@@ -34,3 +34,6 @@
 [submodule "lib/libunistd"]
 	path = lib/libunistd
 	url = https://github.com/robinrowe/libunistd.git
+[submodule "lib/quickjspp"]
+	path = lib/quickjspp
+	url = https://github.com/Hayden-Allen/quickjspp.git

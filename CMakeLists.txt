@@ -13,10 +13,10 @@ option(BUILD_OPENGL3_DEMOS OFF)
 option(BUILD_UNIT_TESTS OFF)
 add_subdirectory(lib/bullet3)
 
-add_subdirectory(lib/libunistd)
 
 if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3 /WX")
+    add_subdirectory(lib/libunistd)
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic")
     if(NOT WIN32)
@@ -62,9 +62,12 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
                                ${PROJECT_SHADERS} ${PROJECT_CONFIGS}
                                ${VENDORS_SOURCES} ${HATS_SOURCES})
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch.h)
-target_link_libraries(${PROJECT_NAME} glfw libunistd
+target_link_libraries(${PROJECT_NAME} glfw
                       ${GLFW_LIBRARIES} ${GLAD_LIBRARIES}
                       BulletDynamics BulletCollision LinearMath)
+if(MSVC)
+        target_link_libraries(${PROJECT_NAME} libunistd)
+endif()
 set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME}
     CXX_STANDARD 23)
