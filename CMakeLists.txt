@@ -38,10 +38,17 @@ include_directories(src/
                     lib/quickjspp
                     lib/stb/)
 
-file(GLOB VENDORS_SOURCES lib/glad/src/glad.c lib/imgui/*.cpp lib/imgui/backends/imgui_impl_glfw.cpp lib/imgui/backends/imgui_impl_opengl3.cpp lib/nanovg/src/nanovg.c lib/quickjspp/*.c)
+file(GLOB VENDORS_SOURCES lib/glad/src/glad.c lib/imgui/*.cpp lib/imgui/backends/imgui_impl_glfw.cpp lib/imgui/backends/imgui_impl_opengl3.cpp lib/nanovg/src/nanovg.c
+        lib/quickjspp/cutils.c
+        lib/quickjspp/libbf.c
+        lib/quickjspp/libregexp.c
+        lib/quickjspp/libunicode.c
+        lib/quickjspp/quickjs.c
+        lib/quickjspp/quickjs-bjson.c
+        lib/quickjspp/quickjs-libc.c)
 set(HATS_SOURCES lib/hats/src/direction.cpp lib/hats/src/point.cpp lib/hats/src/vec.cpp)
-set(PROJECT_HEADERS)
-set(PROJECT_SOURCES "src/main.cpp")
+set(PROJECT_HEADERS "src/component.h" "src/entity.h" "src/entity2.h" "src/scripts_manager.h")
+set(PROJECT_SOURCES "src/main.cpp" "src/entity2.cpp" "src/scripts_manager.cpp")
 file(GLOB PROJECT_CONFIGS CMakeLists.txt
                          .gitattributes
                          .gitignore
