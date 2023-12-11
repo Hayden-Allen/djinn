@@ -28,3 +28,9 @@
 [submodule "lib/model3d"]
 	path = lib/model3d
 	url = https://gitlab.com/bztsrc/model3d.git
+[submodule "lib/miniaudio"]
+	path = lib/miniaudio
+	url = https://github.com/mackron/miniaudio.git
+[submodule "lib/libunistd"]
+	path = lib/libunistd
+	url = https://github.com/robinrowe/libunistd.git
