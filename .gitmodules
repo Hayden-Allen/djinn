@@ -1,0 +1,30 @@
+[submodule "lib/mingl"]
+	path = lib/mingl
+	url = https://github.com/Hayden-Allen/mingl.git
+[submodule "lib/hats"]
+	path = lib/hats
+	url = https://github.com/Hayden-Allen/hats.git
+[submodule "lib/bullet3"]
+	path = lib/bullet3
+	url = https://github.com/bulletphysics/bullet3.git
+[submodule "lib/stb"]
+	path = lib/stb
+	url = https://github.com/nothings/stb.git
+[submodule "lib/glfw"]
+	path = lib/glfw
+	url = https://github.com/glfw/glfw.git
+[submodule "lib/glad"]
+	path = lib/glad
+	url = https://github.com/Dav1dde/glad.git
+[submodule "lib/hapi"]
+	path = lib/hapi
+	url = https://github.com/Hayden-Allen/hapi.git
+[submodule "lib/imgui"]
+	path = lib/imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "lib/nanovg"]
+	path = lib/nanovg
+	url = https://github.com/memononen/nanovg.git
+[submodule "lib/model3d"]
+	path = lib/model3d
+	url = https://gitlab.com/bztsrc/model3d.git
