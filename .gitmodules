@@ -37,3 +37,6 @@
 [submodule "lib/quickjspp"]
 	path = lib/quickjspp
 	url = https://github.com/Hayden-Allen/quickjspp.git
+[submodule "lib/haul"]
+	path = lib/haul
+	url = https://github.com/Hayden-Allen/haul.git

@@ -30,6 +30,7 @@ include_directories(src/
                     lib/glfw/include/
 		    lib/hapi/include
 		    lib/hats/include
+                    lib/haul/include
 		    lib/imgui/
 		    lib/mingl/include
 		    lib/miniaudio/
@@ -47,8 +48,8 @@ file(GLOB VENDORS_SOURCES lib/glad/src/glad.c lib/imgui/*.cpp lib/imgui/backends
         lib/quickjspp/quickjs-bjson.c
         lib/quickjspp/quickjs-libc.c)
 set(HATS_SOURCES lib/hats/src/direction.cpp lib/hats/src/point.cpp lib/hats/src/vec.cpp)
-set(PROJECT_HEADERS "src/component.h" "src/entity.h" "src/entity2.h" "src/scripts_manager.h")
-set(PROJECT_SOURCES "src/main.cpp" "src/entity2.cpp" "src/scripts_manager.cpp")
+set(PROJECT_HEADERS    )
+set(PROJECT_SOURCES "src/main.cpp"   "src/directory_watcher.h" "src/directory_watcher.cpp" "src/script_watcher.h" "src/script_watcher.cpp" "src/script_manager.h" "src/entity.h" "src/entity.cpp" "src/util.h" "src/util.cpp" "src/script_manager.cpp")
 file(GLOB PROJECT_CONFIGS CMakeLists.txt
                          .gitattributes
                          .gitignore
@@ -61,7 +62,7 @@ add_definitions(-DGLFW_INCLUDE_NONE
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
                                ${PROJECT_SHADERS} ${PROJECT_CONFIGS}
                                ${VENDORS_SOURCES} ${HATS_SOURCES})
-target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch.h)
+# target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch.h)
 target_link_libraries(${PROJECT_NAME} glfw
                       ${GLFW_LIBRARIES} ${GLAD_LIBRARIES}
                       BulletDynamics BulletCollision LinearMath)

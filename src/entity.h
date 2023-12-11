@@ -1,51 +1,38 @@
 #pragma once
-#include "component.h"
-#include <map>
+#include "pch.h"
 
-class entity
+static JSValue console_log(JSContext* const ctx, JSValueConst this_val, int const argc, JSValueConst* const argv) {
+	std::cout << "console.log: ";
+	for (int i = 0; i < argc; ++i) {
+		const char* s = JS_ToCString(ctx, argv[i]);
+		std::cout << s << (i < argc - 1 ? " " : "");
+		JS_FreeCString(ctx, s);
+	}
+	std::cout << "\n";
+
+	return JS_UNDEFINED;
+}
+
+class entity final
 {
 public:
-	template<typename T, typename ... ARGS>
-	T* add_component(ARGS&& ... args)
-	{
-		const component_key& k = T::get_key();
-		ASSERT(!m_components.contains(k));
-		T* const c = new T(std::move(args)...);
-		m_components.insert({ k, c });
-		return c;
-	}
-	template<typename T>
-	T* get_component()
-	{
-		const component_key& k = T::get_key();
-		ASSERT(m_components.contains(k));
-		component* const c = m_components.at(k);
-		return static_cast<T*>(c);
-	}
-	template<typename T>
-	T const* get_component() const
-	{
-		const component_key& k = T::get_key();
-		ASSERT(m_components.contains(k));
-		component const* const c = m_components.at(k);
-		return static_cast<T const*>(c);
-	}
-	template<typename T>
-	T* remove_component()
-	{
-		const component_key& k = T::get_key();
-		ASSERT(m_components.contains(k));
-		T* const c = static_cast<T*>(m_components.at(k));
-		m_components.erase(k);
-		return c;
-	}
-	void run()
-	{
-		for (const auto& pair : m_components)
-		{
-			pair.second->run();
-		}
-	}
+	entity(std::string const& fp, JSRuntime* const runtime);
+	DCM(entity);
+	~entity();
+public:
+	void inject_script(std::string const& fp, std::string const& src);
+	void update();
 private:
-	std::map<component_key, component*, component_comparator> m_components;
+	void init_globals();
+	void call_reserved(std::string const& name);
+	void call_load();
+	void call_unload();
+	void call_init();
+	void call_destroy();
+	void call_main();
+	void check_exception(JSValue const val, std::string const& msg);
+private:
+	JSContext* m_ctx;
+	JSValue m_this = JS_UNDEFINED;
+	bool m_script_loaded = false;
 };
