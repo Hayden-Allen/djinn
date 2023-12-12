@@ -19,16 +19,22 @@
 #include "hapi/hapi.h"
 #include "hats/hats.h"
 #include "haul/haul.h"
+#include "glad/glad.h"
+#include "GLFW/glfw3.h"
+#include "mingl/mingl.h"
 #define QJS_USE_CPP
 #include "quickjs.h"
 
 
 
 #ifdef _DEBUG
-#define ASSERT(x) if(!(x)) __debugbreak();
+#	define ASSERT(x) \
+		if (!(x)) __debugbreak();
 #else
-#define ASSERT(x)
+#	define ASSERT(x)
 #endif
 #define MAX_VALUE_T(T) std::numeric_limits<T>::max();
-#define MAX_VALUE(x) MAX_VALUE_T(decltype(x))
-#define DCM(name) name(name const&) = delete; name(name&&) = delete;
+#define MAX_VALUE(x)   MAX_VALUE_T(decltype(x))
+#define DCM(name)               \
+	name(name const&) = delete; \
+	name(name&&) = delete;

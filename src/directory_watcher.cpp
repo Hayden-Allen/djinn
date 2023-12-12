@@ -12,8 +12,7 @@ directory_watcher::directory_watcher(std::string const& base_dir) :
 		NULL,
 		OPEN_EXISTING,
 		FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
-		NULL
-	);
+		NULL);
 	if (m_dir_handle == INVALID_HANDLE_VALUE)
 		err("HANDLE error");
 
@@ -69,8 +68,7 @@ void directory_watcher::register_listener()
 		FILE_NOTIFY_CHANGE_LAST_WRITE | FILE_NOTIFY_CHANGE_FILE_NAME,
 		NULL,
 		&m_overlapped,
-		NULL
-	);
+		NULL);
 	if (!status)
 		err("REGISTER LISTENER error");
 }

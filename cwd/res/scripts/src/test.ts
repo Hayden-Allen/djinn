@@ -9,12 +9,16 @@ export default class TestClass
         this.x = 0;
         this.lastTime = 0;
     }
+    __unload()
+    {
+        console.log("RELOAD");
+    }
     __main()
     {
         const now : number = Date.now();
         if(now - this.lastTime > 1000)
         {
-            console.log("B", String.fromCharCode(this.x++), cool(this.x));
+            console.log("c", String.fromCharCode(this.x++), cool(this.x));
             this.lastTime = now;
         }
     }
