@@ -12,6 +12,7 @@ entity::~entity()
 	{
 		call_unload();
 		call_destroy();
+		JS_FreeValue(m_ctx, m_this);
 	}
 	JS_FreeContext(m_ctx);
 }
@@ -62,7 +63,11 @@ void entity::call_reserved(std::string const& name)
 	JSValue const default_def = JS_GetPropertyStr(m_ctx, global, "__exports");
 	JSValue const default_proto = JS_GetPropertyStr(m_ctx, default_def, "prototype");
 	JSValue const fn = JS_GetPropertyStr(m_ctx, default_proto, name.c_str());
-	check_exception(JS_Call(m_ctx, fn, m_this, 0, nullptr), "entity::call_reserved: " + name);
+
+	JSValue const call_ret = JS_Call(m_ctx, fn, m_this, 0, nullptr);
+	check_exception(call_ret, "entity::call_reserved: " + name);
+	JS_FreeValue(m_ctx, call_ret);
+
 	JS_FreeValue(m_ctx, fn);
 	JS_FreeValue(m_ctx, default_proto);
 	JS_FreeValue(m_ctx, default_def);
