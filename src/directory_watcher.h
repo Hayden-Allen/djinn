@@ -14,7 +14,7 @@ protected:
 	void register_listener();
 	void err(std::string const& msg);
 protected:
-	constexpr static DWORD s_INFO_BUFFER_SIZE = 16 * sizeof(FILE_NOTIFY_INFORMATION);
+	static constexpr DWORD s_INFO_BUFFER_SIZE = 16 * sizeof(FILE_NOTIFY_INFORMATION);
 protected:
 	std::filesystem::path m_base_path;
 	HANDLE m_dir_handle;
