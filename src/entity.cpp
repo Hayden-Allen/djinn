@@ -13,6 +13,7 @@ entity::~entity()
 		call_unload();
 		call_destroy();
 	}
+	JS_FreeContext(m_ctx);
 }
 
 
@@ -49,8 +50,8 @@ void entity::init_globals()
 	JSValue const global = JS_GetGlobalObject(m_ctx);
 
 	JSValue const console = JS_NewObject(m_ctx);
-	JS_SetPropertyStr(m_ctx, global, "console", console);
 	JSValue const log = JS_NewCFunction(m_ctx, console_log, "log", 1);
+	JS_SetPropertyStr(m_ctx, global, "console", console);
 	JS_SetPropertyStr(m_ctx, console, "log", log);
 
 	JS_FreeValue(m_ctx, global);
