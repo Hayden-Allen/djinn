@@ -1,0 +1,9 @@
+{
+  "type": "module",
+  "dependencies": {
+    "@rollup/plugin-typescript": "^11.1.5",
+    "chokidar": "^3.5.3",
+    "rollup": "^4.8.0",
+    "tslib": "^2.6.2"
+  }
+}
