@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(myProject)
+project(djinn)
 
 option(GLFW_BUILD_DOCS OFF)
 option(GLFW_BUILD_EXAMPLES OFF)
@@ -48,8 +48,8 @@ file(GLOB VENDORS_SOURCES lib/glad/src/glad.c lib/imgui/*.cpp lib/imgui/backends
         lib/quickjspp/quickjs-bjson.c
         lib/quickjspp/quickjs-libc.c)
 set(HATS_SOURCES lib/hats/src/direction.cpp lib/hats/src/point.cpp lib/hats/src/vec.cpp)
-set(PROJECT_HEADERS    )
-set(PROJECT_SOURCES "src/main.cpp"   "src/directory_watcher.h" "src/directory_watcher.cpp" "src/script_watcher.h" "src/script_watcher.cpp" "src/script_manager.h" "src/entity.h" "src/entity.cpp" "src/util.h" "src/util.cpp" "src/script_manager.cpp")
+set(PROJECT_HEADERS "src/constants.h" "src/script_manager.h" "src/util.h" "src/mesh_manager.h" "src/manager.h" "src/asset_service.h" "src/js_global.h")
+set(PROJECT_SOURCES "src/main.cpp"   "src/directory_watcher.h" "src/directory_watcher.cpp" "src/script_watcher.h" "src/script_watcher.cpp" "src/entity.h" "src/entity.cpp" "src/util.cpp" "src/script_manager.cpp" "src/mesh_manager.cpp" "src/asset_service.cpp" "src/js_global.cpp")
 file(GLOB PROJECT_CONFIGS CMakeLists.txt
                          .gitattributes
                          .gitignore
@@ -61,7 +61,7 @@ add_definitions(-DGLFW_INCLUDE_NONE
                 -D_CRT_SECURE_NO_WARNINGS)
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
                                ${PROJECT_SHADERS} ${PROJECT_CONFIGS}
-                               ${VENDORS_SOURCES} ${HATS_SOURCES})
+                               ${VENDORS_SOURCES} ${HATS_SOURCES} "src/constants.h")
 target_link_libraries(${PROJECT_NAME} glfw
                       ${GLFW_LIBRARIES} ${GLAD_LIBRARIES}
                       BulletDynamics BulletCollision LinearMath)

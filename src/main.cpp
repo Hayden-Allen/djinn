@@ -3,22 +3,39 @@
 #include "script_manager.h"
 #include "entity.h"
 
+using namespace djinn;
+
 int main(int argc, char* argv[])
 {
 	static char constexpr WATCH_BASE_DIR[] = "../../../../cwd/res/scripts/out";
 	script_manager* g_all_scripts = new script_manager(WATCH_BASE_DIR);
 	script_watcher watcher(WATCH_BASE_DIR, g_all_scripts);
-	entity* const e = g_all_scripts->create_entity("test.js");
+	entity* const e = g_all_scripts->load("test.js");
 
 
 
 	mgl::context c(1920, 1080, "mingl", { .vsync = true, .clear = { .b = 1 } });
-	f32 constexpr vertices[] =
-	{
-		-.5f, -.5f, 0.f, 0.f, 0.f,
-		 .5f, -.5f, 0.f, 1.f, 0.f,
-		 .5f,  .5f, 0.f, 1.f, 1.f,
-		-.5f,  .5f, 0.f, 0.f, 1.f,
+	f32 constexpr vertices[] = {
+		-.5f,
+		-.5f,
+		0.f,
+		0.f,
+		0.f,
+		.5f,
+		-.5f,
+		0.f,
+		1.f,
+		0.f,
+		.5f,
+		.5f,
+		0.f,
+		1.f,
+		1.f,
+		-.5f,
+		.5f,
+		0.f,
+		0.f,
+		1.f,
 	};
 	u32 indices[] = {
 		0, 1, 2, 0, 2, 3
@@ -64,12 +81,12 @@ int main(int argc, char* argv[])
 	for (int i = 0; i < 6; i++)
 		delete[] skypixels[i];
 	mgl::skybox_rgb_f32 sbox("../../../../cwd/res/glsl/sky.vert", "../../../../cwd/res/glsl/sky.frag", std::move(cubemap));
-	
+
 	mgl::camera cam(point<space::WORLD>(0, 0, 5), 0, 0, 108 / c.get_aspect_ratio(), c.get_aspect_ratio(), .01f, 10.f, 1.f);
 
 	constexpr u32 keycodes[] = { GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D, GLFW_KEY_SPACE, GLFW_KEY_LEFT_SHIFT, GLFW_KEY_ESCAPE, GLFW_KEY_LEFT, GLFW_KEY_RIGHT, GLFW_KEY_UP, GLFW_KEY_DOWN };
 	bool keys[11] = { false };
-	const f32 speed = 1.f;
+	f32 const speed = 1.f;
 
 
 
@@ -92,8 +109,7 @@ int main(int argc, char* argv[])
 		vec<space::CAMERA> cam_move(
 			keys[3] - keys[1],
 			keys[4] - keys[5],
-			keys[2] - keys[0]
-		);
+			keys[2] - keys[0]);
 		const f32 mx = 1.f * keys[8] - keys[7];
 		const f32 my = 1.f * keys[10] - keys[9];
 		cam.move(fs, cam_move, mx, my);

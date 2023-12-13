@@ -18,7 +18,8 @@ export default class TestClass
         const now : number = Date.now();
         if(now - this.lastTime > 1000)
         {
-            console.log("b", String.fromCharCode(this.x++), cool(this.x));
+            // console.log("b", String.fromCharCode(this.x++), cool(this.x));
+            console.log(create_mesh(4, [3], 6));
             this.lastTime = now;
         }
     }

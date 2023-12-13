@@ -1,0 +1,15 @@
+- asset service
+	- exposes these to scripts:
+		- audio (load)
+		- texture (load/create)
+		- shader (load)
+		- mesh (load/create)
+	- each has a watcher for hot reloading
+	- each has own ids (size_t)
+	- each has own *_manager and *_watcher
+		- manager supports creating, loading/reloading, renaming, destroying
+		- watcher monitors fs and notifies manager when something changes
+		- all of this is abstracted from scripts; scripts just use id that is bound
+			to these assets under the hood (automatically "get" changes)
+		- managers own assets
+	

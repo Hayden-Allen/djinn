@@ -17,11 +17,14 @@
 #undef far
 
 #include "hapi/hapi.h"
+using namespace hapi;
 #include "hats/hats.h"
+using namespace hats;
 #include "haul/haul.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "mingl/mingl.h"
+using namespace mgl;
 #define QJS_USE_CPP
 #include "quickjs.h"
 
@@ -38,3 +41,5 @@
 #define DCM(name)               \
 	name(name const&) = delete; \
 	name(name&&) = delete;
+
+typedef u32 id_t;
