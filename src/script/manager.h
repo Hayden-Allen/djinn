@@ -1,5 +1,6 @@
+#pragma once
 #include "pch.h"
-#include "util.h"
+#include "core/util.h"
 
 namespace djinn
 {
@@ -24,8 +25,8 @@ namespace djinn
 	protected:
 		static inline id_t s_next_id = 1;
 	protected:
-		std::string m_base_dir;
-		std::unordered_map<id_t, optr<T>> m_objects;
+		std::string m_base_dir;	// directory that is watched for updates
+		std::unordered_map<id_t, optr<T>> m_objects;	// map of unique id to actual object (this class owns all the objects)
 	protected:
 		std::string to_absolute(std::string const& fp)
 		{

@@ -1,13 +1,14 @@
 #include "pch.h"
 #include "script_manager.h"
-#include "util.h"
+#include "core/util.h"
 #include "entity.h"
+#include "core/constants.h"
 
 namespace djinn
 {
-	script_manager::script_manager(std::string const& base_dir) :
+	script_manager::script_manager() :
 		m_runtime(JS_NewRuntime()),
-		m_base_dir(base_dir)
+		m_base_dir(c::base_dir::script)
 	{}
 	script_manager::~script_manager()
 	{

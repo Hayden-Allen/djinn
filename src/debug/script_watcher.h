@@ -9,7 +9,7 @@ namespace djinn
 	class script_watcher : public directory_watcher
 	{
 	public:
-		script_watcher(std::string const& base_dir, script_manager* const manager);
+		script_watcher(script_manager* const manager);
 		DCM(script_watcher);
 	public:
 		void handle_action(DWORD const action, std::string const& fp) override;

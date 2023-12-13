@@ -48,8 +48,8 @@ file(GLOB VENDORS_SOURCES lib/glad/src/glad.c lib/imgui/*.cpp lib/imgui/backends
         lib/quickjspp/quickjs-bjson.c
         lib/quickjspp/quickjs-libc.c)
 set(HATS_SOURCES lib/hats/src/direction.cpp lib/hats/src/point.cpp lib/hats/src/vec.cpp)
-set(PROJECT_HEADERS "src/constants.h" "src/script_manager.h" "src/util.h" "src/mesh_manager.h" "src/manager.h" "src/asset_service.h" "src/js_global.h")
-set(PROJECT_SOURCES "src/main.cpp"   "src/directory_watcher.h" "src/directory_watcher.cpp" "src/script_watcher.h" "src/script_watcher.cpp" "src/entity.h" "src/entity.cpp" "src/util.cpp" "src/script_manager.cpp" "src/mesh_manager.cpp" "src/asset_service.cpp" "src/js_global.cpp")
+set(PROJECT_HEADERS "src/core/constants.h" "src/core/util.h" "src/debug/directory_watcher.h" "src/debug/script_watcher.h" "src/scene/entity.h" "src/scene/script_manager.h" "src/script/asset_service.h" "src/script/js_global.h" "src/script/manager.h" "src/script/mesh_manager.h" "src/pch.h" "src/script/service.h")
+set(PROJECT_SOURCES "src/core/util.cpp" "src/debug/directory_watcher.cpp" "src/debug/script_watcher.cpp" "src/scene/entity.cpp" "src/scene/script_manager.cpp" "src/script/asset_service.cpp" "src/script/js_global.cpp" "src/script/mesh_manager.cpp" "src/main.cpp")
 file(GLOB PROJECT_CONFIGS CMakeLists.txt
                          .gitattributes
                          .gitignore
@@ -59,9 +59,7 @@ file(GLOB PROJECT_CONFIGS CMakeLists.txt
 add_definitions(-DGLFW_INCLUDE_NONE
                 -DPROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\"
                 -D_CRT_SECURE_NO_WARNINGS)
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
-                               ${PROJECT_SHADERS} ${PROJECT_CONFIGS}
-                               ${VENDORS_SOURCES} ${HATS_SOURCES} "src/constants.h")
+add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${PROJECT_CONFIGS} ${VENDORS_SOURCES} ${HATS_SOURCES} )
 target_link_libraries(${PROJECT_NAME} glfw
                       ${GLFW_LIBRARIES} ${GLAD_LIBRARIES}
                       BulletDynamics BulletCollision LinearMath)

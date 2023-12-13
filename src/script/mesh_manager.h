@@ -1,3 +1,4 @@
+#pragma once
 #include "pch.h"
 #include "manager.h"
 
@@ -8,7 +9,6 @@ namespace djinn
 	public:
 		mesh_manager();
 		DCM(mesh_manager);
-		~mesh_manager();
 	public:
 		id_t create(u32 const vertex_count, std::vector<u32> const& layout, u32 const index_count);
 		id_t load(std::string const& fp) override;

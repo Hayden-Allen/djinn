@@ -1,15 +1,15 @@
 #include "pch.h"
-#include "script_watcher.h"
-#include "script_manager.h"
-#include "entity.h"
+#include "debug/script_watcher.h"
+#include "scene/script_manager.h"
+#include "scene/entity.h"
+#include "script/asset_service.h"
 
 using namespace djinn;
 
 int main(int argc, char* argv[])
 {
-	static char constexpr WATCH_BASE_DIR[] = "../../../../cwd/res/scripts/out";
-	script_manager* g_all_scripts = new script_manager(WATCH_BASE_DIR);
-	script_watcher watcher(WATCH_BASE_DIR, g_all_scripts);
+	script_manager* g_all_scripts = new script_manager();
+	script_watcher watcher(g_all_scripts);
 	entity* const e = g_all_scripts->load("test.js");
 
 
@@ -126,5 +126,6 @@ int main(int argc, char* argv[])
 
 	delete e;
 	delete g_all_scripts;
+	asset_service::shutdown();
 	return 0;
 }

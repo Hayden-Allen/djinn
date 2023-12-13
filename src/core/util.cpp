@@ -10,7 +10,7 @@ namespace djinn::u
 	{
 		return std::filesystem::absolute(dir / file).string();
 	}
-	std::vector<u32> extract_uint32_array(JSContext* const ctx, JSValue const& val)
+	std::vector<u32> extract_u32_array(JSContext* const ctx, JSValue const& val)
 	{
 		s64 length;
 		if (JS_GetPropertyLength(ctx, &length, val))
@@ -27,5 +27,14 @@ namespace djinn::u
 			JS_FreeValue(ctx, element);
 		}
 		return ret;
+	}
+	u32 extract_u32(JSContext* const ctx, JSValue const& val, u32* const out)
+	{
+		if (JS_ToUint32(ctx, out, val))
+		{
+			ASSERT(false);
+			return false;
+		}
+		return true;
 	}
 } // namespace djinn::u

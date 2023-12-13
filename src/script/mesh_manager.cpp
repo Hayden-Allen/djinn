@@ -1,13 +1,11 @@
 #include "pch.h"
 #include "mesh_manager.h"
-#include "constants.h"
+#include "core/constants.h"
 
 namespace djinn
 {
 	mesh_manager::mesh_manager() :
-		manager(c::mesh_manager::base_dir)
-	{}
-	mesh_manager::~mesh_manager()
+		manager(c::base_dir::mesh)
 	{}
 
 

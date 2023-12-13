@@ -1,11 +1,12 @@
 #include "pch.h"
 #include "script_watcher.h"
-#include "script_manager.h"
+#include "scene/script_manager.h"
+#include "core/constants.h"
 
 namespace djinn
 {
-	script_watcher::script_watcher(std::string const& base_dir, script_manager* const manager) :
-		directory_watcher(base_dir),
+	script_watcher::script_watcher(script_manager* const manager) :
+		directory_watcher(c::base_dir::script),
 		m_manager(manager)
 	{}
 

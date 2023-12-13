@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "entity.h"
-#include "asset_service.h"
-#include "js_global.h"
+#include "script/asset_service.h"
+#include "script/js_global.h"
 
 namespace djinn
 {

@@ -19,7 +19,9 @@ export default class TestClass
         if(now - this.lastTime > 1000)
         {
             // console.log("b", String.fromCharCode(this.x++), cool(this.x));
-            console.log(create_mesh(4, [3], 6));
+            let id = create_mesh(4, [3], 6);
+            console.log(id);
+            destroy_mesh(id);
             this.lastTime = now;
         }
     }

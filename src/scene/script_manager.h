@@ -8,7 +8,7 @@ namespace djinn
 	class script_manager final
 	{
 	public:
-		script_manager(std::string const& base_dir);
+		script_manager();
 		DCM(script_manager);
 		~script_manager();
 	public:
