@@ -22,6 +22,11 @@ namespace djinn
 		virtual void remove(id_t const id) = 0;
 		virtual void reload(std::string const& fp) = 0;
 		virtual void rename(std::string const& old_fp, std::string const& new_fp) = 0;
+		sptr<T> get(id_t const id)
+		{
+			ASSERT(m_objects.contains(id));
+			return m_objects.at(id);
+		}
 	protected:
 		static inline id_t s_next_id = 1;
 	protected:

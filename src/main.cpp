@@ -3,18 +3,22 @@
 #include "scene/script_manager.h"
 #include "scene/entity.h"
 #include "script/asset_service.h"
+#include "script/render_service.h"
 
 using namespace djinn;
 
 int main(int argc, char* argv[])
 {
+	mgl::context c(1920, 1080, "mingl", { .vsync = true, .clear = { .b = 1 } });
+	asset_service::init();
+	render_service::init(&c);
+
 	script_manager* g_all_scripts = new script_manager();
 	script_watcher watcher(g_all_scripts);
 	entity* const e = g_all_scripts->load("test.js");
 
 
 
-	mgl::context c(1920, 1080, "mingl", { .vsync = true, .clear = { .b = 1 } });
 	f32 constexpr vertices[] = {
 		-.5f,
 		-.5f,
@@ -94,11 +98,12 @@ int main(int argc, char* argv[])
 	{
 		// non blocking wait
 		watcher.poll();
-		e->update();
 
 
 		c.begin_frame();
 		c.clear();
+
+		e->update();
 
 		for (int i = 0; i < sizeof(keys) / sizeof(bool); i++)
 			keys[i] = c.get_key(keycodes[i]);
@@ -127,5 +132,6 @@ int main(int argc, char* argv[])
 	delete e;
 	delete g_all_scripts;
 	asset_service::shutdown();
+	render_service::shutdown();
 	return 0;
 }

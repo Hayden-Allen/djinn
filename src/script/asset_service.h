@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "service.h"
 #include "mesh_manager.h"
+#include "shader_manager.h"
 
 namespace djinn
 {
@@ -22,13 +23,13 @@ namespace djinn
 	public:
 		DCM(asset_service);
 	public:
+		static void init();
 		static void register_functions(JSContext* const ctx);
-		id_t create_mesh(u32 const vertex_count, std::vector<u32> const& vertex_layout, u32 const index_count);
-		void destroy_mesh(id_t const id);
-	private:
-		static inline asset_service* s_instance = nullptr;
+		mesh_manager& get_mesh_manager();
+		shader_manager& get_shader_manager();
 	private:
 		mesh_manager m_mesh_manager;
+		shader_manager m_shader_manager;
 	private:
 		asset_service();
 	};

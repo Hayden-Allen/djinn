@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "entity.h"
 #include "script/asset_service.h"
+#include "script/render_service.h"
 #include "script/js_global.h"
 
 namespace djinn
@@ -10,6 +11,8 @@ namespace djinn
 	{
 		init_globals();
 		asset_service::register_functions(m_ctx);
+		render_service::register_functions(m_ctx);
+		call_init();
 	}
 	entity::~entity()
 	{

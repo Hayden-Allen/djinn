@@ -15,8 +15,6 @@ namespace djinn
 	public:
 		static DERIVED* get_instance()
 		{
-			if (!s_instance)
-				s_instance = new DERIVED();
 			return s_instance;
 		}
 		static void shutdown()
@@ -28,6 +26,8 @@ namespace djinn
 		{
 			ASSERT(false);	// must be implemented by derived services
 		}
+	protected:
+		static inline DERIVED* s_instance = nullptr;
 	protected:
 		service()
 		{
@@ -41,7 +41,5 @@ namespace djinn
 			JS_SetPropertyStr(ctx, global, name.c_str(), fn_obj);
 			JS_FreeValue(ctx, global);
 		}
-	private:
-		static inline DERIVED* s_instance = nullptr;
 	};
 }
