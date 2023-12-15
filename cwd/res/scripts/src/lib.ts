@@ -1,8 +1,3 @@
-export function cool(x: number) : number
-{
-    const y: number = 0xffffffff - x;
-    return y + x;
-}
 export class Entity
 {
     private id: number = -1;

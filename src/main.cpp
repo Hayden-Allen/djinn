@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "debug/script_watcher.h"
+#include "debug/shader_watcher.h"
 #include "scene/script_manager.h"
 #include "scene/entity.h"
 #include "script/asset_service.h"
@@ -13,8 +14,9 @@ int main(int argc, char* argv[])
 	asset_service::init();
 	render_service::init(&c);
 
+	shader_watcher shader_watcher(asset_service::get_shader_manager());
 	script_manager* g_all_scripts = new script_manager();
-	script_watcher watcher(g_all_scripts);
+	script_watcher script_watcher(g_all_scripts);
 	entity* const e = g_all_scripts->load("test.js");
 
 
@@ -45,7 +47,7 @@ int main(int argc, char* argv[])
 		0, 1, 2, 0, 2, 3
 	};
 	mgl::static_render_object ro(vertices, sizeof(vertices) / sizeof(f32), { 3, 2 }, indices, sizeof(indices) / sizeof(u32));
-	mgl::shaders shaders = mgl::shaders("../../../../cwd/res/glsl/test.vert", "../../../../cwd/res/glsl/test.frag");
+	mgl::shaders shaders = mgl::shaders("../../../../cwd/res/glsl/mingl/test.vert", "../../../../cwd/res/glsl/mingl/test.frag");
 	shaders.uniform_1i("u_texture", 0);
 
 	const u32 TW = 32, TH = 32;
@@ -84,7 +86,7 @@ int main(int argc, char* argv[])
 	mgl::cubemap_rgb_f32 cubemap(GL_RGB, TW, TH, skypixels, { .min_filter = GL_NEAREST, .mag_filter = GL_NEAREST });
 	for (int i = 0; i < 6; i++)
 		delete[] skypixels[i];
-	mgl::skybox_rgb_f32 sbox("../../../../cwd/res/glsl/sky.vert", "../../../../cwd/res/glsl/sky.frag", std::move(cubemap));
+	mgl::skybox_rgb_f32 sbox("../../../../cwd/res/glsl/mingl/sky.vert", "../../../../cwd/res/glsl/mingl/sky.frag", std::move(cubemap));
 
 	mgl::camera cam(point<space::WORLD>(0, 0, 5), 0, 0, 108 / c.get_aspect_ratio(), c.get_aspect_ratio(), .01f, 10.f, 1.f);
 
@@ -97,8 +99,8 @@ int main(int argc, char* argv[])
 	while (c.is_running())
 	{
 		// non blocking wait
-		watcher.poll();
-
+		shader_watcher.poll();
+		script_watcher.poll();
 
 		c.begin_frame();
 		c.clear();

@@ -1,3 +1,4 @@
+#pragma once
 #include "pch.h"
 #include "service.h"
 
@@ -22,4 +23,4 @@ namespace djinn
 	private:
 		render_service(mgl::context* const context);
 	};
-}
+} // namespace djinn

@@ -48,8 +48,8 @@ file(GLOB VENDORS_SOURCES lib/glad/src/glad.c lib/imgui/*.cpp lib/imgui/backends
         lib/quickjspp/quickjs-bjson.c
         lib/quickjspp/quickjs-libc.c)
 set(HATS_SOURCES lib/hats/src/direction.cpp lib/hats/src/point.cpp lib/hats/src/vec.cpp)
-set(PROJECT_HEADERS "src/core/constants.h" "src/core/util.h" "src/debug/directory_watcher.h" "src/debug/script_watcher.h" "src/scene/entity.h" "src/scene/script_manager.h" "src/script/asset_service.h" "src/script/js.h" "src/script/manager.h" "src/script/mesh_manager.h" "src/pch.h" "src/script/service.h" "src/script/shader_manager.h" "src/script/render_service.h")
-set(PROJECT_SOURCES "src/core/util.cpp" "src/debug/directory_watcher.cpp" "src/debug/script_watcher.cpp" "src/scene/entity.cpp" "src/scene/script_manager.cpp" "src/script/asset_service.cpp" "src/script/js.cpp" "src/script/mesh_manager.cpp" "src/script/shader_manager.cpp" "src/main.cpp" "src/script/render_service.cpp")
+set(PROJECT_HEADERS "src/core/constants.h" "src/core/util.h" "src/debug/directory_watcher.h" "src/debug/script_watcher.h" "src/scene/entity.h" "src/scene/script_manager.h" "src/script/asset_service.h" "src/script/js.h" "src/script/manager.h" "src/script/mesh_manager.h" "src/pch.h" "src/script/service.h" "src/script/shader_manager.h" "src/script/render_service.h" "src/debug/shader_watcher.h")
+set(PROJECT_SOURCES "src/core/util.cpp" "src/debug/directory_watcher.cpp" "src/debug/script_watcher.cpp" "src/scene/entity.cpp" "src/scene/script_manager.cpp" "src/script/asset_service.cpp" "src/script/js.cpp" "src/script/mesh_manager.cpp" "src/script/shader_manager.cpp" "src/main.cpp" "src/script/render_service.cpp" "src/debug/shader_watcher.cpp")
 file(GLOB PROJECT_CONFIGS CMakeLists.txt
                          .gitattributes
                          .gitignore

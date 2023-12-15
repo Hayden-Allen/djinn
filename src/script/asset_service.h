@@ -12,6 +12,7 @@ namespace djinn
 		extern JSValue destroy_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
 		extern JSValue update_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
 		extern JSValue create_shader(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
+		extern JSValue load_shader(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
 		extern JSValue destroy_shader(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
 		extern JSValue set_shader_uniforms(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
 		/*static constexpr u64 s_FN_COUNT = 1;
@@ -29,8 +30,8 @@ namespace djinn
 	public:
 		static void init();
 		static void register_functions(JSContext* const ctx);
-		static mesh_manager& get_mesh_manager();
-		static shader_manager& get_shader_manager();
+		static mesh_manager* get_mesh_manager();
+		static shader_manager* get_shader_manager();
 	private:
 		mesh_manager m_mesh_manager;
 		shader_manager m_shader_manager;
