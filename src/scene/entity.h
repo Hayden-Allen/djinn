@@ -14,7 +14,6 @@ namespace djinn
 		void inject_script(std::string const& fp, std::string const& src);
 		void update();
 	private:
-		void init_globals();
 		void call_reserved(std::string const& name);
 		void call_load();
 		void call_unload();

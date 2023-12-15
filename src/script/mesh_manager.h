@@ -12,7 +12,7 @@ namespace djinn
 	public:
 		id_t create(u32 const vertex_count, std::vector<u32> const& layout, u32 const index_count);
 		id_t load(std::string const& fp) override;
-		void remove(id_t const id) override;
+		void destroy(id_t const id) override;
 		void reload(std::string const& fp) override;
 		void rename(std::string const& old_fp, std::string const& new_fp) override;
 	};

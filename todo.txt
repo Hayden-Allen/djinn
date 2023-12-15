@@ -13,3 +13,5 @@
 			to these assets under the hood (automatically "get" changes)
 		- managers own assets
 	
+- shader_manager::load
+- shader_watcher

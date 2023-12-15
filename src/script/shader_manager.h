@@ -12,8 +12,9 @@ namespace djinn
 	public:
 		id_t create(std::string const& vert_src, std::string const& frag_src);
 		id_t load(std::string const& fp) override;
-		void remove(id_t const id) override;
+		void destroy(id_t const id) override;
 		void reload(std::string const& fp) override;
 		void rename(std::string const& old_fp, std::string const& new_fp) override;
+		void set_uniform(JSContext* const ctx, id_t const id, std::string const& name, JSValue const& js_val);
 	};
 } // namespace djinn

@@ -20,7 +20,7 @@ namespace djinn
 		ASSERT(false);
 		return create(0, {}, 0);
 	}
-	void mesh_manager::remove(id_t const id)
+	void mesh_manager::destroy(id_t const id)
 	{
 		erase(id);
 	}

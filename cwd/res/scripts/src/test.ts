@@ -1,4 +1,6 @@
-import { cool } from './lib'
+import { cool, Entity } from './lib'
+
+const { Asset, Render } = djinn
 
 const vert_src = `
     #version 330 core
@@ -10,37 +12,38 @@ const vert_src = `
 const frag_src = `
     #version 330 core
     layout(location = 0) out vec4 o_color;
+    uniform vec4 u_color1;
+    uniform vec4 u_color2;
+    uniform float u_colorMix;
     void main() {
-        o_color = vec4(1);
+        o_color = mix(u_color1, u_color2, u_colorMix);
     }
 `
 
-export default class TestClass
+export default class TestClass extends Entity
 {
-    private x: number = 0;
-    private lastTime: number = 0;
-    private ro_id: number;
-    private shader_id: number;
+    private startTime: number = 0;
+    private idMesh: number;
+    private idShader: number;
     __load()
     {
-        this.ro_id = create_mesh(4, [2], 6);
-        this.shader_id = create_shader(vert_src, frag_src);
-        console.log(this.ro_id, this.shader_id);
+        this.startTime = Date.now();
+        this.idMesh = Asset.Mesh.create(4, [2], 6);
+        Asset.Mesh.update(this.idMesh, [0, 0, 1, 0, 1, 1, 0, 1], [0, 1, 2, 0, 2, 3]);
+        this.idShader = Asset.Shader.create(vert_src, frag_src);
     }
     __unload()
     {
-        console.log("RELOAD");
-        destroy_mesh(this.ro_id);
+        Asset.Mesh.destroy(this.idMesh);
+        Asset.Shader.destroy(this.idShader);
     }
     __main()
     {
-        const now : number = Date.now();
-        if(now - this.lastTime > 1000)
-        {
-            update_mesh(this.ro_id, [this.x, 0, this.x + 1, 0, this.x + 1, 1, this.x, 1], [0, 1, 2, 0, 2, 3]);
-            this.lastTime = now;
-            this.x += .1;
-        }
-        draw(this.ro_id, this.shader_id);
+        Asset.Shader.setUniforms(this.idShader, {
+            u_color1: [1, 0, 0, 1],
+            u_color2: [0, 0, 1, 1],
+            u_colorMix: Math.abs(Math.cos((Date.now() - this.startTime) * 0.001)),
+        });
+        Render.draw(this.idMesh, this.idShader);
     }
 }

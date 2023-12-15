@@ -2,17 +2,16 @@
 #include "entity.h"
 #include "script/asset_service.h"
 #include "script/render_service.h"
-#include "script/js_global.h"
+#include "script/js.h"
 
 namespace djinn
 {
 	entity::entity(std::string const& fp, JSRuntime* const runtime) :
 		m_ctx(JS_NewContext(runtime))
 	{
-		init_globals();
+		js::global::init_globals(m_ctx);
 		asset_service::register_functions(m_ctx);
 		render_service::register_functions(m_ctx);
-		call_init();
 	}
 	entity::~entity()
 	{
@@ -43,6 +42,7 @@ namespace djinn
 			m_this = JS_CallConstructor(m_ctx, default_def, 0, nullptr);
 			JS_FreeValue(m_ctx, default_def);
 			JS_FreeValue(m_ctx, global);
+			call_init();
 		}
 
 		call_load();
@@ -55,17 +55,6 @@ namespace djinn
 
 
 
-	void entity::init_globals()
-	{
-		JSValue const global = JS_GetGlobalObject(m_ctx);
-
-		JSValue const console = JS_NewObject(m_ctx);
-		JSValue const log = JS_NewCFunction(m_ctx, js::global::console_log, "log", 1);
-		JS_SetPropertyStr(m_ctx, global, "console", console);
-		JS_SetPropertyStr(m_ctx, console, "log", log);
-
-		JS_FreeValue(m_ctx, global);
-	}
 	void entity::call_reserved(std::string const& name)
 	{
 		JSValue const global = JS_GetGlobalObject(m_ctx);

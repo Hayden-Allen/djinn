@@ -16,7 +16,7 @@ namespace djinn
 	public:
 		static void init(mgl::context* const context);
 		static void register_functions(JSContext* const ctx);
-		mgl::context* const get_context();
+		static mgl::context* const get_context();
 	private:
 		mgl::context* const m_context;
 	private:
