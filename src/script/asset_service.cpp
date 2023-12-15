@@ -32,10 +32,7 @@ namespace djinn
 			id_t id = js::extract_id(ctx, argv[0]);
 			std::vector<f32> const& vertices = js::extract_f32_array(ctx, argv[1]);
 			std::vector<u32> const& indices = js::extract_u32_array(ctx, argv[2]);
-
-			sptr<static_render_object> ro = ::djinn::asset_service::get_mesh_manager()->get(id);
-			ro->get_vertex_array().get_vertices().update(vertices.data(), (u32)vertices.size(), 0);
-			ro->get_indices().update(indices.data(), (u32)indices.size(), 0);
+			::djinn::asset_service::get_mesh_manager()->update(id, vertices, indices);
 			return JS_UNDEFINED;
 		}
 		JSValue create_shader(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -68,6 +65,28 @@ namespace djinn
 				::djinn::asset_service::get_shader_manager()->set_uniform(ctx, id, pair.first, pair.second);
 			return JS_UNDEFINED;
 		}
+		JSValue create_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+		{
+			ASSERT(argc == 2);
+			u32 const width = js::extract_u32(ctx, argv[0]);
+			u32 const height = js::extract_u32(ctx, argv[1]);
+			return js::create_id(ctx, ::djinn::asset_service::get_texture_manager()->create(width, height));
+		}
+		JSValue destroy_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+		{
+			ASSERT(argc == 1);
+			id_t const id = js::extract_id(ctx, argv[0]);
+			::djinn::asset_service::get_texture_manager()->destroy(id);
+			return JS_UNDEFINED;
+		}
+		JSValue update_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+		{
+			ASSERT(argc == 2);
+			id_t const id = js::extract_id(ctx, argv[0]);
+			std::vector<u8> const& subpixels = js::extract_u8_array(ctx, argv[1]);
+			::djinn::asset_service::get_texture_manager()->update(id, subpixels);
+			return JS_UNDEFINED;
+		}
 	} // namespace js::asset_service
 
 
@@ -89,6 +108,9 @@ namespace djinn
 		super::register_function(ctx, "Shader", "load", 2, js::asset_service::load_shader);
 		super::register_function(ctx, "Shader", "destroy", 2, js::asset_service::destroy_shader);
 		super::register_function(ctx, "Shader", "setUniforms", 2, js::asset_service::set_shader_uniforms);
+		super::register_function(ctx, "Texture", "create", 2, js::asset_service::create_texture);
+		super::register_function(ctx, "Texture", "destroy", 2, js::asset_service::destroy_texture);
+		super::register_function(ctx, "Texture", "update", 2, js::asset_service::update_texture);
 	}
 	mesh_manager* asset_service::get_mesh_manager()
 	{
@@ -97,6 +119,10 @@ namespace djinn
 	shader_manager* asset_service::get_shader_manager()
 	{
 		return &s_instance->m_shader_manager;
+	}
+	texture_manager* asset_service::get_texture_manager()
+	{
+		return &s_instance->m_texture_manager;
 	}
 
 

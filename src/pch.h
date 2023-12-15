@@ -36,7 +36,9 @@ using namespace mgl;
 #else
 #	define ASSERT(x)
 #endif
-#define MAX_VALUE_T(T) std::numeric_limits<T>::max();
+#define MIN_VALUE_T(T) std::numeric_limits<T>::lowest()
+#define MIN_VALUE(x)   MIN_VALUE_T(decltype(x))
+#define MAX_VALUE_T(T) std::numeric_limits<T>::max()
 #define MAX_VALUE(x)   MAX_VALUE_T(decltype(x))
 #define DCM(name)               \
 	name(name const&) = delete; \

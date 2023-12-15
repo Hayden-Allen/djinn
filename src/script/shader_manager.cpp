@@ -2,6 +2,7 @@
 #include "shader_manager.h"
 #include "core/constants.h"
 #include "js.h"
+#include "asset_service.h"
 
 namespace djinn
 {
@@ -117,6 +118,14 @@ namespace djinn
 				std::vector<f32> const& v = js::extract_f32_array(ctx, js_val);
 				ASSERT(v.size() == 4);
 				shader->uniform_4fv(info, v.data());
+			}
+			break;
+		case GL_SAMPLER_2D:
+			{
+				std::vector<u32> const& ids = js::extract_u32_array(ctx, js_val);
+				ASSERT(ids.size() == 2); // [0] is texture id, [1] is slot
+				asset_service::get_texture_manager()->bind(ids[0], ids[1]);
+				shader->uniform_1i(info, ids[1]);
 			}
 			break;
 		default:

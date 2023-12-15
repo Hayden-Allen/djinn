@@ -15,5 +15,6 @@ namespace djinn
 		void destroy(id_t const id) override;
 		void reload(std::string const& fp) override;
 		void rename(std::string const& old_fp, std::string const& new_fp) override;
+		void update(id_t const id, std::vector<f32> const& vertices, std::vector<u32> const& indices);
 	};
 } // namespace djinn

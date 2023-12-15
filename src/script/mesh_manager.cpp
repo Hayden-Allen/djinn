@@ -32,4 +32,10 @@ namespace djinn
 	{
 		ASSERT(false);
 	}
+	void mesh_manager::update(id_t const id, std::vector<f32> const& vertices, std::vector<u32> const& indices)
+	{
+		sptr<static_render_object> ro = get(id);
+		ro->get_vertex_array().get_vertices().update(vertices.data(), (u32)vertices.size(), 0);
+		ro->get_indices().update(indices.data(), (u32)indices.size(), 0);
+	}
 } // namespace djinn

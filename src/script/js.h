@@ -3,6 +3,7 @@
 
 namespace djinn::js
 {
+	extern std::vector<u8> extract_u8_array(JSContext* const ctx, JSValue const& val);
 	extern std::vector<u32> extract_u32_array(JSContext* const ctx, JSValue const& val);
 	extern std::vector<f32> extract_f32_array(JSContext* const ctx, JSValue const& val);
 	extern id_t extract_id(JSContext* const ctx, JSValue const& val);

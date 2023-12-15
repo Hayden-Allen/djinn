@@ -3,7 +3,27 @@
 
 namespace djinn::js
 {
+	std::vector<u8> extract_u8_array(JSContext* const ctx, JSValue const& val)
+	{
+		s64 length;
+		if (JS_GetPropertyLength(ctx, &length, val))
+		{
+			ASSERT(false);
+			return {};
+		}
 
+		std::vector<u8> ret(length);
+		for (u32 i = 0; i < (u32)length; i++)
+		{
+			JSValueConst element = JS_GetPropertyUint32(ctx, val, i);
+			u32 out;
+			JS_ToUint32(ctx, &out, element);
+			ASSERT(out <= MAX_VALUE_T(u8));
+			ret[i] = (u8)out;
+			JS_FreeValue(ctx, element);
+		}
+		return ret;
+	}
 	std::vector<u32> extract_u32_array(JSContext* const ctx, JSValue const& val)
 	{
 		s64 length;
@@ -37,6 +57,7 @@ namespace djinn::js
 			JSValueConst element = JS_GetPropertyUint32(ctx, val, i);
 			f64 out;
 			JS_ToFloat64(ctx, &out, element);
+			ASSERT(out <= MAX_VALUE_T(f32) && out >= MIN_VALUE_T(f32));
 			ret[i] = (f32)out;
 			JS_FreeValue(ctx, element);
 		}
