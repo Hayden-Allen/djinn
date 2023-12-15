@@ -8,23 +8,23 @@ export default class TestClass extends Entity
     private idMesh: number
     private idShader: number
     private idTexture: number
-    genTexture()
-    {
-        const TW = 32, TH = 32
-        let pixels = new Array(TW * TH * 4).fill(0)
-        for (let y = 0; y < TH; y++)
-        {
-            for (let x = 0; x < TW; x++)
-            {
-                const off = y * (TW * 4) + x * 4
-                pixels[off + 0] = Math.round(255 * ((TW - x) / (TW * 2) + (TH - y) / (TH * 2)))
-                pixels[off + 1] = 0;
-                pixels[off + 2] = 0;
-                pixels[off + 3] = 255;
-            }
-        }
-        return pixels
-    }
+    // genTexture()
+    // {
+    //     const TW = 32, TH = 32
+    //     let pixels = new Array(TW * TH * 4).fill(0)
+    //     for (let y = 0; y < TH; y++)
+    //     {
+    //         for (let x = 0; x < TW; x++)
+    //         {
+    //             const off = y * (TW * 4) + x * 4
+    //             pixels[off + 0] = Math.round(255 * ((TW - x) / (TW * 2) + (TH - y) / (TH * 2)))
+    //             pixels[off + 1] = 0;
+    //             pixels[off + 2] = 0;
+    //             pixels[off + 3] = 255;
+    //         }
+    //     }
+    //     return pixels
+    // }
     __load()
     {
         this.startTime = Date.now()
@@ -42,8 +42,13 @@ export default class TestClass extends Entity
 
         this.idShader = Asset.Shader.load('test.vert', 'test.frag')
 
-        this.idTexture = Asset.Texture.create(32, 32)
-        Asset.Texture.update(this.idTexture, this.genTexture(),
+        // this.idTexture = Asset.Texture.create(32, 32)
+        // Asset.Texture.update(this.idTexture, this.genTexture(),
+        // {
+        //     'minFilter': 0x2600,
+        //     'magFilter': 0x2600,
+        // })
+        this.idTexture = Asset.Texture.load("test.bmp",
         {
             'minFilter': 0x2600,
             'magFilter': 0x2600,

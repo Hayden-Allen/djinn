@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "debug/script_watcher.h"
 #include "debug/shader_watcher.h"
+#include "debug/texture_watcher.h"
 #include "scene/script_manager.h"
 #include "scene/entity.h"
 #include "script/asset_service.h"
@@ -15,6 +16,7 @@ int main(int argc, char* argv[])
 	render_service::init(&c);
 
 	shader_watcher shader_watcher(asset_service::get_shader_manager());
+	texture_watcher texture_watcher(asset_service::get_texture_manager());
 	script_manager* g_all_scripts = new script_manager();
 	script_watcher script_watcher(g_all_scripts);
 	entity* const e = g_all_scripts->load("test.js");
@@ -101,6 +103,7 @@ int main(int argc, char* argv[])
 		// non blocking wait
 		shader_watcher.poll();
 		script_watcher.poll();
+		texture_watcher.poll();
 
 		c.begin_frame();
 		c.clear();

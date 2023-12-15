@@ -17,6 +17,7 @@ namespace djinn
 		extern JSValue destroy_shader(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
 		extern JSValue set_shader_uniforms(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
 		extern JSValue create_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
+		extern JSValue load_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
 		extern JSValue destroy_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
 		extern JSValue update_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
 		/*static constexpr u64 s_FN_COUNT = 1;

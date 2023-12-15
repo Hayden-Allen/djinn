@@ -14,13 +14,15 @@
 		- managers own assets
 	
 
-- texture_manager::load
-- texture_watcher
-- texture_manager::reload/rename
+- consolidate watcher functionality into base class
 - script/manager
 - script/service
 - refactor js::extract_*_array
+- global GL_* constants in js?
 
 - mesh_manager::load
 - mesh_watcher
 - mesh_manager::reload/rename
+
+- audio_manager/audio_watcher
+

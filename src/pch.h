@@ -25,8 +25,10 @@ using namespace hats;
 #include "GLFW/glfw3.h"
 #include "mingl/mingl.h"
 using namespace mgl;
+
 #define QJS_USE_CPP
 #include "quickjs.h"
+#include "stb_image.h"
 
 
 

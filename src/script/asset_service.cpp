@@ -97,6 +97,15 @@ namespace djinn
 				options = parse_texture_options(ctx, argv[2]);
 			return js::create_id(ctx, ::djinn::asset_service::get_texture_manager()->create(width, height, options));
 		}
+		JSValue load_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+		{
+			ASSERT(argc == 1 || argc == 2);
+			std::string const& fp = js::extract_string(ctx, argv[0]);
+			texture_options options;
+			if (argc == 2)
+				options = parse_texture_options(ctx, argv[1]);
+			return js::create_id(ctx, ::djinn::asset_service::get_texture_manager()->load(fp, options));
+		}
 		JSValue destroy_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 		{
 			ASSERT(argc == 1);
@@ -134,11 +143,12 @@ namespace djinn
 		super::register_function(ctx, "Mesh", "update", 3, js::asset_service::update_mesh);
 		super::register_function(ctx, "Shader", "create", 2, js::asset_service::create_shader);
 		super::register_function(ctx, "Shader", "load", 2, js::asset_service::load_shader);
-		super::register_function(ctx, "Shader", "destroy", 2, js::asset_service::destroy_shader);
+		super::register_function(ctx, "Shader", "destroy", 1, js::asset_service::destroy_shader);
 		super::register_function(ctx, "Shader", "setUniforms", 2, js::asset_service::set_shader_uniforms);
-		super::register_function(ctx, "Texture", "create", 2, js::asset_service::create_texture);
-		super::register_function(ctx, "Texture", "destroy", 2, js::asset_service::destroy_texture);
-		super::register_function(ctx, "Texture", "update", 2, js::asset_service::update_texture);
+		super::register_function(ctx, "Texture", "create", 3, js::asset_service::create_texture);
+		super::register_function(ctx, "Texture", "load", 2, js::asset_service::load_texture);
+		super::register_function(ctx, "Texture", "destroy", 1, js::asset_service::destroy_texture);
+		super::register_function(ctx, "Texture", "update", 3, js::asset_service::update_texture);
 	}
 	mesh_manager* asset_service::get_mesh_manager()
 	{
