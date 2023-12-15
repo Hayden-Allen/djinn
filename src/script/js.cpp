@@ -5,63 +5,15 @@ namespace djinn::js
 {
 	std::vector<u8> extract_u8_array(JSContext* const ctx, JSValue const& val)
 	{
-		s64 length;
-		if (JS_GetPropertyLength(ctx, &length, val))
-		{
-			ASSERT(false);
-			return {};
-		}
-
-		std::vector<u8> ret(length);
-		for (u32 i = 0; i < (u32)length; i++)
-		{
-			JSValueConst element = JS_GetPropertyUint32(ctx, val, i);
-			u32 out;
-			JS_ToUint32(ctx, &out, element);
-			ASSERT(out <= MAX_VALUE_T(u8));
-			ret[i] = (u8)out;
-			JS_FreeValue(ctx, element);
-		}
-		return ret;
+		return helper::extract_array<u8, u32>(ctx, val, JS_ToUint32);
 	}
 	std::vector<u32> extract_u32_array(JSContext* const ctx, JSValue const& val)
 	{
-		s64 length;
-		if (JS_GetPropertyLength(ctx, &length, val))
-		{
-			ASSERT(false);
-			return {};
-		}
-
-		std::vector<u32> ret(length);
-		for (u32 i = 0; i < (u32)length; i++)
-		{
-			JSValueConst element = JS_GetPropertyUint32(ctx, val, i);
-			JS_ToUint32(ctx, &ret[i], element);
-			JS_FreeValue(ctx, element);
-		}
-		return ret;
+		return helper::extract_array<u32, u32>(ctx, val, JS_ToUint32);
 	}
 	std::vector<f32> extract_f32_array(JSContext* const ctx, JSValue const& val)
 	{
-		s64 length;
-		if (JS_GetPropertyLength(ctx, &length, val))
-		{
-			ASSERT(false);
-			return {};
-		}
-
-		std::vector<f32> ret(length);
-		for (u32 i = 0; i < (u32)length; i++)
-		{
-			JSValueConst element = JS_GetPropertyUint32(ctx, val, i);
-			f64 out;
-			JS_ToFloat64(ctx, &out, element);
-			ASSERT(out <= MAX_VALUE_T(f32) && out >= MIN_VALUE_T(f32));
-			ret[i] = (f32)out;
-			JS_FreeValue(ctx, element);
-		}
-		return ret;
+		return helper::extract_array<f32, f64>(ctx, val, JS_ToFloat64);
 	}
 	id_t extract_id(JSContext* const ctx, JSValue const& val)
 	{
@@ -123,6 +75,10 @@ namespace djinn::js::global
 	void init_globals(JSContext* const ctx)
 	{
 		JSValue const global = JS_GetGlobalObject(ctx);
+		
+		JS_SetPropertyStr(ctx, global, "GL_NEAREST", JS_NewUint32(ctx, GL_NEAREST));
+		JS_SetPropertyStr(ctx, global, "GL_LINEAR", JS_NewUint32(ctx, GL_LINEAR));
+		JS_SetPropertyStr(ctx, global, "GL_REPEAT", JS_NewUint32(ctx, GL_REPEAT));
 
 		JSValue const console = JS_NewObject(ctx);
 		JSValue const log = JS_NewCFunction(ctx, console_log, "log", 1);

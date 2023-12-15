@@ -1,28 +1,24 @@
-- asset service
-	- exposes these to scripts:
-		- audio (load)
-		- texture (load/create)
-		- shader (load)
-		- mesh (load/create)
-	- each has a watcher for hot reloading
-	- each has own ids (size_t)
-	- each has own *_manager and *_watcher
-		- manager supports creating, loading/reloading, renaming, destroying
-		- watcher monitors fs and notifies manager when something changes
-		- all of this is abstracted from scripts; scripts just use id that is bound
-			to these assets under the hood (automatically "get" changes)
-		- managers own assets
-	
-
-- consolidate watcher functionality into base class
-- script/manager
-- script/service
-- refactor js::extract_*_array
 - global GL_* constants in js?
 
-- mesh_manager::load
+
+
+- texture_manager skybox support
+- remove test scene
+- render_service::camera
+- input service
+
+- distribution asset pipeline
+- virtual filesystem
+
+- mesh_manager::load (formats? animation?)
+- asset_manager::load_mesh
 - mesh_watcher
 - mesh_manager::reload/rename
 
+- physics_manager/physics_service
+- scene graph
+- load powertranzphormr scenes
+
+- per-camera effects
 - audio_manager/audio_watcher
 

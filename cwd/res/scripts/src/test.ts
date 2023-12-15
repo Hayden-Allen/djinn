@@ -50,8 +50,8 @@ export default class TestClass extends Entity
         // })
         this.idTexture = Asset.Texture.load("test.bmp",
         {
-            'minFilter': 0x2600,
-            'magFilter': 0x2600,
+            'minFilter': GL_NEAREST,
+            'magFilter': GL_LINEAR,
         })
     }
     __unload()
