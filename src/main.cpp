@@ -4,8 +4,8 @@
 #include "debug/texture_watcher.h"
 #include "scene/script_manager.h"
 #include "scene/entity.h"
-#include "script/asset_service.h"
-#include "script/render_service.h"
+#include "script/service/asset_service.h"
+#include "script/service/render_service.h"
 
 using namespace djinn;
 

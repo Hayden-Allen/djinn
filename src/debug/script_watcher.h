@@ -1,20 +1,18 @@
 #pragma once
 #include "pch.h"
 #include "directory_watcher.h"
+#include "core/constants.h"
 
 namespace djinn
 {
 	class script_manager;
 
-	class script_watcher : public directory_watcher
+	class script_watcher : public directory_watcher<script_manager>
 	{
 	public:
-		script_watcher(script_manager* const manager);
+		script_watcher(script_manager* const manager) :
+			directory_watcher(c::base_dir::script, manager)
+		{}
 		DCM(script_watcher);
-	public:
-		void handle_action(DWORD const action, std::string const& fp) override;
-	private:
-		std::string m_old_fp;
-		script_manager* m_manager;
 	};
 } // namespace djinn

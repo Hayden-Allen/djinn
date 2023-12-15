@@ -1,9 +1,9 @@
 #pragma once
 #include "pch.h"
 #include "service.h"
-#include "mesh_manager.h"
-#include "shader_manager.h"
-#include "texture_manager.h"
+#include "script/manager/mesh_manager.h"
+#include "script/manager/shader_manager.h"
+#include "script/manager/texture_manager.h"
 
 namespace djinn
 {

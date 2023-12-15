@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "asset_service.h"
-#include "js.h"
+#include "script/js.h"
 
 namespace djinn
 {

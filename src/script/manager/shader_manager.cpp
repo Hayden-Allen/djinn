@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "shader_manager.h"
 #include "core/constants.h"
-#include "js.h"
-#include "asset_service.h"
+#include "script/js.h"
+#include "script/service/asset_service.h"
 
 namespace djinn
 {
