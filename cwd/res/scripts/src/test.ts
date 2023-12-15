@@ -17,7 +17,7 @@ export default class TestClass extends Entity
             for (let x = 0; x < TW; x++)
             {
                 const off = y * (TW * 4) + x * 4
-                pixels[off + 0] = Math.round(255 * (x / (TW * 2) + y / (TH * 2)))
+                pixels[off + 0] = Math.round(255 * ((TW - x) / (TW * 2) + (TH - y) / (TH * 2)))
                 pixels[off + 1] = 0;
                 pixels[off + 2] = 0;
                 pixels[off + 3] = 255;
@@ -28,6 +28,7 @@ export default class TestClass extends Entity
     __load()
     {
         this.startTime = Date.now()
+
         this.idMesh = Asset.Mesh.create(4, [2, 2], 6)
         Asset.Mesh.update(this.idMesh,
             [
@@ -38,9 +39,15 @@ export default class TestClass extends Entity
             ],
             [0, 1, 2, 0, 2, 3]
         )
+
         this.idShader = Asset.Shader.load('test.vert', 'test.frag')
+
         this.idTexture = Asset.Texture.create(32, 32)
-        Asset.Texture.update(this.idTexture, this.genTexture())
+        Asset.Texture.update(this.idTexture, this.genTexture(),
+        {
+            'minFilter': 0x2600,
+            'magFilter': 0x2600,
+        })
     }
     __unload()
     {

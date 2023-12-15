@@ -4,6 +4,28 @@
 
 namespace djinn
 {
+	static texture_options parse_texture_options(JSContext* const ctx, JSValue const& val)
+	{
+		texture_options options;
+		std::unordered_map<std::string, JSValue> const& map = js::extract_map(ctx, val);
+		for (auto const& pair : map)
+		{
+			if (pair.first == "minFilter")
+				options.min_filter = js::extract_u32(ctx, pair.second);
+			else if (pair.first == "magFilter")
+				options.mag_filter = js::extract_u32(ctx, pair.second);
+			else if (pair.first == "wrapS")
+				options.wrap_t = js::extract_u32(ctx, pair.second);
+			else if (pair.first == "wrapT")
+				options.wrap_t = js::extract_u32(ctx, pair.second);
+			else if (pair.first == "wrapR")
+				options.wrap_r = js::extract_u32(ctx, pair.second);
+			else
+				ASSERT(false);
+		}
+		return options;
+	}
+
 	namespace js::asset_service
 	{
 		/*s32 init(JSContext* const ctx, JSModuleDef* const m)
@@ -67,10 +89,13 @@ namespace djinn
 		}
 		JSValue create_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 		{
-			ASSERT(argc == 2);
+			ASSERT(argc == 2 || argc == 3);
 			u32 const width = js::extract_u32(ctx, argv[0]);
 			u32 const height = js::extract_u32(ctx, argv[1]);
-			return js::create_id(ctx, ::djinn::asset_service::get_texture_manager()->create(width, height));
+			texture_options options;
+			if (argc == 3)
+				options = parse_texture_options(ctx, argv[2]);
+			return js::create_id(ctx, ::djinn::asset_service::get_texture_manager()->create(width, height, options));
 		}
 		JSValue destroy_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 		{
@@ -81,10 +106,13 @@ namespace djinn
 		}
 		JSValue update_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 		{
-			ASSERT(argc == 2);
+			ASSERT(argc == 2 || argc == 3);
 			id_t const id = js::extract_id(ctx, argv[0]);
 			std::vector<u8> const& subpixels = js::extract_u8_array(ctx, argv[1]);
-			::djinn::asset_service::get_texture_manager()->update(id, subpixels);
+			texture_options options;
+			if (argc == 3)
+				options = parse_texture_options(ctx, argv[2]);
+			::djinn::asset_service::get_texture_manager()->update(id, subpixels, options);
 			return JS_UNDEFINED;
 		}
 	} // namespace js::asset_service

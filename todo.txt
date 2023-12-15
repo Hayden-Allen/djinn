@@ -20,7 +20,6 @@
 - script/manager
 - script/service
 - refactor js::extract_*_array
-- texture_manager::load/create texture_options
 
 - mesh_manager::load
 - mesh_watcher
