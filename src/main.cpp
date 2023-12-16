@@ -109,7 +109,6 @@ int main(int argc, char* argv[])
 
 		c->begin_frame();
 		c->clear();
-		nanovg_service::begin_frame(c->get_width(), c->get_height());
 
 		e->update();
 
@@ -134,6 +133,8 @@ int main(int argc, char* argv[])
 		sbox.draw(cam.get_view(), cam.get_proj());
 		c->draw(ro, shaders);
 
+		nanovg_service::begin_frame(c->get_width(), c->get_height());
+		e->draw();
 		nanovg_service::end_frame();
 		glfwSwapBuffers(c->window);
 	}

@@ -39,6 +39,9 @@ export default class TestClass extends Entity
     }
     __main()
     {
+    }
+    __draw()
+    {
         Asset.Shader.setUniforms(this.idShader, {
             // u_color1: [1, 0, 0, 1],
             // u_color2: [0, 0, 1, 1],
@@ -46,7 +49,7 @@ export default class TestClass extends Entity
             u_texture: [this.idTexture, 0]
         })
         Render.draw(this.idMesh, this.idShader)
-
+        
         Nanovg.fillStyle(1, 1, 1)
         Nanovg.fillRect(0, 0, 300, 300)
         Nanovg.fillStyle(0, 1, 0, 1)

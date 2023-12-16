@@ -13,6 +13,7 @@ namespace djinn
 	public:
 		void inject_script(std::string const& fp, std::string const& src);
 		void update();
+		void draw();
 	private:
 		void call_reserved(std::string const& name);
 		void call_load();

@@ -54,6 +54,10 @@ namespace djinn
 	{
 		call_main();
 	}
+	void entity::draw()
+	{
+		call_reserved("__draw");
+	}
 
 
 
