@@ -2,10 +2,11 @@
 #include "pch.h"
 #include "directory_watcher.h"
 #include "core/constants.h"
-#include "script/manager/texture_manager.h"
 
 namespace djinn
 {
+	class texture_manager;
+
 	class texture_watcher : public haul::parent<directory_watcher<texture_manager>>
 	{
 	public:
@@ -14,6 +15,6 @@ namespace djinn
 		{}
 		DCM(texture_watcher);
 	public:
-		// void handle_action(DWORD const action, std::string const& fp) override;
+		void handle_action(DWORD const action, std::string const& fp) override;
 	};
 } // namespace djinn
