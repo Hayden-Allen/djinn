@@ -4,30 +4,32 @@
 
 namespace djinn
 {
-	static texture_options parse_texture_options(JSContext* const ctx, JSValue const& val)
-	{
-		texture_options options;
-		std::unordered_map<std::string, JSValue> const& map = js::extract_map(ctx, val);
-		for (auto const& pair : map)
-		{
-			if (pair.first == "minFilter")
-				options.min_filter = js::extract_u32(ctx, pair.second);
-			else if (pair.first == "magFilter")
-				options.mag_filter = js::extract_u32(ctx, pair.second);
-			else if (pair.first == "wrapS")
-				options.wrap_t = js::extract_u32(ctx, pair.second);
-			else if (pair.first == "wrapT")
-				options.wrap_t = js::extract_u32(ctx, pair.second);
-			else if (pair.first == "wrapR")
-				options.wrap_r = js::extract_u32(ctx, pair.second);
-			else
-				ASSERT(false);
-		}
-		return options;
-	}
-
 	namespace js::asset_service
 	{
+		static texture_options parse_texture_options(JSContext* const ctx, JSValue const& val)
+		{
+			texture_options options;
+			std::unordered_map<std::string, JSValue> const& map = js::extract_map(ctx, val);
+			for (auto const& pair : map)
+			{
+				if (pair.first == "minFilter")
+					options.min_filter = js::extract_u32(ctx, pair.second);
+				else if (pair.first == "magFilter")
+					options.mag_filter = js::extract_u32(ctx, pair.second);
+				else if (pair.first == "wrapS")
+					options.wrap_t = js::extract_u32(ctx, pair.second);
+				else if (pair.first == "wrapT")
+					options.wrap_t = js::extract_u32(ctx, pair.second);
+				else if (pair.first == "wrapR")
+					options.wrap_r = js::extract_u32(ctx, pair.second);
+				else
+					ASSERT(false);
+			}
+			return options;
+		}
+
+
+
 		/*s32 init(JSContext* const ctx, JSModuleDef* const m)
 		{
 			return JS_SetModuleExportList(ctx, m, s_fns, s_FN_COUNT);
@@ -130,6 +132,7 @@ namespace djinn
 
 	void asset_service::init()
 	{
+		ASSERT(!s_instance);
 		s_instance = new asset_service();
 	}
 	void asset_service::register_functions(JSContext* const ctx)

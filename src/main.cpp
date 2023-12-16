@@ -6,14 +6,16 @@
 #include "scene/entity.h"
 #include "script/service/asset_service.h"
 #include "script/service/render_service.h"
+#include "script/service/nanovg_service.h"
 
 using namespace djinn;
 
 int main(int argc, char* argv[])
 {
-	mgl::context c(1920, 1080, "mingl", { .vsync = true, .clear = { .b = 1 } });
+	optr<mgl::context> c(new mgl::context(1920, 1080, "mingl", { .vsync = true, .clear = { .b = 1 } }));
 	asset_service::init();
-	render_service::init(&c);
+	render_service::init(c);
+	nanovg_service::init();
 
 	shader_watcher shader_watcher(asset_service::get_shader_manager());
 	texture_watcher texture_watcher(asset_service::get_texture_manager());
@@ -90,7 +92,7 @@ int main(int argc, char* argv[])
 		delete[] skypixels[i];
 	mgl::skybox_rgb_f32 sbox("../../../../cwd/res/glsl/mingl/sky.vert", "../../../../cwd/res/glsl/mingl/sky.frag", std::move(cubemap));
 
-	mgl::camera cam(point<space::WORLD>(0, 0, 5), 0, 0, 108 / c.get_aspect_ratio(), c.get_aspect_ratio(), .01f, 10.f, 1.f);
+	mgl::camera cam(point<space::WORLD>(0, 0, 5), 0, 0, 108 / c->get_aspect_ratio(), c->get_aspect_ratio(), .01f, 10.f, 1.f);
 
 	constexpr u32 keycodes[] = { GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D, GLFW_KEY_SPACE, GLFW_KEY_LEFT_SHIFT, GLFW_KEY_ESCAPE, GLFW_KEY_LEFT, GLFW_KEY_RIGHT, GLFW_KEY_UP, GLFW_KEY_DOWN };
 	bool keys[11] = { false };
@@ -98,24 +100,25 @@ int main(int argc, char* argv[])
 
 
 
-	while (c.is_running())
+	while (c->is_running())
 	{
 		// non blocking wait
 		shader_watcher.poll();
 		script_watcher.poll();
 		texture_watcher.poll();
 
-		c.begin_frame();
-		c.clear();
+		c->begin_frame();
+		c->clear();
+		nanovg_service::begin_frame(c->get_width(), c->get_height());
 
 		e->update();
 
 		for (int i = 0; i < sizeof(keys) / sizeof(bool); i++)
-			keys[i] = c.get_key(keycodes[i]);
+			keys[i] = c->get_key(keycodes[i]);
 		if (keys[6])
 			break;
 
-		const f32 fs = speed * c.time.delta;
+		const f32 fs = speed * c->time.delta;
 		vec<space::CAMERA> cam_move(
 			keys[3] - keys[1],
 			keys[4] - keys[5],
@@ -129,14 +132,16 @@ int main(int argc, char* argv[])
 
 		texture.bind(0);
 		sbox.draw(cam.get_view(), cam.get_proj());
-		c.draw(ro, shaders);
+		c->draw(ro, shaders);
 
-		glfwSwapBuffers(c.window);
+		nanovg_service::end_frame();
+		glfwSwapBuffers(c->window);
 	}
 
 	delete e;
 	delete g_all_scripts;
 	asset_service::shutdown();
 	render_service::shutdown();
+	c.free();
 	return 0;
 }

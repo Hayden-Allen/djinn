@@ -21,22 +21,23 @@ namespace djinn
 
 
 
-	void render_service::init(mgl::context* const context)
+	void render_service::init(optr<mgl::context>& context)
 	{
-		super::s_instance = new render_service(context);
+		ASSERT(!s_instance);
+		s_instance = new render_service(context);
 	}
 	void render_service::register_functions(JSContext* const ctx)
 	{
 		super::register_function(ctx, "draw", 2, js::render_service::draw);
 	}
-	mgl::context* const render_service::get_context()
+	sptr<mgl::context> render_service::get_context()
 	{
 		return s_instance->m_context;
 	}
 
 
 
-	render_service::render_service(mgl::context* const context) :
+	render_service::render_service(optr<mgl::context>& context) :
 		haul::parent<service<render_service>>("Render"),
 		m_context(context)
 	{}

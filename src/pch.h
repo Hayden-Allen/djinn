@@ -1,3 +1,4 @@
+#pragma once
 #include <stdio.h>
 #include <filesystem>
 #include <iostream>
@@ -22,6 +23,8 @@ using namespace hapi;
 using namespace hats;
 #include "haul/haul.h"
 #include "glad/glad.h"
+
+#define GLFW_INCLUDE_GLEXT
 #include "GLFW/glfw3.h"
 #include "mingl/mingl.h"
 using namespace mgl;
@@ -29,6 +32,7 @@ using namespace mgl;
 #define QJS_USE_CPP
 #include "quickjs.h"
 #include "stb_image.h"
+#include "nanovg.h"
 
 
 

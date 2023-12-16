@@ -38,4 +38,8 @@ namespace djinn::u
 		stbi_image_free(tex_data);
 		return tex;
 	}
+	void sleep(u32 const ms)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+	}
 } // namespace djinn::u

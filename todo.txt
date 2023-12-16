@@ -1,9 +1,10 @@
 - global GL_* constants in js?
 
 
-
+- texture_manager::reload filter events/sleep?
 - texture_manager skybox support
 - remove test scene
+- scene_service
 - render_service::camera
 - input service
 

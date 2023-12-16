@@ -15,12 +15,12 @@ namespace djinn
 	public:
 		DCM(render_service);
 	public:
-		static void init(mgl::context* const context);
+		static void init(optr<mgl::context>& context);
 		static void register_functions(JSContext* const ctx);
-		static mgl::context* const get_context();
+		static sptr<mgl::context> get_context();
 	private:
-		mgl::context* const m_context;
+		sptr<mgl::context> m_context;
 	private:
-		render_service(mgl::context* const context);
+		render_service(optr<mgl::context>& context);
 	};
 } // namespace djinn

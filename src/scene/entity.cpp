@@ -2,6 +2,7 @@
 #include "entity.h"
 #include "script/service/asset_service.h"
 #include "script/service/render_service.h"
+#include "script/service/nanovg_service.h"
 #include "script/js.h"
 
 namespace djinn
@@ -12,6 +13,7 @@ namespace djinn
 		js::global::init_globals(m_ctx);
 		asset_service::register_functions(m_ctx);
 		render_service::register_functions(m_ctx);
+		nanovg_service::register_functions(m_ctx);
 	}
 	entity::~entity()
 	{

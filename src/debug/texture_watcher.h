@@ -7,12 +7,14 @@ namespace djinn
 {
 	class texture_manager;
 
-	class texture_watcher : public directory_watcher<texture_manager>
+	class texture_watcher : public haul::parent<directory_watcher<texture_manager>>
 	{
 	public:
 		texture_watcher(texture_manager* const manager) :
-			directory_watcher(c::base_dir::texture, manager)
+			haul::parent<directory_watcher<texture_manager>>(c::base_dir::texture, manager)
 		{}
 		DCM(texture_watcher);
+	public:
+		void handle_action(DWORD const action, std::string const& fp) override;
 	};
 } // namespace djinn
