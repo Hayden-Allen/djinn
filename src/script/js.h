@@ -26,10 +26,11 @@ namespace djinn::js
 			}
 			return ret;
 		}
-	}
+	} // namespace helper
 	extern std::vector<u8> extract_u8_array(JSContext* const ctx, JSValue const& val);
 	extern std::vector<u32> extract_u32_array(JSContext* const ctx, JSValue const& val);
 	extern std::vector<f32> extract_f32_array(JSContext* const ctx, JSValue const& val);
+	extern std::vector<std::string> extract_string_array(JSContext* const ctx, JSValue const& val);
 	extern id_t extract_id(JSContext* const ctx, JSValue const& val);
 	extern JSValue create_id(JSContext* const ctx, u32 const id);
 	extern u32 extract_u32(JSContext* const ctx, JSValue const& val);

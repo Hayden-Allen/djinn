@@ -1,10 +1,11 @@
 - global GL_* constants in js?
 
 
-- texture_manager::reload filter events/sleep?
-- texture_manager skybox support
+- cubemap_texture_manager
+- on app exit, throw error if assets not destroyed
+- cubemap_manager cache textures
+- cubemap load directory
 - remove test scene
-- scene_service
 - render_service::camera
 - input service
 

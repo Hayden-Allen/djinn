@@ -15,6 +15,24 @@ namespace djinn::js
 	{
 		return helper::extract_array<f32, f64>(ctx, val, JS_ToFloat64);
 	}
+	std::vector<std::string> extract_string_array(JSContext* const ctx, JSValue const& val)
+	{
+		s64 length;
+		if (JS_GetPropertyLength(ctx, &length, val))
+		{
+			ASSERT(false);
+			return {};
+		}
+
+		std::vector<std::string> ret(length);
+		for (u32 i = 0; i < (u32)length; i++)
+		{
+			JSValueConst element = JS_GetPropertyUint32(ctx, val, i);
+			ret[i] = JS_ToCString(ctx, element);
+			JS_FreeValue(ctx, element);
+		}
+		return ret;
+	}
 	id_t extract_id(JSContext* const ctx, JSValue const& val)
 	{
 		return extract_u32(ctx, val); // factor this out so we can change it easier
@@ -75,7 +93,7 @@ namespace djinn::js::global
 	void init_globals(JSContext* const ctx)
 	{
 		JSValue const global = JS_GetGlobalObject(ctx);
-		
+
 		JS_SetPropertyStr(ctx, global, "GL_NEAREST", JS_NewUint32(ctx, GL_NEAREST));
 		JS_SetPropertyStr(ctx, global, "GL_LINEAR", JS_NewUint32(ctx, GL_LINEAR));
 		JS_SetPropertyStr(ctx, global, "GL_REPEAT", JS_NewUint32(ctx, GL_REPEAT));

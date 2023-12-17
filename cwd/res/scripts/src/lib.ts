@@ -6,4 +6,5 @@ export class Entity
     __load() {}
     __unload() {}
     __main() {}
+    __draw() {}
 }

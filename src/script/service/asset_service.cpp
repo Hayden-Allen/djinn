@@ -126,6 +126,27 @@ namespace djinn
 			::djinn::asset_service::get_texture_manager()->update(id, subpixels, options);
 			return JS_UNDEFINED;
 		}
+		JSValue create_cubemap(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+		{
+			return JSValue();
+		}
+		JSValue load_cubemap(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+		{
+			ASSERT(argc == 1 || argc == 2);
+			std::vector<std::string> const& fps = js::extract_string_array(ctx, argv[1]);
+			texture_options options;
+			if (argc == 2)
+				options = parse_texture_options(ctx, argv[1]);
+			return js::create_id(ctx, ::djinn::asset_service::get_cubemap_manager()->load(fps, options));
+		}
+		JSValue destroy_cubemap(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+		{
+			return JSValue();
+		}
+		JSValue update_cubemap(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+		{
+			return JSValue();
+		}
 	} // namespace js::asset_service
 
 
@@ -152,6 +173,10 @@ namespace djinn
 		super::register_function(ctx, "Texture", "load", 2, js::asset_service::load_texture);
 		super::register_function(ctx, "Texture", "destroy", 1, js::asset_service::destroy_texture);
 		super::register_function(ctx, "Texture", "update", 3, js::asset_service::update_texture);
+		super::register_function(ctx, "Cubemap", "create", 3, js::asset_service::create_cubemap);
+		super::register_function(ctx, "Cubemap", "load", 2, js::asset_service::load_cubemap);
+		super::register_function(ctx, "Cubemap", "destroy", 1, js::asset_service::destroy_cubemap);
+		super::register_function(ctx, "Cubemap", "update", 3, js::asset_service::update_cubemap);
 	}
 	mesh_manager* asset_service::get_mesh_manager()
 	{
@@ -164,6 +189,10 @@ namespace djinn
 	texture_manager* asset_service::get_texture_manager()
 	{
 		return &s_instance->m_texture_manager;
+	}
+	cubemap_manager* asset_service::get_cubemap_manager()
+	{
+		return &s_instance->m_cubemap_manager;
 	}
 
 
