@@ -40,9 +40,11 @@ namespace djinn
 		if (!m_script_loaded)
 		{
 			JSValue const global = JS_GetGlobalObject(m_ctx);
-			JSValue const default_def = JS_GetPropertyStr(m_ctx, global, "__exports");
+			JSValue const exports_def = JS_GetPropertyStr(m_ctx, global, "__djinnExports");
+			JSValue const default_def = JS_GetPropertyStr(m_ctx, exports_def, "default");
 			m_this = JS_CallConstructor(m_ctx, default_def, 0, nullptr);
 			JS_FreeValue(m_ctx, default_def);
+			JS_FreeValue(m_ctx, exports_def);
 			JS_FreeValue(m_ctx, global);
 			call_init();
 		}
@@ -64,7 +66,8 @@ namespace djinn
 	void entity::call_reserved(std::string const& name)
 	{
 		JSValue const global = JS_GetGlobalObject(m_ctx);
-		JSValue const default_def = JS_GetPropertyStr(m_ctx, global, "__exports");
+		JSValue const exports_def = JS_GetPropertyStr(m_ctx, global, "__djinnExports");
+		JSValue const default_def = JS_GetPropertyStr(m_ctx, exports_def, "default");
 		JSValue const default_proto = JS_GetPropertyStr(m_ctx, default_def, "prototype");
 		JSValue const fn = JS_GetPropertyStr(m_ctx, default_proto, name.c_str());
 
@@ -75,6 +78,7 @@ namespace djinn
 		JS_FreeValue(m_ctx, fn);
 		JS_FreeValue(m_ctx, default_proto);
 		JS_FreeValue(m_ctx, default_def);
+		JS_FreeValue(m_ctx, exports_def);
 		JS_FreeValue(m_ctx, global);
 	}
 	void entity::call_load()

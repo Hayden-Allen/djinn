@@ -1,3 +1,4 @@
+import './globals.d'
 import { Entity } from './lib'
 
 const { Asset, Render, Nanovg } = djinn
@@ -5,9 +6,9 @@ const { Asset, Render, Nanovg } = djinn
 export default class TestClass extends Entity
 {
     private startTime: number = 0
-    private idMesh: number
-    private idShader: number
-    private idTexture: number
+    private idMesh: number = -1
+    private idShader: number = -1
+    private idTexture: number = -1
     __load()
     {
         this.startTime = Date.now()

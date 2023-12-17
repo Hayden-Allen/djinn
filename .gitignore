@@ -2,4 +2,4 @@
 out
 .DS_Store
 imgui.ini
-node_modules
+bundler/node_modules
