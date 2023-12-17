@@ -4,6 +4,7 @@ out vec3 v_tc;
 uniform mat4 u_vp;
 void main()
 {
-	gl_Position = u_vp * vec4(i_pos, 1);
+	// gl_Position = u_vp * vec4(i_pos, 1);
+	gl_Position = vec4(i_pos, 1);
 	v_tc = i_pos;
 }

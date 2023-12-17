@@ -1,33 +1,35 @@
-const { Asset, Render, Nanovg } = djinn;
+import "./globals.d"
+
+const { Asset, Render } = djinn
 
 interface SkyboxTextureOptions {
-  minFilter: number;
-  magFilter: number;
+  minFilter: number
+  magFilter: number
 }
 
 interface SkyboxTexturePaths {
-  front: string;
-  back: string;
-  left: string;
-  right: string;
-  top: string;
-  bottom: string;
+  front: string
+  back: string
+  left: string
+  right: string
+  top: string
+  bottom: string
 }
 
 interface SkyboxOptions {
-  vertexShader: string;
-  fragmentShader: string;
-  textures: SkyboxTexturePaths;
-  textureOptions: SkyboxTextureOptions;
+  vertexShader: string
+  fragmentShader: string
+  textures: SkyboxTexturePaths
+  textureOptions: SkyboxTextureOptions
 }
 
 export default class Skybox {
-  private idMesh: number = -1;
-  private idShader: number = -1;
-  private idTexture: number = -1;
+  private idMesh: number = -1
+  private idShader: number = -1
+  private idTexture: number = -1
 
   constructor(options: SkyboxOptions) {
-    this.idMesh = Asset.Mesh.create(8, [3], 36);
+    this.idMesh = Asset.Mesh.create(8, [3], 36)
     Asset.Mesh.update(
       this.idMesh,
       [
@@ -62,30 +64,40 @@ export default class Skybox {
         // bottom
         4, 1, 5, 4, 0, 1,
       ]
-    );
+    )
 
     this.idShader = Asset.Shader.load(
       options.vertexShader,
       options.fragmentShader
-    );
+    )
 
-    this.idTexture = Asset.Cubemap.load(options.textures, {
+    const fps = [
+      options.textures.right,
+      options.textures.left,
+      options.textures.top,
+      options.textures.bottom,
+      options.textures.back,
+      options.textures.front,
+    ]
+    this.idTexture = Asset.Cubemap.load(fps, {
       minFilter: options.textureOptions.minFilter,
       magFilter: options.textureOptions.magFilter,
-    });
+    })
 
     Asset.Shader.setUniforms(this.idShader, {
-      u_texture: [this.idTexture, 0],
-    });
+      u_texture: 0,
+    })
   }
 
   unload() {
-    Asset.Mesh.destroy(this.idMesh);
-    Asset.Shader.destroy(this.idShader);
-    Asset.Texture.destroy(this.idTexture);
+    Asset.Mesh.destroy(this.idMesh)
+    Asset.Shader.destroy(this.idShader)
+    Asset.Cubemap.destroy(this.idTexture)
   }
 
   draw() {
-    Render.draw(this.idMesh, this.idShader);
+    // TODO: glDepthMask(false);
+    Render.bindCubemap(this.idTexture, 0)
+    Render.draw(this.idMesh, this.idShader)
   }
 }

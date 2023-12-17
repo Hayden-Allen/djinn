@@ -7,6 +7,8 @@ namespace djinn
 	namespace js::render_service
 	{
 		extern JSValue draw(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
+		extern JSValue bind_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
+		extern JSValue bind_cubemap(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
 	}
 
 	class render_service final : public haul::parent<service<render_service>>

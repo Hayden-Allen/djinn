@@ -121,11 +121,10 @@ namespace djinn
 			}
 			break;
 		case GL_SAMPLER_2D:
+		case GL_SAMPLER_CUBE:
 			{
-				std::vector<u32> const& ids = js::extract_u32_array(ctx, js_val);
-				ASSERT(ids.size() == 2); // [0] is texture id, [1] is slot
-				asset_service::get_texture_manager()->bind(ids[0], ids[1]);
-				shader->uniform_1i(info, ids[1]);
+				u32 const slot = js::extract_u32(ctx, js_val);
+				shader->uniform_1i(info, slot);
 			}
 			break;
 		default:

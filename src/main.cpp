@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
 	}
 	mgl::texture2d_rgb_f32 texture(GL_RGB, TW, TH, pixels, { .min_filter = GL_NEAREST, .mag_filter = GL_NEAREST });
 
-	constexpr u32 r[6] = { 1, 0, 0, 0, 1, 1 };
+	/*constexpr u32 r[6] = { 1, 0, 0, 0, 1, 1 };
 	constexpr u32 g[6] = { 1, 0, 1, 1, 0, 0 };
 	constexpr u32 b[6] = { 1, 1, 0, 1, 0, 1 };
 	f32* skypixels[6];
@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
 	mgl::cubemap_rgb_f32 cubemap(GL_RGB, TW, TH, skypixels, { .min_filter = GL_NEAREST, .mag_filter = GL_NEAREST });
 	for (int i = 0; i < 6; i++)
 		delete[] skypixels[i];
-	mgl::skybox_rgb_f32 sbox("../../../../cwd/res/glsl/mingl/sky.vert", "../../../../cwd/res/glsl/mingl/sky.frag", std::move(cubemap));
+	mgl::skybox_rgb_f32 sbox("../../../../cwd/res/glsl/mingl/sky.vert", "../../../../cwd/res/glsl/mingl/sky.frag", std::move(cubemap));*/
 
 	mgl::camera cam(point<space::WORLD>(0, 0, 5), 0, 0, 108 / c->get_aspect_ratio(), c->get_aspect_ratio(), .01f, 10.f, 1.f);
 
@@ -130,7 +130,7 @@ int main(int argc, char* argv[])
 		shaders.uniform_mat4("u_mvp", mvp.e);
 
 		texture.bind(0);
-		sbox.draw(cam.get_view(), cam.get_proj());
+		// sbox.draw(cam.get_view(), cam.get_proj());
 		c->draw(ro, shaders);
 
 		nanovg_service::begin_frame(c->get_width(), c->get_height());

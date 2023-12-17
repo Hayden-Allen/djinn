@@ -133,7 +133,7 @@ namespace djinn
 		JSValue load_cubemap(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 		{
 			ASSERT(argc == 1 || argc == 2);
-			std::vector<std::string> const& fps = js::extract_string_array(ctx, argv[1]);
+			std::vector<std::string> const& fps = js::extract_string_array(ctx, argv[0]);
 			texture_options options;
 			if (argc == 2)
 				options = parse_texture_options(ctx, argv[1]);
