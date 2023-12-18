@@ -17,7 +17,8 @@ namespace djinn
 		void destroy(id_t const id) override;
 		void reload(std::string const& fp) override;
 		void rename(std::string const& old_fp, std::string const& new_fp) override;
-		void update(id_t const id, std::vector<u8> const& subpixels, texture_options const& options);
+		void update(id_t const id, std::array<std::vector<u8>, 6> const& subpixels, texture_options const& options);
+		void update(id_t const id, std::array<std::vector<u8>, 6> const& subpixels);
 		void bind(id_t const id, u32 const slot);
 	private:
 		std::unordered_map<id_t, std::array<std::string, 6>> m_id2fps;

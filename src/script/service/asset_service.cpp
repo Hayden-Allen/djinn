@@ -120,16 +120,24 @@ namespace djinn
 			ASSERT(argc == 2 || argc == 3);
 			id_t const id = js::extract_id(ctx, argv[0]);
 			std::vector<u8> const& subpixels = js::extract_u8_array(ctx, argv[1]);
-			texture_options options;
 			if (argc == 3)
-				options = parse_texture_options(ctx, argv[2]);
-			::djinn::asset_service::get_texture_manager()->update(id, subpixels, options);
+			{
+				texture_options options = parse_texture_options(ctx, argv[2]);
+				::djinn::asset_service::get_texture_manager()->update(id, subpixels, options);
+			}
+			else
+				::djinn::asset_service::get_texture_manager()->update(id, subpixels);
 			return JS_UNDEFINED;
 		}
 		JSValue create_cubemap(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 		{
-			ASSERT(false);
-			return JSValue();
+			ASSERT(argc == 2 || argc == 3);
+			u32 const width = js::extract_u32(ctx, argv[0]);
+			u32 const height = js::extract_u32(ctx, argv[1]);
+			texture_options options;
+			if (argc == 3)
+				options = parse_texture_options(ctx, argv[2]);
+			return js::create_id(ctx, ::djinn::asset_service::get_cubemap_manager()->create(width, height, options));
 		}
 		JSValue load_cubemap(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 		{
@@ -153,8 +161,23 @@ namespace djinn
 		}
 		JSValue update_cubemap(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 		{
-			ASSERT(false);
-			return JSValue();
+			ASSERT(argc == 2 || argc == 3);
+			id_t const id = js::extract_id(ctx, argv[0]);
+			std::array<std::vector<u8>, 6> subpixels;
+			ASSERT(js::extract_array_length(ctx, argv[1]) == 6);
+			js::array_for(ctx, argv[1], [&](JSValue const& arr, u32 const i)
+				{
+					subpixels[i] = std::move(js::extract_u8_array(ctx, arr));
+				});
+
+			if (argc == 3)
+			{
+				texture_options options = parse_texture_options(ctx, argv[2]);
+				::djinn::asset_service::get_cubemap_manager()->update(id, subpixels, options);
+			}
+			else
+				::djinn::asset_service::get_cubemap_manager()->update(id, subpixels);
+			return JS_UNDEFINED;
 		}
 	} // namespace js::asset_service
 

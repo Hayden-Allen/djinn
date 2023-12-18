@@ -40,7 +40,7 @@ namespace djinn
 	void texture_manager::reload(std::string const& fp)
 	{
 		std::string const& afp = to_absolute(fp);
-		if (!m_id2fp.contains_val(afp))	// either this texture is not loaded or it is not a texture2d
+		if (!m_id2fp.contains_val(afp)) // either this texture is not loaded or it is not a texture2d
 			return;
 		s32 width, height;
 		u8* const data = u::load_texture2d_rgba_u8_raw(afp, &width, &height);
@@ -64,6 +64,10 @@ namespace djinn
 	{
 		sptr<texture2d_rgba_u8> tex = get(id);
 		tex->init(GL_RGBA, tex->get_width(), tex->get_height(), subpixels.data(), options);
+	}
+	void texture_manager::update(id_t const id, std::vector<u8> const& subpixels)
+	{
+		update(id, subpixels, m_id2options.at(id));
 	}
 	void texture_manager::bind(id_t const id, u32 const slot)
 	{

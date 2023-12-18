@@ -40,7 +40,7 @@ export default class TestClass extends Entity {
       },
       textureOptions: {
         minFilter: GL_NEAREST,
-        magFilter: GL_LINEAR,
+        magFilter: GL_NEAREST,
       },
     })
   }

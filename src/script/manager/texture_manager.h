@@ -17,6 +17,7 @@ namespace djinn
 		void reload(std::string const& fp) override;
 		void rename(std::string const& old_fp, std::string const& new_fp) override;
 		void update(id_t const id, std::vector<u8> const& subpixels, texture_options const& options);
+		void update(id_t const id, std::vector<u8> const& subpixels);
 		void bind(id_t const id, u32 const slot);
 	private:
 		haul::bdumap<id_t, std::string> m_id2fp;

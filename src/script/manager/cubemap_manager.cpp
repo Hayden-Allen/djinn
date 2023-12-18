@@ -69,7 +69,7 @@ namespace djinn
 		std::unordered_set<id_t> const& ids = m_fp2ids.at(afp);
 		for (id_t const id : ids)
 		{
-			s32 width, height;
+			s32 new_width, new_height;
 			std::array<std::string, 6> const& existing_afps = m_id2fps.at(id);
 			std::array<u8*, 6> pixels = { nullptr };
 			for (s32 i = 0; i < 6; i++)
@@ -77,13 +77,16 @@ namespace djinn
 				std::string const& existing_afp = existing_afps.at(i);
 				if (existing_afp == afp)
 				{
-					u8* const new_pixels = load_one(afp, &width, &height);
+					u8* const new_pixels = load_one(afp, &new_width, &new_height);
 					m_fp2pixels[afp] = pixels[i] = new_pixels;
 				}
 				else
 					pixels[i] = m_fp2pixels.at(afp);
 			}
-			get(id)->init(GL_RGBA, width, height, pixels.data(), m_id2options.at(id));
+			sptr<cubemap_rgba_u8> tex = get(id);
+			if (new_width != tex->get_width() || new_height != tex->get_height())
+				ASSERT(false);
+			tex->init(GL_RGBA, new_width, new_height, pixels.data(), m_id2options.at(id));
 		}
 	}
 	void cubemap_manager::rename(std::string const& old_fp, std::string const& new_fp)
@@ -103,9 +106,17 @@ namespace djinn
 		entry.key() = new_afp;
 		m_fp2ids.insert(std::move(entry));
 	}
-	void cubemap_manager::update(id_t const id, std::vector<u8> const& subpixels, texture_options const& options)
+	void cubemap_manager::update(id_t const id, std::array<std::vector<u8>, 6> const& subpixels, texture_options const& options)
 	{
-		ASSERT(false);
+		u8 const* raw_subpixels[6] = { nullptr };
+		for (s32 i = 0; i < 6; i++)
+			raw_subpixels[i] = subpixels[i].data();
+		sptr<cubemap_rgba_u8> tex = get(id);
+		tex->init(GL_RGBA, tex->get_width(), tex->get_height(), raw_subpixels, options);
+	}
+	void cubemap_manager::update(id_t const id, std::array<std::vector<u8>, 6> const& subpixels)
+	{
+		update(id, subpixels, m_id2options.at(id));
 	}
 	void cubemap_manager::bind(id_t const id, u32 const slot)
 	{
