@@ -2,7 +2,7 @@ import "./lib/globals.d"
 import Entity from "./lib/Entity"
 import Skybox from "./lib/Skybox"
 
-const { Asset, Render, Nanovg } = djinn
+const { Asset, Render, Nanovg, Scene } = djinn
 
 function genTexture(
   w: number,
@@ -30,6 +30,7 @@ export default class TestClass extends Entity {
   private idShader: number = -1
   private idTexture: number = -1
   private skybox: Skybox | undefined
+  private idCamera: number = -1
 
   __load() {
     this.idMesh = Asset.Mesh.create(4, [2, 2], 6)
@@ -104,16 +105,19 @@ export default class TestClass extends Entity {
         },
       }
     )
+    this.idCamera = Scene.loadCamera("cam.js")
+    console.log(this.idCamera)
   }
   __unload() {
     this.skybox!.unload()
     Asset.Mesh.destroy(this.idMesh)
     Asset.Shader.destroy(this.idShader)
     Asset.Texture.destroy(this.idTexture)
+    Scene.destroy(this.idCamera)
   }
   __main() {}
   __draw() {
-    this.skybox!.draw()
+    this.skybox!.draw(this.idCamera)
     Render.bindTexture(this.idTexture, 0)
     Render.draw(this.idMesh, this.idShader)
   }

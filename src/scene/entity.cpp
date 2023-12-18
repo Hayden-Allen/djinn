@@ -4,6 +4,7 @@
 #include "script/service/render_service.h"
 #include "script/service/nanovg_service.h"
 #include "script/service/util_service.h"
+#include "script/service/scene_service.h"
 #include "script/js.h"
 
 namespace djinn
@@ -16,6 +17,7 @@ namespace djinn
 		render_service::register_functions(m_ctx);
 		nanovg_service::register_functions(m_ctx);
 		util_service::register_functions(m_ctx);
+		scene_service::register_functions(m_ctx);
 	}
 	entity::~entity()
 	{
@@ -26,6 +28,25 @@ namespace djinn
 			JS_FreeValue(m_ctx, m_this);
 		}
 		JS_FreeContext(m_ctx);
+	}
+
+
+
+	void entity::update()
+	{
+		call_main();
+	}
+	void entity::draw()
+	{
+		call_reserved("__draw");
+	}
+	void entity::draw_ui()
+	{
+		call_reserved("__ui");
+	}
+	tmat<space::OBJECT, space::WORLD> const& entity::get_transform() const
+	{
+		return m_transform;
 	}
 
 
@@ -54,21 +75,6 @@ namespace djinn
 		call_load();
 		m_script_loaded = true;
 	}
-	void entity::update()
-	{
-		call_main();
-	}
-	void entity::draw()
-	{
-		call_reserved("__draw");
-	}
-	void entity::draw_ui()
-	{
-		call_reserved("__ui");
-	}
-
-
-
 	void entity::call_reserved(std::string const& name)
 	{
 		JSValue const global = JS_GetGlobalObject(m_ctx);

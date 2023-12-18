@@ -5,12 +5,12 @@
 
 namespace djinn
 {
-	class script_manager;
+	class entity_manager;
 
-	class script_watcher : public directory_watcher<script_manager>
+	class script_watcher : public directory_watcher<entity_manager>
 	{
 	public:
-		script_watcher(script_manager* const manager) :
+		script_watcher(entity_manager* const manager) :
 			directory_watcher(c::base_dir::script, manager)
 		{}
 		DCM(script_watcher);

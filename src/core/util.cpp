@@ -42,4 +42,12 @@ namespace djinn::u
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 	}
+	std::string read_file(std::string const& afp)
+	{
+		std::ifstream ifs(afp);
+		ASSERT(ifs.is_open());
+		std::ostringstream sstr;
+		sstr << ifs.rdbuf();
+		return sstr.str();
+	}
 } // namespace djinn::u

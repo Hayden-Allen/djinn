@@ -18,6 +18,7 @@ namespace djinn
 		extern JSValue load_shader(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
 		extern JSValue destroy_shader(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
 		extern JSValue set_shader_uniforms(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
+		extern JSValue set_shader_camera_uniforms(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
 
 		extern JSValue create_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
 		extern JSValue load_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);

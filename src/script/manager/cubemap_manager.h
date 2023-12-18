@@ -21,10 +21,10 @@ namespace djinn
 		void update(id_t const id, std::array<std::vector<u8>, 6> const& subpixels);
 		void bind(id_t const id, u32 const slot);
 	private:
-		std::unordered_map<id_t, std::array<std::string, 6>> m_id2fps;
-		std::unordered_map<std::string, std::unordered_set<id_t>> m_fp2ids;
+		std::unordered_map<id_t, std::array<std::string, 6>> m_id2afps;
+		std::unordered_map<std::string, std::unordered_set<id_t>> m_afp2ids;
 		std::unordered_map<id_t, texture_options> m_id2options;
-		std::unordered_map<std::string, u8*> m_fp2pixels;
+		std::unordered_map<std::string, u8*> m_afp2pixels;
 	private:
 		std::array<u8*, 6> load(std::array<std::string, 6> const& fps, s32* const out_width, s32* const out_height)
 		{
@@ -47,12 +47,12 @@ namespace djinn
 		{
 			std::string const& afp = to_absolute(fp);
 			u8* const pixels = u::load_texture2d_rgba_u8_raw(afp, out_width, out_height);
-			auto const& it = m_fp2pixels.find(afp);
-			if (it != m_fp2pixels.end())
+			auto const& it = m_afp2pixels.find(afp);
+			if (it != m_afp2pixels.end())
 			{
 				stbi_image_free(it->second);
 			}
-			m_fp2pixels.insert({ afp, pixels });
+			m_afp2pixels.insert({ afp, pixels });
 			return pixels;
 		}
 	};

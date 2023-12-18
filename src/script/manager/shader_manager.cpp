@@ -28,44 +28,45 @@ namespace djinn
 		std::string const& frag_afp = to_absolute(frag_fp);
 		shaders* const s = new shaders(vert_afp, frag_afp);
 		id_t const id = insert(s);
-		m_fp2ids[vert_afp].insert(id);
-		m_fp2ids[frag_afp].insert(id);
-		m_id2fps.insert({ id, { vert_afp, frag_afp } });
+		m_afp2ids[vert_afp].insert(id);
+		m_afp2ids[frag_afp].insert(id);
+		m_id2afps.insert({ id, { vert_afp, frag_afp } });
 		return id;
 	}
 	void shader_manager::destroy(id_t const id)
 	{
 		// if this shader is loaded from files (made with `load` rather than `create`)
-		auto const& it = m_id2fps.find(id);
-		if (it != m_id2fps.end())
+		auto const& it = m_id2afps.find(id);
+		if (it != m_id2afps.end())
 		{
 			shader_src const& fps = it->second;
 			// remove shader from its vert fp's set, and delete the set if it is now empty
-			auto& vert_ids = m_fp2ids.at(fps.vert);
+			auto& vert_ids = m_afp2ids.at(fps.vert);
 			vert_ids.erase(id);
 			if (!vert_ids.size())
-				m_fp2ids.erase(fps.vert);
+				m_afp2ids.erase(fps.vert);
 
 			// remove shader from its frag fp's set, and delete the set if it is now empty
-			auto& frag_ids = m_fp2ids.at(fps.frag);
+			auto& frag_ids = m_afp2ids.at(fps.frag);
 			frag_ids.erase(id);
 			if (!frag_ids.size())
-				m_fp2ids.erase(fps.frag);
+				m_afp2ids.erase(fps.frag);
 
 			// remove shader from id map
-			m_id2fps.erase(id);
+			m_id2afps.erase(id);
 		}
 		erase(id);
 	}
 	void shader_manager::reload(std::string const& fp)
 	{
 		std::string const& afp = to_absolute(fp);
-		ASSERT(m_fp2ids.contains(afp));
+		if (!m_afp2ids.contains(afp))
+			return;
 		// reinitialize all shaders using this fp
-		auto const& ids = m_fp2ids.at(afp);
+		auto const& ids = m_afp2ids.at(afp);
 		for (id_t const id : ids)
 		{
-			shader_src const& fps = m_id2fps.at(id);
+			shader_src const& fps = m_id2afps.at(id);
 			get(id)->init(fps.vert, fps.frag);
 		}
 	}
@@ -73,17 +74,17 @@ namespace djinn
 	{
 		std::string const& old_afp = to_absolute(old_fp);
 		std::string const& new_afp = to_absolute(new_fp);
-		ASSERT(m_fp2ids.contains(old_afp));
-		auto const& ids = m_fp2ids.at(old_afp);
+		ASSERT(m_afp2ids.contains(old_afp));
+		auto const& ids = m_afp2ids.at(old_afp);
 		// rename old_fp => new_fp in map
-		auto entry = m_fp2ids.extract(old_afp);
+		auto entry = m_afp2ids.extract(old_afp);
 		entry.key() = new_afp;
-		m_fp2ids.insert(std::move(entry));
+		m_afp2ids.insert(std::move(entry));
 
 		// update fps for all ids using this shader
 		for (id_t const id : ids)
 		{
-			shader_src& fps = m_id2fps.at(id);
+			shader_src& fps = m_id2afps.at(id);
 			if (old_afp == fps.vert)
 				fps.vert = new_afp;
 			else
@@ -130,5 +131,11 @@ namespace djinn
 		default:
 			ASSERT(false);
 		}
+	}
+	void shader_manager::set_uniform_mat4(id_t const id, std::string const& name, f32 const* const mat)
+	{
+		sptr<shaders> shaders = get(id);
+		if (shaders->has_uniform(name))
+			shaders->uniform_mat4(name, mat);
 	}
 } // namespace djinn

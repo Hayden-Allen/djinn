@@ -137,9 +137,10 @@ export default class Skybox {
     Asset.Cubemap.destroy(this.idTexture)
   }
 
-  draw() {
+  draw(idCamera: number) {
     // TODO: glDepthMask(false);
     Render.bindCubemap(this.idTexture, 0)
+    Asset.Shader.setCameraUniforms(this.idShader, idCamera)
     Render.draw(this.idMesh, this.idShader)
   }
 }

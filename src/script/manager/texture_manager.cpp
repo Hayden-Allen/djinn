@@ -27,25 +27,25 @@ namespace djinn
 		std::string const& afp = to_absolute(fp);
 		texture2d_rgba_u8* const tex = u::load_texture2d_rgba_u8(afp, options);
 		id_t const id = insert(tex);
-		m_id2fp.insert(id, afp);
+		m_id2afp.insert(id, afp);
 		m_id2options.insert({ id, options });
 		return id;
 	}
 	void texture_manager::destroy(id_t const id)
 	{
-		m_id2fp.erase_key(id);
+		m_id2afp.erase_key(id);
 		m_id2options.erase(id);
 		erase(id);
 	}
 	void texture_manager::reload(std::string const& fp)
 	{
 		std::string const& afp = to_absolute(fp);
-		if (!m_id2fp.contains_val(afp)) // either this texture is not loaded or it is not a texture2d
+		if (!m_id2afp.contains_val(afp)) // either this texture is not loaded or it is not a texture2d
 			return;
 		s32 width, height;
 		u8* const data = u::load_texture2d_rgba_u8_raw(afp, &width, &height);
 
-		auto const& ids = m_id2fp.get_key(afp);
+		auto const& ids = m_id2afp.get_key(afp);
 		for (id_t const id : ids)
 		{
 			get(id)->init(GL_RGBA, width, height, data, m_id2options.at(id));
@@ -56,10 +56,10 @@ namespace djinn
 	void texture_manager::rename(std::string const& old_fp, std::string const& new_fp)
 	{
 		std::string const& old_afp = to_absolute(old_fp);
-		if (!m_id2fp.contains_val(old_afp)) // either this texture is not loaded or it is not a texture2d
+		if (!m_id2afp.contains_val(old_afp)) // either this texture is not loaded or it is not a texture2d
 			return;
 		std::string const& new_afp = to_absolute(new_fp);
-		m_id2fp.replace_val(old_afp, new_afp);
+		m_id2afp.replace_val(old_afp, new_afp);
 	}
 	void texture_manager::update(id_t const id, std::vector<u8> const& subpixels, texture_options const& options)
 	{

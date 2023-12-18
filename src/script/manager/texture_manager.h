@@ -20,7 +20,7 @@ namespace djinn
 		void update(id_t const id, std::vector<u8> const& subpixels);
 		void bind(id_t const id, u32 const slot);
 	private:
-		haul::bdumap<id_t, std::string> m_id2fp;
+		haul::bdumap<id_t, std::string> m_id2afp;
 		std::unordered_map<id_t, texture_options> m_id2options;
 	};
 } // namespace djinn

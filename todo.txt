@@ -2,8 +2,9 @@
 - on app exit, throw error if assets not destroyed
 
 
-- input service
+- figure out how to do entity_manager::get_camera (separate camera_manager?)
 - render_service::camera
+- input service
 - pass vp to skybox
 - deferred renderer
 - scene graph

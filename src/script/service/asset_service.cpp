@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "asset_service.h"
 #include "script/js.h"
+#include "scene/camera_entity.h"
+#include "scene_service.h"
+#include "core/constants.h"
 
 namespace djinn::js::asset_service
 {
@@ -81,10 +84,21 @@ namespace djinn::js::asset_service
 	JSValue set_shader_uniforms(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2);
-		id_t id = js::extract_id(ctx, argv[0]);
+		id_t const id = js::extract_id(ctx, argv[0]);
 		std::unordered_map<std::string, JSValue> const& map = js::extract_map(ctx, argv[1]);
 		for (auto const& pair : map)
 			::djinn::asset_service::get_shader_manager()->set_uniform(ctx, id, pair.first, pair.second);
+		return JS_UNDEFINED;
+	}
+	JSValue set_shader_camera_uniforms(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const shader_id = js::extract_id(ctx, argv[0]);
+		id_t const camera_id = js::extract_id(ctx, argv[1]);
+		camera_entity const* const cam = ::djinn::scene_service::get_entity_manager()->get_camera(camera_id);
+		::djinn::asset_service::get_shader_manager()->set_uniform_mat4(shader_id, c::uniform::view_mat, cam->get_view().e);
+		::djinn::asset_service::get_shader_manager()->set_uniform_mat4(shader_id, c::uniform::proj_mat, cam->get_proj().e);
+		::djinn::asset_service::get_shader_manager()->set_uniform_mat4(shader_id, c::uniform::vp_mat, cam->get_view_proj().e);
 		return JS_UNDEFINED;
 	}
 	JSValue create_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -179,6 +193,8 @@ namespace djinn::js::asset_service
 	}
 } // namespace djinn::js::asset_service
 
+
+
 namespace djinn
 {
 	void asset_service::init()
@@ -199,6 +215,7 @@ namespace djinn
 		super::register_function(ctx, "Shader", "load", 2, js::asset_service::load_shader);
 		super::register_function(ctx, "Shader", "destroy", 1, js::asset_service::destroy_shader);
 		super::register_function(ctx, "Shader", "setUniforms", 2, js::asset_service::set_shader_uniforms);
+		super::register_function(ctx, "Shader", "setCameraUniforms", 2, js::asset_service::set_shader_camera_uniforms);
 		super::register_function(ctx, "Texture", "create", 3, js::asset_service::create_texture);
 		super::register_function(ctx, "Texture", "load", 2, js::asset_service::load_texture);
 		super::register_function(ctx, "Texture", "destroy", 1, js::asset_service::destroy_texture);
