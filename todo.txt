@@ -2,11 +2,10 @@
 - on app exit, throw error if assets not destroyed
 
 
-- nanovg text
-- deferred renderer
+- input service
 - render_service::camera
 - pass vp to skybox
-- input service
+- deferred renderer
 - scene graph
 
 
