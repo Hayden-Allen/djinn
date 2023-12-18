@@ -114,10 +114,10 @@ export default class TestClass extends Entity {
   __main() {}
   __draw() {
     this.skybox!.draw()
-
     Render.bindTexture(this.idTexture, 0)
     Render.draw(this.idMesh, this.idShader)
-
+  }
+  __ui() {
     Nanovg.fillStyle(1, 1, 1)
     Nanovg.fillRect(0, 0, 300, 300)
     Nanovg.fillStyle(0, 1, 0, 1)
@@ -127,5 +127,9 @@ export default class TestClass extends Entity {
     Nanovg.strokeLine(50, 50, 100, 100)
     Nanovg.strokeCircle(150, 150, 50)
     Nanovg.fillCircle(200, 150, 50)
+
+    Nanovg.fillStyle(0, 0, 0)
+    Nanovg.setFont("sans", 24)
+    Nanovg.drawText(100, 250, "TEST")
   }
 }

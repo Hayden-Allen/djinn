@@ -9,5 +9,6 @@ namespace djinn::c
 		static std::string const script = "../../../../cwd/res/scripts/out";
 		static std::string const shader = "../../../../cwd/res/glsl";
 		static std::string const texture = "../../../../cwd/res/texture";
+		static std::string const font = "../../../../cwd/res/font";
 	} // namespace base_dir
 } // namespace djinn::c

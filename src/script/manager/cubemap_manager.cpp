@@ -55,7 +55,11 @@ namespace djinn
 				std::unordered_set<id_t>& ids = m_fp2ids.at(afp);
 				ids.erase(id);
 				if (!ids.size())
+				{
 					m_fp2ids.erase(afp);
+					stbi_image_free(m_fp2pixels.at(afp));
+					m_fp2pixels.erase(afp);
+				}
 			}
 			m_id2fps.erase(id);
 		}
@@ -81,7 +85,7 @@ namespace djinn
 					m_fp2pixels[afp] = pixels[i] = new_pixels;
 				}
 				else
-					pixels[i] = m_fp2pixels.at(afp);
+					pixels[i] = m_fp2pixels.at(existing_afp);
 			}
 			sptr<cubemap_rgba_u8> tex = get(id);
 			if (new_width != tex->get_width() || new_height != tex->get_height())
@@ -92,7 +96,8 @@ namespace djinn
 	void cubemap_manager::rename(std::string const& old_fp, std::string const& new_fp)
 	{
 		std::string const& old_afp = to_absolute(old_fp);
-		ASSERT(m_fp2ids.contains(old_afp));
+		if (!m_fp2ids.contains(old_afp)) // either this texture is not loaded or it is not part of a cubemap
+			return;
 		std::string const& new_afp = to_absolute(new_fp);
 		std::unordered_set<id_t> const& ids = m_fp2ids.at(old_afp);
 		for (id_t const id : ids)
@@ -105,6 +110,8 @@ namespace djinn
 		auto entry = m_fp2ids.extract(old_afp);
 		entry.key() = new_afp;
 		m_fp2ids.insert(std::move(entry));
+		m_fp2pixels.insert({ new_afp, m_fp2pixels.at(old_afp) });
+		m_fp2pixels.erase(old_afp);
 	}
 	void cubemap_manager::update(id_t const id, std::array<std::vector<u8>, 6> const& subpixels, texture_options const& options)
 	{

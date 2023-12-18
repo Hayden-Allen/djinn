@@ -2,22 +2,21 @@
 - on app exit, throw error if assets not destroyed
 
 
-- cubemap load directory
 - nanovg text
-- remove test scene
+- deferred renderer
 - render_service::camera
+- pass vp to skybox
 - input service
+- scene graph
 
-- distribution asset pipeline
-- virtual filesystem
 
 - mesh_manager::load (formats? animation?)
 - asset_manager::load_mesh
 - mesh_watcher
 - mesh_manager::reload/rename
-
+- distribution asset pipeline
+- virtual filesystem
 - physics_manager/physics_service
-- scene graph
 - load powertranzphormr scenes
 
 - per-camera effects

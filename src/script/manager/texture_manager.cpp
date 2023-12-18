@@ -56,7 +56,8 @@ namespace djinn
 	void texture_manager::rename(std::string const& old_fp, std::string const& new_fp)
 	{
 		std::string const& old_afp = to_absolute(old_fp);
-		ASSERT(m_id2fp.contains_val(old_afp));
+		if (!m_id2fp.contains_val(old_afp)) // either this texture is not loaded or it is not a texture2d
+			return;
 		std::string const& new_afp = to_absolute(new_fp);
 		m_id2fp.replace_val(old_afp, new_afp);
 	}

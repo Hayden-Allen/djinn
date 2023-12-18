@@ -62,6 +62,10 @@ namespace djinn
 	{
 		call_reserved("__draw");
 	}
+	void entity::draw_ui()
+	{
+		call_reserved("__ui");
+	}
 
 
 

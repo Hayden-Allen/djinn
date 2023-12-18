@@ -16,6 +16,8 @@ namespace djinn
 		extern JSValue stroke_arc(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
 		extern JSValue stroke_circle(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
 		extern JSValue draw_basis(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
+		extern JSValue set_font(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
+		extern JSValue draw_text(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv);
 	} // namespace js::nanovg_service
 
 	class nanovg_service final : public haul::parent<service<nanovg_service>>

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "nanovg_service.h"
 #include "script/js.h"
+#include "core/constants.h"
 #define NANOVG_GL3_IMPLEMENTATION
 #include "nanovg_gl.h"
 
@@ -145,6 +146,29 @@ namespace djinn
 
 			return JS_UNDEFINED;
 		}
+		JSValue set_font(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+		{
+			ASSERT(argc == 2);
+			std::string const& face = js::extract_string(ctx, argv[0]);
+			f32 const size = js::extract_f32(ctx, argv[1]);
+			NVGcontext* const nvg = ::djinn::nanovg_service::get_context();
+			nvgFontSize(nvg, size);
+			nvgFontFace(nvg, face.c_str());
+			return JS_UNDEFINED;
+		}
+		JSValue draw_text(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+		{
+			ASSERT(argc == 3);
+			f32 const x = js::extract_f32(ctx, argv[0]);
+			f32 const y = js::extract_f32(ctx, argv[1]);
+			std::string const& msg = js::extract_string(ctx, argv[2]);
+			NVGcontext* const nvg = ::djinn::nanovg_service::get_context();
+			nvgBeginPath(nvg);
+			nvgFontSize(nvg, 17.0f);
+			nvgFontFace(nvg, "sans");
+			nvgText(nvg, x, y, msg.c_str(), nullptr);
+			return JS_UNDEFINED;
+		}
 	} // namespace js::nanovg_service
 
 
@@ -160,6 +184,8 @@ namespace djinn
 	{
 		ASSERT(!s_instance);
 		s_instance = new nanovg_service();
+		NVGcontext* const nvg = s_instance->m_context;
+		nvgCreateFont(nvg, "sans", (c::base_dir::font + std::string("/Roboto-Regular.ttf")).c_str());
 	}
 	void nanovg_service::begin_frame(u32 const window_width, u32 const window_height)
 	{
@@ -183,6 +209,8 @@ namespace djinn
 		super::register_function(ctx, "strokeRect", 4, js::nanovg_service::stroke_rect);
 		super::register_function(ctx, "strokeArc", 6, js::nanovg_service::stroke_arc);
 		super::register_function(ctx, "strokeCircle", 3, js::nanovg_service::stroke_circle);
+		super::register_function(ctx, "setFont", 2, js::nanovg_service::set_font);
+		super::register_function(ctx, "drawText", 3, js::nanovg_service::draw_text);
 	}
 	NVGcontext* const nanovg_service::get_context()
 	{

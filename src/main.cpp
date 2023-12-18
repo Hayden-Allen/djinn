@@ -92,6 +92,8 @@ int main(int argc, char* argv[])
 		c->clear();
 
 		e->update();
+		nanovg_service::begin_frame(c->get_width(), c->get_height());
+		e->draw();
 
 		for (int i = 0; i < sizeof(keys) / sizeof(bool); i++)
 			keys[i] = c->get_key(keycodes[i]);
@@ -113,8 +115,7 @@ int main(int argc, char* argv[])
 		texture.bind(0);
 		c->draw(ro, shaders);
 
-		nanovg_service::begin_frame(c->get_width(), c->get_height());
-		e->draw();
+		e->draw_ui();
 		nanovg_service::end_frame();
 		glfwSwapBuffers(c->window);
 	}
