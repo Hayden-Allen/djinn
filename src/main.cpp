@@ -2,6 +2,7 @@
 #include "debug/script_watcher.h"
 #include "debug/shader_watcher.h"
 #include "debug/texture_watcher.h"
+#include "debug/cubemap_watcher.h"
 #include "scene/script_manager.h"
 #include "scene/entity.h"
 #include "script/service/asset_service.h"
@@ -19,6 +20,7 @@ int main(int argc, char* argv[])
 
 	shader_watcher shader_watcher(asset_service::get_shader_manager());
 	texture_watcher texture_watcher(asset_service::get_texture_manager());
+	cubemap_watcher cubemap_watcher(asset_service::get_cubemap_manager());
 	script_manager* g_all_scripts = new script_manager();
 	script_watcher script_watcher(g_all_scripts);
 	entity* const e = g_all_scripts->load("test.js");
@@ -68,30 +70,6 @@ int main(int argc, char* argv[])
 	}
 	mgl::texture2d_rgb_f32 texture(GL_RGB, TW, TH, pixels, { .min_filter = GL_NEAREST, .mag_filter = GL_NEAREST });
 
-	/*constexpr u32 r[6] = { 1, 0, 0, 0, 1, 1 };
-	constexpr u32 g[6] = { 1, 0, 1, 1, 0, 0 };
-	constexpr u32 b[6] = { 1, 1, 0, 1, 0, 1 };
-	f32* skypixels[6];
-	for (int i = 0; i < 6; i++)
-	{
-		skypixels[i] = new f32[TW * TH * 3];
-		for (int y = 0; y < TH; y++)
-		{
-			for (int x = 0; x < TW; x++)
-			{
-				const u32 off = y * (TW * 3) + x * 3;
-				const f32 mag = (x / (TW * 2.f) + y / (TH * 2.f));
-				skypixels[i][off + 0] = mag * r[i];
-				skypixels[i][off + 1] = mag * g[i];
-				skypixels[i][off + 2] = mag * b[i];
-			}
-		}
-	}
-	mgl::cubemap_rgb_f32 cubemap(GL_RGB, TW, TH, skypixels, { .min_filter = GL_NEAREST, .mag_filter = GL_NEAREST });
-	for (int i = 0; i < 6; i++)
-		delete[] skypixels[i];
-	mgl::skybox_rgb_f32 sbox("../../../../cwd/res/glsl/mingl/sky.vert", "../../../../cwd/res/glsl/mingl/sky.frag", std::move(cubemap));*/
-
 	mgl::camera cam(point<space::WORLD>(0, 0, 5), 0, 0, 108 / c->get_aspect_ratio(), c->get_aspect_ratio(), .01f, 10.f, 1.f);
 
 	constexpr u32 keycodes[] = { GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D, GLFW_KEY_SPACE, GLFW_KEY_LEFT_SHIFT, GLFW_KEY_ESCAPE, GLFW_KEY_LEFT, GLFW_KEY_RIGHT, GLFW_KEY_UP, GLFW_KEY_DOWN };
@@ -106,6 +84,7 @@ int main(int argc, char* argv[])
 		shader_watcher.poll();
 		script_watcher.poll();
 		texture_watcher.poll();
+		cubemap_watcher.poll();
 
 		c->begin_frame();
 		c->clear();
@@ -130,7 +109,6 @@ int main(int argc, char* argv[])
 		shaders.uniform_mat4("u_mvp", mvp.e);
 
 		texture.bind(0);
-		// sbox.draw(cam.get_view(), cam.get_proj());
 		c->draw(ro, shaders);
 
 		nanovg_service::begin_frame(c->get_width(), c->get_height());

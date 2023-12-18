@@ -40,7 +40,8 @@ namespace djinn
 	void texture_manager::reload(std::string const& fp)
 	{
 		std::string const& afp = to_absolute(fp);
-		ASSERT(m_id2fp.contains_val(afp));
+		if (!m_id2fp.contains_val(afp))	// either this texture is not loaded or it is not a texture2d
+			return;
 		s32 width, height;
 		u8* const data = u::load_texture2d_rgba_u8_raw(afp, &width, &height);
 

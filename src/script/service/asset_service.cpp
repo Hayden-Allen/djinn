@@ -128,23 +128,32 @@ namespace djinn
 		}
 		JSValue create_cubemap(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 		{
+			ASSERT(false);
 			return JSValue();
 		}
 		JSValue load_cubemap(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 		{
 			ASSERT(argc == 1 || argc == 2);
 			std::vector<std::string> const& fps = js::extract_string_array(ctx, argv[0]);
+			ASSERT(fps.size() == 6);
+			std::array<std::string, 6> fps_arr;
+			for (s32 i = 0; i < 6; i++)
+				fps_arr[i] = fps[i];
 			texture_options options;
 			if (argc == 2)
 				options = parse_texture_options(ctx, argv[1]);
-			return js::create_id(ctx, ::djinn::asset_service::get_cubemap_manager()->load(fps, options));
+			return js::create_id(ctx, ::djinn::asset_service::get_cubemap_manager()->load(fps_arr, options));
 		}
 		JSValue destroy_cubemap(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 		{
-			return JSValue();
+			ASSERT(argc == 1);
+			id_t const id = js::extract_id(ctx, argv[0]);
+			::djinn::asset_service::get_cubemap_manager()->destroy(id);
+			return JS_UNDEFINED;
 		}
 		JSValue update_cubemap(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 		{
+			ASSERT(false);
 			return JSValue();
 		}
 	} // namespace js::asset_service

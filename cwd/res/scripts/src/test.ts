@@ -7,7 +7,6 @@ export default class TestClass extends Entity {
   private idMesh: number = -1
   private idShader: number = -1
   private idTexture: number = -1
-  private idTexture2: number = -1
   private skybox: Skybox | undefined
 
   __load() {
@@ -24,10 +23,6 @@ export default class TestClass extends Entity {
       minFilter: GL_NEAREST,
       magFilter: GL_LINEAR,
     })
-    this.idTexture2 = Asset.Texture.load("test2.bmp", {
-      minFilter: GL_NEAREST,
-      magFilter: GL_LINEAR,
-    })
     Asset.Shader.setUniforms(this.idShader, {
       u_texture: 0,
     })
@@ -36,12 +31,12 @@ export default class TestClass extends Entity {
       vertexShader: "mingl/sky.vert",
       fragmentShader: "mingl/sky.frag",
       textures: {
-        front: "test.bmp",
-        back: "test.bmp",
-        left: "test.bmp",
-        right: "test.bmp",
-        top: "test.bmp",
-        bottom: "test.bmp",
+        front: "nz.bmp",
+        back: "pz.bmp",
+        left: "nx.bmp",
+        right: "px.bmp",
+        top: "py.bmp",
+        bottom: "ny.bmp",
       },
       textureOptions: {
         minFilter: GL_NEAREST,
