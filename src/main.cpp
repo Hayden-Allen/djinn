@@ -8,6 +8,7 @@
 #include "script/service/asset_service.h"
 #include "script/service/render_service.h"
 #include "script/service/nanovg_service.h"
+#include "script/service/util_service.h"
 
 using namespace djinn;
 
@@ -17,6 +18,7 @@ int main(int argc, char* argv[])
 	asset_service::init();
 	render_service::init(c);
 	nanovg_service::init();
+	util_service::init();
 
 	shader_watcher shader_watcher(asset_service::get_shader_manager());
 	texture_watcher texture_watcher(asset_service::get_texture_manager());

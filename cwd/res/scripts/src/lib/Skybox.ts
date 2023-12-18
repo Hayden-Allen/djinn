@@ -1,47 +1,37 @@
 import "./globals.d"
 
-const { Asset, Render } = djinn
+const { Asset, Render, Util } = djinn
 
 interface SkyboxTextureOptions {
   minFilter: number
   magFilter: number
 }
 
-interface SkyboxTexturePaths {
+interface SkyboxLoadFilesOptions {
   front: string
   back: string
   left: string
   right: string
   top: string
   bottom: string
+  textureOptions: SkyboxTextureOptions
+}
+
+interface SkyboxLoadDirectoryOptions {
+  dir: string
+  textureOptions: SkyboxTextureOptions
+}
+
+interface SkyboxGeneratedOptions {
+  width: number
+  height: number
+  pixels: Array<Array<number>>
+  textureOptions: SkyboxTextureOptions
 }
 
 interface SkyboxOptions {
   vertexShader: string
   fragmentShader: string
-  textures: SkyboxTexturePaths
-  textureOptions: SkyboxTextureOptions
-}
-
-function genTexture(
-  w: number,
-  h: number,
-  rmask: number,
-  gmask: number,
-  bmask: number
-) {
-  const pixels = new Array(w * h * 4)
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      const off = y * (w * 4) + x * 4
-      const val = Math.round(255 * (x / (w * 2) + y / (h * 2)))
-      pixels[off + 0] = rmask * val
-      pixels[off + 1] = gmask * val
-      pixels[off + 2] = bmask * val
-      pixels[off + 3] = 255
-    }
-  }
-  return pixels
 }
 
 export default class Skybox {
@@ -92,31 +82,53 @@ export default class Skybox {
       options.fragmentShader
     )
 
-    // const fps = [
-    //   options.textures.right,
-    //   options.textures.left,
-    //   options.textures.top,
-    //   options.textures.bottom,
-    //   options.textures.back,
-    //   options.textures.front,
-    // ]
-    // this.idTexture = Asset.Cubemap.load(fps, options.textureOptions)
-
-    const TW = 32,
-      TH = 32
-    this.idTexture = Asset.Cubemap.create(32, 32, options.textureOptions)
-    const pixels = []
-    const R_MASK = [0, 0, 0, 0, 1, 1]
-    const G_MASK = [0, 0, 1, 1, 0, 0]
-    const B_MASK = [0, 1, 0, 1, 0, 1]
-    for (let i = 0; i < 6; i++) {
-      pixels[i] = genTexture(TW, TH, R_MASK[i], G_MASK[i], B_MASK[i])
-    }
-    Asset.Cubemap.update(this.idTexture, pixels)
-
     Asset.Shader.setUniforms(this.idShader, {
       u_texture: 0,
     })
+  }
+
+  static loadFiles(
+    sboxOptions: SkyboxOptions,
+    loadOptions: SkyboxLoadFilesOptions
+  ) {
+    const fps = [
+      loadOptions.right,
+      loadOptions.left,
+      loadOptions.top,
+      loadOptions.bottom,
+      loadOptions.back,
+      loadOptions.front,
+    ]
+    const idTexture = Asset.Cubemap.load(fps, loadOptions.textureOptions)
+    const ret = new Skybox(sboxOptions)
+    ret.idTexture = idTexture
+    return ret
+  }
+
+  static loadDirectory(
+    sboxOptions: SkyboxOptions,
+    loadOptions: SkyboxLoadDirectoryOptions
+  ) {
+    const fps = Util.listFiles(Util.makeTexturePath(loadOptions.dir))
+    const idTexture = Asset.Cubemap.load(fps, loadOptions.textureOptions)
+    const ret = new Skybox(sboxOptions)
+    ret.idTexture = idTexture
+    return ret
+  }
+
+  static createGenerated(
+    sboxOptions: SkyboxOptions,
+    genOptions: SkyboxGeneratedOptions
+  ) {
+    let idTexture = Asset.Cubemap.create(
+      genOptions.width,
+      genOptions.height,
+      genOptions.textureOptions
+    )
+    Asset.Cubemap.update(idTexture, genOptions.pixels)
+    const ret = new Skybox(sboxOptions)
+    ret.idTexture = idTexture
+    return ret
   }
 
   unload() {

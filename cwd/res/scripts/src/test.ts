@@ -3,6 +3,28 @@ import Entity from "./lib/Entity"
 import Skybox from "./lib/Skybox"
 
 const { Asset, Render, Nanovg } = djinn
+
+function genTexture(
+  w: number,
+  h: number,
+  rmask: number,
+  gmask: number,
+  bmask: number
+) {
+  const pixels = new Array(w * h * 4)
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const off = y * (w * 4) + x * 4
+      const val = Math.round(255 * (x / (w * 2) + y / (h * 2)))
+      pixels[off + 0] = rmask * val
+      pixels[off + 1] = gmask * val
+      pixels[off + 2] = bmask * val
+      pixels[off + 3] = 255
+    }
+  }
+  return pixels
+}
+
 export default class TestClass extends Entity {
   private idMesh: number = -1
   private idShader: number = -1
@@ -27,22 +49,61 @@ export default class TestClass extends Entity {
       u_texture: 0,
     })
 
-    this.skybox = new Skybox({
-      vertexShader: "mingl/sky.vert",
-      fragmentShader: "mingl/sky.frag",
-      textures: {
-        front: "nz.bmp",
-        back: "pz.bmp",
-        left: "nx.bmp",
-        right: "px.bmp",
-        top: "py.bmp",
-        bottom: "ny.bmp",
+    // const TW = 32,
+    //   TH = 32
+    // const pixels = []
+    // const R_MASK = [0, 0, 0, 0, 1, 1]
+    // const G_MASK = [0, 0, 1, 1, 0, 0]
+    // const B_MASK = [0, 1, 0, 1, 0, 1]
+    // for (let i = 0; i < 6; i++) {
+    //   pixels[i] = genTexture(TW, TH, R_MASK[i], G_MASK[i], B_MASK[i])
+    // }
+    // this.skybox = Skybox.createGenerated(
+    //   {
+    //     vertexShader: "mingl/sky.vert",
+    //     fragmentShader: "mingl/sky.frag",
+    //   },
+    //   {
+    //     width: TW,
+    //     height: TH,
+    //     pixels,
+    //     textureOptions: {
+    //       minFilter: GL_NEAREST,
+    //       magFilter: GL_NEAREST,
+    //     },
+    //   }
+    // )
+    // this.skybox = Skybox.loadFiles(
+    //   {
+    //     vertexShader: "mingl/sky.vert",
+    //     fragmentShader: "mingl/sky.frag",
+    //   },
+    //   {
+    //     front: "nz.bmp",
+    //     back: "pz.bmp",
+    //     left: "nx.bmp",
+    //     right: "px.bmp",
+    //     top: "py.bmp",
+    //     bottom: "ny.bmp",
+    //     textureOptions: {
+    //       minFilter: GL_NEAREST,
+    //       magFilter: GL_NEAREST,
+    //     },
+    //   }
+    // )
+    this.skybox = Skybox.loadDirectory(
+      {
+        vertexShader: "mingl/sky.vert",
+        fragmentShader: "mingl/sky.frag",
       },
-      textureOptions: {
-        minFilter: GL_NEAREST,
-        magFilter: GL_NEAREST,
-      },
-    })
+      {
+        dir: "dir",
+        textureOptions: {
+          minFilter: GL_NEAREST,
+          magFilter: GL_NEAREST,
+        },
+      }
+    )
   }
   __unload() {
     this.skybox!.unload()

@@ -35,6 +35,8 @@ namespace djinn
 		extern s32 init(JSContext* const ctx, JSModuleDef* const m);*/
 	} // namespace js::asset_service
 
+
+
 	class asset_service final : public haul::parent<service<asset_service>>
 	{
 		friend class super;

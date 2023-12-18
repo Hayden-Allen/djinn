@@ -1,10 +1,9 @@
 - global GL_* constants in js?
-
-
-- cubemap_texture_manager
 - on app exit, throw error if assets not destroyed
-- cubemap_manager cache textures
+
+
 - cubemap load directory
+- nanovg text
 - remove test scene
 - render_service::camera
 - input service
