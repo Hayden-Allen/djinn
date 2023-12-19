@@ -1,8 +1,14 @@
-- now
+- questions
 	- figure out how to do entity_manager::get_camera (separate camera_manager?)
+	- how to do math in the scripts? get/setPos data types
+	- reset ids on scene switch?
+
+- now
+	- input service
+	- move to mgl::layer system
+	- input_service takes layer to get access to input_cache
 
 - soon
-	- input service
 	- deferred renderer
 	- scene graph
 
@@ -15,6 +21,7 @@
 	- load powertranzphormr scenes
 	- distribution asset pipeline
 	- virtual filesystem
+	- release build (remove watchers, change asserts, etc)
 
 - even later
 	- per-camera effects

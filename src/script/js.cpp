@@ -46,25 +46,21 @@ namespace djinn::js
 	{
 		return JS_NewUint32(ctx, id); // factor this out so we can change it easier
 	}
+	JSValue create_bool(JSContext* const ctx, bool const b)
+	{
+		return JS_NewBool(ctx, (s32)b);
+	}
+	s32 extract_s32(JSContext* const ctx, JSValue const& val)
+	{
+		return helper::extract<s32, s32>(ctx, val, JS_ToInt32);
+	}
 	u32 extract_u32(JSContext* const ctx, JSValue const& val)
 	{
-		u32 out = 0;
-		if (JS_ToUint32(ctx, &out, val))
-		{
-			ASSERT(false);
-			return out;
-		}
-		return out;
+		return helper::extract<u32, u32>(ctx, val, JS_ToUint32);
 	}
 	f32 extract_f32(JSContext* const ctx, JSValue const& val)
 	{
-		f64 out;
-		if (JS_ToFloat64(ctx, &out, val))
-		{
-			ASSERT(false);
-			return (f32)out;
-		}
-		return (f32)out;
+		return helper::extract<f32, f64>(ctx, val, JS_ToFloat64);
 	}
 	std::string extract_string(JSContext* const ctx, JSValue const& val)
 	{

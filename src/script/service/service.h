@@ -89,5 +89,30 @@ namespace djinn
 		{
 			register_function(ctx, "", fn_name, num_args, fn);
 		}
+		static void register_property_u32(JSContext* const ctx, std::string const& name, u32 const val)
+		{
+			JSValue const global_obj = JS_GetGlobalObject(ctx);
+			JSValue djinn_obj = JS_GetPropertyStr(ctx, global_obj, "djinn");
+			if (JS_IsUndefined(djinn_obj))
+			{
+				djinn_obj = JS_NewObject(ctx);
+				JS_SetPropertyStr(ctx, global_obj, "djinn", djinn_obj);
+			}
+			else
+			{
+				JS_FreeValue(ctx, djinn_obj);
+			}
+			JSValue service_obj = JS_GetPropertyStr(ctx, djinn_obj, s_instance->m_namespace.c_str());
+			if (JS_IsUndefined(service_obj))
+			{
+				service_obj = JS_NewObject(ctx);
+				JS_SetPropertyStr(ctx, djinn_obj, s_instance->m_namespace.c_str(), service_obj);
+			}
+			else
+			{
+				JS_FreeValue(ctx, service_obj);
+			}
+			JS_SetPropertyStr(ctx, service_obj, name.c_str(), JS_NewUint32(ctx, val));
+		}
 	};
 } // namespace djinn

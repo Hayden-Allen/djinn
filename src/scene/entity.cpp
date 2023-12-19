@@ -5,6 +5,7 @@
 #include "script/service/nanovg_service.h"
 #include "script/service/util_service.h"
 #include "script/service/scene_service.h"
+#include "script/service/input_service.h"
 #include "script/js.h"
 
 namespace djinn
@@ -18,6 +19,7 @@ namespace djinn
 		nanovg_service::register_functions(m_ctx);
 		util_service::register_functions(m_ctx);
 		scene_service::register_functions(m_ctx);
+		input_service::register_functions(m_ctx);
 	}
 	entity::~entity()
 	{

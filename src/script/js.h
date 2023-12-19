@@ -10,6 +10,8 @@ namespace djinn::js
 	extern std::vector<std::string> extract_string_array(JSContext* const ctx, JSValue const& val);
 	extern id_t extract_id(JSContext* const ctx, JSValue const& val);
 	extern JSValue create_id(JSContext* const ctx, u32 const id);
+	extern JSValue create_bool(JSContext* const ctx, bool const b);
+	extern s32 extract_s32(JSContext* const ctx, JSValue const& val);
 	extern u32 extract_u32(JSContext* const ctx, JSValue const& val);
 	extern f32 extract_f32(JSContext* const ctx, JSValue const& val);
 	extern std::string extract_string(JSContext* const ctx, JSValue const& val);
@@ -44,6 +46,14 @@ namespace djinn::js
 				JS_FreeValue(ctx, element);
 			}
 			return ret;
+		}
+		template<typename CPP, typename JS, typename FN>
+		CPP extract(JSContext* const ctx, JSValue const& val, FN const& fn)
+		{
+			JS out{};
+			if (fn(ctx, &out, val))
+				ASSERT(false);
+			return (CPP)out;
 		}
 	} // namespace helper
 

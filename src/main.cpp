@@ -10,6 +10,7 @@
 #include "script/service/nanovg_service.h"
 #include "script/service/util_service.h"
 #include "script/service/scene_service.h"
+#include "script/service/input_service.h"
 
 using namespace djinn;
 
@@ -21,13 +22,11 @@ int main(int argc, char* argv[])
 	nanovg_service::init();
 	util_service::init();
 	scene_service::init();
+	input_service::init(c);
 
 	shader_watcher shader_watcher(asset_service::get_shader_manager());
 	texture_watcher texture_watcher(asset_service::get_texture_manager());
 	cubemap_watcher cubemap_watcher(asset_service::get_cubemap_manager());
-	/*script_manager* g_all_scripts = new script_manager();
-	script_watcher script_watcher(g_all_scripts);
-	entity* const e = g_all_scripts->load("test.js");*/
 	script_watcher script_watcher(scene_service::get_entity_manager());
 	id_t const eid = scene_service::get_entity_manager()->load("test.js");
 	sptr<entity> e = scene_service::get_entity_manager()->get(eid);

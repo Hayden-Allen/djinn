@@ -4,18 +4,18 @@
 
 namespace djinn
 {
-	class render_service final : public haul::parent<service<render_service>>
+	class input_service final : public haul::parent<service<input_service>>
 	{
 		friend class super;
 	public:
-		DCM(render_service);
+		DCM(input_service);
 	public:
-		static void init(optr<mgl::context>& context);
+		static void init(sptr<mgl::context> const& context);
 		static void register_functions(JSContext* const ctx);
 		static sptr<mgl::context> get_context();
 	private:
 		sptr<mgl::context> m_context;
 	private:
-		render_service(optr<mgl::context>& context);
+		input_service(sptr<mgl::context> const& context);
 	};
 } // namespace djinn
