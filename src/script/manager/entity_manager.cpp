@@ -20,12 +20,12 @@ namespace djinn
 	id_t entity_manager::load(std::string const& fp)
 	{
 		std::string const& afp = to_absolute(fp);
-		return load_base(new entity(afp, m_runtime), afp);
+		return load_base(new entity(s_next_id, afp, m_runtime), afp);
 	}
 	id_t entity_manager::load_camera(std::string const& fp)
 	{
 		std::string const& afp = to_absolute(fp);
-		id_t const id = load_base(new camera_entity(afp, m_runtime), afp);
+		id_t const id = load_base(new camera_entity(s_next_id, afp, m_runtime), afp);
 		m_cameras.insert(id);
 		return id;
 	}

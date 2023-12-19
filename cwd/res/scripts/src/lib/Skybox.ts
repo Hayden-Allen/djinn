@@ -1,4 +1,5 @@
 import "./globals.d"
+import Camera from "../cam"
 
 const { Asset, Render, Util } = djinn
 

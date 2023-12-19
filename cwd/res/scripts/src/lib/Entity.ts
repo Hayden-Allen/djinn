@@ -1,10 +1,13 @@
 export default class Entity {
-  private id: number = -1
+  protected id: number = -1
+  getId() {
+    return this.id
+  }
   __init() {}
   __destroy() {}
   __load() {}
   __unload() {}
-  __main() {}
+  __main(dt: number) {}
   __draw() {}
   __ui() {}
 }

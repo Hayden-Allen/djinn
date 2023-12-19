@@ -1,6 +1,7 @@
 import "./lib/globals.d"
 import Entity from "./lib/Entity"
 import Skybox from "./lib/Skybox"
+import Camera from "./cam"
 
 const { Asset, Render, Nanovg, Scene, Input } = djinn
 
@@ -106,18 +107,14 @@ export default class TestClass extends Entity {
       }
     )
     this.idCamera = Scene.loadCamera("cam.js")
-    console.log(this.idCamera)
   }
   __unload() {
     this.skybox!.unload()
     Asset.Mesh.destroy(this.idMesh)
     Asset.Shader.destroy(this.idShader)
     Asset.Texture.destroy(this.idTexture)
-    Scene.destroy(this.idCamera)
   }
-  __main() {
-    console.log(Input.getKey(Input.KEY_LEFT))
-  }
+  __main(dt: number) {}
   __draw() {
     this.skybox!.draw(this.idCamera)
     Render.bindTexture(this.idTexture, 0)

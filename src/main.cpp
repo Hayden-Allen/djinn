@@ -76,11 +76,10 @@ int main(int argc, char* argv[])
 	}
 	mgl::texture2d_rgb_f32 texture(GL_RGB, TW, TH, pixels, { .min_filter = GL_NEAREST, .mag_filter = GL_NEAREST });
 
-	mgl::camera cam(point<space::WORLD>(0, 0, 5), 0, 0, 108 / c->get_aspect_ratio(), c->get_aspect_ratio(), .01f, 10.f, 1.f);
-
+	/*mgl::camera cam(point<space::WORLD>(0, 0, 5), 0, 0, 108 / c->get_aspect_ratio(), c->get_aspect_ratio(), .01f, 10.f, 1.f);
 	constexpr u32 keycodes[] = { GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D, GLFW_KEY_SPACE, GLFW_KEY_LEFT_SHIFT, GLFW_KEY_ESCAPE, GLFW_KEY_LEFT, GLFW_KEY_RIGHT, GLFW_KEY_UP, GLFW_KEY_DOWN };
 	bool keys[11] = { false };
-	f32 const speed = 1.f;
+	f32 const speed = 1.f;*/
 
 
 
@@ -94,12 +93,19 @@ int main(int argc, char* argv[])
 
 		c->begin_frame();
 		c->clear();
+		f32 const dt = c->time.delta;
 
-		e->update();
+		scene_service::get_entity_manager()->for_each([&](sptr<entity> e, id_t const id)
+			{
+				e->update(dt);
+			});
 		nanovg_service::begin_frame(c->get_width(), c->get_height());
-		e->draw();
+		scene_service::get_entity_manager()->for_each([](sptr<entity> e, id_t const id)
+			{
+				e->draw();
+			});
 
-		for (int i = 0; i < sizeof(keys) / sizeof(bool); i++)
+		/*for (int i = 0; i < sizeof(keys) / sizeof(bool); i++)
 			keys[i] = c->get_key(keycodes[i]);
 		if (keys[6])
 			break;
@@ -117,15 +123,22 @@ int main(int argc, char* argv[])
 		shaders.uniform_mat4("u_mvp", mvp.e);
 
 		texture.bind(0);
-		c->draw(ro, shaders);
+		c->draw(ro, shaders);*/
 
-		e->draw_ui();
+		scene_service::get_entity_manager()->for_each([](sptr<entity> e, id_t const id)
+			{
+				e->draw_ui();
+			});
 		nanovg_service::end_frame();
 		glfwSwapBuffers(c->window);
 	}
 
 	asset_service::shutdown();
 	render_service::shutdown();
+	nanovg_service::shutdown();
+	util_service::shutdown();
+	scene_service::shutdown();
+	input_service::shutdown();
 	c.free();
 	return 0;
 }
