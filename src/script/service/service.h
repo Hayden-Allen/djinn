@@ -113,6 +113,7 @@ namespace djinn
 				JS_FreeValue(ctx, service_obj);
 			}
 			JS_SetPropertyStr(ctx, service_obj, name.c_str(), JS_NewUint32(ctx, val));
+			JS_FreeValue(ctx, global_obj);
 		}
 	};
 } // namespace djinn

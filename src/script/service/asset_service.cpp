@@ -99,6 +99,9 @@ namespace djinn::js::asset_service
 		::djinn::asset_service::get_shader_manager()->set_uniform_mat4(shader_id, c::uniform::view_mat, cam->get_view().e);
 		::djinn::asset_service::get_shader_manager()->set_uniform_mat4(shader_id, c::uniform::proj_mat, cam->get_proj().e);
 		::djinn::asset_service::get_shader_manager()->set_uniform_mat4(shader_id, c::uniform::vp_mat, cam->get_view_proj().e);
+		// remove translation from view matrix
+		mat<space::WORLD, space::CLIP> const& vpr = cam->get_proj() * cam->get_view().basis_copy();
+		::djinn::asset_service::get_shader_manager()->set_uniform_mat4(shader_id, c::uniform::vpr_mat, vpr.e);
 		return JS_UNDEFINED;
 	}
 	JSValue create_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)

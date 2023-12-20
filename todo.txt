@@ -4,10 +4,15 @@
 	- reset ids on scene switch?
 
 - now
+	- Scene.create(this)	// pass JSvalue to entity (don't load from fp)
+	- clean up camera stuff
+	- quickjs dangling pointer
 	- input service
 	- imgui service
 	- move to mgl::layer system
 	- input_service takes layer to get access to input_cache
+	- asset cache by filepath
+	- set camera uniforms automatically in Render.draw
 
 - soon
 	- deferred renderer

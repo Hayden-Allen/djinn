@@ -16,5 +16,6 @@ namespace djinn::c
 		static std::string const view_mat = "u_view";
 		static std::string const proj_mat = "u_proj";
 		static std::string const vp_mat = "u_vp";
+		static std::string const vpr_mat = "u_vpr";
 	} // namespace uniform
 } // namespace djinn::c
