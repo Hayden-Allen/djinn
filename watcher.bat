@@ -1,1 +1,1 @@
-node bundler/index.js C:\Users\hayde\_dev\cpp\_power\djinn\cwd\res\scripts\src C:\Users\hayde\_dev\cpp\_power\djinn\cwd\res\scripts\out
+node bundler/index.js cwd\res\scripts\src cwd\res\scripts\out
