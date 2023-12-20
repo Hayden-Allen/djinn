@@ -9,9 +9,6 @@ export default class Camera extends Entity {
   //     this.id = id
   //     console.log("Create camera " + this.id)
   //   }
-  constructor() {
-    this.id = Scene.createCamera(this)
-  }
   __unload() {
     Scene.destroy(this.id)
   }

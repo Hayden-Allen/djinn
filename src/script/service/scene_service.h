@@ -12,9 +12,11 @@ namespace djinn
 		DCM(scene_service);
 	public:
 		static void init();
+		static void shutdown();
 		static void register_functions(JSContext* const ctx);
 		static entity_manager* get_entity_manager();
 	private:
+		JSRuntime* const m_runtime;
 		entity_manager m_entity_manager;
 	private:
 		scene_service();

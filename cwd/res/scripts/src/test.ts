@@ -40,9 +40,7 @@ export default class TestClass extends Entity {
       [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1],
       [0, 1, 2, 0, 2, 3]
     )
-
     this.idShader = Asset.Shader.load("test.vert", "test.frag")
-
     this.idTexture = Asset.Texture.load("test.bmp", {
       minFilter: GL_NEAREST,
       magFilter: GL_LINEAR,
@@ -50,7 +48,6 @@ export default class TestClass extends Entity {
     Asset.Shader.setUniforms(this.idShader, {
       u_texture: 0,
     })
-
     // const TW = 32,
     //   TH = 32
     // const pixels = []
@@ -130,7 +127,6 @@ export default class TestClass extends Entity {
     Nanovg.strokeLine(50, 50, 100, 100)
     Nanovg.strokeCircle(150, 150, 50)
     Nanovg.fillCircle(200, 150, 50)
-
     Nanovg.fillStyle(0, 0, 0)
     Nanovg.setFont("sans", 24)
     Nanovg.drawText(100, 250, "TEST")

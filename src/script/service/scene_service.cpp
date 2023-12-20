@@ -49,12 +49,20 @@ namespace djinn::js::scene_service
 	}
 } // namespace djinn::js::scene_service
 
+
+
 namespace djinn
 {
 	void scene_service::init()
 	{
 		ASSERT(!s_instance);
 		s_instance = new scene_service();
+	}
+	void scene_service::shutdown()
+	{
+		JSRuntime* const runtime = s_instance->m_runtime;
+		super::shutdown();
+		JS_FreeRuntime(runtime);
 	}
 	void scene_service::register_functions(JSContext* const ctx)
 	{
@@ -72,6 +80,8 @@ namespace djinn
 
 
 	scene_service::scene_service() :
-		haul::parent<service<scene_service>>("Scene")
+		haul::parent<service<scene_service>>("Scene"),
+		m_runtime(JS_NewRuntime()),
+		m_entity_manager(m_runtime)
 	{}
 } // namespace djinn

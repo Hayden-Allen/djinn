@@ -9,9 +9,8 @@ namespace djinn
 	class entity_manager final : public manager<entity>
 	{
 	public:
-		entity_manager();
+		entity_manager(JSRuntime* const runtime);
 		DCM(entity_manager);
-		~entity_manager();
 	public:
 		id_t load(std::string const& fp) override;
 		id_t load_camera(std::string const& fp);

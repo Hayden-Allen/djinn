@@ -29,7 +29,6 @@ int main(int argc, char* argv[])
 	cubemap_watcher cubemap_watcher(asset_service::get_cubemap_manager());
 	script_watcher script_watcher(scene_service::get_entity_manager());
 	id_t const eid = scene_service::get_entity_manager()->load("test.js");
-	sptr<entity> e = scene_service::get_entity_manager()->get(eid);
 
 
 
@@ -133,12 +132,12 @@ int main(int argc, char* argv[])
 		glfwSwapBuffers(c->window);
 	}
 
-	asset_service::shutdown();
 	render_service::shutdown();
 	nanovg_service::shutdown();
 	util_service::shutdown();
 	scene_service::shutdown();
 	input_service::shutdown();
+	asset_service::shutdown();
 	c.free();
 	return 0;
 }

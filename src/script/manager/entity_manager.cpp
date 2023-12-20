@@ -6,14 +6,10 @@
 
 namespace djinn
 {
-	entity_manager::entity_manager() :
+	entity_manager::entity_manager(JSRuntime* const runtime) :
 		manager(c::base_dir::script),
-		m_runtime(JS_NewRuntime())
+		m_runtime(runtime)
 	{}
-	entity_manager::~entity_manager()
-	{
-		JS_FreeRuntime(m_runtime);
-	}
 
 
 
