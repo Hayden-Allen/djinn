@@ -1,13 +1,12 @@
 - questions
-	- figure out how to do entity_manager::get_camera (separate camera_manager?)
 	- how to do math in the scripts? get/setPos data types
 	- reset ids on scene switch?
+	- input service abstraction?
 
 - now
 	- Scene.create(this)	// pass JSvalue to entity (don't load from fp)
-	- clean up camera stuff
-	- quickjs dangling pointer
-	- input service
+	- separate camera_manager
+	- input service mouse
 	- imgui service
 	- move to mgl::layer system
 	- input_service takes layer to get access to input_cache

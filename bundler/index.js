@@ -1,10 +1,10 @@
 import readline from "node:readline";
 import process from "node:process";
 import path from "node:path";
-import fsPromises from "node:fs/promises";
 import chokidar from "chokidar";
 import ts from "typescript";
 import * as esbuild from "esbuild";
+import fs from "node:fs";
 
 if (process.argv.length !== 4) {
   console.error(
@@ -26,19 +26,19 @@ function getBuildPath(filePath) {
 
 const esbuildWatchers = new Map();
 
-async function main() {
+function main() {
   const tsConfig = JSON.parse(
-    await fsPromises.readFile(path.join(srcDir, "tsconfig.json"))
+    fs.readFileSync(path.join(srcDir, "tsconfig.json"))
   );
   console.warn(
     "[Warning] tsconfig.json will not be watched - you must restart the bundler if you change this file"
   );
 
-  await fsPromises.rm(buildDir, {
+  fs.rmSync(buildDir, {
     recursive: true,
     force: true,
   });
-  await fsPromises.mkdir(buildDir);
+  fs.mkdirSync(buildDir);
 
   const watcher = chokidar.watch(srcDir);
 
@@ -64,11 +64,8 @@ async function main() {
           {
             name: "custom-plugin",
             setup(build) {
-              build.onLoad({ filter: filePathRegexFilter }, async (args) => {
-                const fileContents = await fsPromises.readFile(
-                  args.path,
-                  "utf8"
-                );
+              build.onLoad({ filter: filePathRegexFilter }, (args) => {
+                const fileContents = fs.readFileSync(args.path, "utf8");
                 const compilerOptions = {
                   ...tsConfig.compilerOptions,
                   noEmitOnError: true,
@@ -119,10 +116,13 @@ async function main() {
                   };
                 }
               });
-              build.onEnd(async (result) => {
+              build.onEnd((result) => {
                 if (result.errors.length === 0) {
                   for (const outFile of result.outputFiles) {
-                    await fsPromises.writeFile(
+                    fs.mkdirSync(path.dirname(outFile.path), {
+                      recursive: true,
+                    });
+                    fs.writeFileSync(
                       outFile.path,
                       outFile.text.replace(/\s*var globalThis;\s*/g, ""),
                       "utf8"
@@ -154,7 +154,7 @@ async function main() {
       esbuildWatchers.delete(filePath);
     }
 
-    await fsPromises.rm(getBuildPath(filePath), {
+    fs.rmSync(getBuildPath(filePath), {
       recursive: true,
       force: true,
     });
