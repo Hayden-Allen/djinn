@@ -15,6 +15,7 @@ namespace djinn
 		static void shutdown();
 		static void register_functions(JSContext* const ctx);
 		static entity_manager* get_entity_manager();
+		static JSRuntime* get_runtime();
 	private:
 		JSRuntime* const m_runtime;
 		entity_manager m_entity_manager;

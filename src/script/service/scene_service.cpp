@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "scene_service.h"
 #include "script/js.h"
+#include "core/constants.h"
 
 namespace djinn::js::scene_service
 {
@@ -76,6 +77,10 @@ namespace djinn
 	entity_manager* scene_service::get_entity_manager()
 	{
 		return &s_instance->m_entity_manager;
+	}
+	JSRuntime* scene_service::get_runtime()
+	{
+		return s_instance->m_runtime;
 	}
 
 

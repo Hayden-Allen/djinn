@@ -1,12 +1,11 @@
 - questions
 	- how to do math in the scripts? get/setPos data types
 	- reset ids on scene switch?
-	- input service abstraction?
 
 - now
 	- Scene.create(this)	// pass JSvalue to entity (don't load from fp)
 	- separate camera_manager
-	- input service mouse
+	- input service abstraction (xbox controller)
 	- imgui service
 	- move to mgl::layer system
 	- input_service takes layer to get access to input_cache

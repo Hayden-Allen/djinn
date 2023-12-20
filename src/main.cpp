@@ -11,8 +11,56 @@
 #include "script/service/util_service.h"
 #include "script/service/scene_service.h"
 #include "script/service/input_service.h"
+#include "core/constants.h"
+#include "script/js.h"
 
 using namespace djinn;
+
+void script_main()
+{
+	std::string const& afp = u::to_absolute(djinn::c::base_dir::script, "main.js");
+	std::string const& src = u::read_file(afp);
+	printf("%s\n", src.c_str());
+
+	JSContext* const ctx = JS_NewContext(scene_service::get_runtime());
+	js::global::init_globals(ctx);
+	asset_service::register_functions(ctx);
+	render_service::register_functions(ctx);
+	nanovg_service::register_functions(ctx);
+	util_service::register_functions(ctx);
+	scene_service::register_functions(ctx);
+	input_service::register_functions(ctx);
+
+	JSValue const eval_ret = JS_Eval(ctx, src.data(), src.size(), "main.js", JS_EVAL_TYPE_MODULE);
+	if (JS_IsException(eval_ret))
+	{
+		JSValue const ex_val = JS_GetException(ctx);
+		char const* const ex = JS_ToCString(ctx, ex_val);
+		printf("Exception occurred: %s\n", ex);
+		JS_FreeCString(ctx, ex);
+		JS_FreeValue(ctx, ex_val);
+	}
+	JS_FreeValue(ctx, eval_ret);
+
+	JSValue const global = JS_GetGlobalObject(ctx);
+	JSValue const exports_def = JS_GetPropertyStr(ctx, global, "__djinnExports");
+	JSValue const default_def = JS_GetPropertyStr(ctx, exports_def, "default");
+	JSValue const call_ret = JS_Call(ctx, default_def, JS_UNDEFINED, 0, nullptr);
+	if (JS_IsException(call_ret))
+	{
+		JSValue const ex_val = JS_GetException(ctx);
+		char const* const ex = JS_ToCString(ctx, ex_val);
+		printf("Exception occurred: %s\n", ex);
+		JS_FreeCString(ctx, ex);
+		JS_FreeValue(ctx, ex_val);
+	}
+	JS_FreeValue(ctx, call_ret);
+	JS_FreeValue(ctx, default_def);
+	JS_FreeValue(ctx, exports_def);
+	JS_FreeValue(ctx, global);
+
+	JS_FreeContext(ctx);
+}
 
 int main(int argc, char* argv[])
 {
@@ -29,58 +77,7 @@ int main(int argc, char* argv[])
 	cubemap_watcher cubemap_watcher(asset_service::get_cubemap_manager());
 	script_watcher script_watcher(scene_service::get_entity_manager());
 	id_t const eid = scene_service::get_entity_manager()->load("test.js");
-
-
-
-	f32 constexpr vertices[] = {
-		-.5f,
-		-.5f,
-		0.f,
-		0.f,
-		0.f,
-		.5f,
-		-.5f,
-		0.f,
-		1.f,
-		0.f,
-		.5f,
-		.5f,
-		0.f,
-		1.f,
-		1.f,
-		-.5f,
-		.5f,
-		0.f,
-		0.f,
-		1.f,
-	};
-	u32 indices[] = {
-		0, 1, 2, 0, 2, 3
-	};
-	mgl::static_render_object ro(vertices, sizeof(vertices) / sizeof(f32), { 3, 2 }, indices, sizeof(indices) / sizeof(u32));
-	mgl::shaders shaders = mgl::shaders("../../../../cwd/res/glsl/mingl/test.vert", "../../../../cwd/res/glsl/mingl/test.frag");
-	shaders.uniform_1i("u_texture", 0);
-
-	const u32 TW = 32, TH = 32;
-	f32 pixels[TW * TH * 3] = { 0.f };
-	for (int y = 0; y < TH; y++)
-	{
-		for (int x = 0; x < TW; x++)
-		{
-			const u32 off = y * (TW * 3) + x * 3;
-			pixels[off + 0] = (x / (TW * 2.f) + y / (TH * 2.f));
-			pixels[off + 1] = 0.f;
-			pixels[off + 2] = 0.f;
-		}
-	}
-	mgl::texture2d_rgb_f32 texture(GL_RGB, TW, TH, pixels, { .min_filter = GL_NEAREST, .mag_filter = GL_NEAREST });
-
-	/*mgl::camera cam(point<space::WORLD>(0, 0, 5), 0, 0, 108 / c->get_aspect_ratio(), c->get_aspect_ratio(), .01f, 10.f, 1.f);
-	constexpr u32 keycodes[] = { GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D, GLFW_KEY_SPACE, GLFW_KEY_LEFT_SHIFT, GLFW_KEY_ESCAPE, GLFW_KEY_LEFT, GLFW_KEY_RIGHT, GLFW_KEY_UP, GLFW_KEY_DOWN };
-	bool keys[11] = { false };
-	f32 const speed = 1.f;*/
-
-
+	// script_main();
 
 	while (c->is_running())
 	{
@@ -103,27 +100,6 @@ int main(int argc, char* argv[])
 			{
 				e->draw();
 			});
-
-		/*for (int i = 0; i < sizeof(keys) / sizeof(bool); i++)
-			keys[i] = c->get_key(keycodes[i]);
-		if (keys[6])
-			break;
-
-		const f32 fs = speed * c->time.delta;
-		vec<space::CAMERA> cam_move(
-			keys[3] - keys[1],
-			keys[4] - keys[5],
-			keys[2] - keys[0]);
-		const f32 mx = 1.f * keys[8] - keys[7];
-		const f32 my = 1.f * keys[10] - keys[9];
-		cam.move(fs, cam_move, mx, my);
-
-		mat<space::OBJECT, space::CLIP> const mvp = cam.get_view_proj() * mat<space::OBJECT, space::WORLD>();
-		shaders.uniform_mat4("u_mvp", mvp.e);
-
-		texture.bind(0);
-		c->draw(ro, shaders);*/
-
 		scene_service::get_entity_manager()->for_each([](sptr<entity> e, id_t const id)
 			{
 				e->draw_ui();
