@@ -11,8 +11,7 @@ namespace djinn
 
 	void camera_entity::configure(f32 const fov_y, f32 const aspect, f32 const near, f32 const far)
 	{
-		/*m_proj = pmat_util::projection(fov_y, aspect, near, far);
-		m_vp = m_proj * m_view;*/
+		m_cam.configure(fov_y, aspect, near, far);
 	}
 	pmat<space::CAMERA, space::CLIP> const& camera_entity::get_proj() const
 	{

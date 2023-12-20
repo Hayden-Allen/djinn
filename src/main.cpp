@@ -75,7 +75,8 @@ int main(int argc, char* argv[])
 	shader_watcher shader_watcher(asset_service::get_shader_manager());
 	texture_watcher texture_watcher(asset_service::get_texture_manager());
 	cubemap_watcher cubemap_watcher(asset_service::get_cubemap_manager());
-	script_watcher script_watcher(scene_service::get_entity_manager());
+	script_watcher_entity script_watcher_entity(scene_service::get_entity_manager());
+	script_watcher_camera script_watcher_camera(scene_service::get_camera_entity_manager());
 	id_t const eid = scene_service::get_entity_manager()->load("test.js");
 	// script_main();
 
@@ -83,28 +84,20 @@ int main(int argc, char* argv[])
 	{
 		// non blocking wait
 		shader_watcher.poll();
-		script_watcher.poll();
+		script_watcher_entity.poll();
+		script_watcher_camera.poll();
 		texture_watcher.poll();
 		cubemap_watcher.poll();
 
 		c->begin_frame();
 		c->clear();
-		f32 const dt = c->time.delta;
 
-		scene_service::get_entity_manager()->for_each([&](sptr<entity> e, id_t const id)
-			{
-				e->update(dt);
-			});
+		scene_service::update_all(c->time.delta);
 		nanovg_service::begin_frame(c->get_width(), c->get_height());
-		scene_service::get_entity_manager()->for_each([](sptr<entity> e, id_t const id)
-			{
-				e->draw();
-			});
-		scene_service::get_entity_manager()->for_each([](sptr<entity> e, id_t const id)
-			{
-				e->draw_ui();
-			});
+		scene_service::draw_all();
+		scene_service::draw_ui_all();
 		nanovg_service::end_frame();
+
 		glfwSwapBuffers(c->window);
 	}
 

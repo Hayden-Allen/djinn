@@ -6,13 +6,22 @@
 namespace djinn
 {
 	class entity_manager;
+	class camera_entity_manager;
 
-	class script_watcher : public directory_watcher<entity_manager>
+	class script_watcher_entity : public directory_watcher<entity_manager>
 	{
 	public:
-		script_watcher(entity_manager* const manager) :
+		script_watcher_entity(entity_manager* const manager) :
 			directory_watcher(c::base_dir::script, manager)
 		{}
-		DCM(script_watcher);
+		DCM(script_watcher_entity);
+	};
+	class script_watcher_camera : public directory_watcher<camera_entity_manager>
+	{
+	public:
+		script_watcher_camera(camera_entity_manager* const manager) :
+			directory_watcher(c::base_dir::script, manager)
+		{}
+		DCM(script_watcher_camera);
 	};
 } // namespace djinn

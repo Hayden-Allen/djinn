@@ -1,7 +1,7 @@
 import "./lib/globals.d"
 import Entity from "./lib/Entity"
 
-const { Scene, Input } = djinn
+const { Render, Scene, Input } = djinn
 
 export default class Camera extends Entity {
   //   constructor(id: number) {
@@ -9,6 +9,10 @@ export default class Camera extends Entity {
   //     this.id = id
   //     console.log("Create camera " + this.id)
   //   }
+  __load() {
+    const ar = Render.getAspectRatio()
+    Scene.Camera.configure(this.id, 108 / ar, ar, 0.01, 1000)
+  }
   __unload() {
     Scene.destroy(this.id)
   }
@@ -18,7 +22,7 @@ export default class Camera extends Entity {
     const dz = Input.getKey(Input.KEY_S) - Input.getKey(Input.KEY_W)
     const mx = Input.getKey(Input.KEY_RIGHT) - Input.getKey(Input.KEY_LEFT)
     const my = Input.getKey(Input.KEY_DOWN) - Input.getKey(Input.KEY_UP)
-    Scene.moveCamera(this.id, dt, dx, dy, dz, mx, my)
+    Scene.Camera.move(this.id, dt, dx, dy, dz, mx, my)
   }
   //   static load(fp: string) {
   //     return new Camera(Scene.loadCamera(fp))

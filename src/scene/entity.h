@@ -1,14 +1,14 @@
 #pragma once
 #include "pch.h"
 
-
 namespace djinn
 {
-	class entity_manager;
+	template<typename T>
+	class entity_manager_base;
 
 	class entity
 	{
-		friend class entity_manager;
+		friend class entity_manager_base<entity>;
 	public:
 		entity(id_t const id, std::string const& fp, JSRuntime* const runtime);
 		DCM(entity);

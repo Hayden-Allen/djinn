@@ -4,8 +4,12 @@
 
 namespace djinn
 {
+	template<typename T>
+	class entity_manager_base;
+
 	class camera_entity final : public entity
 	{
+		friend class entity_manager_base<camera_entity>;
 	public:
 		camera_entity(id_t const id, std::string const& fp, JSRuntime* const runtime);
 		DCM(camera_entity);

@@ -50,6 +50,10 @@ namespace djinn::js
 	{
 		return JS_NewBool(ctx, (s32)b);
 	}
+	JSValue create_f32(JSContext* const ctx, f32 const f)
+	{
+		return JS_NewFloat64(ctx, f);
+	}
 	s32 extract_s32(JSContext* const ctx, JSValue const& val)
 	{
 		return helper::extract<s32, s32>(ctx, val, JS_ToInt32);

@@ -3,10 +3,10 @@
 	- reset ids on scene switch?
 
 - now
-	- Scene.create(this)	// pass JSvalue to entity (don't load from fp)
 	- separate camera_manager
 	- input service abstraction (xbox controller)
 	- imgui service
+	- Scene.create(this)	// pass JSvalue to entity (don't load from fp)
 	- move to mgl::layer system
 	- input_service takes layer to get access to input_cache
 	- asset cache by filepath

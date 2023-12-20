@@ -33,6 +33,11 @@ namespace djinn
 			::djinn::asset_service::get_cubemap_manager()->bind(id, slot);
 			return JS_UNDEFINED;
 		}
+		JSValue get_aspect_ratio(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+		{
+			ASSERT(argc == 0);
+			return js::create_f32(ctx, ::djinn::render_service::get_context()->get_aspect_ratio());
+		}
 	} // namespace js::render_service
 
 
@@ -47,6 +52,7 @@ namespace djinn
 		super::register_function(ctx, "draw", 2, js::render_service::draw);
 		super::register_function(ctx, "bindTexture", 2, js::render_service::bind_texture);
 		super::register_function(ctx, "bindCubemap", 2, js::render_service::bind_cubemap);
+		super::register_function(ctx, "getAspectRatio", 0, js::render_service::get_aspect_ratio);
 	}
 	sptr<mgl::context> render_service::get_context()
 	{

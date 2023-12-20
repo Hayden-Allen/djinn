@@ -27,6 +27,18 @@ namespace djinn
 			ASSERT(m_objects.contains(id));
 			return m_objects.at(id);
 		}
+		template<typename FN>
+		void for_each(FN const& fn)
+		{
+			for (auto& pair : m_objects)
+				fn(sptr<T>(pair.second), pair.first);
+		}
+		template<typename FN>
+		void for_each(FN const& fn) const
+		{
+			for (auto const& pair : m_objects)
+				fn(sptr<T>(pair.second), pair.first);
+		}
 	protected:
 		static inline id_t s_next_id = 1;
 	protected:

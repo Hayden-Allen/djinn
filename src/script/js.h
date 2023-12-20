@@ -9,13 +9,14 @@ namespace djinn::js
 	extern std::vector<f32> extract_f32_array(JSContext* const ctx, JSValue const& val);
 	extern std::vector<std::string> extract_string_array(JSContext* const ctx, JSValue const& val);
 	extern id_t extract_id(JSContext* const ctx, JSValue const& val);
-	extern JSValue create_id(JSContext* const ctx, u32 const id);
-	extern JSValue create_bool(JSContext* const ctx, bool const b);
 	extern s32 extract_s32(JSContext* const ctx, JSValue const& val);
 	extern u32 extract_u32(JSContext* const ctx, JSValue const& val);
 	extern f32 extract_f32(JSContext* const ctx, JSValue const& val);
 	extern std::string extract_string(JSContext* const ctx, JSValue const& val);
 	extern std::unordered_map<std::string, JSValue> extract_map(JSContext* const ctx, JSValue const& val);
+	extern JSValue create_id(JSContext* const ctx, u32 const id);
+	extern JSValue create_bool(JSContext* const ctx, bool const b);
+	extern JSValue create_f32(JSContext* const ctx, f32 const f);
 	template<typename FN>
 	void array_for(JSContext* const ctx, JSValue const& arr, FN const& fn)
 	{
