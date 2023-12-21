@@ -14,7 +14,48 @@ namespace djinn::js::scene_service
 		}
 		return ::djinn::scene_service::get_camera_entity_manager()->get(id).get();
 	}
-
+	template<typename FN>
+	JSValue get_value(JSContext* const ctx, s32 const argc, JSValueConst* const argv, FN const& fn, u64 const index)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		return js::create_f32(ctx, (get_entity(id)->*fn)()[index]);
+	}
+	template<typename FN>
+	JSValue get_values(JSContext* const ctx, s32 const argc, JSValueConst* const argv, FN const& fn)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		return js::create_f32_array(ctx, 3, (get_entity(id)->*fn)());
+	}
+	template<typename FN>
+	JSValue set_value(JSContext* const ctx, s32 const argc, JSValueConst* const argv, FN const& fn)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		f32 const f = js::extract_f32(ctx, argv[1]);
+		(get_entity(id)->*fn)(f);
+		return JS_UNDEFINED;
+	}
+	template<typename FN>
+	JSValue set_values(JSContext* const ctx, s32 const argc, JSValueConst* const argv, FN const& fn)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::vector<f32> const& arr = js::extract_f32_array(ctx, argv[1]);
+		ASSERT(arr.size() == 3);
+		(get_entity(id)->*fn)(arr[0], arr[1], arr[2]);
+		return JS_UNDEFINED;
+	}
+	template<typename FN>
+	JSValue add_value(JSContext* const ctx, s32 const argc, JSValueConst* const argv, FN const& fn, f32 const x, f32 const y, f32 const z)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		f32 const f = js::extract_f32(ctx, argv[1]);
+		(get_entity(id)->*fn)(x * f, y * f, z * f);
+		return JS_UNDEFINED;
+	}
 
 
 	JSValue load_entity(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -61,378 +102,201 @@ namespace djinn::js::scene_service
 
 	JSValue get_pos(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		return js::create_f32_array(ctx, 3, get_entity(id)->get_pos());
+		return get_values(ctx, argc, argv, &entity::get_pos);
 	}
 	JSValue get_pos_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		return js::create_f32(ctx, get_entity(id)->get_pos()[0]);
+		return get_value(ctx, argc, argv, &entity::get_pos, 0);
 	}
 	JSValue get_pos_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		return js::create_f32(ctx, get_entity(id)->get_pos()[1]);
+		return get_value(ctx, argc, argv, &entity::get_pos, 1);
 	}
 	JSValue get_pos_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		return js::create_f32(ctx, get_entity(id)->get_pos()[2]);
+		return get_value(ctx, argc, argv, &entity::get_pos, 2);
 	}
 	JSValue set_pos(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::vector<f32> const& arr = js::extract_f32_array(ctx, argv[1]);
-		ASSERT(arr.size() == 3);
-		get_entity(id)->set_pos(arr[0], arr[1], arr[2]);
-		return JS_UNDEFINED;
+		return set_values(ctx, argc, argv, &entity::set_pos);
 	}
 	JSValue set_pos_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->set_pos_x(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &entity::set_pos_x);
 	}
 	JSValue set_pos_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->set_pos_y(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &entity::set_pos_y);
 	}
 	JSValue set_pos_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->set_pos_z(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &entity::set_pos_z);
 	}
 	JSValue add_pos(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::vector<f32> const& arr = js::extract_f32_array(ctx, argv[1]);
-		ASSERT(arr.size() == 3);
-		get_entity(id)->add_pos(arr[0], arr[1], arr[2]);
-		return JS_UNDEFINED;
+		return set_values(ctx, argc, argv, &entity::add_pos);
 	}
 	JSValue add_pos_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->add_pos(f, 0, 0);
-		return JS_UNDEFINED;
+		return add_value(ctx, argc, argv, &entity::add_pos, 1, 0, 0);
 	}
 	JSValue add_pos_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->add_pos(0, f, 0);
-		return JS_UNDEFINED;
+		return add_value(ctx, argc, argv, &entity::add_pos, 0, 1, 0);
 	}
 	JSValue add_pos_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->add_pos(0, 0, f);
-		return JS_UNDEFINED;
+		return add_value(ctx, argc, argv, &entity::add_pos, 0, 0, 1);
 	}
 	JSValue add_pos_local(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::vector<f32> const& arr = js::extract_f32_array(ctx, argv[1]);
-		ASSERT(arr.size() == 3);
-		get_entity(id)->add_pos_local(arr[0], arr[1], arr[2]);
-		return JS_UNDEFINED;
+		return set_values(ctx, argc, argv, &entity::add_pos_local);
 	}
 	JSValue add_pos_local_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->add_pos_local(f, 0, 0);
-		return JS_UNDEFINED;
+		return add_value(ctx, argc, argv, &entity::add_pos_local, 1, 0, 0);
 	}
 	JSValue add_pos_local_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->add_pos_local(0, f, 0);
-		return JS_UNDEFINED;
+		return add_value(ctx, argc, argv, &entity::add_pos_local, 0, 1, 0);
 	}
 	JSValue add_pos_local_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->add_pos_local(0, 0, f);
-		return JS_UNDEFINED;
+		return add_value(ctx, argc, argv, &entity::add_pos_local, 0, 0, 1);
 	}
 
 
 
 	JSValue get_rot(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		return js::create_f32_array(ctx, 3, get_entity(id)->get_rot());
+		return get_values(ctx, argc, argv, &entity::get_rot);
 	}
 	JSValue get_rot_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		return js::create_f32(ctx, get_entity(id)->get_rot()[0]);
+		return get_value(ctx, argc, argv, &entity::get_rot, 0);
 	}
 	JSValue get_rot_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		return js::create_f32(ctx, get_entity(id)->get_rot()[1]);
+		return get_value(ctx, argc, argv, &entity::get_rot, 1);
 	}
 	JSValue get_rot_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		return js::create_f32(ctx, get_entity(id)->get_rot()[2]);
+		return get_value(ctx, argc, argv, &entity::get_rot, 2);
 	}
 	JSValue set_rot(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::vector<f32> const& arr = js::extract_f32_array(ctx, argv[1]);
-		ASSERT(arr.size() == 3);
-		get_entity(id)->set_rot(arr[0], arr[1], arr[2]);
-		return JS_UNDEFINED;
+		return set_values(ctx, argc, argv, &entity::set_rot);
 	}
 	JSValue set_rot_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->set_rot_x(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &entity::set_rot_x);
 	}
 	JSValue set_rot_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->set_rot_y(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &entity::set_rot_y);
 	}
 	JSValue set_rot_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->set_rot_z(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &entity::set_rot_z);
 	}
 	JSValue add_rot(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::vector<f32> const& arr = js::extract_f32_array(ctx, argv[1]);
-		ASSERT(arr.size() == 3);
-		get_entity(id)->add_rot(arr[0], arr[1], arr[2]);
-		return JS_UNDEFINED;
+		return set_values(ctx, argc, argv, &entity::add_rot);
 	}
 	JSValue add_rot_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->add_rot(f, 0, 0);
-		return JS_UNDEFINED;
+		return add_value(ctx, argc, argv, &entity::add_rot, 1, 0, 0);
 	}
 	JSValue add_rot_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->add_rot(0, f, 0);
-		return JS_UNDEFINED;
+		return add_value(ctx, argc, argv, &entity::add_rot, 0, 1, 0);
 	}
 	JSValue add_rot_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->add_rot(0, 0, f);
-		return JS_UNDEFINED;
+		return add_value(ctx, argc, argv, &entity::add_rot, 0, 0, 1);
 	}
 	JSValue add_rot_local(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::vector<f32> const& arr = js::extract_f32_array(ctx, argv[1]);
-		ASSERT(arr.size() == 3);
-		get_entity(id)->add_rot_local(arr[0], arr[1], arr[2]);
-		return JS_UNDEFINED;
+		return set_values(ctx, argc, argv, &entity::add_rot_local);
 	}
 	JSValue add_rot_local_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->add_rot_local(f, 0, 0);
-		return JS_UNDEFINED;
+		return add_value(ctx, argc, argv, &entity::add_rot_local, 1, 0, 0);
 	}
 	JSValue add_rot_local_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->add_rot_local(0, f, 0);
-		return JS_UNDEFINED;
+		return add_value(ctx, argc, argv, &entity::add_rot_local, 0, 1, 0);
 	}
 	JSValue add_rot_local_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->add_rot_local(0, 0, f);
-		return JS_UNDEFINED;
+		return add_value(ctx, argc, argv, &entity::add_rot_local, 0, 0, 1);
 	}
 
 
 
 	JSValue get_scale(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		return js::create_f32_array(ctx, 3, get_entity(id)->get_scale());
+		return get_values(ctx, argc, argv, &entity::get_scale);
 	}
 	JSValue get_scale_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		return js::create_f32(ctx, get_entity(id)->get_scale()[0]);
+		return get_value(ctx, argc, argv, &entity::get_scale, 0);
 	}
 	JSValue get_scale_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		return js::create_f32(ctx, get_entity(id)->get_scale()[1]);
+		return get_value(ctx, argc, argv, &entity::get_scale, 1);
 	}
 	JSValue get_scale_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		return js::create_f32(ctx, get_entity(id)->get_scale()[2]);
+		return get_value(ctx, argc, argv, &entity::get_scale, 2);
 	}
 	JSValue set_scale(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::vector<f32> const& arr = js::extract_f32_array(ctx, argv[1]);
-		ASSERT(arr.size() == 3);
-		get_entity(id)->set_scale(arr[0], arr[1], arr[2]);
-		return JS_UNDEFINED;
+		return set_values(ctx, argc, argv, &entity::set_scale);
 	}
 	JSValue set_scale_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->set_scale_x(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &entity::set_scale_x);
 	}
 	JSValue set_scale_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->set_scale_y(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &entity::set_scale_y);
 	}
 	JSValue set_scale_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->set_scale_z(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &entity::set_scale_z);
 	}
 	JSValue add_scale(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::vector<f32> const& arr = js::extract_f32_array(ctx, argv[1]);
-		ASSERT(arr.size() == 3);
-		get_entity(id)->add_scale(arr[0], arr[1], arr[2]);
-		return JS_UNDEFINED;
+		return set_values(ctx, argc, argv, &entity::add_scale);
 	}
 	JSValue add_scale_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->add_scale(f, 0, 0);
-		return JS_UNDEFINED;
+		return add_value(ctx, argc, argv, &entity::add_scale, 1, 0, 0);
 	}
 	JSValue add_scale_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->add_scale(0, f, 0);
-		return JS_UNDEFINED;
+		return add_value(ctx, argc, argv, &entity::add_scale, 0, 1, 0);
 	}
 	JSValue add_scale_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->add_scale(0, 0, f);
-		return JS_UNDEFINED;
+		return add_value(ctx, argc, argv, &entity::add_scale, 0, 0, 1);
 	}
 	JSValue add_scale_local(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::vector<f32> const& arr = js::extract_f32_array(ctx, argv[1]);
-		ASSERT(arr.size() == 3);
-		get_entity(id)->add_scale_local(arr[0], arr[1], arr[2]);
-		return JS_UNDEFINED;
+		return set_values(ctx, argc, argv, &entity::add_scale_local);
 	}
 	JSValue add_scale_local_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->add_scale_local(f, 0, 0);
-		return JS_UNDEFINED;
+		return add_value(ctx, argc, argv, &entity::add_scale_local, 1, 0, 0);
 	}
 	JSValue add_scale_local_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->add_scale_local(0, f, 0);
-		return JS_UNDEFINED;
+		return add_value(ctx, argc, argv, &entity::add_scale_local, 0, 1, 0);
 	}
 	JSValue add_scale_local_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		get_entity(id)->add_scale_local(0, 0, f);
-		return JS_UNDEFINED;
+		return add_value(ctx, argc, argv, &entity::add_scale_local, 0, 0, 1);
 	}
 } // namespace djinn::js::scene_service
 
