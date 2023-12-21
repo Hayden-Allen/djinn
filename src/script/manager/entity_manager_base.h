@@ -47,7 +47,10 @@ namespace djinn
 		{
 			std::string const& src = m_afp2src.at(afp);
 			for (id_t const id : m_id2afp.get_key(afp))
-				this->get(id)->inject_script(afp, src);
+			{
+				sptr<T> ptr = this->get(id);
+				ptr->inject_script(afp, src);
+			}
 		}
 		void load_file(std::string const& afp)
 		{

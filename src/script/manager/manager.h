@@ -4,8 +4,20 @@
 
 namespace djinn
 {
+	class manager_counter
+	{
+	public:
+		DCM(manager_counter);
+	protected:
+		static inline id_t s_next_id = 1;
+	protected:
+		manager_counter() {}
+	};
+
+
+
 	template<typename T>
-	class manager
+	class manager : public manager_counter
 	{
 	public:
 		manager(std::string const& base_dir) :
@@ -27,6 +39,10 @@ namespace djinn
 			ASSERT(m_objects.contains(id));
 			return m_objects.at(id);
 		}
+		bool has(id_t const id) const
+		{
+			return m_objects.contains(id);
+		}
 		template<typename FN>
 		void for_each(FN const& fn)
 		{
@@ -39,8 +55,6 @@ namespace djinn
 			for (auto const& pair : m_objects)
 				fn(sptr<T>(pair.second), pair.first);
 		}
-	protected:
-		static inline id_t s_next_id = 1;
 	protected:
 		std::string m_base_dir;
 		std::unordered_map<id_t, optr<T>> m_objects; // map of unique id to actual object (this class owns all the objects)

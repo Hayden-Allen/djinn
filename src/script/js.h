@@ -17,6 +17,7 @@ namespace djinn::js
 	extern JSValue create_id(JSContext* const ctx, u32 const id);
 	extern JSValue create_bool(JSContext* const ctx, bool const b);
 	extern JSValue create_f32(JSContext* const ctx, f32 const f);
+	extern JSValue create_f32_array(JSContext* const ctx, s64 const count, f32 const* const f);
 	template<typename FN>
 	void array_for(JSContext* const ctx, JSValue const& arr, FN const& fn)
 	{

@@ -33,7 +33,7 @@ export default class TestClass extends Entity {
   private skybox: Skybox | undefined
   private camera: ICamera
 
-  __load() {
+  __init() {
     this.idMesh = Asset.Mesh.create(4, [2, 2], 6)
     Asset.Mesh.update(
       this.idMesh,
@@ -105,8 +105,8 @@ export default class TestClass extends Entity {
     )
     this.camera = Scene.Camera.load("lib/Camera.js")
   }
-  __unload() {
-    this.skybox!.unload()
+  __destroy() {
+    this.skybox!.destroy()
     Asset.Mesh.destroy(this.idMesh)
     Asset.Shader.destroy(this.idShader)
     Asset.Texture.destroy(this.idTexture)

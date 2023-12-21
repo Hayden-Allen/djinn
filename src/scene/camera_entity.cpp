@@ -13,12 +13,17 @@ namespace djinn
 
 
 
+	void camera_entity::update(f32 const dt)
+	{
+		entity::update(dt); // recomputes m_transform
+		m_view = m_transform.invert_cast_copy<space::WORLD, space::CAMERA>();
+		update_mats();
+	}
 	void camera_entity::configure(f32 const fov_y, f32 const aspect, f32 const near, f32 const far)
 	{
 		// m_cam.configure(fov_y, aspect, near, far);
 		m_proj = pmat_util::projection(fov_y, aspect, near, far);
-		m_view_proj = m_proj * m_view;
-		m_view_proj_basis = m_proj * m_view.basis_copy();
+		update_mats();
 	}
 	pmat<space::CAMERA, space::CLIP> const& camera_entity::get_proj() const
 	{
@@ -32,14 +37,11 @@ namespace djinn
 	{
 		return m_view_proj;
 	}
-	void camera_entity::multiply_transform(tmat<space::OBJECT, space::OBJECT> const& mat)
+
+
+
+	void camera_entity::update_mats()
 	{
-		ASSERT(false);
-	}
-	void camera_entity::multiply_transform(tmat<space::CAMERA, space::CAMERA> const& mat)
-	{
-		m_transform *= mat.cast_copy<space::OBJECT, space::OBJECT>();
-		m_view = m_transform.invert_cast_copy<space::WORLD, space::CAMERA>();
 		m_view_proj = m_proj * m_view;
 		m_view_proj_basis = m_proj * m_view.basis_copy();
 	}

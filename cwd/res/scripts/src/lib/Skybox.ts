@@ -131,7 +131,7 @@ export default class Skybox {
     return ret
   }
 
-  unload() {
+  destroy() {
     Asset.Mesh.destroy(this.idMesh)
     Asset.Shader.destroy(this.idShader)
     Asset.Cubemap.destroy(this.idTexture)

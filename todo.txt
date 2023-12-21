@@ -1,11 +1,12 @@
 - questions
 	- reset ids on scene switch?
+	- enforce all pos/rot/scale changes be done in __main?
 
 - now
 	- globally unique id
 	- entity transform => pos rot scale
 	- get/set/increment pos, rot, scale
-	- imgui service
+	- imgui service (__imgui/imgui_service::register_functions not called in release mode)
 	- Scene.create(this)	// pass JSvalue to entity (don't load from fp)
 	- move to mgl::layer system
 	- input_service takes layer to get access to input_cache

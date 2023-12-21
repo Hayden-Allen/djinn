@@ -38,6 +38,10 @@ namespace djinn
 	void entity::update(f32 const dt)
 	{
 		call_main(dt);
+		tmat<space::OBJECT, space::PARENT> const& trans = tmat_util::translation<space::OBJECT, space::PARENT>(point<space::PARENT>(m_pos[0], m_pos[1], m_pos[2]));
+		tmat<space::OBJECT, space::OBJECT> const& rot = tmat_util::rotation_yxz<space::OBJECT>(m_rot[0], m_rot[1], m_rot[2]);
+		tmat<space::OBJECT, space::OBJECT> const& scale = tmat_util::scale<space::OBJECT>(m_scale[0], m_scale[1], m_scale[2]);
+		m_transform = trans * rot * scale;
 	}
 	void entity::draw()
 	{
@@ -47,17 +51,49 @@ namespace djinn
 	{
 		call_reserved("__ui", 0, nullptr);
 	}
-	tmat<space::OBJECT, space::WORLD> const& entity::get_transform() const
-	{
-		return m_transform;
-	}
-	void entity::multiply_transform(tmat<space::OBJECT, space::OBJECT> const& mat)
-	{
-		m_transform *= mat;
-	}
 	JSValue entity::get_js_value()
 	{
 		return m_this;
+	}
+	void entity::set_pos(f32 const x, f32 const y, f32 const z)
+	{
+		m_pos[0] = x;
+		m_pos[1] = y;
+		m_pos[2] = z;
+	}
+	void entity::set_rot(f32 const x, f32 const y, f32 const z)
+	{
+		m_rot[0] = x;
+		m_rot[1] = y;
+		m_rot[2] = z;
+	}
+	void entity::set_scale(f32 const x, f32 const y, f32 const z)
+	{
+		ASSERT(x != 0 && y != 0 && z != 0);
+		m_scale[0] = x;
+		m_scale[1] = y;
+		m_scale[2] = z;
+	}
+	f32 const* entity::get_pos() const
+	{
+		return m_pos;
+	}
+	f32 const* entity::get_rot() const
+	{
+		return m_rot;
+	}
+	f32 const* entity::get_scale() const
+	{
+		return m_scale;
+	}
+	tmat<space::OBJECT, space::PARENT> const& entity::get_transform() const
+	{
+		return m_transform;
+	}
+	tmat<space::OBJECT, space::WORLD> entity::get_world_transform() const
+	{
+		ASSERT(false);
+		return m_transform.cast_copy<space::OBJECT, space::WORLD>();
 	}
 
 

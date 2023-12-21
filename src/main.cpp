@@ -16,52 +16,6 @@
 
 using namespace djinn;
 
-void script_main()
-{
-	std::string const& afp = u::to_absolute(djinn::c::base_dir::script, "main.js");
-	std::string const& src = u::read_file(afp);
-	printf("%s\n", src.c_str());
-
-	JSContext* const ctx = JS_NewContext(scene_service::get_runtime());
-	js::global::init_globals(ctx);
-	asset_service::register_functions(ctx);
-	render_service::register_functions(ctx);
-	nanovg_service::register_functions(ctx);
-	util_service::register_functions(ctx);
-	scene_service::register_functions(ctx);
-	input_service::register_functions(ctx);
-
-	JSValue const eval_ret = JS_Eval(ctx, src.data(), src.size(), "main.js", JS_EVAL_TYPE_MODULE);
-	if (JS_IsException(eval_ret))
-	{
-		JSValue const ex_val = JS_GetException(ctx);
-		char const* const ex = JS_ToCString(ctx, ex_val);
-		printf("Exception occurred: %s\n", ex);
-		JS_FreeCString(ctx, ex);
-		JS_FreeValue(ctx, ex_val);
-	}
-	JS_FreeValue(ctx, eval_ret);
-
-	JSValue const global = JS_GetGlobalObject(ctx);
-	JSValue const exports_def = JS_GetPropertyStr(ctx, global, "__djinnExports");
-	JSValue const default_def = JS_GetPropertyStr(ctx, exports_def, "default");
-	JSValue const call_ret = JS_Call(ctx, default_def, JS_UNDEFINED, 0, nullptr);
-	if (JS_IsException(call_ret))
-	{
-		JSValue const ex_val = JS_GetException(ctx);
-		char const* const ex = JS_ToCString(ctx, ex_val);
-		printf("Exception occurred: %s\n", ex);
-		JS_FreeCString(ctx, ex);
-		JS_FreeValue(ctx, ex_val);
-	}
-	JS_FreeValue(ctx, call_ret);
-	JS_FreeValue(ctx, default_def);
-	JS_FreeValue(ctx, exports_def);
-	JS_FreeValue(ctx, global);
-
-	JS_FreeContext(ctx);
-}
-
 int main(int argc, char* argv[])
 {
 	optr<mgl::context> c(new mgl::context(1920, 1080, "mingl", { .vsync = true, .clear = { .b = 1 } }));

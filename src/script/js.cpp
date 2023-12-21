@@ -54,6 +54,13 @@ namespace djinn::js
 	{
 		return JS_NewFloat64(ctx, f);
 	}
+	JSValue create_f32_array(JSContext* const ctx, s64 const count, f32 const* const f)
+	{
+		JSValue arr = JS_NewArray(ctx);
+		for (s64 i = 0; i < count; i++)
+			JS_SetPropertyInt64(ctx, arr, i, create_f32(ctx, f[i]));
+		return arr;
+	}
 	s32 extract_s32(JSContext* const ctx, JSValue const& val)
 	{
 		return helper::extract<s32, s32>(ctx, val, JS_ToInt32);
