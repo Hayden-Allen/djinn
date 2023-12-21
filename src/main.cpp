@@ -45,6 +45,9 @@ int main(int argc, char* argv[])
 
 		c->begin_frame();
 		c->clear();
+		char buf[128] = { 0 };
+		sprintf_s(buf, "djinn - %dfps", (s32)c->avg_fps);
+		glfwSetWindowTitle(c->window, buf);
 
 		scene_service::update_all(c->time.delta);
 		nanovg_service::begin_frame(c->get_width(), c->get_height());
