@@ -103,8 +103,7 @@ export default class TestClass extends Entity {
         },
       }
     )
-    this.camera = Scene.Camera.load("cam.js")
-    //
+    this.camera = Scene.Camera.load("lib/Camera.js")
   }
   __unload() {
     this.skybox!.unload()

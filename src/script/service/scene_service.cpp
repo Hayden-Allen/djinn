@@ -13,7 +13,7 @@ namespace djinn::js::scene_service
 		// return js::create_id(ctx, ::djinn::scene_service::get_entity_manager()->load(fp));
 		id_t const id = ::djinn::scene_service::get_entity_manager()->load(fp);
 		sptr<entity> e = ::djinn::scene_service::get_entity_manager()->get(id);
-		return e->get_js_value();
+		return JS_DupValue(ctx, e->get_js_value());
 	}
 	JSValue destroy_entity(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -29,7 +29,7 @@ namespace djinn::js::scene_service
 		// return js::create_id(ctx, ::djinn::scene_service::get_camera_entity_manager()->load(fp));
 		id_t const id = ::djinn::scene_service::get_camera_entity_manager()->load(fp);
 		sptr<camera_entity> e = ::djinn::scene_service::get_camera_entity_manager()->get(id);
-		return e->get_js_value();
+		return JS_DupValue(ctx, e->get_js_value());
 	}
 	JSValue move_camera(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
