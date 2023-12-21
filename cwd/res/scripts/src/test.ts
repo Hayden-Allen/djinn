@@ -115,6 +115,7 @@ export default class TestClass extends Entity {
   __draw() {
     this.skybox!.draw(this.idCamera)
     Render.bindTexture(this.idTexture, 0)
+    Asset.Shader.setCameraUniforms(this.idShader, this.idCamera)
     Render.draw(this.idMesh, this.idShader)
   }
   __ui() {

@@ -18,8 +18,12 @@ namespace djinn
 		pmat<space::CAMERA, space::CLIP> const& get_proj() const;
 		tmat<space::WORLD, space::CAMERA> const& get_view() const;
 		mat<space::WORLD, space::CLIP> const& get_view_proj() const;
-		void move(f32 const dt, vec<space::CAMERA> const& amount, f32 const mx, f32 const my);
+		void multiply_transform(tmat<space::OBJECT, space::OBJECT> const& mat) override;
+		void multiply_transform(tmat<space::CAMERA, space::CAMERA> const& mat);
 	private:
-		camera m_cam;
+		pmat<space::CAMERA, space::CLIP> m_proj;
+		tmat<space::WORLD, space::CAMERA> m_view;
+		mat<space::WORLD, space::CLIP> m_view_proj;
+		mat<space::WORLD, space::CLIP> m_view_proj_basis;
 	};
 } // namespace djinn

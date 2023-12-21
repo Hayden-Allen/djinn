@@ -51,6 +51,10 @@ namespace djinn
 	{
 		return m_transform;
 	}
+	void entity::multiply_transform(tmat<space::OBJECT, space::OBJECT> const& mat)
+	{
+		m_transform *= mat;
+	}
 
 
 

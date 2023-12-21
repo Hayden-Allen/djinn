@@ -1,10 +1,9 @@
 - questions
 	- how to do math in the scripts? get/setPos data types
 	- reset ids on scene switch?
+	- separate camera/entity rotation? should camera rotation be done in the script or expose mgl::camera?
 
 - now
-	- separate camera_manager
-	- input service abstraction (xbox controller)
 	- imgui service
 	- Scene.create(this)	// pass JSvalue to entity (don't load from fp)
 	- move to mgl::layer system

@@ -27,16 +27,24 @@ namespace djinn::js::scene_service
 	}
 	JSValue move_camera(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 7);
+		ASSERT(argc == 4);
 		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const dt = js::extract_f32(ctx, argv[1]);
-		f32 const dx = js::extract_f32(ctx, argv[2]);
-		f32 const dy = js::extract_f32(ctx, argv[3]);
-		f32 const dz = js::extract_f32(ctx, argv[4]);
-		f32 const mx = js::extract_f32(ctx, argv[5]);
-		f32 const my = js::extract_f32(ctx, argv[6]);
+		f32 const dx = js::extract_f32(ctx, argv[1]);
+		f32 const dy = js::extract_f32(ctx, argv[2]);
+		f32 const dz = js::extract_f32(ctx, argv[3]);
 		sptr<camera_entity> cam = ::djinn::scene_service::get_camera_entity_manager()->get(id);
-		cam->move(dt, { dx, dy, dz }, mx, my);
+		tmat<space::CAMERA, space::CAMERA> const& mat = tmat_util::translation<space::CAMERA>(dx, dy, dz);
+		cam->multiply_transform(mat);
+		return JS_UNDEFINED;
+	}
+	JSValue rotate_camera(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 4);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		f32 const dx = js::extract_f32(ctx, argv[1]);
+		f32 const dy = js::extract_f32(ctx, argv[2]);
+		sptr<camera_entity> cam = ::djinn::scene_service::get_camera_entity_manager()->get(id);
+		cam->rotate(dx, dy);
 		return JS_UNDEFINED;
 	}
 	JSValue configure_camera(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -80,7 +88,8 @@ namespace djinn
 		super::register_function(ctx, "Entity", "load", 1, js::scene_service::load_entity);
 		super::register_function(ctx, "Entity", "destroy", 1, js::scene_service::destroy_entity);
 		super::register_function(ctx, "Camera", "load", 1, js::scene_service::load_camera);
-		super::register_function(ctx, "Camera", "move", 7, js::scene_service::move_camera);
+		super::register_function(ctx, "Camera", "move", 4, js::scene_service::move_camera);
+		super::register_function(ctx, "Camera", "rotate", 4, js::scene_service::rotate_camera);
 		super::register_function(ctx, "Camera", "configure", 5, js::scene_service::configure_camera);
 		super::register_function(ctx, "Camera", "destroy", 1, js::scene_service::destroy_camera);
 	}

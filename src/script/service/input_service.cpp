@@ -10,6 +10,26 @@ namespace djinn::js::input_service
 		s32 const key = js::extract_s32(ctx, argv[0]);
 		return js::create_bool(ctx, ::djinn::input_service::get_context()->get_key(key));
 	}
+	JSValue left_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 0);
+		return js::create_f32(ctx, 1.f * ::djinn::input_service::get_context()->get_key(GLFW_KEY_D) - ::djinn::input_service::get_context()->get_key(GLFW_KEY_A));
+	}
+	JSValue left_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 0);
+		return js::create_f32(ctx, 1.f * ::djinn::input_service::get_context()->get_key(GLFW_KEY_S) - ::djinn::input_service::get_context()->get_key(GLFW_KEY_W));
+	}
+	JSValue right_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 0);
+		return js::create_f32(ctx, 1.f * ::djinn::input_service::get_context()->get_key(GLFW_KEY_RIGHT) - ::djinn::input_service::get_context()->get_key(GLFW_KEY_LEFT));
+	}
+	JSValue right_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 0);
+		return js::create_f32(ctx, 1.f * ::djinn::input_service::get_context()->get_key(GLFW_KEY_DOWN) - ::djinn::input_service::get_context()->get_key(GLFW_KEY_UP));
+	}
 } // namespace djinn::js::input_service
 
 
@@ -24,6 +44,10 @@ namespace djinn
 	void input_service::register_functions(JSContext* const ctx)
 	{
 		super::register_function(ctx, "getKey", 1, js::input_service::get_key);
+		super::register_function(ctx, "leftX", 0, js::input_service::left_x);
+		super::register_function(ctx, "leftY", 0, js::input_service::left_y);
+		super::register_function(ctx, "rightX", 0, js::input_service::right_x);
+		super::register_function(ctx, "rightY", 0, js::input_service::right_y);
 
 		char buf[32] = { 0 };
 		for (char i = '0'; i < '9'; i++)

@@ -17,12 +17,15 @@ export default class Camera extends Entity {
     Scene.destroy(this.id)
   }
   __main(dt: number) {
-    const dx = Input.getKey(Input.KEY_D) - Input.getKey(Input.KEY_A)
-    const dy = Input.getKey(Input.KEY_SPACE) - Input.getKey(Input.KEY_SHIFT)
-    const dz = Input.getKey(Input.KEY_S) - Input.getKey(Input.KEY_W)
-    const mx = Input.getKey(Input.KEY_RIGHT) - Input.getKey(Input.KEY_LEFT)
-    const my = Input.getKey(Input.KEY_DOWN) - Input.getKey(Input.KEY_UP)
-    Scene.Camera.move(this.id, dt, dx, dy, dz, mx, my)
+    const dx = dt * Input.leftX()
+    const dy =
+      dt * (Input.getKey(Input.KEY_SPACE) - Input.getKey(Input.KEY_SHIFT))
+    const dz = dt * Input.leftY()
+    const mx = dt * Input.rightX()
+    const my = dt * Input.rightY()
+    // Scene.Camera.move(this.id, dt, dx, dy, dz, mx, my)
+    Scene.Camera.move(this.id, dx, dy, dz)
+    Scene.Camera.rotate(this.id, my, mx, 0)
   }
   //   static load(fp: string) {
   //     return new Camera(Scene.loadCamera(fp))
