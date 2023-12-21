@@ -55,6 +55,10 @@ namespace djinn
 	{
 		m_transform *= mat;
 	}
+	JSValue entity::get_js_value()
+	{
+		return m_this;
+	}
 
 
 

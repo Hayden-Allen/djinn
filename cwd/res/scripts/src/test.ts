@@ -1,7 +1,7 @@
 import "./lib/globals.d"
+import type { ICamera } from "./lib/Camera.d"
 import Entity from "./lib/Entity"
 import Skybox from "./lib/Skybox"
-import Camera from "./cam"
 
 const { Asset, Render, Nanovg, Scene, Input } = djinn
 
@@ -31,7 +31,7 @@ export default class TestClass extends Entity {
   private idShader: number = -1
   private idTexture: number = -1
   private skybox: Skybox | undefined
-  private idCamera: number = -1
+  private camera: ICamera
 
   __load() {
     this.idMesh = Asset.Mesh.create(4, [2, 2], 6)
@@ -103,7 +103,8 @@ export default class TestClass extends Entity {
         },
       }
     )
-    this.idCamera = Scene.Camera.load("cam.js")
+    this.camera = Scene.Camera.load("cam.js")
+    //
   }
   __unload() {
     this.skybox!.unload()
@@ -113,9 +114,9 @@ export default class TestClass extends Entity {
   }
   __main(dt: number) {}
   __draw() {
-    this.skybox!.draw(this.idCamera)
+    this.skybox!.draw(this.camera!.getId())
     Render.bindTexture(this.idTexture, 0)
-    Asset.Shader.setCameraUniforms(this.idShader, this.idCamera)
+    Asset.Shader.setCameraUniforms(this.idShader, this.camera!.getId())
     Render.draw(this.idMesh, this.idShader)
   }
   __ui() {

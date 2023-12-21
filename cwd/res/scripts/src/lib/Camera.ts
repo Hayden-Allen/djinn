@@ -1,14 +1,10 @@
-import "./lib/globals.d"
-import Entity from "./lib/Entity"
+import "./globals.d"
+import Entity from "./Entity"
+import type { _ICamera } from "./Camera.d"
 
 const { Render, Scene, Input } = djinn
 
-export default class Camera extends Entity {
-  //   constructor(id: number) {
-  //     super()
-  //     this.id = id
-  //     console.log("Create camera " + this.id)
-  //   }
+export default class Camera extends Entity implements _ICamera {
   __load() {
     const ar = Render.getAspectRatio()
     Scene.Camera.configure(this.id, 108 / ar, ar, 0.01, 1000)
@@ -23,11 +19,7 @@ export default class Camera extends Entity {
     const dz = dt * Input.leftY()
     const mx = dt * Input.rightX()
     const my = dt * Input.rightY()
-    // Scene.Camera.move(this.id, dt, dx, dy, dz, mx, my)
     Scene.Camera.move(this.id, dx, dy, dz)
     Scene.Camera.rotate(this.id, my, mx, 0)
   }
-  //   static load(fp: string) {
-  //     return new Camera(Scene.loadCamera(fp))
-  //   }
 }

@@ -10,7 +10,10 @@ namespace djinn::js::scene_service
 	{
 		ASSERT(argc == 1);
 		std::string const& fp = js::extract_string(ctx, argv[0]);
-		return js::create_id(ctx, ::djinn::scene_service::get_entity_manager()->load(fp));
+		// return js::create_id(ctx, ::djinn::scene_service::get_entity_manager()->load(fp));
+		id_t const id = ::djinn::scene_service::get_entity_manager()->load(fp);
+		sptr<entity> e = ::djinn::scene_service::get_entity_manager()->get(id);
+		return e->get_js_value();
 	}
 	JSValue destroy_entity(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -23,7 +26,10 @@ namespace djinn::js::scene_service
 	{
 		ASSERT(argc == 1);
 		std::string const& fp = js::extract_string(ctx, argv[0]);
-		return js::create_id(ctx, ::djinn::scene_service::get_camera_entity_manager()->load(fp));
+		// return js::create_id(ctx, ::djinn::scene_service::get_camera_entity_manager()->load(fp));
+		id_t const id = ::djinn::scene_service::get_camera_entity_manager()->load(fp);
+		sptr<camera_entity> e = ::djinn::scene_service::get_camera_entity_manager()->get(id);
+		return e->get_js_value();
 	}
 	JSValue move_camera(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -43,8 +49,10 @@ namespace djinn::js::scene_service
 		id_t const id = js::extract_id(ctx, argv[0]);
 		f32 const dx = js::extract_f32(ctx, argv[1]);
 		f32 const dy = js::extract_f32(ctx, argv[2]);
+		f32 const dz = js::extract_f32(ctx, argv[3]);
 		sptr<camera_entity> cam = ::djinn::scene_service::get_camera_entity_manager()->get(id);
-		cam->rotate(dx, dy);
+		tmat<space::CAMERA, space::CAMERA> const& mat = tmat_util::rotation_yzx<space::CAMERA>(-dx, -dy, -dz);
+		cam->multiply_transform(mat);
 		return JS_UNDEFINED;
 	}
 	JSValue configure_camera(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)

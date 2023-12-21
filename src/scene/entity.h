@@ -19,6 +19,7 @@ namespace djinn
 		void draw_ui();
 		tmat<space::OBJECT, space::WORLD> const& get_transform() const;
 		virtual void multiply_transform(tmat<space::OBJECT, space::OBJECT> const& mat);
+		JSValue get_js_value();
 	protected:
 		void inject_script(std::string const& fp, std::string const& src);
 		void call_reserved(std::string const& name, s32 const argc, JSValue* const argv);

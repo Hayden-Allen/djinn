@@ -43,7 +43,7 @@ function main() {
   const watcher = chokidar.watch(srcDir);
 
   watcher.on("add", async (filePath) => {
-    const filePathRegexFilter = /\.tsx?/;
+    const filePathRegexFilter = /[^\.d]\.tsx?/;
 
     if (!filePath.match(filePathRegexFilter)) {
       console.log("[Skipping]", filePath);

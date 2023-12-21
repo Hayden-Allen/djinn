@@ -1,4 +1,6 @@
-export default class Entity {
+import "./Entity.d"
+
+export default class Entity implements _IEntity {
   protected id: number = -1
   getId() {
     return this.id
