@@ -36,7 +36,7 @@ namespace djinn
 		virtual void destroy(id_t const id) = 0;
 		sptr<T> get(id_t const id)
 		{
-			ASSERT(m_objects.contains(id));
+			ASSERT(m_objects.contains(id))
 			return m_objects.at(id);
 		}
 		bool has(id_t const id) const
@@ -72,7 +72,7 @@ namespace djinn
 		}
 		void erase(id_t const id)
 		{
-			ASSERT(m_objects.contains(id));
+			ASSERT(m_objects.contains(id))
 			optr<T>& ptr = m_objects.at(id);
 			ptr.free();
 			m_objects.erase(id);

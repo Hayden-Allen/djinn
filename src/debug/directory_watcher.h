@@ -96,7 +96,7 @@ namespace djinn
 		void err(std::string const& msg)
 		{
 			printf("%s\n", msg.c_str());
-			ASSERT(false);
+			ASSERT(false)
 		}
 	protected:
 		static constexpr DWORD s_INFO_BUFFER_SIZE = 16 * sizeof(FILE_NOTIFY_INFORMATION);

@@ -13,6 +13,7 @@ option(BUILD_OPENGL3_DEMOS OFF)
 option(BUILD_UNIT_TESTS OFF)
 add_subdirectory(lib/bullet3)
 
+option(DJINN_DIST OFF)
 
 if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3 /WX")
@@ -59,6 +60,9 @@ file(GLOB PROJECT_CONFIGS CMakeLists.txt
 add_definitions(-DGLFW_INCLUDE_NONE
                 -DPROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\"
                 -D_CRT_SECURE_NO_WARNINGS)
+if(DJINN_DIST)
+        add_definitions(-DDJINN_DIST)
+endif()
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${PROJECT_CONFIGS} ${VENDORS_SOURCES} ${HATS_SOURCES} )
 target_link_libraries(${PROJECT_NAME} glfw
                       ${GLFW_LIBRARIES} ${GLAD_LIBRARIES}

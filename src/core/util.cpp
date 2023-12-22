@@ -15,7 +15,7 @@ namespace djinn::u
 		std::ifstream test(fp);
 		if (!test.is_open())
 		{
-			ASSERT(false);
+			ASSERT(false)
 			return nullptr;
 		}
 		test.close();
@@ -24,7 +24,7 @@ namespace djinn::u
 		int w = -1, h = -1, c = -1;
 		stbi_uc* const tex_data = stbi_load(fp.c_str(), &w, &h, &c, 4);
 		ASSERT(tex_data != nullptr)
-		ASSERT(c >= 3);
+		ASSERT(c >= 3)
 		if (out_width)
 			*out_width = w;
 		if (out_height)
@@ -46,7 +46,7 @@ namespace djinn::u
 	std::string read_file(std::string const& afp)
 	{
 		std::ifstream ifs(afp);
-		ASSERT(ifs.is_open());
+		ASSERT(ifs.is_open())
 		std::ostringstream sstr;
 		sstr << ifs.rdbuf();
 		return sstr.str();

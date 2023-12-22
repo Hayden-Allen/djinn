@@ -24,7 +24,7 @@ namespace djinn
 	}
 	id_t cubemap_manager::load(std::string const& fp)
 	{
-		ASSERT(false);
+		ASSERT(false)
 		return 0;
 	}
 	id_t cubemap_manager::load(std::array<std::string, 6> const& fps, texture_options const& options)
@@ -88,8 +88,7 @@ namespace djinn
 					pixels[i] = m_afp2pixels.at(existing_afp);
 			}
 			sptr<cubemap_rgba_u8> tex = get(id);
-			if (new_width != tex->get_width() || new_height != tex->get_height())
-				ASSERT(false)
+			ASSERT(new_width == tex->get_width() && new_height == tex->get_height())
 			tex->init(GL_RGBA, new_width, new_height, pixels.data(), m_id2options.at(id));
 		}
 	}

@@ -32,7 +32,9 @@ export default class TestClass extends Entity {
   private idTexture: number = -1
   private skybox: Skybox | undefined
   private camera: ICamera
-  private color: number[] = [0, 0, 0, 1]
+  private color: number[] = [0, 1, 0, 0.5]
+  private meshPos: number[] = [0, 0, 0]
+  private meshVel: number[] = [1, 1, 1]
 
   __init() {
     this.idMesh = Asset.Mesh.create(4, [2, 2], 6)
@@ -91,40 +93,58 @@ export default class TestClass extends Entity {
     //     },
     //   }
     // )
-    this.skybox = Skybox.loadDirectory(
-      {
-        vertexShader: "mingl/sky.vert",
-        fragmentShader: "mingl/sky.frag",
-      },
-      {
-        dir: "dir",
-        textureOptions: {
-          minFilter: GL_NEAREST,
-          magFilter: GL_NEAREST,
-        },
-      }
-    )
+    // this.skybox = Skybox.loadDirectory(
+    //   {
+    //     vertexShader: "mingl/sky.vert",
+    //     fragmentShader: "mingl/sky.frag",
+    //   },
+    //   {
+    //     dir: "dir",
+    //     textureOptions: {
+    //       minFilter: GL_NEAREST,
+    //       magFilter: GL_NEAREST,
+    //     },
+    //   }
+    // )
     this.camera = Scene.Camera.load("lib/Camera.js")
+    for (var i = 0; i < 3; i++) {
+      this.meshPos[i] = Math.random() * 2 - 1
+      this.meshVel[i] = Math.random() * 2 - 1
+    }
   }
   __destroy() {
-    this.skybox!.destroy()
+    // this.skybox!.destroy()
     Asset.Mesh.destroy(this.idMesh)
     Asset.Shader.destroy(this.idShader)
     Asset.Texture.destroy(this.idTexture)
   }
   __main(dt: number) {
-    Scene.requestImgui(this.id)
+    for (var i = 0; i < this.meshPos.length; i++) {
+      const newPos = this.meshPos[i] + dt * this.meshVel[i]
+      if (newPos < -1) {
+        this.meshPos[i] = -1
+        this.meshVel[i] *= -1
+      } else if (newPos > 1) {
+        this.meshPos[i] = 1
+        this.meshVel[i] *= -1
+      } else {
+        this.meshPos[i] = newPos
+      }
+    }
+    // Scene.requestImgui(this.id)
   }
   __draw() {
-    this.skybox!.draw(this.camera!.getId())
+    // this.skybox!.draw(this.camera!.getId())
     Render.bindTexture(this.idTexture, 0)
     Asset.Shader.setCameraUniforms(this.idShader, this.camera!.getId())
     Asset.Shader.setUniforms(this.idShader, {
       u_color: this.color,
+      u_pos: this.meshPos,
     })
     Render.draw(this.idMesh, this.idShader)
   }
   __ui() {
+    if (this.id != 1) return
     Nanovg.fillStyle(1, 1, 1)
     Nanovg.fillRect(0, 0, 300, 300)
     Nanovg.fillStyle(this.color[0], this.color[1], this.color[2])

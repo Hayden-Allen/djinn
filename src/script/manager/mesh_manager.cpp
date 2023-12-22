@@ -17,7 +17,7 @@ namespace djinn
 	}
 	id_t mesh_manager::load(std::string const& fp)
 	{
-		ASSERT(false);
+		ASSERT(false)
 		return create(0, {}, 0);
 	}
 	void mesh_manager::destroy(id_t const id)
@@ -26,11 +26,11 @@ namespace djinn
 	}
 	void mesh_manager::reload(std::string const& fp)
 	{
-		ASSERT(false);
+		ASSERT(false)
 	}
 	void mesh_manager::rename(std::string const& old_fp, std::string const& new_fp)
 	{
-		ASSERT(false);
+		ASSERT(false)
 	}
 	void mesh_manager::update(id_t const id, std::vector<f32> const& vertices, std::vector<u32> const& indices)
 	{

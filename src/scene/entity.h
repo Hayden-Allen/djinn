@@ -48,7 +48,8 @@ namespace djinn
 		void add_scale_local(f32 const x, f32 const y, f32 const z);
 	protected:
 		JSContext* m_ctx;
-		JSValue m_this = JS_UNDEFINED;
+		JSValue m_this = JS_UNDEFINED, m_global = JS_UNDEFINED, m_exports = JS_UNDEFINED, m_default = JS_UNDEFINED, m_proto = JS_UNDEFINED;
+		std::unordered_map<std::string, JSValue> m_function_cache;
 		tmat<space::OBJECT, space::PARENT> m_transform;
 		f32 m_pos[3] = { 0 }, m_rot[3] = { 0 }, m_scale[3] = { 1, 1, 1 };
 		id_t m_id;
@@ -62,5 +63,6 @@ namespace djinn
 		void call_destroy();
 		void call_main(f32 const dt);
 		void check_exception(JSValue const val, std::string const& msg) const;
+		void clear_cache();
 	};
 } // namespace djinn

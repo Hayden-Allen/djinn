@@ -42,11 +42,10 @@ using namespace mgl;
 
 
 
-#ifdef _DEBUG
-#	define ASSERT(x) \
-		if (!(x)) __debugbreak();
-#else
+#ifdef DJINN_DIST
 #	define ASSERT(x)
+#else
+#	define ASSERT(x) if (!(x)) __debugbreak();
 #endif
 #define MIN_VALUE_T(T) std::numeric_limits<T>::lowest()
 #define MIN_VALUE(x)   MIN_VALUE_T(decltype(x))

@@ -1,18 +1,17 @@
 ﻿{
 	"configurations": [
 		{
-			"name": "x64-Debug",
+			"name": "Debug",
 			"generator": "Ninja",
 			"configurationType": "Debug",
 			"inheritEnvironments": [ "msvc_x64_x64" ],
 			"buildRoot": "${projectDir}\\out\\build\\${name}",
 			"installRoot": "${projectDir}\\out\\install\\${name}",
 			"cmakeCommandArgs": "",
-			"buildCommandArgs": "",
 			"ctestCommandArgs": ""
 		},
 		{
-			"name": "x64-Release",
+			"name": "Release",
 			"generator": "Ninja",
 			"configurationType": "RelWithDebInfo",
 			"buildRoot": "${projectDir}\\out\\build\\${name}",
@@ -20,8 +19,25 @@
 			"cmakeCommandArgs": "",
 			"buildCommandArgs": "",
 			"ctestCommandArgs": "",
+			"inheritEnvironments": [ "msvc_x64_x64" ]
+		},
+		{
+			"name": "Dist",
+			"generator": "Ninja",
+			"configurationType": "Release",
+			"buildRoot": "${projectDir}\\out\\build\\${name}",
+			"installRoot": "${projectDir}\\out\\install\\${name}",
+			"cmakeCommandArgs": "",
+			"buildCommandArgs": "",
+			"ctestCommandArgs": "",
 			"inheritEnvironments": [ "msvc_x64_x64" ],
-			"variables": []
+			"variables": [
+				{
+					"name": "DJINN_DIST",
+					"value": "True",
+					"type": "BOOL"
+				}
+			]
 		}
 	]
 }

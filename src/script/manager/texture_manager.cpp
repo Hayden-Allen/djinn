@@ -19,7 +19,7 @@ namespace djinn
 	}
 	id_t texture_manager::load(std::string const& fp)
 	{
-		ASSERT(false);
+		ASSERT(false)
 		return 0;
 	}
 	id_t texture_manager::load(std::string const& fp, texture_options const& options)
