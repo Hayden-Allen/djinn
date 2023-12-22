@@ -34,8 +34,7 @@ namespace djinn
 			{
 				s32 new_width, new_height;
 				pixels[i] = load_one(fps[i], &new_width, &new_height);
-				if (width != -1 && (new_width != width || new_height != height))
-					ASSERT(false);
+				ASSERT(width == -1 || (new_width == width && new_height == height))
 				width = new_width;
 				height = new_height;
 			}

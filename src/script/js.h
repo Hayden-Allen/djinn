@@ -53,8 +53,8 @@ namespace djinn::js
 		CPP extract(JSContext* const ctx, JSValue const& val, FN const& fn)
 		{
 			JS out{};
-			if (fn(ctx, &out, val))
-				ASSERT(false);
+			auto const ret = fn(ctx, &out, val);
+			ASSERT(!ret)
 			return (CPP)out;
 		}
 	} // namespace helper

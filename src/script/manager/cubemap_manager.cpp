@@ -89,7 +89,7 @@ namespace djinn
 			}
 			sptr<cubemap_rgba_u8> tex = get(id);
 			if (new_width != tex->get_width() || new_height != tex->get_height())
-				ASSERT(false);
+				ASSERT(false)
 			tex->init(GL_RGBA, new_width, new_height, pixels.data(), m_id2options.at(id));
 		}
 	}

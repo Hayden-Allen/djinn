@@ -23,6 +23,7 @@ namespace djinn::u
 		stbi_set_flip_vertically_on_load(true);
 		int w = -1, h = -1, c = -1;
 		stbi_uc* const tex_data = stbi_load(fp.c_str(), &w, &h, &c, 4);
+		ASSERT(tex_data != nullptr)
 		ASSERT(c >= 3);
 		if (out_width)
 			*out_width = w;

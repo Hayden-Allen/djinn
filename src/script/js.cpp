@@ -10,8 +10,8 @@ namespace djinn::js
 	s64 extract_array_length(JSContext* const ctx, JSValue const& val)
 	{
 		s64 length;
-		if (JS_GetPropertyLength(ctx, &length, val))
-			ASSERT(false);
+		s32 const ret = JS_GetPropertyLength(ctx, &length, val);
+		ASSERT(!ret)
 		return length;
 	}
 	std::vector<u8> extract_u8_array(JSContext* const ctx, JSValue const& val)
