@@ -12,4 +12,5 @@ export default class Entity implements _IEntity {
   __main(dt: number) {}
   __draw() {}
   __ui() {}
+  __imgui() {}
 }

@@ -58,11 +58,17 @@ namespace djinn::js::scene_service
 	}
 
 
+	JSValue request_imgui(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		get_entity(id)->request_imgui();
+		return JS_UNDEFINED;
+	}
 	JSValue load_entity(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
 		std::string const& fp = js::extract_string(ctx, argv[0]);
-		// return js::create_id(ctx, ::djinn::scene_service::get_entity_manager()->load(fp));
 		id_t const id = ::djinn::scene_service::get_entity_manager()->load(fp);
 		sptr<entity> e = ::djinn::scene_service::get_entity_manager()->get(id);
 		return JS_DupValue(ctx, e->get_js_value());
@@ -317,6 +323,7 @@ namespace djinn
 	}
 	void scene_service::register_functions(JSContext* const ctx)
 	{
+		super::register_function(ctx, "requestImgui", 1, js::scene_service::request_imgui);
 		super::register_function(ctx, "load", 1, js::scene_service::load_entity);
 		super::register_function(ctx, "destroy", 1, js::scene_service::destroy_entity);
 		super::register_function(ctx, "Camera", "load", 1, js::scene_service::load_camera);
@@ -385,7 +392,7 @@ namespace djinn
 	{
 		return s_instance->m_runtime;
 	}
-	void scene_service::update_all(f32 const dt)
+	void scene_service::update(f32 const dt)
 	{
 		s_instance->m_entity_manager.for_each([&](sptr<entity> e, id_t const id)
 			{
@@ -396,7 +403,7 @@ namespace djinn
 				e->update(dt);
 			});
 	}
-	void scene_service::draw_all()
+	void scene_service::draw()
 	{
 		s_instance->m_entity_manager.for_each([](sptr<entity> e, id_t const id)
 			{
@@ -407,7 +414,7 @@ namespace djinn
 				e->draw();
 			});
 	}
-	void scene_service::draw_ui_all()
+	void scene_service::draw_ui()
 	{
 		s_instance->m_entity_manager.for_each([](sptr<entity> e, id_t const id)
 			{
@@ -416,6 +423,17 @@ namespace djinn
 		s_instance->m_camera_entity_manager.for_each([](sptr<camera_entity> e, id_t const id)
 			{
 				e->draw_ui();
+			});
+	}
+	void scene_service::draw_imgui()
+	{
+		s_instance->m_entity_manager.for_each([](sptr<entity> e, id_t const id)
+			{
+				e->draw_imgui();
+			});
+		s_instance->m_camera_entity_manager.for_each([](sptr<camera_entity> e, id_t const id)
+			{
+				e->draw_imgui();
 			});
 	}
 

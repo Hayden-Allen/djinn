@@ -18,9 +18,10 @@ namespace djinn
 		static entity_manager* get_entity_manager();
 		static camera_entity_manager* get_camera_entity_manager();
 		static JSRuntime* get_runtime();
-		static void update_all(f32 const dt);
-		static void draw_all();
-		static void draw_ui_all();
+		static void update(f32 const dt);
+		static void draw();
+		static void draw_ui();
+		static void draw_imgui();
 	private:
 		JSRuntime* const m_runtime;
 		entity_manager m_entity_manager;

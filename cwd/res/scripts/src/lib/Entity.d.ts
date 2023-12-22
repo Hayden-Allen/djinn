@@ -7,6 +7,7 @@ declare interface _IEntity {
   __main(dt: number): void
   __draw(): void
   __ui(): void
+  __imgui(): void
 }
 
 type IEntity = _IEntity | undefined

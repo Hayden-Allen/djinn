@@ -17,6 +17,8 @@ namespace djinn
 		virtual void update(f32 const dt);
 		void draw();
 		void draw_ui();
+		void draw_imgui();
+		void request_imgui();
 		JSValue get_js_value();
 		tmat<space::OBJECT, space::PARENT> const& get_transform() const;
 		tmat<space::OBJECT, space::WORLD> get_world_transform() const;
@@ -50,7 +52,7 @@ namespace djinn
 		tmat<space::OBJECT, space::PARENT> m_transform;
 		f32 m_pos[3] = { 0 }, m_rot[3] = { 0 }, m_scale[3] = { 1, 1, 1 };
 		id_t m_id;
-		bool m_script_loaded = false;
+		bool m_script_loaded = false, m_request_imgui = false;
 	protected:
 		void inject_script(std::string const& fp, std::string const& src);
 		void call_reserved(std::string const& name, s32 const argc, JSValue* const argv);
@@ -59,6 +61,6 @@ namespace djinn
 		void call_init();
 		void call_destroy();
 		void call_main(f32 const dt);
-		void check_exception(JSValue const val, std::string const& msg);
+		void check_exception(JSValue const val, std::string const& msg) const;
 	};
 } // namespace djinn

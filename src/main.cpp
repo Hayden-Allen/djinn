@@ -11,6 +11,7 @@
 #include "script/service/util_service.h"
 #include "script/service/scene_service.h"
 #include "script/service/input_service.h"
+#include "script/service/imgui_service.h"
 #include "core/constants.h"
 #include "script/js.h"
 
@@ -25,6 +26,7 @@ int main(int argc, char* argv[])
 	util_service::init();
 	scene_service::init();
 	input_service::init(c);
+	imgui_service::init(c);
 
 	shader_watcher shader_watcher(asset_service::get_shader_manager());
 	texture_watcher texture_watcher(asset_service::get_texture_manager());
@@ -49,11 +51,14 @@ int main(int argc, char* argv[])
 		sprintf_s(buf, "djinn - %dfps", (s32)c->avg_fps);
 		glfwSetWindowTitle(c->window, buf);
 
-		scene_service::update_all(c->time.delta);
+		scene_service::update(c->time.delta);
 		nanovg_service::begin_frame(c->get_width(), c->get_height());
-		scene_service::draw_all();
-		scene_service::draw_ui_all();
+		scene_service::draw();
+		scene_service::draw_ui();
 		nanovg_service::end_frame();
+		imgui_service::begin_frame();
+		scene_service::draw_imgui();
+		imgui_service::end_frame();
 
 		glfwSwapBuffers(c->window);
 	}
@@ -64,6 +69,7 @@ int main(int argc, char* argv[])
 	scene_service::shutdown();
 	input_service::shutdown();
 	asset_service::shutdown();
+	imgui_service::shutdown();
 	c.free();
 	return 0;
 }

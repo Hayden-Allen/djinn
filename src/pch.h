@@ -36,6 +36,9 @@ using namespace mgl;
 #include "quickjs.h"
 #include "stb_image.h"
 #include "nanovg.h"
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
 
 
 

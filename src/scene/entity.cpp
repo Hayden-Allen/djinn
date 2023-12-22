@@ -6,6 +6,7 @@
 #include "script/service/util_service.h"
 #include "script/service/scene_service.h"
 #include "script/service/input_service.h"
+#include "script/service/imgui_service.h"
 #include "script/js.h"
 
 namespace djinn
@@ -21,6 +22,7 @@ namespace djinn
 		util_service::register_functions(m_ctx);
 		scene_service::register_functions(m_ctx);
 		input_service::register_functions(m_ctx);
+		imgui_service::register_functions(m_ctx);
 	}
 	entity::~entity()
 	{
@@ -37,6 +39,7 @@ namespace djinn
 
 	void entity::update(f32 const dt)
 	{
+		m_request_imgui = false;
 		call_main(dt);
 		tmat<space::OBJECT, space::PARENT> const& trans = tmat_util::translation<space::OBJECT, space::PARENT>(point<space::PARENT>(m_pos[0], m_pos[1], m_pos[2]));
 		tmat<space::OBJECT, space::OBJECT> const& rot = tmat_util::rotation_yxz<space::OBJECT>(m_rot[0], m_rot[1], m_rot[2]);
@@ -51,10 +54,29 @@ namespace djinn
 	{
 		call_reserved("__ui", 0, nullptr);
 	}
+	void entity::draw_imgui()
+	{
+		if (!m_request_imgui)
+			return;
+		char buf[128] = { 0 };
+		sprintf_s(buf, "Entity_%u", m_id);
+		if (ImGui::Begin(buf))
+		{
+			call_reserved("__imgui", 0, nullptr);
+		}
+		ImGui::End();
+	}
+	void entity::request_imgui()
+	{
+		m_request_imgui = true;
+	}
 	JSValue entity::get_js_value()
 	{
 		return m_this;
 	}
+
+
+
 	f32 const* entity::get_pos() const
 	{
 		return m_pos;
@@ -246,7 +268,7 @@ namespace djinn
 		call_reserved("__main", 1, &dtval);
 		JS_FreeValue(m_ctx, dtval);
 	}
-	void entity::check_exception(JSValue const val, std::string const& msg)
+	void entity::check_exception(JSValue const val, std::string const& msg) const
 	{
 		if (JS_IsException(val))
 		{

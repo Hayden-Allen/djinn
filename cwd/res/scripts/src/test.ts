@@ -3,7 +3,7 @@ import type { ICamera } from "./lib/Camera.d"
 import Entity from "./lib/Entity"
 import Skybox from "./lib/Skybox"
 
-const { Asset, Render, Nanovg, Scene, Input } = djinn
+const { Asset, Render, Nanovg, Scene, ImGui } = djinn
 
 function genTexture(
   w: number,
@@ -32,6 +32,7 @@ export default class TestClass extends Entity {
   private idTexture: number = -1
   private skybox: Skybox | undefined
   private camera: ICamera
+  private color: number[] = [0, 0, 0, 1]
 
   __init() {
     this.idMesh = Asset.Mesh.create(4, [2, 2], 6)
@@ -111,25 +112,33 @@ export default class TestClass extends Entity {
     Asset.Shader.destroy(this.idShader)
     Asset.Texture.destroy(this.idTexture)
   }
-  __main(dt: number) {}
+  __main(dt: number) {
+    Scene.requestImgui(this.id)
+  }
   __draw() {
     this.skybox!.draw(this.camera!.getId())
     Render.bindTexture(this.idTexture, 0)
     Asset.Shader.setCameraUniforms(this.idShader, this.camera!.getId())
+    Asset.Shader.setUniforms(this.idShader, {
+      u_color: this.color,
+    })
     Render.draw(this.idMesh, this.idShader)
   }
   __ui() {
     Nanovg.fillStyle(1, 1, 1)
     Nanovg.fillRect(0, 0, 300, 300)
-    Nanovg.fillStyle(0, 1, 0, 1)
+    Nanovg.fillStyle(this.color[0], this.color[1], this.color[2])
     Nanovg.fillRect(0, 0, 50, 50)
-    Nanovg.strokeStyle(1, 0, 1)
+    Nanovg.strokeStyle(1 - this.color[0], 1 - this.color[1], 1 - this.color[2])
     Nanovg.strokeRect(50, 50, 50, 50)
     Nanovg.strokeLine(50, 50, 100, 100)
     Nanovg.strokeCircle(150, 150, 50)
     Nanovg.fillCircle(200, 150, 50)
-    Nanovg.fillStyle(0, 0, 0)
     Nanovg.setFont("sans", 24)
     Nanovg.drawText(100, 250, "TEST")
+  }
+  __imgui() {
+    ImGui.text("I am a text box!")
+    this.color = ImGui.colorPicker4("color", this.color)
   }
 }
