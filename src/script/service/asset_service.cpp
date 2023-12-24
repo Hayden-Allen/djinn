@@ -31,10 +31,6 @@ namespace djinn::js::asset_service
 
 
 
-	/*s32 init(JSContext* const ctx, JSModuleDef* const m)
-	{
-		return JS_SetModuleExportList(ctx, m, s_fns, s_FN_COUNT);
-	}*/
 	JSValue create_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 3);

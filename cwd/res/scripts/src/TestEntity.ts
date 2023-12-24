@@ -1,17 +1,18 @@
 import "./lib/globals.d"
 import type { ICamera } from "./lib/Camera.d"
 import Entity from "./lib/Entity"
+import Color from "./lib/Color"
 
 const { Asset, Render } = djinn
 
 export default class TestEntity extends Entity {
-  private idMesh: number = -1
-  private idShader: number = -1
-  private idTexture: number = -1
+  private idMesh: number = 0
+  private idShader: number = 0
+  private idTexture: number = 0
   private meshPos: number[] = [0, 0, 0]
   private meshVel: number[] = [1, 1, 1]
   private camera: ICamera
-  private color: number[] | undefined
+  private color: Color | undefined
 
   __init() {
     this.idMesh = Asset.Mesh.create(4, [2, 2], 6)
@@ -56,9 +57,13 @@ export default class TestEntity extends Entity {
     Render.bindTexture(this.idTexture, 0)
     Asset.Shader.setCameraUniforms(this.idShader, this.camera!.getId())
     Asset.Shader.setUniforms(this.idShader, {
-      u_color: this.color,
+      u_color: this.color!.toArray(),
       u_pos: this.meshPos,
     })
     Render.draw(this.idMesh, this.idShader)
+  }
+  bind(cam: ICamera, color: Color) {
+    this.camera = cam
+    this.color = color
   }
 }

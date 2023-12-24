@@ -4,7 +4,7 @@
 
 namespace djinn
 {
-	class mesh_manager final : public manager<static_render_object>
+	class mesh_manager final : public ref_counted_manager<static_render_object>
 	{
 	public:
 		mesh_manager();

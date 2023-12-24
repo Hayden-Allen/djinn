@@ -4,7 +4,7 @@
 
 namespace djinn
 {
-	class texture_manager final : public manager<texture2d_rgba_u8>
+	class texture_manager final : public ref_counted_manager<texture2d_rgba_u8>
 	{
 	public:
 		texture_manager();
@@ -22,5 +22,7 @@ namespace djinn
 	private:
 		haul::bdumap<id_t, std::string> m_id2afp;
 		std::unordered_map<id_t, texture_options> m_id2options;
+	private:
+		id_t find_existing(std::string const& afp, texture_options const& options);
 	};
 } // namespace djinn

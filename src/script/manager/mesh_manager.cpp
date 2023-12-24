@@ -5,7 +5,7 @@
 namespace djinn
 {
 	mesh_manager::mesh_manager() :
-		manager(c::base_dir::mesh)
+		ref_counted_manager(c::base_dir::mesh)
 	{}
 
 
@@ -22,7 +22,7 @@ namespace djinn
 	}
 	void mesh_manager::destroy(id_t const id)
 	{
-		erase(id);
+		try_erase(id);
 	}
 	void mesh_manager::reload(std::string const& fp)
 	{

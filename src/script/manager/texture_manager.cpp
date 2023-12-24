@@ -5,7 +5,7 @@
 namespace djinn
 {
 	texture_manager::texture_manager() :
-		manager(c::base_dir::texture)
+		ref_counted_manager(c::base_dir::texture)
 	{}
 
 
@@ -25,6 +25,14 @@ namespace djinn
 	id_t texture_manager::load(std::string const& fp, texture_options const& options)
 	{
 		std::string const& afp = to_absolute(fp);
+		id_t const existing_id = find_existing(afp, options);
+		// the texture at the given filepath has already been created (with given options)
+		if (existing_id != 0)
+		{
+			m_id2ref[existing_id]++;
+			return existing_id;
+		}
+		// no such texture exists, create it
 		texture2d_rgba_u8* const tex = u::load_texture2d_rgba_u8(afp, options);
 		id_t const id = insert(tex);
 		m_id2afp.insert(id, afp);
@@ -33,9 +41,11 @@ namespace djinn
 	}
 	void texture_manager::destroy(id_t const id)
 	{
-		m_id2afp.erase_key(id);
-		m_id2options.erase(id);
-		erase(id);
+		if (try_erase(id))
+		{
+			m_id2afp.erase_key(id);
+			m_id2options.erase(id);
+		}
 	}
 	void texture_manager::reload(std::string const& fp)
 	{
@@ -74,5 +84,21 @@ namespace djinn
 	{
 		sptr<texture2d_rgba_u8> tex = get(id);
 		tex->bind(slot);
+	}
+
+
+
+	id_t texture_manager::find_existing(std::string const& afp, texture_options const& options)
+	{
+		if (!m_id2afp.contains_val(afp))
+			return 0;
+		std::unordered_set<id_t> const& ids = m_id2afp.get_key(afp);
+		for (id_t const id : ids)
+		{
+			texture_options const& opts = m_id2options.at(id);
+			if (options == opts)
+				return id;
+		}
+		return 0;
 	}
 } // namespace djinn

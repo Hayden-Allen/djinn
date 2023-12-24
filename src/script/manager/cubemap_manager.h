@@ -33,7 +33,18 @@ namespace djinn
 			for (s32 i = 0; i < 6; i++)
 			{
 				s32 new_width, new_height;
-				pixels[i] = load_one(fps[i], &new_width, &new_height);
+				std::string const& afp = to_absolute(fps[i]);
+				auto const& it = m_afp2pixels.find(afp);
+				// if we've already loaded this image don't load it again
+				if (it != m_afp2pixels.end())
+				{
+					pixels[i] = it->second;
+				}
+				else
+				{
+					pixels[i] = load_one(fps[i], &new_width, &new_height);
+				}
+
 				ASSERT(width == -1 || (new_width == width && new_height == height))
 				width = new_width;
 				height = new_height;
@@ -47,6 +58,7 @@ namespace djinn
 			std::string const& afp = to_absolute(fp);
 			u8* const pixels = u::load_texture2d_rgba_u8_raw(afp, out_width, out_height);
 			auto const& it = m_afp2pixels.find(afp);
+			// if we've already loaded this image, get rid of the old data
 			if (it != m_afp2pixels.end())
 			{
 				stbi_image_free(it->second);

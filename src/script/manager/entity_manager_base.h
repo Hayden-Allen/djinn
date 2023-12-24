@@ -35,8 +35,10 @@ namespace djinn
 		}
 		void destroy(id_t const id) override final
 		{
-			this->erase(id);
-			m_id2afp.erase_key(id);
+			if (this->try_erase(id))
+			{
+				m_id2afp.erase_key(id);
+			}
 		}
 	protected:
 		JSRuntime* const m_runtime;

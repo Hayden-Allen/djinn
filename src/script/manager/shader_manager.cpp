@@ -7,7 +7,7 @@
 namespace djinn
 {
 	shader_manager::shader_manager() :
-		manager(c::base_dir::shader)
+		ref_counted_manager(c::base_dir::shader)
 	{}
 
 
@@ -26,6 +26,15 @@ namespace djinn
 	{
 		std::string const& vert_afp = to_absolute(vert_fp);
 		std::string const& frag_afp = to_absolute(frag_fp);
+		// if a shader using both vert_afp and frag_afp already exists, return its id
+		id_t const existing_id = find_existing(vert_afp, frag_afp);
+		if (existing_id != 0)
+		{
+			m_id2ref[existing_id]++;
+			return existing_id;
+		}
+
+		// no such shader exists yet, create it
 		shaders* const s = new shaders(vert_afp, frag_afp);
 		id_t const id = insert(s);
 		m_afp2ids[vert_afp].insert(id);
@@ -35,27 +44,28 @@ namespace djinn
 	}
 	void shader_manager::destroy(id_t const id)
 	{
-		// if this shader is loaded from files (made with `load` rather than `create`)
-		auto const& it = m_id2afps.find(id);
-		if (it != m_id2afps.end())
+		if (try_erase(id))
 		{
-			shader_src const& fps = it->second;
+			// if this shader is loaded from files (made with `load` rather than `create`)
+			auto const& it = m_id2afps.find(id);
+			if (it == m_id2afps.end())
+				return;
+			shader_afps const& afps = it->second;
 			// remove shader from its vert fp's set, and delete the set if it is now empty
-			auto& vert_ids = m_afp2ids.at(fps.vert);
+			auto& vert_ids = m_afp2ids.at(afps.vert_afp);
 			vert_ids.erase(id);
 			if (!vert_ids.size())
-				m_afp2ids.erase(fps.vert);
+				m_afp2ids.erase(afps.vert_afp);
 
 			// remove shader from its frag fp's set, and delete the set if it is now empty
-			auto& frag_ids = m_afp2ids.at(fps.frag);
+			auto& frag_ids = m_afp2ids.at(afps.frag_afp);
 			frag_ids.erase(id);
 			if (!frag_ids.size())
-				m_afp2ids.erase(fps.frag);
+				m_afp2ids.erase(afps.frag_afp);
 
 			// remove shader from id map
 			m_id2afps.erase(id);
 		}
-		erase(id);
 	}
 	void shader_manager::reload(std::string const& fp)
 	{
@@ -66,8 +76,8 @@ namespace djinn
 		auto const& ids = m_afp2ids.at(afp);
 		for (id_t const id : ids)
 		{
-			shader_src const& fps = m_id2afps.at(id);
-			get(id)->init(fps.vert, fps.frag);
+			shader_afps const& afps = m_id2afps.at(id);
+			get(id)->init(afps.vert_afp, afps.frag_afp);
 		}
 	}
 	void shader_manager::rename(std::string const& old_fp, std::string const& new_fp)
@@ -84,11 +94,11 @@ namespace djinn
 		// update fps for all ids using this shader
 		for (id_t const id : ids)
 		{
-			shader_src& fps = m_id2afps.at(id);
-			if (old_afp == fps.vert)
-				fps.vert = new_afp;
+			shader_afps& afps = m_id2afps.at(id);
+			if (old_afp == afps.vert_afp)
+				afps.vert_afp = new_afp;
 			else
-				fps.frag = new_afp;
+				afps.frag_afp = new_afp;
 		}
 	}
 	void shader_manager::set_uniform(JSContext* const ctx, id_t const id, std::string const& name, JSValue const& js_val)
@@ -138,5 +148,24 @@ namespace djinn
 		sptr<shaders> shaders = get(id);
 		if (shaders->has_uniform(name))
 			shaders->uniform_mat4(name, mat);
+	}
+
+
+
+	id_t shader_manager::find_existing(std::string const& vert_afp, std::string const& frag_afp)
+	{
+		auto const& itv = m_afp2ids.find(vert_afp);
+		auto const& itf = m_afp2ids.find(frag_afp);
+		// don't have at least one of the two files
+		if (itv == m_afp2ids.end() || itf == m_afp2ids.end())
+			return 0;
+		std::unordered_set<id_t> const& ids = m_afp2ids.at(vert_afp);
+		// check if any shaders that use vert_afp also use frag_afp
+		for (id_t const id : ids)
+		{
+			if (m_id2afps.at(id).frag_afp == frag_afp)
+				return id;
+		}
+		return 0;
 	}
 } // namespace djinn

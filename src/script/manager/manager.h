@@ -27,7 +27,9 @@ namespace djinn
 		virtual ~manager()
 		{
 			for (auto& pair : m_objects)
+			{
 				pair.second.free();
+			}
 		}
 	public:
 		virtual id_t load(std::string const& fp) = 0;
@@ -56,8 +58,6 @@ namespace djinn
 				fn(sptr<T>(pair.second), pair.first);
 		}
 	protected:
-		static inline constexpr u32 s_batch_size = 512;
-	protected:
 		std::string m_base_dir;
 		std::unordered_map<id_t, optr<T>> m_objects; // map of unique id to actual object (this class owns all the objects)
 	protected:
@@ -65,19 +65,56 @@ namespace djinn
 		{
 			return u::to_absolute(m_base_dir, fp);
 		}
-		id_t insert(T* const t)
+		virtual id_t insert(T* const t)
 		{
 			id_t const id = s_next_id;
 			s_next_id++;
 			m_objects.insert({ id, optr<T>(t) });
 			return id;
 		}
-		void erase(id_t const id)
+		virtual bool try_erase(id_t const id)
 		{
-			ASSERT(m_objects.contains(id))
 			optr<T>& ptr = m_objects.at(id);
 			ptr.free();
 			m_objects.erase(id);
+			return true;
+		}
+	};
+
+
+
+	template<typename T>
+	class ref_counted_manager : public manager<T>
+	{
+	public:
+		ref_counted_manager(std::string const& base_dir) :
+			manager<T>(base_dir)
+		{}
+		DCM(ref_counted_manager);
+		virtual ~ref_counted_manager()
+		{
+			ASSERT(m_id2ref.empty());
+		}
+	protected:
+		std::unordered_map<id_t, u64> m_id2ref; // map unique id to its ref count
+	protected:
+		id_t insert(T* const t) override final
+		{
+			id_t const id = manager<T>::insert(t);
+			m_id2ref.insert({ id, 1 });
+			return id;
+		}
+		bool try_erase(id_t const id) override final
+		{
+			ASSERT(m_id2ref.contains(id));
+			m_id2ref[id]--;
+			if (m_id2ref.at(id) == 0)
+			{
+				manager<T>::try_erase(id);
+				m_id2ref.erase(id);
+				return true;
+			}
+			return false;
 		}
 	};
 } // namespace djinn

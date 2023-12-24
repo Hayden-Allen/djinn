@@ -2,6 +2,8 @@ import "./lib/globals.d"
 import type { ICamera } from "./lib/Camera.d"
 import Entity from "./lib/Entity"
 import Skybox from "./lib/Skybox"
+import TestEntity from "./TestEntity"
+import Color from "./lib/Color"
 
 const { Asset, Render, Nanovg, Scene, ImGui } = djinn
 
@@ -29,51 +31,10 @@ function genTexture(
 export default class MainEntity extends Entity {
   private skybox: Skybox | undefined
   private camera: ICamera
-  private color: number[] = [0, 1, 0, 0.5]
+  private color: Color = new Color(0, 0, 0, 1)
+  private entities: TestEntity[] = []
 
   __init() {
-    // const TW = 32,
-    //   TH = 32
-    // const pixels = []
-    // const R_MASK = [0, 0, 0, 0, 1, 1]
-    // const G_MASK = [0, 0, 1, 1, 0, 0]
-    // const B_MASK = [0, 1, 0, 1, 0, 1]
-    // for (let i = 0; i < 6; i++) {
-    //   pixels[i] = genTexture(TW, TH, R_MASK[i], G_MASK[i], B_MASK[i])
-    // }
-    // this.skybox = Skybox.createGenerated(
-    //   {
-    //     vertexShader: "mingl/sky.vert",
-    //     fragmentShader: "mingl/sky.frag",
-    //   },
-    //   {
-    //     width: TW,
-    //     height: TH,
-    //     pixels,
-    //     textureOptions: {
-    //       minFilter: GL_NEAREST,
-    //       magFilter: GL_NEAREST,
-    //     },
-    //   }
-    // )
-    // this.skybox = Skybox.loadFiles(
-    //   {
-    //     vertexShader: "mingl/sky.vert",
-    //     fragmentShader: "mingl/sky.frag",
-    //   },
-    //   {
-    //     front: "nz.bmp",
-    //     back: "pz.bmp",
-    //     left: "nx.bmp",
-    //     right: "px.bmp",
-    //     top: "py.bmp",
-    //     bottom: "ny.bmp",
-    //     textureOptions: {
-    //       minFilter: GL_NEAREST,
-    //       magFilter: GL_NEAREST,
-    //     },
-    //   }
-    // )
     this.skybox = Skybox.loadDirectory(
       {
         vertexShader: "mingl/sky.vert",
@@ -88,15 +49,27 @@ export default class MainEntity extends Entity {
       }
     )
     this.camera = Scene.Camera.load("lib/Camera.js")
-
-    for (var i = 0; i < 1000; i++) {
-      let e = Scene.load("TestEntity.js")
-      e.color = this.color
-      e.camera = this.camera
-    }
   }
   __destroy() {
     this.skybox!.destroy()
+  }
+  __load() {
+    this.color.set(0, 1, 1, 0.5)
+    for (var i = 0; i < 200; i++) {
+      let e = Scene.load("TestEntity.js")
+      e.bind(this.camera, this.color)
+      this.entities.push(e)
+    }
+    const idTexture = Asset.Texture.load("test.bmp", {
+      minFilter: GL_NEAREST,
+      magFilter: GL_LINEAR,
+    })
+    Asset.Texture.destroy(idTexture)
+  }
+  __unload() {
+    for (var i = 0; i < this.entities.length; i++)
+      Scene.destroy(this.entities[i].getId())
+    this.entities = []
   }
   __main(dt: number) {
     Scene.requestImgui(this.id)
@@ -107,9 +80,9 @@ export default class MainEntity extends Entity {
   __ui() {
     Nanovg.fillStyle(1, 1, 1)
     Nanovg.fillRect(0, 0, 300, 300)
-    Nanovg.fillStyle(this.color[0], this.color[1], this.color[2])
+    Nanovg.fillStyle(this.color.r, this.color.g, this.color.b)
     Nanovg.fillRect(0, 0, 50, 50)
-    Nanovg.strokeStyle(1 - this.color[0], 1 - this.color[1], 1 - this.color[2])
+    Nanovg.strokeStyle(1 - this.color.r, 1 - this.color.g, 1 - this.color.b)
     Nanovg.strokeRect(50, 50, 50, 50)
     Nanovg.strokeLine(50, 50, 100, 100)
     Nanovg.strokeCircle(150, 150, 50)
@@ -119,6 +92,6 @@ export default class MainEntity extends Entity {
   }
   __imgui() {
     ImGui.text("I am a text box!")
-    this.color = ImGui.colorPicker4("color", this.color)
+    this.color.fromArray(ImGui.colorPicker4("color", this.color.toArray()))
   }
 }

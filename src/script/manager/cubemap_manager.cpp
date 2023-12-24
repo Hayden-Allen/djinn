@@ -46,9 +46,10 @@ namespace djinn
 	}
 	void cubemap_manager::destroy(id_t const id)
 	{
-		auto const& it = m_id2afps.find(id);
-		if (it != m_id2afps.end())
+		if (try_erase(id))
 		{
+			auto const& it = m_id2afps.find(id);
+			if (it == m_id2afps.end()) return;
 			std::array<std::string, 6> const& afps = it->second;
 			for (std::string const& afp : afps)
 			{
@@ -63,7 +64,6 @@ namespace djinn
 			}
 			m_id2afps.erase(id);
 		}
-		erase(id);
 	}
 	void cubemap_manager::reload(std::string const& fp)
 	{

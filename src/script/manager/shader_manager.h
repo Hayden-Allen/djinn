@@ -4,7 +4,7 @@
 
 namespace djinn
 {
-	class shader_manager final : public manager<shaders>
+	class shader_manager final : public ref_counted_manager<shaders>
 	{
 	public:
 		shader_manager();
@@ -19,12 +19,14 @@ namespace djinn
 		void set_uniform(JSContext* const ctx, id_t const id, std::string const& name, JSValue const& js_val);
 		void set_uniform_mat4(id_t const id, std::string const& name, f32 const* const mat);
 	private:
-		struct shader_src
+		struct shader_afps
 		{
-			std::string vert, frag;
+			std::string vert_afp, frag_afp;
 		};
 	private:
 		std::unordered_map<std::string, std::unordered_set<id_t>> m_afp2ids;
-		std::unordered_map<id_t, shader_src> m_id2afps;
+		std::unordered_map<id_t, shader_afps> m_id2afps;
+	private:
+		id_t find_existing(std::string const& vert_afp, std::string const& frag_afp);
 	};
 } // namespace djinn
