@@ -42,7 +42,7 @@ namespace djinn
 	{
 		m_request_imgui = false;
 		call_main(dt);
-		tmat<space::OBJECT, space::PARENT> const& trans = tmat_util::translation<space::OBJECT, space::PARENT>(point<space::PARENT>(m_pos[0], m_pos[1], m_pos[2]));
+		tmat<space::OBJECT, space::PARENT> const& trans = tmat_util::translation<space::OBJECT, space::PARENT>(m_pos[0], m_pos[1], m_pos[2]);
 		tmat<space::OBJECT, space::OBJECT> const& rot = tmat_util::rotation_yxz<space::OBJECT>(m_rot[0], m_rot[1], m_rot[2]);
 		tmat<space::OBJECT, space::OBJECT> const& scale = tmat_util::scale<space::OBJECT>(m_scale[0], m_scale[1], m_scale[2]);
 		m_transform = trans * rot * scale;
@@ -245,9 +245,8 @@ namespace djinn
 		}
 
 		JSValue const call_ret = JS_Call(m_ctx, fn, m_this, argc, argv);
-		check_exception(call_ret, "entity::call_reserved: " + name);
+		// check_exception(call_ret, "entity::call_reserved: " + name);
 		JS_FreeValue(m_ctx, call_ret);
-
 	}
 	void entity::call_load()
 	{

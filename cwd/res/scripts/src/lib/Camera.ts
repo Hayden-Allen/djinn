@@ -16,7 +16,6 @@ export default class Camera extends Entity implements _ICamera {
     const dz = dt * Input.leftY()
     const mx = dt * Input.rightX()
     const my = dt * Input.rightY()
-
     Scene.addPosLocal(this.id, [dx, 0, dz])
     Scene.addPosY(this.id, dy)
     Scene.addRot(this.id, [-my, -mx, 0])

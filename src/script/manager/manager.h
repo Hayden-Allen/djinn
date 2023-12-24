@@ -56,6 +56,8 @@ namespace djinn
 				fn(sptr<T>(pair.second), pair.first);
 		}
 	protected:
+		static inline constexpr u32 s_batch_size = 512;
+	protected:
 		std::string m_base_dir;
 		std::unordered_map<id_t, optr<T>> m_objects; // map of unique id to actual object (this class owns all the objects)
 	protected:

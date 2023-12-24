@@ -62,7 +62,8 @@ namespace djinn
 			id_t const id = this->insert(t);
 			m_id2afp.insert(id, afp);
 			if (m_afp2src.contains(afp))
-				inject_script(afp);
+				// inject_script(afp);
+				t->inject_script(afp, m_afp2src.at(afp));
 			else
 				load_file(afp);
 			return id;

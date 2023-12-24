@@ -37,11 +37,13 @@ int main(int argc, char* argv[])
 	script_watcher_entity script_watcher_entity(scene_service::get_entity_manager());
 	script_watcher_camera script_watcher_camera(scene_service::get_camera_entity_manager());
 	#endif
-	// for (int i = 0; i < 100; i++)
-	scene_service::get_entity_manager()->load("test.js");
+	scene_service::get_entity_manager()->load("main.js");
 	// script_main();
 
-	while (c->is_running())
+	u32 const NUM_FRAMES = 1000;
+	f32 update_avg = 0, draw_avg = 0, ui_avg = 0, imgui_avg = 0;
+	// while (c->is_running())
+	for (u32 i = 0; i < NUM_FRAMES; i++)
 	{
 		// non blocking wait
 		#ifndef DJINN_DIST
@@ -58,19 +60,36 @@ int main(int argc, char* argv[])
 		sprintf_s(buf, "djinn - %dfps", (s32)c->avg_fps);
 		glfwSetWindowTitle(c->window, buf);
 
+		auto start = std::chrono::high_resolution_clock::now();
 		scene_service::update(c->time.delta);
-		nanovg_service::begin_frame(c->get_width(), c->get_height());
+		update_avg += 1.f * std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() / NUM_FRAMES;
+
+		start = std::chrono::high_resolution_clock::now();
 		scene_service::draw();
+		draw_avg += 1.f * std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() / NUM_FRAMES;
+
+		start = std::chrono::high_resolution_clock::now();
+		nanovg_service::begin_frame(c->get_width(), c->get_height());
 		scene_service::draw_ui();
 		nanovg_service::end_frame();
+		ui_avg += 1.f * std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() / NUM_FRAMES;
+
 		#ifndef DJINN_DIST
+		start = std::chrono::high_resolution_clock::now();
 		imgui_service::begin_frame();
 		scene_service::draw_imgui();
 		imgui_service::end_frame();
+		imgui_avg += 1.f * std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() / NUM_FRAMES;
 		#endif
 
 		glfwSwapBuffers(c->window);
 	}
+	f32 avg_total = 1000 / c->avg_fps;
+	printf("UPDATE: %f (%.2f%%)\n", update_avg, update_avg / avg_total * 100);
+	printf("DRAW: %f (%.2f%%)\n", draw_avg, draw_avg / avg_total * 100);
+	printf("UI: %f (%.2f%%)\n", ui_avg, ui_avg / avg_total * 100);
+	printf("IMGUI: %f (%.2f%%)\n", imgui_avg, imgui_avg / avg_total * 100);
+	printf("TOTAL: %f\n", avg_total);
 
 	render_service::shutdown();
 	nanovg_service::shutdown();
