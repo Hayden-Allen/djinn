@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
 
 #if DJINN_PROFILE
 	u32 const NUM_FRAMES = 1000;
-	f32 update_avg = 0, draw_avg = 0, ui_avg = 0, imgui_avg = 0;
+	f32 input_avg = 0, update_avg = 0, draw_avg = 0, ui_avg = 0, imgui_avg = 0;
 	for (u32 i = 0; i < NUM_FRAMES; i++)
 #else
 	while (c->is_running())
@@ -72,6 +72,8 @@ int main(int argc, char* argv[])
 		char buf[128] = { 0 };
 		sprintf_s(buf, "djinn - %dfps", (s32)c->avg_fps);
 		c->set_title(buf);
+
+		DJINN_TIME(input_service::update(), input_avg, NUM_FRAMES);
 
 		DJINN_TIME(scene_service::update(c->time.delta), update_avg, NUM_FRAMES);
 		DJINN_TIME(scene_service::draw(), draw_avg, NUM_FRAMES);
