@@ -72,7 +72,10 @@ namespace djinn
 	void mesh_instance_batch::draw(sptr<mgl::context> const& ctx, static_render_object const& ro, sptr<shaders> const& shaders)
 	{
 		for (u64 i = 0; i < m_instances.size(); i++)
+		{
+			m_instances[i]->update_transform();
 			update(i, m_instances[i]->get_world_transform());
+		}
 		// bind first block to 0, so all blocks will be bound in [0, n)
 		shaders->uniform_block_binding(c::uniform::instanced_transforms_block, 0);
 		for (u32 i = 0; i < (u32)m_transforms.size(); i++)

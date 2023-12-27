@@ -11,7 +11,7 @@ out vec3 v_tc;
 void main()
 {
 	mat4 transform = u_transforms[0].m[gl_InstanceID];
-	gl_Position = u_vpr * vec4(i_pos, 1);
+	gl_Position = u_vpr * transform * vec4(i_pos, 1);
 	// gl_Position = vec4(i_pos, 1);
 	v_tc = i_pos;
 }

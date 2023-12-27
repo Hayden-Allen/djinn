@@ -10,6 +10,7 @@ namespace djinn
 		DCM(scene_object);
 		virtual ~scene_object();
 	public:
+		void update_transform();
 		tmat<space::OBJECT, space::PARENT> const& get_transform() const;
 		tmat<space::OBJECT, space::WORLD> get_world_transform() const;
 	public:
@@ -41,7 +42,5 @@ namespace djinn
 		f32 m_pos[3] = { 0 }, m_rot[3] = { 0 }, m_scale[3] = { 1, 1, 1 };
 	protected:
 		scene_object(id_t const id);
-	protected:
-		void update_transform();
 	};
 } // namespace djinn

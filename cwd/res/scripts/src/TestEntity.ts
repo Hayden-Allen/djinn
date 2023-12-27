@@ -14,8 +14,8 @@ export default class TestEntity extends Entity {
 
   __init() {
     for (var i = 0; i < 3; i++) {
-      this.meshPos[i] = Math.random() * 2 - 1
-      this.meshVel[i] = Math.random() * 2 - 1
+      this.meshPos[i] = (Math.random() * 2 - 1) * 10
+      this.meshVel[i] = (Math.random() * 2 - 1) * 10
     }
   }
   __destroy() {
@@ -24,17 +24,17 @@ export default class TestEntity extends Entity {
   __main(dt: number) {
     for (var i = 0; i < this.meshPos.length; i++) {
       const newPos = this.meshPos[i] + dt * this.meshVel[i]
-      if (newPos < -1) {
-        this.meshPos[i] = -1
+      if (newPos < -10) {
+        this.meshPos[i] = -10
         this.meshVel[i] *= -1
-      } else if (newPos > 1) {
-        this.meshPos[i] = 1
+      } else if (newPos > 10) {
+        this.meshPos[i] = 10
         this.meshVel[i] *= -1
       } else {
         this.meshPos[i] = newPos
       }
     }
-    // Scene.setPos(this.idInstance, this.meshPos)
+    Scene.setPos(this.idInstance, this.meshPos)
   }
   __draw() {
     // Render.bindTexture(this.idTexture, 0)
