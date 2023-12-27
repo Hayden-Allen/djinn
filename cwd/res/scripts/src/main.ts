@@ -60,18 +60,18 @@ export default class MainEntity extends Entity {
     Asset.Shader.setUniforms(this.idShader, {
       u_texture: 0,
     })
-    // this.idMesh = Asset.Mesh.create(
-    //   4,
-    //   [2, 2],
-    //   6,
-    //   [this.idTexture],
-    //   this.idShader
-    // )
-    // Asset.Mesh.update(
-    //   this.idMesh,
-    //   [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1],
-    //   [0, 1, 2, 0, 2, 3]
-    // )
+    this.idMesh = Asset.Mesh.create(
+      4,
+      [2, 2],
+      6,
+      [this.idTexture],
+      this.idShader
+    )
+    Asset.Mesh.update(
+      this.idMesh,
+      [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1],
+      [0, 1, 2, 0, 2, 3]
+    )
   }
   __destroy() {
     this.skybox!.destroy()
@@ -80,12 +80,12 @@ export default class MainEntity extends Entity {
     Asset.Texture.destroy(this.idTexture)
   }
   __load() {
-    // this.color.set(0, 1, 1, 0.5)
-    // for (var i = 0; i < 200; i++) {
-    //   let e = Scene.load("TestEntity.js")
-    //   e.bind(this.camera, this.color, this.idMesh)
-    //   this.entities.push(e)
-    // }
+    this.color.set(0, 1, 1, 0.5)
+    for (var i = 0; i < 200; i++) {
+      let e = Scene.load("TestEntity.js")
+      e.bind(this.camera, this.color, this.idMesh)
+      this.entities.push(e)
+    }
   }
   __unload() {
     for (var i = 0; i < this.entities.length; i++)
@@ -97,7 +97,7 @@ export default class MainEntity extends Entity {
   }
   __draw() {
     this.skybox!.draw(this.camera!.getId())
-    // Asset.Shader.setCameraUniforms(this.idShader, this.camera!.getId())
+    Asset.Shader.setCameraUniforms(this.idShader, this.camera!.getId())
   }
   __ui() {
     Nanovg.fillStyle(1, 1, 1)

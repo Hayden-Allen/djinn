@@ -74,7 +74,7 @@ namespace djinn
 		for (u64 i = 0; i < m_instances.size(); i++)
 			update(i, m_instances[i]->get_world_transform());
 		// bind first block to 0, so all blocks will be bound in [0, n)
-		// shaders->uniform_block_binding(c::uniform::instanced_transforms_block, 0);
+		shaders->uniform_block_binding(c::uniform::instanced_transforms_block, 0);
 		for (u32 i = 0; i < (u32)m_transforms.size(); i++)
 		{
 			m_transforms[i].bind(i);
