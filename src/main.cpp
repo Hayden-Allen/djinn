@@ -76,7 +76,13 @@ int main(int argc, char* argv[])
 		DJINN_TIME(input_service::update(), input_avg, NUM_FRAMES);
 
 		DJINN_TIME(scene_service::update(c->time.delta), update_avg, NUM_FRAMES);
-		DJINN_TIME(scene_service::draw(), draw_avg, NUM_FRAMES);
+		DJINN_TIME(
+			scene_service::draw();
+			asset_service::get_mesh_manager()->for_each([](sptr<mesh> mesh, id_t const id)
+				{
+					mesh->draw(render_service::get_context());
+				});
+			, draw_avg, NUM_FRAMES);
 
 		DJINN_TIME(
 			nanovg_service::begin_frame(c->get_width(), c->get_height());
@@ -106,10 +112,13 @@ int main(int argc, char* argv[])
 	render_service::shutdown();
 	nanovg_service::shutdown();
 	util_service::shutdown();
-	scene_service::shutdown();
 	input_service::shutdown();
-	asset_service::shutdown();
 	imgui_service::shutdown();
+
+	// TODO mesh (asset) has sptr<mesh_instance> (scene)
+	// scene_service::shutdown calls entity.__destroy, which frees meshes
+	asset_service::shutdown();
+	scene_service::shutdown();
 	c.free();
 	return 0;
 }

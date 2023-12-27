@@ -3,10 +3,11 @@
 #include "script/js.h"
 #include "core/constants.h"
 #include "scene/camera_entity.h"
+#include "asset_service.h"
 
 namespace djinn::js::scene_service
 {
-	entity* get_entity(id_t const id)
+	static entity* get_entity(id_t const id)
 	{
 		if (::djinn::scene_service::get_entity_manager()->has(id))
 		{
@@ -14,19 +15,31 @@ namespace djinn::js::scene_service
 		}
 		return ::djinn::scene_service::get_camera_entity_manager()->get(id).get();
 	}
+	static scene_object* get_scene_object(id_t const id)
+	{
+		if (::djinn::scene_service::get_entity_manager()->has(id))
+		{
+			return ::djinn::scene_service::get_entity_manager()->get(id).get();
+		}
+		else if (::djinn::scene_service::get_camera_entity_manager()->has(id))
+		{
+			return ::djinn::scene_service::get_camera_entity_manager()->get(id).get();
+		}
+		return ::djinn::scene_service::get_mesh_instance_manager()->get(id).get();
+	}
 	template<typename FN>
 	JSValue get_value(JSContext* const ctx, s32 const argc, JSValueConst* const argv, FN const& fn, u64 const index)
 	{
 		ASSERT(argc == 1);
 		id_t const id = js::extract_id(ctx, argv[0]);
-		return js::create_f32(ctx, (get_entity(id)->*fn)()[index]);
+		return js::create_f32(ctx, (get_scene_object(id)->*fn)()[index]);
 	}
 	template<typename FN>
 	JSValue get_values(JSContext* const ctx, s32 const argc, JSValueConst* const argv, FN const& fn)
 	{
 		ASSERT(argc == 1);
 		id_t const id = js::extract_id(ctx, argv[0]);
-		return js::create_f32_array(ctx, 3, (get_entity(id)->*fn)());
+		return js::create_f32_array(ctx, 3, (get_scene_object(id)->*fn)());
 	}
 	template<typename FN>
 	JSValue set_value(JSContext* const ctx, s32 const argc, JSValueConst* const argv, FN const& fn)
@@ -34,7 +47,7 @@ namespace djinn::js::scene_service
 		ASSERT(argc == 2);
 		id_t const id = js::extract_id(ctx, argv[0]);
 		f32 const f = js::extract_f32(ctx, argv[1]);
-		(get_entity(id)->*fn)(f);
+		(get_scene_object(id)->*fn)(f);
 		return JS_UNDEFINED;
 	}
 	template<typename FN>
@@ -44,7 +57,7 @@ namespace djinn::js::scene_service
 		id_t const id = js::extract_id(ctx, argv[0]);
 		std::vector<f32> const& arr = js::extract_f32_array(ctx, argv[1]);
 		ASSERT(arr.size() == 3);
-		(get_entity(id)->*fn)(arr[0], arr[1], arr[2]);
+		(get_scene_object(id)->*fn)(arr[0], arr[1], arr[2]);
 		return JS_UNDEFINED;
 	}
 	template<typename FN>
@@ -53,9 +66,10 @@ namespace djinn::js::scene_service
 		ASSERT(argc == 2);
 		id_t const id = js::extract_id(ctx, argv[0]);
 		f32 const f = js::extract_f32(ctx, argv[1]);
-		(get_entity(id)->*fn)(x * f, y * f, z * f);
+		(get_scene_object(id)->*fn)(x * f, y * f, z * f);
 		return JS_UNDEFINED;
 	}
+
 
 
 	JSValue request_imgui(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -101,6 +115,21 @@ namespace djinn::js::scene_service
 		f32 const far = js::extract_f32(ctx, argv[4]);
 		sptr<camera_entity> cam = ::djinn::scene_service::get_camera_entity_manager()->get(id);
 		cam->configure(fovy, aspect, near, far);
+		return JS_UNDEFINED;
+	}
+	JSValue create_mesh_instance(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const mesh_id = js::extract_u32(ctx, argv[0]);
+		sptr<mesh> mesh = ::djinn::asset_service::get_mesh_manager()->get(mesh_id);
+		id_t const instance_id = ::djinn::scene_service::get_mesh_instance_manager()->create(mesh);
+		return js::create_id(ctx, instance_id);
+	}
+	JSValue destroy_mesh_instance(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t id = js::extract_id(ctx, argv[0]);
+		::djinn::scene_service::get_mesh_instance_manager()->destroy(id);
 		return JS_UNDEFINED;
 	}
 
@@ -323,7 +352,9 @@ namespace djinn
 	}
 	void scene_service::register_functions(JSContext* const ctx)
 	{
-		super::register_function(ctx, "requestImgui", 1, js::scene_service::request_imgui);
+		super::register_function(ctx, "MeshInstance", "create", 1, js::scene_service::create_mesh_instance);
+		super::register_function(ctx, "MeshInstance", "destroy", 1, js::scene_service::destroy_mesh_instance);
+		super::register_function(ctx, "Entity", "requestImgui", 1, js::scene_service::request_imgui);
 		super::register_function(ctx, "load", 1, js::scene_service::load_entity);
 		super::register_function(ctx, "destroy", 1, js::scene_service::destroy_entity);
 		super::register_function(ctx, "Camera", "load", 1, js::scene_service::load_camera);
@@ -387,6 +418,10 @@ namespace djinn
 	camera_entity_manager* scene_service::get_camera_entity_manager()
 	{
 		return &s_instance->m_camera_entity_manager;
+	}
+	mesh_instance_manager* scene_service::get_mesh_instance_manager()
+	{
+		return &s_instance->m_mesh_instance_manager;
 	}
 	JSRuntime* scene_service::get_runtime()
 	{

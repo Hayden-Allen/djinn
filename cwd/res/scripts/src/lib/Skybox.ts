@@ -1,6 +1,6 @@
 import "./globals.d"
 
-const { Asset, Render, Util } = djinn
+const { Asset, Scene, Util } = djinn
 
 interface SkyboxTextureOptions {
   minFilter: number
@@ -35,12 +35,18 @@ interface SkyboxOptions {
 }
 
 export default class Skybox {
-  private idMesh: number = -1
-  private idShader: number = -1
-  private idTexture: number = -1
+  private idMesh: number = 0
+  private idInstance: number = 0
+  private idShader: number = 0
+  private idTexture: number = 0
 
-  constructor(options: SkyboxOptions) {
-    this.idMesh = Asset.Mesh.create(8, [3], 36)
+  constructor(idTexture: number, options: SkyboxOptions) {
+    this.idTexture = idTexture
+    this.idShader = Asset.Shader.load(
+      options.vertexShader,
+      options.fragmentShader
+    )
+    this.idMesh = Asset.Mesh.create(8, [3], 36, [this.idTexture], this.idShader)
     Asset.Mesh.update(
       this.idMesh,
       [
@@ -76,11 +82,7 @@ export default class Skybox {
         4, 1, 5, 4, 0, 1,
       ]
     )
-
-    this.idShader = Asset.Shader.load(
-      options.vertexShader,
-      options.fragmentShader
-    )
+    this.idInstance = Scene.MeshInstance.create(this.idMesh)
 
     Asset.Shader.setUniforms(this.idShader, {
       u_texture: 0,
@@ -100,8 +102,7 @@ export default class Skybox {
       loadOptions.front,
     ]
     const idTexture = Asset.Cubemap.load(fps, loadOptions.textureOptions)
-    const ret = new Skybox(sboxOptions)
-    ret.idTexture = idTexture
+    const ret = new Skybox(idTexture, sboxOptions)
     return ret
   }
 
@@ -111,8 +112,7 @@ export default class Skybox {
   ) {
     const fps = Util.listFiles(Util.makeTexturePath(loadOptions.dir))
     const idTexture = Asset.Cubemap.load(fps, loadOptions.textureOptions)
-    const ret = new Skybox(sboxOptions)
-    ret.idTexture = idTexture
+    const ret = new Skybox(idTexture, sboxOptions)
     return ret
   }
 
@@ -120,27 +120,27 @@ export default class Skybox {
     sboxOptions: SkyboxOptions,
     genOptions: SkyboxGeneratedOptions
   ) {
-    let idTexture = Asset.Cubemap.create(
+    const idTexture = Asset.Cubemap.create(
       genOptions.width,
       genOptions.height,
       genOptions.textureOptions
     )
     Asset.Cubemap.update(idTexture, genOptions.pixels)
-    const ret = new Skybox(sboxOptions)
-    ret.idTexture = idTexture
+    const ret = new Skybox(idTexture, sboxOptions)
     return ret
   }
 
   destroy() {
     Asset.Mesh.destroy(this.idMesh)
+    Asset.Mesh.destroyInstance(this.idInstance)
     Asset.Shader.destroy(this.idShader)
     Asset.Cubemap.destroy(this.idTexture)
   }
 
   draw(idCamera: number) {
     // TODO: glDepthMask(false);
-    Render.bindCubemap(this.idTexture, 0)
+    // Render.bindCubemap(this.idTexture, 0)
     Asset.Shader.setCameraUniforms(this.idShader, idCamera)
-    Render.draw(this.idMesh, this.idShader)
+    // Render.draw(this.idMesh, this.idShader)
   }
 }

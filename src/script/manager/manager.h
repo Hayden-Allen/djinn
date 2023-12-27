@@ -36,10 +36,11 @@ namespace djinn
 		virtual void reload(std::string const& fp) = 0;
 		virtual void rename(std::string const& old_fp, std::string const& new_fp) = 0;
 		virtual void destroy(id_t const id) = 0;
-		sptr<T> get(id_t const id)
+		template<typename U = T>
+		sptr<U, T> get(id_t const id)
 		{
 			ASSERT(m_objects.contains(id))
-			return m_objects.at(id);
+			return sptr<U, T>(m_objects.at(id));
 		}
 		bool has(id_t const id) const
 		{

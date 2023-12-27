@@ -1,16 +1,17 @@
 #pragma once
 #include "pch.h"
 #include "manager.h"
+#include "scene/mesh.h"
 
 namespace djinn
 {
-	class mesh_manager final : public ref_counted_manager<static_render_object>
+	class mesh_manager final : public ref_counted_manager<mesh>
 	{
 	public:
 		mesh_manager();
 		DCM(mesh_manager);
 	public:
-		id_t create(u32 const vertex_count, std::vector<u32> const& layout, u32 const index_count);
+		id_t create(u32 const vertex_count, std::vector<u32> const& layout, u32 const index_count, std::vector<sptr<texture>> const& textures, sptr<shaders> const& shaders);
 		id_t load(std::string const& fp) override;
 		void destroy(id_t const id) override;
 		void reload(std::string const& fp) override;

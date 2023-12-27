@@ -1,8 +1,7 @@
 - questions
 	- reset ids on scene switch?
 	- enforce all pos/rot/scale changes be done in __main?
-	- any advantages to non-instanced draw calls? immediate mode vs render mask API
-	- should instanced draws be for particles only?
+	- uniform cache broken
 
 - now
 	- move to mgl::layer system

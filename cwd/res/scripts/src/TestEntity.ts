@@ -3,41 +3,23 @@ import type { ICamera } from "./lib/Camera.d"
 import Entity from "./lib/Entity"
 import Color from "./lib/Color"
 
-const { Asset, Render } = djinn
+const { Asset, Scene } = djinn
 
 export default class TestEntity extends Entity {
-  private idMesh: number = 0
-  private idShader: number = 0
-  private idTexture: number = 0
+  private idInstance: number = 0
   private meshPos: number[] = [0, 0, 0]
   private meshVel: number[] = [1, 1, 1]
   private camera: ICamera
   private color: Color | undefined
 
   __init() {
-    this.idMesh = Asset.Mesh.create(4, [2, 2], 6)
-    Asset.Mesh.update(
-      this.idMesh,
-      [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1],
-      [0, 1, 2, 0, 2, 3]
-    )
-    this.idShader = Asset.Shader.load("test.vert", "test.frag")
-    this.idTexture = Asset.Texture.load("test.bmp", {
-      minFilter: GL_NEAREST,
-      magFilter: GL_LINEAR,
-    })
-    Asset.Shader.setUniforms(this.idShader, {
-      u_texture: 0,
-    })
     for (var i = 0; i < 3; i++) {
       this.meshPos[i] = Math.random() * 2 - 1
       this.meshVel[i] = Math.random() * 2 - 1
     }
   }
   __destroy() {
-    Asset.Mesh.destroy(this.idMesh)
-    Asset.Shader.destroy(this.idShader)
-    Asset.Texture.destroy(this.idTexture)
+    Asset.Mesh.destroyInstance(this.idInstance)
   }
   __main(dt: number) {
     for (var i = 0; i < this.meshPos.length; i++) {
@@ -52,18 +34,20 @@ export default class TestEntity extends Entity {
         this.meshPos[i] = newPos
       }
     }
+    // Scene.setPos(this.idInstance, this.meshPos)
   }
   __draw() {
-    Render.bindTexture(this.idTexture, 0)
-    Asset.Shader.setCameraUniforms(this.idShader, this.camera!.getId())
-    Asset.Shader.setUniforms(this.idShader, {
-      u_color: this.color!.toArray(),
-      u_pos: this.meshPos,
-    })
-    Render.draw(this.idMesh, this.idShader)
+    // Render.bindTexture(this.idTexture, 0)
+    // Asset.Shader.setCameraUniforms(this.idShader, this.camera!.getId())
+    // Asset.Shader.setUniforms(this.idShader, {
+    //   u_color: this.color!.toArray(),
+    //   u_pos: this.meshPos,
+    // })
+    // Render.draw(this.idMesh, this.idShader)
   }
-  bind(cam: ICamera, color: Color) {
+  bind(cam: ICamera, color: Color, idMesh: number) {
     this.camera = cam
     this.color = color
+    this.idInstance = Scene.MeshInstance.create(idMesh)
   }
 }

@@ -87,7 +87,7 @@ namespace djinn
 				else
 					pixels[i] = m_afp2pixels.at(existing_afp);
 			}
-			sptr<cubemap_rgba_u8> tex = get(id);
+			sptr<cubemap_rgba_u8, texture> tex = get<cubemap_rgba_u8>(id);
 			ASSERT(new_width == tex->get_width() && new_height == tex->get_height())
 			tex->init(GL_RGBA, new_width, new_height, pixels.data(), m_id2options.at(id));
 		}
@@ -117,7 +117,7 @@ namespace djinn
 		u8 const* raw_subpixels[6] = { nullptr };
 		for (s32 i = 0; i < 6; i++)
 			raw_subpixels[i] = subpixels[i].data();
-		sptr<cubemap_rgba_u8> tex = get(id);
+		sptr<cubemap_rgba_u8, texture> tex = get<cubemap_rgba_u8>(id);
 		tex->init(GL_RGBA, tex->get_width(), tex->get_height(), raw_subpixels, options);
 	}
 	void cubemap_manager::update(id_t const id, std::array<std::vector<u8>, 6> const& subpixels)
@@ -126,7 +126,7 @@ namespace djinn
 	}
 	void cubemap_manager::bind(id_t const id, u32 const slot)
 	{
-		sptr<cubemap_rgba_u8> tex = get(id);
+		sptr<texture> tex = get(id);
 		tex->bind(slot);
 	}
 } // namespace djinn

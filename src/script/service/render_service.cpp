@@ -9,12 +9,14 @@ namespace djinn
 	{
 		JSValue draw(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 		{
-			ASSERT(argc == 2);
+			/*ASSERT(argc == 2);
 			id_t const ro_id = js::extract_id(ctx, argv[0]);
 			id_t const shader_id = js::extract_id(ctx, argv[1]);
 			sptr<static_render_object> ro = ::djinn::asset_service::get_mesh_manager()->get(ro_id);
 			sptr<shaders> shaders = ::djinn::asset_service::get_shader_manager()->get(shader_id);
 			::djinn::render_service::get_context()->draw(*ro.get(), *shaders.get());
+			return JS_UNDEFINED;*/
+			ASSERT(false);
 			return JS_UNDEFINED;
 		}
 		JSValue bind_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)

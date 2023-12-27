@@ -28,29 +28,43 @@ namespace djinn::js::asset_service
 		}
 		return options;
 	}
-
+	static sptr<texture> get_texture(id_t const id)
+	{
+		if (::djinn::asset_service::get_texture_manager()->has(id))
+			return ::djinn::asset_service::get_texture_manager()->get(id);
+		return ::djinn::asset_service::get_cubemap_manager()->get(id);
+	}
 
 
 	JSValue create_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 3);
-		u32 vertex_count = js::extract_u32(ctx, argv[0]);
+		ASSERT(argc == 5);
+		u32 const vertex_count = js::extract_u32(ctx, argv[0]);
 		std::vector<u32> const& vertex_layout = js::extract_u32_array(ctx, argv[1]);
-		u32 index_count = js::extract_u32(ctx, argv[2]);
+		u32 const index_count = js::extract_u32(ctx, argv[2]);
+		std::vector<id_t> const& texture_ids = js::extract_id_array(ctx, argv[3]);
+		id_t const shader_id = js::extract_id(ctx, argv[4]);
 
-		return js::create_id(ctx, ::djinn::asset_service::get_mesh_manager()->create(vertex_count, vertex_layout, index_count));
+		std::vector<sptr<texture>> textures;
+		textures.reserve(texture_ids.size());
+		for (id_t const id : texture_ids)
+			textures.push_back(get_texture(id));
+		sptr<shaders> shaders = ::djinn::asset_service::get_shader_manager()->get(shader_id);
+
+		JSValue ret = js::create_id(ctx, ::djinn::asset_service::get_mesh_manager()->create(vertex_count, vertex_layout, index_count, textures, shaders));
+		return ret;
 	}
 	JSValue destroy_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
-		id_t id = js::extract_id(ctx, argv[0]);
+		id_t const id = js::extract_id(ctx, argv[0]);
 		::djinn::asset_service::get_mesh_manager()->destroy(id);
 		return JS_UNDEFINED;
 	}
 	JSValue update_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 3);
-		id_t id = js::extract_id(ctx, argv[0]);
+		id_t const id = js::extract_id(ctx, argv[0]);
 		std::vector<f32> const& vertices = js::extract_f32_array(ctx, argv[1]);
 		std::vector<u32> const& indices = js::extract_u32_array(ctx, argv[2]);
 		::djinn::asset_service::get_mesh_manager()->update(id, vertices, indices);
@@ -203,13 +217,9 @@ namespace djinn
 	}
 	void asset_service::register_functions(JSContext* const ctx)
 	{
-		/*JSModuleDef* m;
-		m = JS_NewCModule(ctx, "asset_service", js::asset_service::init);
-		ASSERT(m);
-		JS_AddModuleExportList(ctx, m, js::asset_service::s_fns, js::asset_service::s_FN_COUNT);*/
-		super::register_function(ctx, "Mesh", "create", 3, js::asset_service::create_mesh);
-		super::register_function(ctx, "Mesh", "destroy", 1, js::asset_service::destroy_mesh);
+		super::register_function(ctx, "Mesh", "create", 5, js::asset_service::create_mesh);
 		super::register_function(ctx, "Mesh", "update", 3, js::asset_service::update_mesh);
+		super::register_function(ctx, "Mesh", "destroy", 1, js::asset_service::destroy_mesh);
 		super::register_function(ctx, "Shader", "create", 2, js::asset_service::create_shader);
 		super::register_function(ctx, "Shader", "load", 2, js::asset_service::load_shader);
 		super::register_function(ctx, "Shader", "destroy", 1, js::asset_service::destroy_shader);

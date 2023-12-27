@@ -21,10 +21,10 @@ namespace djinn
 		static texture_manager* get_texture_manager();
 		static cubemap_manager* get_cubemap_manager();
 	private:
-		mesh_manager m_mesh_manager;
 		shader_manager m_shader_manager;
 		texture_manager m_texture_manager;
 		cubemap_manager m_cubemap_manager;
+		mesh_manager m_mesh_manager;
 	private:
 		asset_service();
 	};

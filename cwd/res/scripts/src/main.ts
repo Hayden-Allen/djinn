@@ -33,12 +33,15 @@ export default class MainEntity extends Entity {
   private camera: ICamera
   private color: Color = new Color(0, 0, 0, 1)
   private entities: TestEntity[] = []
+  private idShader: number = 0
+  private idTexture: number = 0
+  private idMesh: number = 0
 
   __init() {
     this.skybox = Skybox.loadDirectory(
       {
-        vertexShader: "mingl/sky.vert",
-        fragmentShader: "mingl/sky.frag",
+        vertexShader: "sky.vert",
+        fragmentShader: "sky.frag",
       },
       {
         dir: "dir",
@@ -49,22 +52,40 @@ export default class MainEntity extends Entity {
       }
     )
     this.camera = Scene.Camera.load("lib/Camera.js")
-  }
-  __destroy() {
-    this.skybox!.destroy()
-  }
-  __load() {
-    this.color.set(0, 1, 1, 0.5)
-    for (var i = 0; i < 200; i++) {
-      let e = Scene.load("TestEntity.js")
-      e.bind(this.camera, this.color)
-      this.entities.push(e)
-    }
-    const idTexture = Asset.Texture.load("test.bmp", {
+    this.idShader = Asset.Shader.load("test.vert", "test.frag")
+    this.idTexture = Asset.Texture.load("test.bmp", {
       minFilter: GL_NEAREST,
       magFilter: GL_LINEAR,
     })
-    Asset.Texture.destroy(idTexture)
+    Asset.Shader.setUniforms(this.idShader, {
+      u_texture: 0,
+    })
+    // this.idMesh = Asset.Mesh.create(
+    //   4,
+    //   [2, 2],
+    //   6,
+    //   [this.idTexture],
+    //   this.idShader
+    // )
+    // Asset.Mesh.update(
+    //   this.idMesh,
+    //   [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1],
+    //   [0, 1, 2, 0, 2, 3]
+    // )
+  }
+  __destroy() {
+    this.skybox!.destroy()
+    Asset.Mesh.destroy(this.idMesh)
+    Asset.Shader.destroy(this.idShader)
+    Asset.Texture.destroy(this.idTexture)
+  }
+  __load() {
+    // this.color.set(0, 1, 1, 0.5)
+    // for (var i = 0; i < 200; i++) {
+    //   let e = Scene.load("TestEntity.js")
+    //   e.bind(this.camera, this.color, this.idMesh)
+    //   this.entities.push(e)
+    // }
   }
   __unload() {
     for (var i = 0; i < this.entities.length; i++)
@@ -76,6 +97,7 @@ export default class MainEntity extends Entity {
   }
   __draw() {
     this.skybox!.draw(this.camera!.getId())
+    // Asset.Shader.setCameraUniforms(this.idShader, this.camera!.getId())
   }
   __ui() {
     Nanovg.fillStyle(1, 1, 1)

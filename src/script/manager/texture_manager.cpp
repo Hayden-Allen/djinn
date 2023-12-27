@@ -58,7 +58,7 @@ namespace djinn
 		auto const& ids = m_id2afp.get_key(afp);
 		for (id_t const id : ids)
 		{
-			get(id)->init(GL_RGBA, width, height, data, m_id2options.at(id));
+			get<texture2d_rgba_u8>(id)->init(GL_RGBA, width, height, data, m_id2options.at(id));
 		}
 
 		stbi_image_free(data);
@@ -73,7 +73,7 @@ namespace djinn
 	}
 	void texture_manager::update(id_t const id, std::vector<u8> const& subpixels, texture_options const& options)
 	{
-		sptr<texture2d_rgba_u8> tex = get(id);
+		auto tex = get<texture2d_rgba_u8>(id);
 		tex->init(GL_RGBA, tex->get_width(), tex->get_height(), subpixels.data(), options);
 	}
 	void texture_manager::update(id_t const id, std::vector<u8> const& subpixels)
@@ -82,8 +82,7 @@ namespace djinn
 	}
 	void texture_manager::bind(id_t const id, u32 const slot)
 	{
-		sptr<texture2d_rgba_u8> tex = get(id);
-		tex->bind(slot);
+		get<texture2d_rgba_u8>(id)->bind(slot);
 	}
 
 

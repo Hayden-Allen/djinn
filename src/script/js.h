@@ -6,6 +6,7 @@ namespace djinn::js
 	extern s64 extract_array_length(JSContext* const ctx, JSValue const& val);
 	extern std::vector<u8> extract_u8_array(JSContext* const ctx, JSValue const& val);
 	extern std::vector<u32> extract_u32_array(JSContext* const ctx, JSValue const& val);
+	extern std::vector<id_t> extract_id_array(JSContext* const ctx, JSValue const& val);
 	extern std::vector<f32> extract_f32_array(JSContext* const ctx, JSValue const& val);
 	extern std::vector<std::string> extract_string_array(JSContext* const ctx, JSValue const& val);
 	extern id_t extract_id(JSContext* const ctx, JSValue const& val);

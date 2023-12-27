@@ -10,15 +10,14 @@ namespace djinn
 
 
 
-	id_t mesh_manager::create(u32 const vertex_count, std::vector<u32> const& layout, u32 const index_count)
+	id_t mesh_manager::create(u32 const vertex_count, std::vector<u32> const& layout, u32 const index_count, std::vector<sptr<texture>> const& textures, sptr<shaders> const& shaders)
 	{
-		static_render_object* const ro = new static_render_object(nullptr, vertex_count, layout, nullptr, index_count);
-		return insert(ro);
+		return insert(new mesh(vertex_count, layout, index_count, textures, shaders));
 	}
 	id_t mesh_manager::load(std::string const& fp)
 	{
 		ASSERT(false)
-		return create(0, {}, 0);
+		return 0;
 	}
 	void mesh_manager::destroy(id_t const id)
 	{
@@ -34,8 +33,6 @@ namespace djinn
 	}
 	void mesh_manager::update(id_t const id, std::vector<f32> const& vertices, std::vector<u32> const& indices)
 	{
-		sptr<static_render_object> ro = get(id);
-		ro->get_vertex_array().get_vertices().update(vertices.data(), (u32)vertices.size(), 0);
-		ro->get_indices().update(indices.data(), (u32)indices.size(), 0);
+		get(id)->update(vertices, indices);
 	}
 } // namespace djinn

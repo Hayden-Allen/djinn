@@ -14,7 +14,6 @@ namespace djinn
 	}
 	tmat<space::OBJECT, space::WORLD> scene_object::get_world_transform() const
 	{
-		ASSERT(false)
 		return m_transform.cast_copy<space::OBJECT, space::WORLD>();
 	}
 	f32 const* scene_object::get_pos() const

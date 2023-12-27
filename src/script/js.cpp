@@ -22,6 +22,10 @@ namespace djinn::js
 	{
 		return helper::extract_array<u32, u32>(ctx, val, JS_ToUint32);
 	}
+	std::vector<id_t> extract_id_array(JSContext* const ctx, JSValue const& val)
+	{
+		return helper::extract_array<id_t, id_t>(ctx, val, JS_ToUint32);
+	}
 	std::vector<f32> extract_f32_array(JSContext* const ctx, JSValue const& val)
 	{
 		return helper::extract_array<f32, f64>(ctx, val, JS_ToFloat64);

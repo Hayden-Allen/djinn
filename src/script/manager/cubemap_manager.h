@@ -4,7 +4,7 @@
 
 namespace djinn
 {
-	class cubemap_manager final : public manager<cubemap_rgba_u8>
+	class cubemap_manager final : public manager<texture>
 	{
 	public:
 		cubemap_manager();

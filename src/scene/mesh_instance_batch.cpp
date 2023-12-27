@@ -1,14 +1,16 @@
 #include "pch.h"
 #include "mesh_instance_batch.h"
+#include "core/constants.h"
+#include "mesh_instance.h"
 
 namespace djinn
 {
-	mesh_instance_batch::mesh_instance_batch(sptr<mesh> const& mesh) :
+	mesh_instance_batch::mesh_instance_batch(wptr<mesh> const& mesh) :
 		m_mesh(mesh)
 	{
-		add_block();
 		s_num_ubos = mgl::get_param<u32>(GL_MAX_VERTEX_UNIFORM_BLOCKS);
 		s_transforms_per_ubo = mgl::get_param<u32>(GL_MAX_UNIFORM_BLOCK_SIZE) / s_mat_size;
+		add_block();
 	}
 
 
@@ -17,23 +19,24 @@ namespace djinn
 	{
 		return m_instances.size();
 	}
-	u64 mesh_instance_batch::insert(id_t const id)
+	u64 mesh_instance_batch::insert(sptr<mesh_instance> instance)
 	{
 		u64 index = 0;
 		if (!m_openings.empty())
 		{
 			index = m_openings.back();
 			m_openings.pop_back();
-			m_instances[index] = id;
+			m_instances[index] = instance;
 		}
 		// no openings, add id to the end and put its transform at the end
 		else
 		{
 			index = m_next;
 			m_next++;
-			m_instances.push_back(id);
+			m_instances.push_back(instance);
 		}
 		set_transform_index(index);
+		instance->bind(index);
 		m_valid++;
 		return index;
 	}
@@ -42,7 +45,7 @@ namespace djinn
 		ASSERT(index < m_instances.size());
 		ASSERT(m_instances[index] != 0);
 		// this slot is now not bound to a mesh_instance
-		m_instances[index] = 0;
+		m_instances[index].unbind();
 		m_openings.push_back(index);
 		// there is one less transform being written to the UBOs
 		m_valid--;
@@ -64,10 +67,19 @@ namespace djinn
 		u64 const block_index = total_index / s_transforms_per_ubo;
 		u64 const transform_index = total_index % s_transforms_per_ubo;
 		ASSERT(block_index < m_transforms.size());
-		m_transforms[block_index].update(transform.e, s_floats_per_mat, (u32)transform_index * s_floats_per_mat);
+		m_transforms[block_index].update(transform.e, s_floats_per_mat, (u32)transform_index * s_mat_size);
 	}
-	void mesh_instance_batch::draw() const
+	void mesh_instance_batch::draw(sptr<mgl::context> const& ctx, static_render_object const& ro, sptr<shaders> const& shaders)
 	{
+		for (u64 i = 0; i < m_instances.size(); i++)
+			update(i, m_instances[i]->get_world_transform());
+		// bind first block to 0, so all blocks will be bound in [0, n)
+		shaders->uniform_block_binding(c::uniform::instanced_transforms_block, 0);
+		for (u32 i = 0; i < (u32)m_transforms.size(); i++)
+		{
+			m_transforms[i].bind(i);
+		}
+		ctx->draw_instanced(ro, *shaders.get(), m_valid);
 	}
 
 
