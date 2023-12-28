@@ -93,10 +93,13 @@ export default class MainEntity extends Entity {
     this.entities = []
   }
   __main(dt: number) {
-    Scene.requestImgui(this.id)
+    Scene.Entity.requestImgui(this.id)
   }
   __draw() {
     this.skybox!.draw(this.camera!.getId())
+    Asset.Shader.setUniforms(this.idShader, {
+      u_color: this.color!.toArray(),
+    })
     Asset.Shader.setCameraUniforms(this.idShader, this.camera!.getId())
   }
   __ui() {

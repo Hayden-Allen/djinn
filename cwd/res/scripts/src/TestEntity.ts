@@ -19,7 +19,7 @@ export default class TestEntity extends Entity {
     }
   }
   __destroy() {
-    Asset.Mesh.destroyInstance(this.idInstance)
+    Scene.MeshInstance.destroy(this.idInstance)
   }
   __main(dt: number) {
     for (var i = 0; i < this.meshPos.length; i++) {

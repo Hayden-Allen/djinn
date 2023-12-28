@@ -23,6 +23,7 @@ namespace djinn
 	}
 	void mesh_instance_manager::destroy(id_t const id)
 	{
+		get(id)->remove_from_batch();
 		try_erase(id);
 	}
 	void mesh_instance_manager::reload(std::string const& fp)

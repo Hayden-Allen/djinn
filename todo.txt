@@ -1,14 +1,27 @@
 - questions
 	- reset ids on scene switch?
 	- enforce all pos/rot/scale changes be done in __main?
-	- uniform cache broken
+	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
 
 - now
+	- s_num_ubos/s_transforms_per_ubo
+		- sync these values between mesh_instance_batch and shaders (preprocessor, always use minimum?)
+	- instance shaders
+		- per-instance struct
+		- preprocessor to compile with maximum array size of this struct
+		- struct names and data types are extracted from shader after compilation
+		- batches have their own shaders
+		- when an instance is created, you give it shader id. appropriate batch is selected or created,
+			and that instance gets a structure containing the correct per-instance uniforms for that shader
+		- dirty flag on instance transform
+		- visibility mask (Scene.MeshInstance.setVisible) camera mask?
+	- mesh_instance_manager::destroy broken
 	- move to mgl::layer system
 	- input_service takes layer to get access to input_cache
 	- set camera uniforms automatically in Render.draw
 
 - soon
+	- framebuffer_u8/f32?
 	- deferred renderer
 	- scene graph
 
@@ -18,6 +31,8 @@
 	- mesh_watcher
 	- mesh_manager::reload/rename
 	- physics_manager/physics_service
+		- set transform functions
+		- Physics.copyTransformTo(idHitbox, idSceneObject) this is how physics world drives entity transforms
 	- load powertranzphormr scenes
 	- distribution asset pipeline
 	- virtual filesystem

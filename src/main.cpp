@@ -51,8 +51,8 @@ int main(int argc, char* argv[])
 	scene_service::get_entity_manager()->load("main.js");
 
 #if DJINN_PROFILE
-	u32 const NUM_FRAMES = 1000;
-	f32 input_avg = 0, update_avg = 0, draw_avg = 0, ui_avg = 0, imgui_avg = 0;
+	u32 const NUM_FRAMES = 500;
+	f32 input_avg = 0, update_avg = 0, draw_avg = 0, gl_avg = 0, ui_avg = 0, imgui_avg = 0;
 	for (u32 i = 0; i < NUM_FRAMES; i++)
 #else
 	while (c->is_running())
@@ -76,13 +76,13 @@ int main(int argc, char* argv[])
 		DJINN_TIME(input_service::update(), input_avg, NUM_FRAMES);
 
 		DJINN_TIME(scene_service::update(c->time.delta), update_avg, NUM_FRAMES);
+		DJINN_TIME(scene_service::draw();, draw_avg, NUM_FRAMES);
 		DJINN_TIME(
-			scene_service::draw();
 			asset_service::get_mesh_manager()->for_each([](sptr<mesh> mesh, id_t const id)
 				{
 					mesh->draw(render_service::get_context());
 				});
-			, draw_avg, NUM_FRAMES);
+			, gl_avg, NUM_FRAMES);
 
 		DJINN_TIME(
 			nanovg_service::begin_frame(c->get_width(), c->get_height());

@@ -8,8 +8,10 @@ namespace djinn
 	mesh_instance_batch::mesh_instance_batch(wptr<mesh> const& mesh) :
 		m_mesh(mesh)
 	{
-		s_num_ubos = mgl::get_param<u32>(GL_MAX_VERTEX_UNIFORM_BLOCKS);
-		s_transforms_per_ubo = mgl::get_param<u32>(GL_MAX_UNIFORM_BLOCK_SIZE) / s_mat_size;
+		/*s_num_ubos = mgl::get_param<u32>(GL_MAX_VERTEX_UNIFORM_BLOCKS);
+		s_transforms_per_ubo = mgl::get_param<u32>(GL_MAX_UNIFORM_BLOCK_SIZE) / s_mat_size;*/
+		s_num_ubos = 12;
+		s_transforms_per_ubo = 256;
 		add_block();
 	}
 
@@ -36,7 +38,7 @@ namespace djinn
 			m_instances.push_back(instance);
 		}
 		set_transform_index(index);
-		instance->bind(index);
+		instance->bind(this, index);
 		m_valid++;
 		return index;
 	}
@@ -103,7 +105,7 @@ namespace djinn
 		if (m_max_transform_index.empty() || index > m_max_transform_index.back())
 			m_max_transform_index.push_back(index);
 		// create new ubo if needed
-		if (index / s_transforms_per_ubo > m_transforms.size())
+		if (index / s_transforms_per_ubo >= m_transforms.size())
 			add_block();
 	}
 } // namespace djinn

@@ -8,6 +8,6 @@ in vec2 v_tex;
 
 void main()
 {
-    o_color = texture(u_texture, v_tex);
-    // o_color = mix(texture(u_texture, v_tex), vec4(u_color.rgb, 1), u_color.a);
+    // o_color = texture(u_texture, v_tex);
+    o_color = mix(texture(u_texture, v_tex), vec4(u_color.rgb, 1), u_color.a);
 }
