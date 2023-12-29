@@ -71,11 +71,15 @@ namespace djinn
 		sound_source* source = new sound_source();
 		source->load(afp);
 		id_t const id = insert(source);
+		m_id2afp.insert(id, afp);
 		return id;
 	}
 	void sound_source_manager::destroy(id_t const id)
 	{
-		try_erase(id);
+		if (try_erase(id))
+		{
+			m_id2afp.erase_key(id);
+		}
 	}
 	void sound_source_manager::reload(std::string const& fp)
 	{

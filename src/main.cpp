@@ -69,6 +69,7 @@ int main(int argc, char* argv[])
 		script_watcher_camera.poll();
 		texture_watcher.poll();
 		cubemap_watcher.poll();
+		sound_watcher.poll();
 #endif
 
 		c->begin_frame();

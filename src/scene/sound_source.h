@@ -20,7 +20,5 @@ namespace djinn
 		std::unordered_set<wptr<sound_emitter>> m_emitters;
 		ma_resource_manager_data_source m_source;
 		bool m_source_ready = false;
-	private:
-		void inject_to_emitters();
 	};
 } // namespace djinn
