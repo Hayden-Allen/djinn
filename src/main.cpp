@@ -7,6 +7,7 @@
 #include "script/service/scene_service.h"
 #include "script/service/input_service.h"
 #include "script/service/imgui_service.h"
+#include "script/service/sound_service.h"
 #include "core/constants.h"
 #include "script/js.h"
 #ifndef DJINN_DIST
@@ -14,6 +15,7 @@
 #	include "debug/shader_watcher.h"
 #	include "debug/texture_watcher.h"
 #	include "debug/cubemap_watcher.h"
+#       include "debug/sound_source_watcher.h"
 #endif
 
 #define DJINN_PROFILE 0
@@ -40,6 +42,7 @@ int main(int argc, char* argv[])
 	scene_service::init();
 	input_service::init(c);
 	imgui_service::init(c);
+	sound_service::init();
 
 #ifndef DJINN_DIST
 	shader_watcher shader_watcher(asset_service::get_shader_manager());
@@ -47,12 +50,13 @@ int main(int argc, char* argv[])
 	cubemap_watcher cubemap_watcher(asset_service::get_cubemap_manager());
 	script_watcher_entity script_watcher_entity(scene_service::get_entity_manager());
 	script_watcher_camera script_watcher_camera(scene_service::get_camera_entity_manager());
+	sound_source_watcher sound_watcher(asset_service::get_sound_source_manager());
 #endif
 	scene_service::get_entity_manager()->load("main.js");
 
 #if DJINN_PROFILE
 	u32 const NUM_FRAMES = 500;
-	f32 input_avg = 0, update_avg = 0, draw_avg = 0, gl_avg = 0, ui_avg = 0, imgui_avg = 0;
+	f32 input_avg = 0, update_avg = 0, sound_avg = 0, draw_avg = 0, gl_avg = 0, ui_avg = 0, imgui_avg = 0;
 	for (u32 i = 0; i < NUM_FRAMES; i++)
 #else
 	while (c->is_running())
@@ -76,6 +80,7 @@ int main(int argc, char* argv[])
 		DJINN_TIME(input_service::update(), input_avg, NUM_FRAMES);
 
 		DJINN_TIME(scene_service::update(c->time.delta), update_avg, NUM_FRAMES);
+		DJINN_TIME(sound_service::update(), sound_avg, NUM_FRAMES);
 		DJINN_TIME(scene_service::draw();, draw_avg, NUM_FRAMES);
 		DJINN_TIME(
 			asset_service::get_mesh_manager()->for_each([](sptr<mesh> mesh, id_t const id)
@@ -109,16 +114,18 @@ int main(int argc, char* argv[])
 	printf("TOTAL: %f\n", avg_total);
 #endif
 
+	scene_service::free_all_entities();
+
+	sound_service::shutdown();
 	render_service::shutdown();
 	nanovg_service::shutdown();
 	util_service::shutdown();
 	input_service::shutdown();
 	imgui_service::shutdown();
-
-	// TODO mesh (asset) has sptr<mesh_instance> (scene)
-	// scene_service::shutdown calls entity.__destroy, which frees meshes
 	asset_service::shutdown();
 	scene_service::shutdown();
+
 	c.free();
+
 	return 0;
 }

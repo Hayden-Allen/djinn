@@ -15,6 +15,7 @@ namespace djinn
 	public:
 		static void init();
 		static void shutdown();
+		static void free_all_entities();
 		static void register_functions(JSContext* const ctx);
 		static entity_manager* get_entity_manager();
 		static camera_entity_manager* get_camera_entity_manager();

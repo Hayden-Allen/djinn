@@ -5,6 +5,7 @@
 #include "script/manager/shader_manager.h"
 #include "script/manager/texture_manager.h"
 #include "script/manager/cubemap_manager.h"
+#include "script/manager/sound_source_manager.h"
 
 namespace djinn
 {
@@ -20,11 +21,13 @@ namespace djinn
 		static shader_manager* get_shader_manager();
 		static texture_manager* get_texture_manager();
 		static cubemap_manager* get_cubemap_manager();
+		static sound_source_manager* get_sound_source_manager();
 	private:
 		shader_manager m_shader_manager;
 		texture_manager m_texture_manager;
 		cubemap_manager m_cubemap_manager;
 		mesh_manager m_mesh_manager;
+		sound_source_manager m_sound_source_manager;
 	private:
 		asset_service();
 	};
