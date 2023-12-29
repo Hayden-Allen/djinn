@@ -244,7 +244,7 @@ namespace djinn
 		super::register_function(ctx, "Cubemap", "load", 2, js::asset_service::load_cubemap);
 		super::register_function(ctx, "Cubemap", "destroy", 1, js::asset_service::destroy_cubemap);
 		super::register_function(ctx, "Cubemap", "update", 3, js::asset_service::update_cubemap);
-		super::register_function(ctx, "Sound", "load", 2, js::asset_service::load_sound_source);
+		super::register_function(ctx, "Sound", "load", 1, js::asset_service::load_sound_source);
 		super::register_function(ctx, "Sound", "destroy", 1, js::asset_service::destroy_sound_source);
 	}
 	mesh_manager* asset_service::get_mesh_manager()

@@ -40,6 +40,14 @@ namespace djinn
 				m_id2afp.erase_key(id);
 			}
 		}
+		void free_all()
+		{
+			for (auto& pair : this->m_objects)
+			{
+				pair.second.free();
+			}
+			this->m_objects.clear();
+		}
 	protected:
 		JSRuntime* const m_runtime;
 		std::unordered_map<std::string, std::string> m_afp2src;

@@ -54,7 +54,7 @@ namespace djinn
 	}
 	void sound_service::register_functions(JSContext* const ctx)
 	{
-		super::register_function(ctx, "Emitter", "create", 2, js::sound_service::create_sound_emitter);
+		super::register_function(ctx, "Emitter", "create", 1, js::sound_service::create_sound_emitter);
 		super::register_function(ctx, "Emitter", "destroy", 1, js::sound_service::destroy_sound_emitter);
 		super::register_function(ctx, "Emitter", "play", 1, js::sound_service::play_sound_emitter);
 		super::register_function(ctx, "Emitter", "stop", 1, js::sound_service::stop_sound_emitter);

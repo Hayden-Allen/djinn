@@ -118,7 +118,9 @@ namespace djinn
 		}
 
 		JSValue const call_ret = JS_Call(m_ctx, fn, m_this, argc, argv);
-		// check_exception(call_ret, "entity::call_reserved: " + name);
+#ifndef DJINN_DIST
+		check_exception(call_ret, "entity::call_reserved: " + name);
+#endif
 		JS_FreeValue(m_ctx, call_ret);
 	}
 	void entity::call_load()

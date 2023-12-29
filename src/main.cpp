@@ -114,17 +114,18 @@ int main(int argc, char* argv[])
 	printf("TOTAL: %f\n", avg_total);
 #endif
 
+	scene_service::free_all_entities();
+
 	sound_service::shutdown();
 	render_service::shutdown();
 	nanovg_service::shutdown();
 	util_service::shutdown();
 	input_service::shutdown();
 	imgui_service::shutdown();
-
-	// TODO mesh (asset) has sptr<mesh_instance> (scene)
-	// scene_service::shutdown calls entity.__destroy, which frees meshes
 	asset_service::shutdown();
 	scene_service::shutdown();
+
 	c.free();
+
 	return 0;
 }
