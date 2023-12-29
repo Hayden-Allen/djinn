@@ -226,16 +226,6 @@ namespace djinn
 		ASSERT(!s_instance);
 		s_instance = new asset_service();
 	}
-	void asset_service::configure_sound_source_manager()
-	{
-		ASSERT(s_instance);
-		s_instance->m_sound_source_manager.configure();
-	}
-	void asset_service::unconfigure_sound_source_manager()
-	{
-		ASSERT(s_instance);
-		s_instance->m_sound_source_manager.unconfigure();
-	}
 	void asset_service::register_functions(JSContext* const ctx)
 	{
 		super::register_function(ctx, "Mesh", "create", 4, js::asset_service::create_mesh);

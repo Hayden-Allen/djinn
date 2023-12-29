@@ -18,6 +18,7 @@ namespace djinn
 		static void update();
 	public:
 		static ma_engine* get_engine();
+		static sound_emitter_manager* get_sound_emitter_manager();
 	private:
 		sound_emitter_manager m_sound_emitter_manager;
 		ma_engine m_engine;
