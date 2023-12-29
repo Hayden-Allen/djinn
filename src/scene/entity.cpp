@@ -7,6 +7,7 @@
 #include "script/service/scene_service.h"
 #include "script/service/input_service.h"
 #include "script/service/imgui_service.h"
+#include "script/service/sound_service.h"
 #include "script/js.h"
 
 namespace djinn
@@ -23,6 +24,7 @@ namespace djinn
 		scene_service::register_functions(m_ctx);
 		input_service::register_functions(m_ctx);
 		imgui_service::register_functions(m_ctx);
+		sound_service::register_functions(m_ctx);
 	}
 	entity::~entity()
 	{

@@ -10,6 +10,7 @@ namespace djinn::c
 		static std::string const shader = "../../../../cwd/res/glsl";
 		static std::string const texture = "../../../../cwd/res/texture";
 		static std::string const font = "../../../../cwd/res/font";
+		static std::string const sound = "../../../../cwd/res/sound";
 	} // namespace base_dir
 	namespace uniform
 	{
