@@ -372,6 +372,11 @@ namespace djinn
 		super::shutdown();
 		JS_FreeRuntime(runtime);
 	}
+	void scene_service::free_all_entities()
+	{
+		scene_service::get_camera_entity_manager()->free_all();
+		scene_service::get_entity_manager()->free_all();
+	}
 	void scene_service::register_functions(JSContext* const ctx)
 	{
 		super::register_function(ctx, "MeshInstance", "create", 2, js::scene_service::create_mesh_instance);

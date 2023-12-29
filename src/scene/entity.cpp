@@ -7,6 +7,7 @@
 #include "script/service/scene_service.h"
 #include "script/service/input_service.h"
 #include "script/service/imgui_service.h"
+#include "script/service/sound_service.h"
 #include "script/js.h"
 
 namespace djinn
@@ -23,6 +24,7 @@ namespace djinn
 		scene_service::register_functions(m_ctx);
 		input_service::register_functions(m_ctx);
 		imgui_service::register_functions(m_ctx);
+		sound_service::register_functions(m_ctx);
 	}
 	entity::~entity()
 	{
@@ -116,7 +118,9 @@ namespace djinn
 		}
 
 		JSValue const call_ret = JS_Call(m_ctx, fn, m_this, argc, argv);
-		// check_exception(call_ret, "entity::call_reserved: " + name);
+#ifndef DJINN_DIST
+		check_exception(call_ret, "entity::call_reserved: " + name);
+#endif
 		JS_FreeValue(m_ctx, call_ret);
 	}
 	void entity::call_load()

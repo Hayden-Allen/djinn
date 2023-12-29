@@ -202,6 +202,19 @@ namespace djinn::js::asset_service
 			::djinn::asset_service::get_cubemap_manager()->update(id, subpixels);
 		return JS_UNDEFINED;
 	}
+	JSValue load_sound_source(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		std::string const& fp = js::extract_string(ctx, argv[0]);
+		return js::create_id(ctx, ::djinn::asset_service::get_sound_source_manager()->load(fp));
+	}
+	JSValue destroy_sound_source(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		::djinn::asset_service::get_sound_source_manager()->destroy(id);
+		return JS_UNDEFINED;
+	}
 } // namespace djinn::js::asset_service
 
 
@@ -231,6 +244,8 @@ namespace djinn
 		super::register_function(ctx, "Cubemap", "load", 2, js::asset_service::load_cubemap);
 		super::register_function(ctx, "Cubemap", "destroy", 1, js::asset_service::destroy_cubemap);
 		super::register_function(ctx, "Cubemap", "update", 3, js::asset_service::update_cubemap);
+		super::register_function(ctx, "Sound", "load", 1, js::asset_service::load_sound_source);
+		super::register_function(ctx, "Sound", "destroy", 1, js::asset_service::destroy_sound_source);
 	}
 	mesh_manager* asset_service::get_mesh_manager()
 	{
@@ -247,6 +262,10 @@ namespace djinn
 	cubemap_manager* asset_service::get_cubemap_manager()
 	{
 		return &s_instance->m_cubemap_manager;
+	}
+	sound_source_manager* asset_service::get_sound_source_manager()
+	{
+		return &s_instance->m_sound_source_manager;
 	}
 
 

@@ -5,7 +5,7 @@ import Skybox from "./lib/Skybox"
 import TestEntity from "./TestEntity"
 import Color from "./lib/Color"
 
-const { Asset, Render, Nanovg, Scene, ImGui } = djinn
+const { Asset, Render, Nanovg, Scene, ImGui, Sound } = djinn
 
 function genTexture(
   w: number,
@@ -36,6 +36,9 @@ export default class MainEntity extends Entity {
   private idShader: number = 0
   private idTexture: number = 0
   private idMesh: number = 0
+  private idSoundSource: number = 0
+  private idSoundEmitter: number = 0
+  private needsPlayAudio: boolean = true
 
   __init() {
     this.skybox = Skybox.loadDirectory(
@@ -66,9 +69,15 @@ export default class MainEntity extends Entity {
       [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1],
       [0, 1, 2, 0, 2, 3]
     )
+    this.idSoundSource = Asset.Sound.load("test.mp3")
+    this.idSoundEmitter = Sound.Emitter.create(this.idSoundSource)
+    this.needsPlayAudio = true
   }
   __destroy() {
     this.skybox!.destroy()
+    Sound.Emitter.stop(this.idSoundEmitter)
+    Sound.Emitter.destroy(this.idSoundEmitter)
+    Asset.Sound.destroy(this.idSoundSource)
     Asset.Mesh.destroy(this.idMesh)
     Asset.Shader.destroy(this.idShader)
     Asset.Texture.destroy(this.idTexture)
@@ -87,6 +96,10 @@ export default class MainEntity extends Entity {
     this.entities = []
   }
   __main(dt: number) {
+    if (this.needsPlayAudio) {
+      Sound.Emitter.play(this.idSoundEmitter)
+      this.needsPlayAudio = false
+    }
     Scene.Entity.requestImgui(this.id)
   }
   __draw() {
