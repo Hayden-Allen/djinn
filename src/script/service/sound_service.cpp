@@ -8,7 +8,7 @@ namespace djinn::js::sound_service
 {
 	JSValue create_sound_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
+		ASSERT(argc == 1);
 		id_t const sound_source_id = js::extract_id(ctx, argv[0]);
 		sptr<sound_source> source = ::djinn::asset_service::get_sound_source_manager()->get(sound_source_id);
 		id_t const instance_id = ::djinn::sound_service::get_sound_emitter_manager()->create(source);
