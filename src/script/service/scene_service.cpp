@@ -127,6 +127,26 @@ namespace djinn::js::scene_service
 		id_t const instance_id = ::djinn::scene_service::get_mesh_instance_manager()->create(mesh, shaders);
 		return js::create_id(ctx, instance_id);
 	}
+	JSValue set_mesh_instance_uniform(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const instance_id = js::extract_id(ctx, argv[0]);
+		std::unordered_map<std::string, JSValue> const& map = js::extract_map(ctx, argv[1]);
+		sptr<mesh_instance> instance = ::djinn::scene_service::get_mesh_instance_manager()->get(instance_id);
+		for (auto const& pair : map)
+		{
+			ASSERT(JS_IsArray(ctx, pair.second));
+			ASSERT(js::extract_array_length(ctx, pair.second) == 2);
+			JSValue const& js_data = JS_GetPropertyUint32(ctx, pair.second, 0);
+			JSValue const& js_index = JS_GetPropertyUint32(ctx, pair.second, 1);
+			std::vector<f32> const& data = js::extract_f32_array(ctx, js_data);
+			u32 const index = js::extract_u32(ctx, js_index);
+			JS_FreeValue(ctx, js_data);
+			JS_FreeValue(ctx, js_index);
+			instance->set_uniform(pair.first, data, index);
+		}
+		return JS_UNDEFINED;
+	}
 	JSValue destroy_mesh_instance(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
@@ -360,6 +380,7 @@ namespace djinn
 	void scene_service::register_functions(JSContext* const ctx)
 	{
 		super::register_function(ctx, "MeshInstance", "create", 2, js::scene_service::create_mesh_instance);
+		super::register_function(ctx, "MeshInstance", "setUniform", 2, js::scene_service::set_mesh_instance_uniform);
 		super::register_function(ctx, "MeshInstance", "destroy", 1, js::scene_service::destroy_mesh_instance);
 		super::register_function(ctx, "Entity", "requestImgui", 1, js::scene_service::request_imgui);
 		super::register_function(ctx, "load", 1, js::scene_service::load_entity);

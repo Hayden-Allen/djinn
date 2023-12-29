@@ -10,6 +10,7 @@ namespace djinn
 		std::unordered_set<std::string> seen;
 		for_each_uniform([&](shader_uniform const& res)
 			{
+				printf("%s\n", res.name.c_str());
 				if (res.name.starts_with(c::uniform::instanced_transforms_block))
 				{
 					std::string const& field_name = res.name.substr(res.name.find_last_of('.') + 1);

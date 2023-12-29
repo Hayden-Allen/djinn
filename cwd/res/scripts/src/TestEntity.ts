@@ -44,6 +44,10 @@ export default class TestEntity extends Entity {
     //   u_pos: this.meshPos,
     // })
     // Render.draw(this.idMesh, this.idShader)
+    Scene.MeshInstance.setUniform(this.idInstance, {
+      m: [[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -1, 1], 0],
+      // c: [this.color!.toArray(), 0],
+    })
   }
   bind(cam: ICamera, color: Color, idMesh: number, idShader: number) {
     this.camera = cam

@@ -10,14 +10,30 @@ namespace djinn
 		scene_object(id),
 		m_mesh(mesh),
 		m_batch_index(MAX_VALUE_T(u64)),
-		m_batch_shaders(batch_shaders)
+		m_batch_shaders(batch_shaders),
+		m_batch(nullptr)
 	{
 		auto const& fields = batch_shaders->get_instance_fields();
+		u32 offset_bytes = 0;
 		for (shaders::instance_field const& f : fields)
 		{
-			std::vector<f32> data(mgl::get_shader_type_size(f.type) * f.arr_count);
-			m_fields.insert({ f.name, { data, f.type, f.arr_count } });
+			u32 const num_floats = mgl::get_shader_type_size_bytes(f.type) / sizeof(f32) * f.arr_count;
+			std::vector<f32> data(num_floats);
+			m_fields.emplace_back(data, offset_bytes, f.type, f.arr_count);
+			m_field_index.insert({ f.name, m_fields.size() - 1 });
+			offset_bytes += num_floats * sizeof(f32);
 		}
+	}
+
+	void mesh_instance::set_uniform(std::string const& name, std::vector<f32> const& data, u32 const index)
+	{
+		auto it = m_field_index.find(name);
+		ASSERT(it != m_field_index.end());
+		mesh_instance_field& field = m_fields.at(it->second);
+		ASSERT(index < (u32)field.arr_count);
+		ASSERT(data.size() * sizeof(f32) == mgl::get_shader_type_size_bytes(field.type));
+		std::copy(data.begin(), data.end(), field.data.begin() + index);
+		m_batch->update(m_batch_index, field);
 	}
 
 
@@ -29,8 +45,9 @@ namespace djinn
 
 
 
-	void mesh_instance::bind(u64 const index)
+	void mesh_instance::bind(wptr<mesh_instance_batch> batch, u64 const index)
 	{
+		m_batch = batch;
 		m_batch_index = index;
 	}
 } // namespace djinn
