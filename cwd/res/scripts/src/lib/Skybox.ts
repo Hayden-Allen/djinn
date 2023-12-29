@@ -83,7 +83,9 @@ export default class Skybox {
       ]
     )
     this.idInstance = Scene.MeshInstance.create(this.idMesh, this.idShader)
-
+    Scene.MeshInstance.setUniform(this.idInstance, {
+      m: [[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], 0],
+    })
     Asset.Shader.setUniforms(this.idShader, {
       u_texture: 0,
     })
@@ -131,8 +133,8 @@ export default class Skybox {
   }
 
   destroy() {
+    Scene.MeshInstance.destroy(this.idInstance)
     Asset.Mesh.destroy(this.idMesh)
-    Asset.Mesh.destroyInstance(this.idInstance)
     Asset.Shader.destroy(this.idShader)
     Asset.Cubemap.destroy(this.idTexture)
   }

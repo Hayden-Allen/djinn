@@ -5,6 +5,7 @@ namespace djinn
 {
 	class mesh;
 	class mesh_instance;
+	struct mesh_instance_field;
 	class shaders;
 
 	class mesh_instance_batch final
@@ -12,18 +13,15 @@ namespace djinn
 	public:
 		mesh_instance_batch(wptr<mesh> const& mesh, sptr<shaders> const& shaders);
 		mesh_instance_batch(mesh_instance_batch const&) = delete;
-		mesh_instance_batch(mesh_instance_batch&& other);
+		mesh_instance_batch(mesh_instance_batch&& other) noexcept;
 	public:
 		bool empty() const;
 		u64 insert(sptr<mesh_instance> instance);
 		void remove(u64 const index);
-		void update(u64 const index, tmat<space::OBJECT, space::WORLD> const& transform);
+		void update(u64 const index, mesh_instance_field const& field);
 		void draw(sptr<mgl::context> const& ctx, static_render_object const& ro);
 	private:
-		static inline u32 const s_floats_per_mat = 16;
-		static inline u32 const s_mat_size = s_floats_per_mat * sizeof(float);
 		static inline u32 s_num_ubos;
-		static inline u32 s_transforms_per_ubo;
 	private:
 		wptr<mesh> m_mesh;
 		sptr<shaders> m_shaders;
@@ -33,6 +31,7 @@ namespace djinn
 		std::vector<u64> m_transform_indices;			  // same size as m_instances. element at i is where m_instances[i] writes its transform in m_transforms
 		std::vector<u64> m_max_transform_index;			  // size = m_valid, stores the index of the max value in m_transform_indices
 		s32 m_next = 0, m_valid = 0;					  // end of m_instances, number of valid ids in m_instances
+		u32 m_instances_per_ubo = 0, m_floats_per_instance = 0;
 	private:
 		void add_block();
 		void set_transform_index(u64 const index);

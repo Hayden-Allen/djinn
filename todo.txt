@@ -5,7 +5,10 @@
 	- visibility mask (Scene.MeshInstance.setVisible) camera mask?
 
 - now
+	- glGetProgramResourceiv to get type/offset of variables in uniform block
+		- only supported gl >= 4.3 (so not mac?)
 	- manager => [file_manager, ref_counted_manager, ref_counted_file_manager]
+	- sound_emitter/sound_source wptr->sptr
 	- s_num_ubos/s_transforms_per_ubo
 		- sync these values between mesh_instance_batch and shaders (preprocessor, always use minimum?)
 	- instance shaders

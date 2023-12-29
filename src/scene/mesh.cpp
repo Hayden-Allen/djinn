@@ -40,19 +40,4 @@ namespace djinn
 		if (m_batches.at(shaders).empty())
 			m_batches.erase(shaders);
 	}
-	/*void mesh::insert_instance(sptr<shaders> const& shaders, sptr<mesh_instance> instance)
-	{
-		auto it = m_batches.find(shaders);
-		if (it == m_batches.end())
-		{
-			m_batches.insert({ shaders, mesh_instance_batch(wptr(this), shaders) });
-		}
-		m_batches.at(shaders).insert(instance);
-	}
-	void mesh::remove_instance(sptr<shaders> const& shaders, u64 const index)
-	{
-		m_batches[shaders].remove(index);
-		if (m_batches[shaders].empty())
-			m_batches.erase(shaders);
-	}*/
 } // namespace djinn

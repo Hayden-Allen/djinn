@@ -75,7 +75,7 @@ export default class MainEntity extends Entity {
   }
   __load() {
     this.color.set(0, 1, 1, 0.5)
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < 100; i++) {
       let e = Scene.load("TestEntity.js")
       e.bind(this.camera, this.color, this.idMesh, this.idShader)
       this.entities.push(e)
@@ -91,9 +91,9 @@ export default class MainEntity extends Entity {
   }
   __draw() {
     this.skybox!.draw(this.camera!.getId())
-    Asset.Shader.setUniforms(this.idShader, {
-      u_color: this.color!.toArray(),
-    })
+    // Asset.Shader.setUniforms(this.idShader, {
+    //   u_color: this.color!.toArray(),
+    // })
     Asset.Shader.setCameraUniforms(this.idShader, this.camera!.getId())
   }
   __ui() {
