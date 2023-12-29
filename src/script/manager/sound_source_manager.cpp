@@ -86,13 +86,6 @@ namespace djinn
 			get(id)->load(afp);
 		}
 	}
-	void sound_source_manager::reload_all()
-	{
-		for (const auto& pair : m_id2afp)
-		{
-			get(pair.first)->load(pair.second);
-		}
-	}
 	void sound_source_manager::rename(std::string const& old_fp, std::string const& new_fp)
 	{
 		std::string const& old_afp = to_absolute(old_fp);
@@ -106,6 +99,9 @@ namespace djinn
 
 	void sound_source_manager::reload_all()
 	{
-		ASSERT(false);
+		for (auto const& pair : m_id2afp)
+		{
+			get(pair.first)->load(pair.second);
+		}
 	}
 } // namespace djinn
