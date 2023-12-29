@@ -10,7 +10,9 @@ out vec3 v_tc;
 
 void main()
 {
-	mat4 transform = u_transforms[0].m[gl_InstanceID];
+    int blockIndex = gl_InstanceID / 256;
+    int transformIndex = gl_InstanceID - 256 * blockIndex;
+	mat4 transform = u_transforms[blockIndex].m[transformIndex];
 	gl_Position = u_vpr * transform * vec4(i_pos, 1);
 	// gl_Position = vec4(i_pos, 1);
 	v_tc = i_pos;

@@ -2,19 +2,20 @@
 	- reset ids on scene switch?
 	- enforce all pos/rot/scale changes be done in __main?
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
+	- visibility mask (Scene.MeshInstance.setVisible) camera mask?
 
 - now
+	- manager => [file_manager, ref_counted_manager, ref_counted_file_manager]
 	- s_num_ubos/s_transforms_per_ubo
 		- sync these values between mesh_instance_batch and shaders (preprocessor, always use minimum?)
 	- instance shaders
 		- per-instance struct
 		- preprocessor to compile with maximum array size of this struct
 		- struct names and data types are extracted from shader after compilation
-		- batches have their own shaders
-		- when an instance is created, you give it shader id. appropriate batch is selected or created,
-			and that instance gets a structure containing the correct per-instance uniforms for that shader
-		- dirty flag on instance transform
-		- visibility mask (Scene.MeshInstance.setVisible) camera mask?
+	- mesh_instance_batch testing
+		- create instances with different shaders
+		- removing works at all
+		- removing instance at capacity threshold deletes now-unused ubo
 	- mesh_instance_manager::destroy broken
 	- move to mgl::layer system
 	- input_service takes layer to get access to input_cache

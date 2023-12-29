@@ -46,7 +46,7 @@ export default class Skybox {
       options.vertexShader,
       options.fragmentShader
     )
-    this.idMesh = Asset.Mesh.create(8, [3], 36, [this.idTexture], this.idShader)
+    this.idMesh = Asset.Mesh.create(8, [3], 36, [this.idTexture])
     Asset.Mesh.update(
       this.idMesh,
       [
@@ -82,7 +82,7 @@ export default class Skybox {
         4, 1, 5, 4, 0, 1,
       ]
     )
-    this.idInstance = Scene.MeshInstance.create(this.idMesh)
+    this.idInstance = Scene.MeshInstance.create(this.idMesh, this.idShader)
 
     Asset.Shader.setUniforms(this.idShader, {
       u_texture: 0,

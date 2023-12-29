@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "manager.h"
+#include "asset/shaders.h"
 
 namespace djinn
 {
