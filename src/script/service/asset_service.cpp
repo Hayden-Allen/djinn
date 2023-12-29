@@ -38,20 +38,18 @@ namespace djinn::js::asset_service
 
 	JSValue create_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 5);
+		ASSERT(argc == 4);
 		u32 const vertex_count = js::extract_u32(ctx, argv[0]);
 		std::vector<u32> const& vertex_layout = js::extract_u32_array(ctx, argv[1]);
 		u32 const index_count = js::extract_u32(ctx, argv[2]);
 		std::vector<id_t> const& texture_ids = js::extract_id_array(ctx, argv[3]);
-		id_t const shader_id = js::extract_id(ctx, argv[4]);
 
 		std::vector<sptr<texture>> textures;
 		textures.reserve(texture_ids.size());
 		for (id_t const id : texture_ids)
 			textures.push_back(get_texture(id));
-		sptr<shaders> shaders = ::djinn::asset_service::get_shader_manager()->get(shader_id);
 
-		JSValue ret = js::create_id(ctx, ::djinn::asset_service::get_mesh_manager()->create(vertex_count, vertex_layout, index_count, textures, shaders));
+		JSValue ret = js::create_id(ctx, ::djinn::asset_service::get_mesh_manager()->create(vertex_count, vertex_layout, index_count, textures));
 		return ret;
 	}
 	JSValue destroy_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -217,7 +215,7 @@ namespace djinn
 	}
 	void asset_service::register_functions(JSContext* const ctx)
 	{
-		super::register_function(ctx, "Mesh", "create", 5, js::asset_service::create_mesh);
+		super::register_function(ctx, "Mesh", "create", 4, js::asset_service::create_mesh);
 		super::register_function(ctx, "Mesh", "update", 3, js::asset_service::update_mesh);
 		super::register_function(ctx, "Mesh", "destroy", 1, js::asset_service::destroy_mesh);
 		super::register_function(ctx, "Shader", "create", 2, js::asset_service::create_shader);

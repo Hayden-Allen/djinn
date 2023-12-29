@@ -2,11 +2,13 @@
 #include "mesh_instance_batch.h"
 #include "core/constants.h"
 #include "mesh_instance.h"
+#include "asset/shaders.h"
 
 namespace djinn
 {
-	mesh_instance_batch::mesh_instance_batch(wptr<mesh> const& mesh) :
-		m_mesh(mesh)
+	mesh_instance_batch::mesh_instance_batch(wptr<mesh> const& mesh, sptr<shaders> const& shaders) :
+		m_mesh(mesh),
+		m_shaders(shaders)
 	{
 		/*s_num_ubos = mgl::get_param<u32>(GL_MAX_VERTEX_UNIFORM_BLOCKS);
 		s_transforms_per_ubo = mgl::get_param<u32>(GL_MAX_UNIFORM_BLOCK_SIZE) / s_mat_size;*/
@@ -14,12 +16,23 @@ namespace djinn
 		s_transforms_per_ubo = 256;
 		add_block();
 	}
+	mesh_instance_batch::mesh_instance_batch(mesh_instance_batch&& other) :
+		m_mesh(other.m_mesh),
+		m_shaders(other.m_shaders),
+		m_instances(std::move(other.m_instances)),
+		m_transforms(std::move(other.m_transforms)),
+		m_openings(std::move(other.m_openings)),
+		m_transform_indices(std::move(other.m_transform_indices)),
+		m_max_transform_index(std::move(other.m_max_transform_index)),
+		m_next(other.m_next),
+		m_valid(other.m_valid)
+	{}
 
 
 
-	u64 mesh_instance_batch::get_count() const
+	bool mesh_instance_batch::empty() const
 	{
-		return m_instances.size();
+		return m_valid == 0;
 	}
 	u64 mesh_instance_batch::insert(sptr<mesh_instance> instance)
 	{
@@ -38,7 +51,7 @@ namespace djinn
 			m_instances.push_back(instance);
 		}
 		set_transform_index(index);
-		instance->bind(this, index);
+		instance->bind(index);
 		m_valid++;
 		return index;
 	}
@@ -51,7 +64,9 @@ namespace djinn
 		m_openings.push_back(index);
 		// there is one less transform being written to the UBOs
 		m_valid--;
-		// TODO check if we can delete a UBO now
+		// check if we can delete a UBO now
+		if (m_valid % s_transforms_per_ubo == s_transforms_per_ubo - 1)
+			m_transforms.pop_back();
 
 		// slot in m_instances whose transform is at the end of the UBOs
 		u64 const end_transform_index = m_max_transform_index.back();
@@ -71,7 +86,7 @@ namespace djinn
 		ASSERT(block_index < m_transforms.size());
 		m_transforms[block_index].update(transform.e, s_floats_per_mat, (u32)transform_index * s_mat_size);
 	}
-	void mesh_instance_batch::draw(sptr<mgl::context> const& ctx, static_render_object const& ro, sptr<shaders> const& shaders)
+	void mesh_instance_batch::draw(sptr<mgl::context> const& ctx, static_render_object const& ro)
 	{
 		for (u64 i = 0; i < m_instances.size(); i++)
 		{
@@ -79,12 +94,12 @@ namespace djinn
 			update(i, m_instances[i]->get_world_transform());
 		}
 		// bind first block to 0, so all blocks will be bound in [0, n)
-		shaders->uniform_block_binding(c::uniform::instanced_transforms_block, 0);
+		m_shaders->uniform_block_binding(c::uniform::instanced_transforms_block, 0);
 		for (u32 i = 0; i < (u32)m_transforms.size(); i++)
 		{
 			m_transforms[i].bind(i);
 		}
-		ctx->draw_instanced(ro, *shaders.get(), m_valid);
+		ctx->draw_instanced(ro, *m_shaders.get(), m_valid);
 	}
 
 

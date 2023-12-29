@@ -11,7 +11,7 @@ namespace djinn
 		mesh_manager();
 		DCM(mesh_manager);
 	public:
-		id_t create(u32 const vertex_count, std::vector<u32> const& layout, u32 const index_count, std::vector<sptr<texture>> const& textures, sptr<shaders> const& shaders);
+		id_t create(u32 const vertex_count, std::vector<u32> const& layout, u32 const index_count, std::vector<sptr<texture>> const& textures);
 		id_t load(std::string const& fp) override;
 		void destroy(id_t const id) override;
 		void reload(std::string const& fp) override;

@@ -10,10 +10,10 @@ namespace djinn
 
 
 
-	id_t mesh_instance_manager::create(sptr<mesh>& mesh)
+	id_t mesh_instance_manager::create(sptr<mesh> mesh, sptr<shaders> const& shaders)
 	{
-		id_t const id = insert(new mesh_instance(s_next_id));
-		mesh->insert_instance(get(id));
+		id_t const id = insert(new mesh_instance(s_next_id, mesh, shaders));
+		mesh->insert_instance(shaders, get(id));
 		return id;
 	}
 	id_t mesh_instance_manager::load(std::string const& fp)

@@ -45,9 +45,9 @@ export default class TestEntity extends Entity {
     // })
     // Render.draw(this.idMesh, this.idShader)
   }
-  bind(cam: ICamera, color: Color, idMesh: number) {
+  bind(cam: ICamera, color: Color, idMesh: number, idShader: number) {
     this.camera = cam
     this.color = color
-    this.idInstance = Scene.MeshInstance.create(idMesh)
+    this.idInstance = Scene.MeshInstance.create(idMesh, idShader)
   }
 }
