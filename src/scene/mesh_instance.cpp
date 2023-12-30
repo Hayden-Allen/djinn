@@ -6,7 +6,7 @@
 
 namespace djinn
 {
-	mesh_instance::mesh_instance(id_t const id, wptr<mesh> const& mesh, sptr<shaders> const& batch_shaders) :
+	mesh_instance::mesh_instance(id_t const id, sptr<mesh> const& mesh, wptr<shaders> const& batch_shaders) :
 		scene_object(id),
 		m_mesh(mesh),
 		m_batch_index(MAX_VALUE_T(u64)),

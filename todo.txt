@@ -5,21 +5,17 @@
 	- visibility mask (Scene.MeshInstance.setVisible) camera mask?
 
 - now
-	- glGetProgramResourceiv to get type/offset of variables in uniform block
-		- only supported gl >= 4.3 (so not mac?)
-	- manager => [file_manager, ref_counted_manager, ref_counted_file_manager]
-	- sound_emitter/sound_source wptr->sptr
 	- s_num_ubos/s_transforms_per_ubo
 		- sync these values between mesh_instance_batch and shaders (preprocessor, always use minimum?)
 	- instance shaders
-		- per-instance struct
-		- preprocessor to compile with maximum array size of this struct
-		- struct names and data types are extracted from shader after compilation
+		- preprocessor to compile with maximum array size of instance struct
+	- manager => [file_manager, ref_counted_manager, ref_counted_file_manager]
 	- mesh_instance_batch testing
 		- create instances with different shaders
 		- removing works at all
 		- removing instance at capacity threshold deletes now-unused ubo
-	- mesh_instance_manager::destroy broken
+		- removing all instances using a shader deletes that instance
+
 	- move to mgl::layer system
 	- input_service takes layer to get access to input_cache
 	- set camera uniforms automatically in Render.draw

@@ -4,7 +4,7 @@
 
 namespace djinn
 {
-	mesh::mesh(u32 const vertex_count, std::vector<u32> const& layout, u32 const index_count, std::vector<sptr<texture>> const& textures) :
+	mesh::mesh(u32 const vertex_count, std::vector<u32> const& layout, u32 const index_count, std::vector<wptr<texture>> const& textures) :
 		m_ro(vertex_count, layout, index_count),
 		m_textures(textures)
 	{}
@@ -25,7 +25,7 @@ namespace djinn
 
 
 
-	void mesh::insert_instance(sptr<shaders> const& x, sptr<mesh_instance> instance)
+	void mesh::insert_instance(wptr<shaders> const& x, sptr<mesh_instance> instance)
 	{
 		auto it = m_batches.find(x);
 		if (it == m_batches.end())
@@ -34,7 +34,7 @@ namespace djinn
 		}
 		m_batches.at(x).insert(instance);
 	}
-	void mesh::remove_instance(sptr<shaders> const& shaders, u64 const index)
+	void mesh::remove_instance(wptr<shaders> const& shaders, u64 const index)
 	{
 		m_batches.at(shaders).remove(index);
 		if (m_batches.at(shaders).empty())

@@ -15,7 +15,7 @@
 #	include "debug/shader_watcher.h"
 #	include "debug/texture_watcher.h"
 #	include "debug/cubemap_watcher.h"
-#       include "debug/sound_source_watcher.h"
+#	include "debug/sound_source_watcher.h"
 #endif
 
 #define DJINN_PROFILE 0
@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
 	printf("TOTAL: %f\n", avg_total);
 #endif
 
-	scene_service::free_all_entities();
+	scene_service::free_all();
 
 	sound_service::shutdown();
 	render_service::shutdown();

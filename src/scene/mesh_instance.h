@@ -21,14 +21,14 @@ namespace djinn
 		friend class mesh_instance_batch;
 		friend class mesh_instance_manager;
 	public:
-		mesh_instance(id_t const id, wptr<mesh> const& mesh, sptr<shaders> const& batch_shaders);
+		mesh_instance(id_t const id, sptr<mesh> const& mesh, wptr<shaders> const& batch_shaders);
 		DCM(mesh_instance);
 	public:
 		void set_uniform(std::string const& name, std::vector<f32> const& data, u32 const index);
 	private:
-		wptr<mesh> m_mesh;
+		sptr<mesh> m_mesh;
 		u64 m_batch_index;
-		sptr<shaders> m_batch_shaders;
+		wptr<shaders> m_batch_shaders;
 		wptr<mesh_instance_batch> m_batch;
 		std::vector<mesh_instance_field> m_fields;
 		std::unordered_map<std::string, u64> m_field_index;

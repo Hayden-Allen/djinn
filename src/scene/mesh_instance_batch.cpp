@@ -6,7 +6,7 @@
 
 namespace djinn
 {
-	mesh_instance_batch::mesh_instance_batch(wptr<mesh> const& mesh, sptr<shaders> const& shaders) :
+	mesh_instance_batch::mesh_instance_batch(wptr<mesh> const& mesh, wptr<shaders> const& shaders) :
 		m_mesh(mesh),
 		m_shaders(shaders)
 	{

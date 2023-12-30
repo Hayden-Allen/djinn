@@ -58,6 +58,15 @@ namespace djinn
 			for (auto const& pair : m_objects)
 				fn(sptr<T>(pair.second), pair.first);
 		}
+		virtual void free_all()
+		{
+			std::map<id_t, optr<T>> sorted;
+			for (auto& pair : this->m_objects)
+				sorted.insert({ pair.first, std::move(pair.second) });
+			this->m_objects.clear();
+			for (auto it = sorted.rbegin(); it != sorted.rend(); it++)
+				it->second.free();
+		}
 	protected:
 		std::string m_base_dir;
 		std::unordered_map<id_t, optr<T>> m_objects; // map of unique id to actual object (this class owns all the objects)

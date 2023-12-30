@@ -44,10 +44,10 @@ namespace djinn::js::asset_service
 		u32 const index_count = js::extract_u32(ctx, argv[2]);
 		std::vector<id_t> const& texture_ids = js::extract_id_array(ctx, argv[3]);
 
-		std::vector<sptr<texture>> textures;
+		std::vector<wptr<texture>> textures;
 		textures.reserve(texture_ids.size());
 		for (id_t const id : texture_ids)
-			textures.push_back(get_texture(id));
+			textures.emplace_back(get_texture(id));
 
 		JSValue ret = js::create_id(ctx, ::djinn::asset_service::get_mesh_manager()->create(vertex_count, vertex_layout, index_count, textures));
 		return ret;

@@ -14,11 +14,11 @@ namespace djinn::c
 	} // namespace base_dir
 	namespace uniform
 	{
-		static std::string const view_mat = "u_view";
-		static std::string const proj_mat = "u_proj";
-		static std::string const vp_mat = "u_vp";
-		static std::string const vpr_mat = "u_vpr";
-		static std::string const instanced_transforms_block = "u_instanced_transforms";
+		static std::string const view_mat = "d_view";
+		static std::string const proj_mat = "d_proj";
+		static std::string const vp_mat = "d_vp";
+		static std::string const vpr_mat = "d_vpr";
+		static std::string const instanced_transforms_block = "d_instance";
 		static std::string const instance_transform = "d_transform";
 	} // namespace uniform
 } // namespace djinn::c

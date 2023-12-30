@@ -372,7 +372,7 @@ namespace djinn
 		super::shutdown();
 		JS_FreeRuntime(runtime);
 	}
-	void scene_service::free_all_entities()
+	void scene_service::free_all()
 	{
 		scene_service::get_camera_entity_manager()->free_all();
 		scene_service::get_entity_manager()->free_all();

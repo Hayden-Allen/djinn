@@ -10,7 +10,7 @@ namespace djinn
 
 
 
-	id_t mesh_manager::create(u32 const vertex_count, std::vector<u32> const& layout, u32 const index_count, std::vector<sptr<texture>> const& textures)
+	id_t mesh_manager::create(u32 const vertex_count, std::vector<u32> const& layout, u32 const index_count, std::vector<wptr<texture>> const& textures)
 	{
 		return insert(new mesh(vertex_count, layout, index_count, textures));
 	}
