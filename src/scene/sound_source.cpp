@@ -18,20 +18,32 @@ namespace djinn
 	
 	void sound_source::load(const std::string& afp)
 	{
+		for (auto emitter : m_emitters)
+		{
+			emitter->before_reload();
+		}
+
 		if (m_source_ready)
 		{
 			ma_resource_manager_data_source_uninit(&m_source);
+			m_source_ready = false;
 		}
+
 		ma_resource_manager* resource_mgr = asset_service::get_sound_source_manager()->get_resource_manager();
 		if (!resource_mgr)
 		{
 			ASSERT(false); // FIXME: This happens when the sound service is disabled, we need to figure out how to handle this
 		}
+
 		ma_result result = ma_resource_manager_data_source_init(resource_mgr, afp.c_str(), 0, nullptr, &m_source);
 		ASSERT(result == MA_SUCCESS);
+
 		m_source_ready = true;
 
-		inject_to_emitters();
+		for (auto emitter : m_emitters)
+		{
+			emitter->after_reload();
+		}
 	}
 	void sound_source::register_emitter(wptr<sound_emitter> emitter)
 	{
@@ -44,15 +56,5 @@ namespace djinn
 	ma_resource_manager_data_source* sound_source::get_data_source()
 	{
 		return m_source_ready ? &m_source : nullptr;
-	}
-
-
-
-	void sound_source::inject_to_emitters()
-	{
-		for (auto emitter : m_emitters)
-		{
-			emitter->reload_source();
-		}
 	}
 } // namespace djinn
