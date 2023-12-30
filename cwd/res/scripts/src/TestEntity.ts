@@ -17,6 +17,7 @@ export default class TestEntity extends Entity {
       this.meshPos[i] = (Math.random() * 2 - 1) * 10
       this.meshVel[i] = (Math.random() * 2 - 1) * 10
     }
+    this.color = new Color(Math.random(), Math.random(), Math.random(), 0.5)
   }
   __destroy() {
     Scene.MeshInstance.destroy(this.idInstance)
@@ -36,22 +37,17 @@ export default class TestEntity extends Entity {
     }
     Scene.setPos(this.idInstance, this.meshPos)
   }
-  __draw() {
-    // Render.bindTexture(this.idTexture, 0)
-    // Asset.Shader.setCameraUniforms(this.idShader, this.camera!.getId())
-    // Asset.Shader.setUniforms(this.idShader, {
-    //   u_color: this.color!.toArray(),
-    //   u_pos: this.meshPos,
-    // })
-    // Render.draw(this.idMesh, this.idShader)
-    Scene.MeshInstance.setUniform(this.idInstance, {
-      m: [[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -1, 1], 0],
-      // c: [this.color!.toArray(), 0],
-    })
-  }
+  __draw() {}
   bind(cam: ICamera, color: Color, idMesh: number, idShader: number) {
     this.camera = cam
-    this.color = color
+    // this.color = color
     this.idInstance = Scene.MeshInstance.create(idMesh, idShader)
+    const x = (Math.random() * 2 - 1) * 10
+    const y = (Math.random() * 2 - 1) * 10
+    const z = Math.random() * -10
+    Scene.MeshInstance.setUniform(this.idInstance, {
+      // m: [[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x, y, z, 1], 0],
+      color: [this.color!.toArray(), 0],
+    })
   }
 }

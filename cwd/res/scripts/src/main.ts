@@ -97,7 +97,7 @@ export default class MainEntity extends Entity {
   }
   __main(dt: number) {
     if (this.needsPlayAudio) {
-      Sound.Emitter.play(this.idSoundEmitter)
+      // Sound.Emitter.play(this.idSoundEmitter)
       this.needsPlayAudio = false
     }
     Scene.Entity.requestImgui(this.id)

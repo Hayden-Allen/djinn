@@ -19,5 +19,6 @@ namespace djinn::c
 		static std::string const vp_mat = "u_vp";
 		static std::string const vpr_mat = "u_vpr";
 		static std::string const instanced_transforms_block = "u_instanced_transforms";
+		static std::string const instance_transform = "d_transform";
 	} // namespace uniform
 } // namespace djinn::c

@@ -11,6 +11,7 @@ namespace djinn
 			std::string name;
 			GLenum type;
 			s32 arr_count;
+			u32 offset_bytes;
 		};
 	public:
 		shaders(std::string const& vert_fp, std::string const& frag_fp, bool const fp_is_src = false);

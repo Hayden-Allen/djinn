@@ -14,16 +14,16 @@ namespace djinn
 		m_batch(nullptr)
 	{
 		auto const& fields = batch_shaders->get_instance_fields();
-		u32 offset_bytes = 0;
 		for (shaders::instance_field const& f : fields)
 		{
 			u32 const num_floats = mgl::get_shader_type_size_bytes(f.type) / sizeof(f32) * f.arr_count;
 			std::vector<f32> data(num_floats);
-			m_fields.emplace_back(data, offset_bytes, f.type, f.arr_count);
+			m_fields.emplace_back(data, f.type, f.arr_count, f.offset_bytes);
 			m_field_index.insert({ f.name, m_fields.size() - 1 });
-			offset_bytes += num_floats * sizeof(f32);
 		}
 	}
+
+
 
 	void mesh_instance::set_uniform(std::string const& name, std::vector<f32> const& data, u32 const index)
 	{

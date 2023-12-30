@@ -35,5 +35,6 @@ namespace djinn
 	private:
 		void add_block();
 		void set_transform_index(u64 const index);
+		void update_transform(u64 const index, tmat<space::OBJECT, space::WORLD> const& transform);
 	};
 } // namespace djinn

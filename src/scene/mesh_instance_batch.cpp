@@ -14,7 +14,7 @@ namespace djinn
 		s_transforms_per_ubo = mgl::get_param<u32>(GL_MAX_UNIFORM_BLOCK_SIZE) / s_mat_size;*/
 		s_num_ubos = 12;
 		m_instances_per_ubo = 256;
-		u32 total_floats = 0;
+		u32 total_floats = 16; // 16 floats in mat4 (transform)
 		for (auto const& field : shaders->get_instance_fields())
 			total_floats += mgl::get_shader_type_size_bytes(field.type) / sizeof(f32);
 		m_floats_per_instance = total_floats;
@@ -90,15 +90,17 @@ namespace djinn
 		u64 const block_index = total_index / m_instances_per_ubo;
 		u64 const transform_index = total_index % m_instances_per_ubo;
 		ASSERT(block_index < m_transforms.size());
-		m_transforms[block_index].update(field.data.data(), (u32)field.data.size(), field.offset_bytes);
+		u64 const offset_bytes = field.offset_bytes + (m_floats_per_instance * sizeof(f32) * total_index);
+		m_transforms[block_index].update(field.data.data(), (u32)field.data.size(), (u32)offset_bytes);
 	}
 	void mesh_instance_batch::draw(sptr<mgl::context> const& ctx, static_render_object const& ro)
 	{
-		/*for (u64 i = 0; i < m_instances.size(); i++)
+		// TODO dirty flag/do this when transform function called
+		for (u64 i = 0; i < m_instances.size(); i++)
 		{
 			m_instances[i]->update_transform();
-			update(i, m_instances[i]->get_world_transform());
-		}*/
+			update_transform(i, m_instances[i]->get_world_transform());
+		}
 		// bind first block to 0, so all blocks will be bound in [0, n)
 		m_shaders->uniform_block_binding(c::uniform::instanced_transforms_block, 0);
 		for (u32 i = 0; i < (u32)m_transforms.size(); i++)
@@ -128,5 +130,15 @@ namespace djinn
 		// create new ubo if needed
 		if (index / m_instances_per_ubo >= m_transforms.size())
 			add_block();
+	}
+	void mesh_instance_batch::update_transform(u64 const index, tmat<space::OBJECT, space::WORLD> const& transform)
+	{
+		ASSERT(index < m_transform_indices.size());
+		u64 const total_index = m_transform_indices[index];
+		u64 const block_index = total_index / m_instances_per_ubo;
+		u64 const transform_index = total_index % m_instances_per_ubo;
+		ASSERT(block_index < m_transforms.size());
+		u64 const offset_bytes = (m_floats_per_instance * sizeof(f32) * total_index);
+		m_transforms[block_index].update(transform.e, 16, (u32)offset_bytes);
 	}
 } // namespace djinn

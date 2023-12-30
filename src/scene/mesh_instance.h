@@ -11,9 +11,9 @@ namespace djinn
 	struct mesh_instance_field
 	{
 		std::vector<f32> data;
-		u32 offset_bytes;
 		GLenum type;
 		s32 arr_count;
+		u32 offset_bytes;
 	};
 
 	class mesh_instance final : public scene_object

@@ -84,7 +84,7 @@ export default class Skybox {
     )
     this.idInstance = Scene.MeshInstance.create(this.idMesh, this.idShader)
     Scene.MeshInstance.setUniform(this.idInstance, {
-      m: [[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], 0],
+      // m: [[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], 0],
     })
     Asset.Shader.setUniforms(this.idShader, {
       u_texture: 0,

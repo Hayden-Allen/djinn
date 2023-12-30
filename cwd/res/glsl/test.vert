@@ -3,10 +3,8 @@ layout(location = 0) in vec2 i_pos;
 layout(location = 1) in vec2 i_tex;
 struct instance
 {
-    vec4 b;
-    vec4 a;
-    vec4 d;
-    vec4 c;
+    mat4 d_transform;
+    vec4 color;
 };
 layout(std140, binding = 0) uniform u_instanced_transforms
 {
@@ -18,11 +16,10 @@ out vec4 v_color;
 
 void main()
 {
-    // int blockIndex = gl_InstanceID / 256;
-    // int transformIndex = gl_InstanceID - 256 * blockIndex;
-	// mat4 transform = u_transforms[blockIndex].i[transformIndex].m;
-    // gl_Position = u_vp * transform * vec4(i_pos, 0, 1);
-    gl_Position = u_vp * vec4(i_pos, 0, 1);
+    int blockIndex = gl_InstanceID / 256;
+    int transformIndex = gl_InstanceID - 256 * blockIndex;
+	mat4 transform = u_transforms[blockIndex].i[transformIndex].d_transform;
+    gl_Position = u_vp * transform * vec4(i_pos, 0, 1);
     v_tex = i_tex;
-    // v_color = u_transforms[blockIndex].i[transformIndex].c;
+    v_color = u_transforms[blockIndex].i[transformIndex].color;
 }
