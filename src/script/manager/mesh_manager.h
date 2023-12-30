@@ -5,7 +5,7 @@
 
 namespace djinn
 {
-	class mesh_manager final : public ref_counted_manager<mesh>
+	class mesh_manager final : public ref_counted_file_manager<mesh>
 	{
 	public:
 		mesh_manager();

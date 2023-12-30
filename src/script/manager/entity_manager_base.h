@@ -6,11 +6,11 @@
 namespace djinn
 {
 	template<typename T>
-	class entity_manager_base : public manager<T>
+	class entity_manager_base : public file_manager<T>
 	{
 	public:
 		entity_manager_base(JSRuntime* const runtime) :
-			manager<T>(c::base_dir::script),
+			file_manager<T>(c::base_dir::script),
 			m_runtime(runtime)
 		{}
 		DCM(entity_manager_base);

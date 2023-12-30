@@ -7,7 +7,7 @@
 namespace djinn
 {
 	sound_source_manager::sound_source_manager() :
-		ref_counted_manager(c::base_dir::sound)
+		ref_counted_file_manager(c::base_dir::sound)
 	{
 	}
 	sound_source_manager::~sound_source_manager()
@@ -84,8 +84,8 @@ namespace djinn
 	void sound_source_manager::reload(std::string const& fp)
 	{
 		std::string const afp = to_absolute(fp);
-		const auto& ids = m_id2afp.get_key(afp);
-		for (const auto& id : ids)
+		auto const& ids = m_id2afp.get_key(afp);
+		for (auto const& id : ids)
 		{
 			get(id)->load(afp);
 		}

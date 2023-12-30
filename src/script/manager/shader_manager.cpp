@@ -7,7 +7,7 @@
 namespace djinn
 {
 	shader_manager::shader_manager() :
-		ref_counted_manager(c::base_dir::shader)
+		ref_counted_file_manager(c::base_dir::shader)
 	{}
 
 

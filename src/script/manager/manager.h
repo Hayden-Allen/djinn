@@ -20,22 +20,23 @@ namespace djinn
 	class manager : public manager_counter
 	{
 	public:
-		manager(std::string const& base_dir) :
-			m_base_dir(base_dir)
-		{}
+		manager() {}
 		DCM(manager);
 		virtual ~manager()
 		{
-			for (auto& pair : m_objects)
-			{
-				pair.second.free();
-			}
+			free_all();
 		}
 	public:
-		virtual id_t load(std::string const& fp) = 0;
-		virtual void reload(std::string const& fp) = 0;
-		virtual void rename(std::string const& old_fp, std::string const& new_fp) = 0;
 		virtual void destroy(id_t const id) = 0;
+		void free_all()
+		{
+			std::map<id_t, optr<T>> sorted;
+			for (auto& pair : this->m_objects)
+				sorted.insert({ pair.first, std::move(pair.second) });
+			this->m_objects.clear();
+			for (auto it = sorted.rbegin(); it != sorted.rend(); it++)
+				it->second.free();
+		}
 		template<typename U = T>
 		sptr<U, T> get(id_t const id)
 		{
@@ -58,23 +59,9 @@ namespace djinn
 			for (auto const& pair : m_objects)
 				fn(sptr<T>(pair.second), pair.first);
 		}
-		virtual void free_all()
-		{
-			std::map<id_t, optr<T>> sorted;
-			for (auto& pair : this->m_objects)
-				sorted.insert({ pair.first, std::move(pair.second) });
-			this->m_objects.clear();
-			for (auto it = sorted.rbegin(); it != sorted.rend(); it++)
-				it->second.free();
-		}
 	protected:
-		std::string m_base_dir;
 		std::unordered_map<id_t, optr<T>> m_objects; // map of unique id to actual object (this class owns all the objects)
 	protected:
-		std::string to_absolute(std::string const& fp)
-		{
-			return u::to_absolute(m_base_dir, fp);
-		}
 		virtual id_t insert(T* const t)
 		{
 			id_t const id = s_next_id;
@@ -93,13 +80,45 @@ namespace djinn
 
 
 
+	class file_manager_base
+	{
+	public:
+		file_manager_base(std::string const& base_dir) :
+			m_base_dir(base_dir)
+		{}
+		DCM(file_manager_base);
+	public:
+		virtual id_t load(std::string const& fp) = 0;
+		virtual void reload(std::string const& fp) = 0;
+		virtual void rename(std::string const& old_fp, std::string const& new_fp) = 0;
+	protected:
+		std::string m_base_dir;
+	protected:
+		std::string to_absolute(std::string const& fp)
+		{
+			return u::to_absolute(m_base_dir, fp);
+		}
+	};
+
+
+
+	template<typename T>
+	class file_manager : public manager<T>, public file_manager_base
+	{
+	public:
+		file_manager(std::string const& base_dir) :
+			file_manager_base(base_dir)
+		{}
+		DCM(file_manager);
+	};
+
+
+
 	template<typename T>
 	class ref_counted_manager : public manager<T>
 	{
 	public:
-		ref_counted_manager(std::string const& base_dir) :
-			manager<T>(base_dir)
-		{}
+		ref_counted_manager() {}
 		DCM(ref_counted_manager);
 		virtual ~ref_counted_manager()
 		{
@@ -126,5 +145,17 @@ namespace djinn
 			}
 			return false;
 		}
+	};
+
+
+
+	template<typename T>
+	class ref_counted_file_manager : public ref_counted_manager<T>, public file_manager_base
+	{
+	public:
+		ref_counted_file_manager(std::string const& base_dir) :
+			file_manager_base(base_dir)
+		{}
+		DCM(ref_counted_file_manager);
 	};
 } // namespace djinn

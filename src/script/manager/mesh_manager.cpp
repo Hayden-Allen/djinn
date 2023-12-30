@@ -5,7 +5,7 @@
 namespace djinn
 {
 	mesh_manager::mesh_manager() :
-		ref_counted_manager(c::base_dir::mesh)
+		ref_counted_file_manager(c::base_dir::mesh)
 	{}
 
 

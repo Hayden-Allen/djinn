@@ -5,7 +5,7 @@
 
 namespace djinn
 {
-	class sound_source_manager final : public ref_counted_manager<sound_source>
+	class sound_source_manager final : public ref_counted_file_manager<sound_source>
 	{
 	public:
 		sound_source_manager();

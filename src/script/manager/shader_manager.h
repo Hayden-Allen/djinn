@@ -5,7 +5,7 @@
 
 namespace djinn
 {
-	class shader_manager final : public ref_counted_manager<shaders>
+	class shader_manager final : public ref_counted_file_manager<shaders>
 	{
 	public:
 		shader_manager();

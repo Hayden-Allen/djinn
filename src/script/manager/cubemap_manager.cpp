@@ -5,7 +5,7 @@
 namespace djinn
 {
 	cubemap_manager::cubemap_manager() :
-		manager(c::base_dir::texture)
+		ref_counted_file_manager(c::base_dir::texture)
 	{}
 	cubemap_manager::~cubemap_manager()
 	{

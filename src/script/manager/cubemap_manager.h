@@ -4,7 +4,7 @@
 
 namespace djinn
 {
-	class cubemap_manager final : public manager<texture>
+	class cubemap_manager final : public ref_counted_file_manager<texture>
 	{
 	public:
 		cubemap_manager();

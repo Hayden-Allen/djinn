@@ -9,7 +9,6 @@
 		- sync these values between mesh_instance_batch and shaders (preprocessor, always use minimum?)
 	- instance shaders
 		- preprocessor to compile with maximum array size of instance struct
-	- manager => [file_manager, ref_counted_manager, ref_counted_file_manager]
 	- mesh_instance_batch testing
 		- create instances with different shaders
 		- removing works at all

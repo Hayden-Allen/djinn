@@ -5,7 +5,7 @@
 namespace djinn
 {
 	texture_manager::texture_manager() :
-		ref_counted_manager(c::base_dir::texture)
+		ref_counted_file_manager(c::base_dir::texture)
 	{}
 
 

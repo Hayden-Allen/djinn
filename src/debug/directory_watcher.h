@@ -3,6 +3,7 @@
 
 namespace djinn
 {
+	// T should be either a file_manager or ref_counted_file_manager (script/manager/manager.h)
 	template<typename T>
 	class directory_watcher
 	{

@@ -4,7 +4,7 @@
 
 namespace djinn
 {
-	class texture_manager final : public ref_counted_manager<texture>
+	class texture_manager final : public ref_counted_file_manager<texture>
 	{
 	public:
 		texture_manager();
