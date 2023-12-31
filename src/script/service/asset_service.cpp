@@ -68,14 +68,7 @@ namespace djinn::js::asset_service
 		::djinn::asset_service::get_mesh_manager()->update(id, vertices, indices);
 		return JS_UNDEFINED;
 	}
-	JSValue create_shader(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
-	{
-		ASSERT(argc == 2);
-		std::string const vert_src = js::extract_string(ctx, argv[0]);
-		std::string const frag_src = js::extract_string(ctx, argv[1]);
-		return js::create_id(ctx, ::djinn::asset_service::get_shader_manager()->create(vert_src, frag_src));
-	}
-	extern JSValue load_shader(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	JSValue load_shader(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2);
 		std::string const vert_fp = js::extract_string(ctx, argv[0]);
@@ -231,7 +224,6 @@ namespace djinn
 		super::register_function(ctx, "Mesh", "create", 4, js::asset_service::create_mesh);
 		super::register_function(ctx, "Mesh", "update", 3, js::asset_service::update_mesh);
 		super::register_function(ctx, "Mesh", "destroy", 1, js::asset_service::destroy_mesh);
-		super::register_function(ctx, "Shader", "create", 2, js::asset_service::create_shader);
 		super::register_function(ctx, "Shader", "load", 2, js::asset_service::load_shader);
 		super::register_function(ctx, "Shader", "destroy", 1, js::asset_service::destroy_shader);
 		super::register_function(ctx, "Shader", "setUniforms", 2, js::asset_service::set_shader_uniforms);

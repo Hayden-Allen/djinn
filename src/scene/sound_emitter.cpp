@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "sound_emitter.h"
-#include "sound_source.h"
+#include "asset/sound_source.h"
 #include "script/service/sound_service.h"
 
 namespace djinn

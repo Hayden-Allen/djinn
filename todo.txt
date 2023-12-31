@@ -2,46 +2,36 @@
 	- reset ids on scene switch?
 	- enforce all pos/rot/scale changes be done in __main?
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
-	- visibility mask (Scene.MeshInstance.setVisible) camera mask?
 
 - now
 	- s_num_ubos/s_transforms_per_ubo
+		- INSTANCE_TYPE, INSTANCE_FIELD, #define d_instance
 		- sync these values between mesh_instance_batch and shaders (preprocessor, always use minimum?)
-	- instance shaders
 		- preprocessor to compile with maximum array size of instance struct
+	- miniaudio include
 	- mesh_instance_batch testing
 		- create instances with different shaders
 		- removing works at all
 		- removing instance at capacity threshold deletes now-unused ubo
 		- removing all instances using a shader deletes that instance
 
-	- move to mgl::layer system
-	- input_service takes layer to get access to input_cache
-	- set camera uniforms automatically in Render.draw
-
-- soon
-	- framebuffer_u8/f32?
-	- deferred renderer
-	- scene graph
-
 - later
-	- mesh_manager::load (formats? animation?)
-	- asset_manager::load_mesh
-	- mesh_watcher
-	- mesh_manager::reload/rename
+	- m3d
 	- physics_manager/physics_service
 		- set transform functions
 		- Physics.copyTransformTo(idHitbox, idSceneObject) this is how physics world drives entity transforms
 	- load powertranzphormr scenes
+
+- later
+	- framebuffer_u8/f32?
+	- deferred renderer
+	- scene graph/multiple cameras
+	- visibility mask (Scene.MeshInstance.setVisible) camera mask?
+	- move to mgl::layer system
 	- distribution asset pipeline
 	- virtual filesystem
-	- release build (remove watchers, change asserts, etc)
 
 - even later
 	- per-camera effects
-	- audio_manager/audio_watcher
 
-- !important
-	- global GL_* constants in js?
-	- on app exit, throw error if assets not destroyed
 

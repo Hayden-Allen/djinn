@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "sound_source.h"
-#include "sound_emitter.h"
+#include "scene/sound_emitter.h"
 #include "script/service/asset_service.h"
 
 namespace djinn
@@ -15,8 +15,8 @@ namespace djinn
 	}
 
 
-	
-	void sound_source::load(const std::string& afp)
+
+	void sound_source::load(std::string const& afp)
 	{
 		for (auto emitter : m_emitters)
 		{

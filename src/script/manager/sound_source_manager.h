@@ -1,10 +1,12 @@
 #pragma once
 #include "pch.h"
 #include "manager.h"
-#include "scene/sound_source.h"
+#include "asset/sound_source.h"
 
 namespace djinn
 {
+	class sound_source;
+
 	class sound_source_manager final : public ref_counted_file_manager<sound_source>
 	{
 	public:

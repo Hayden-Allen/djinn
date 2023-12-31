@@ -4,8 +4,8 @@
 
 namespace djinn
 {
-	shaders::shaders(std::string const& vert_fp, std::string const& frag_fp, bool const fp_is_src) :
-		mgl::shaders(vert_fp, frag_fp, fp_is_src)
+	shaders::shaders(std::string const& vert_fp, std::string const& frag_fp) :
+		mgl::shaders(preprocess(vert_fp), u::read_file(frag_fp), true)
 	{
 		std::unordered_set<std::string> seen;
 		u32 constexpr UNIFORM_TMP_SIZE = 512;

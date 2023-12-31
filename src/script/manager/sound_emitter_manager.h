@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "manager.h"
-#include "scene/sound_source.h"
+#include "asset/sound_source.h"
 #include "scene/sound_emitter.h"
 
 namespace djinn

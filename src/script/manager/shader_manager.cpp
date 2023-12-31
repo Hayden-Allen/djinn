@@ -12,11 +12,6 @@ namespace djinn
 
 
 
-	id_t shader_manager::create(std::string const& vert_src, std::string const& frag_src)
-	{
-		shaders* const s = new shaders(vert_src, frag_src, true);
-		return insert(s);
-	}
 	id_t shader_manager::load(std::string const& fp)
 	{
 		ASSERT(false)

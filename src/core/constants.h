@@ -18,7 +18,9 @@ namespace djinn::c
 		static std::string const proj_mat = "d_proj";
 		static std::string const vp_mat = "d_vp";
 		static std::string const vpr_mat = "d_vpr";
-		static std::string const instanced_transforms_block = "d_instance";
+		static std::string const instance_block_type = "d_instance_block";
+		static std::string const instances_uniform = "d_instances";
+		static std::string const instance_struct = "d_instance_struct";
 		static std::string const instance_transform = "d_transform";
 	} // namespace uniform
 } // namespace djinn::c

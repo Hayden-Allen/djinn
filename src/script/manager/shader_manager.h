@@ -11,7 +11,6 @@ namespace djinn
 		shader_manager();
 		DCM(shader_manager);
 	public:
-		id_t create(std::string const& vert_src, std::string const& frag_src);
 		id_t load(std::string const& fp) override;
 		id_t load(std::string const& vert_fp, std::string const& frag_fp);
 		void destroy(id_t const id) override;

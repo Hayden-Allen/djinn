@@ -51,4 +51,32 @@ namespace djinn::u
 		sstr << ifs.rdbuf();
 		return sstr.str();
 	}
+	std::string trim(std::string const& s)
+	{
+		std::string ret = s;
+		ret.erase(0, ret.find_first_not_of(" \n\r\t"));
+		ret.erase(ret.find_last_not_of(" \n\r\t") + 1);
+		return ret;
+	}
+	// https://gist.github.com/tcmug/9712f9192571c5fe65c362e6e86266f8
+	std::vector<std::string> split(std::string const& string, std::string const& delim)
+	{
+		std::vector<std::string> result;
+		size_t from = 0, to = 0;
+		while (std::string::npos != (to = string.find(delim, from)))
+		{
+			result.push_back(string.substr(from, to - from));
+			from = to + delim.length();
+		}
+		result.push_back(string.substr(from, to));
+		return result;
+	}
+	bool iequals(std::string const& a, std::string const& b)
+	{
+		return (a.size() == b.size()) &&
+			   std::equal(a.begin(), a.end(), b.begin(), [](char const ca, char const cb)
+				   {
+					   return std::tolower(ca) == std::tolower(cb);
+				   });
+	}
 } // namespace djinn::u

@@ -102,7 +102,7 @@ namespace djinn
 			update_transform(i, m_instances[i]->get_world_transform());
 		}
 		// bind first block to 0, so all blocks will be bound in [0, n)
-		m_shaders->uniform_block_binding(c::uniform::instanced_transforms_block, 0);
+		m_shaders->uniform_block_binding(c::uniform::instance_block_type, 0);
 		for (u32 i = 0; i < (u32)m_transforms.size(); i++)
 		{
 			m_transforms[i].bind(i);
