@@ -23,4 +23,20 @@ namespace djinn::c
 		static std::string const instance_struct = "d_instance_struct";
 		static std::string const instance_transform = "d_transform";
 	} // namespace uniform
+	namespace shader
+	{
+		static u32 num_ubos = 12;
+		static u32 ubo_size_bytes = 16384;
+		namespace type
+		{
+			static std::string const basic = "basic";
+			static std::string const animated = "animated";
+			static std::string const custom = "custom";
+		} // namespace type
+		namespace macro
+		{
+			static std::string const type = "TYPE";
+			static std::string const instance_field = "FIELD";
+		} // namespace macro
+	}	  // namespace shader
 } // namespace djinn::c

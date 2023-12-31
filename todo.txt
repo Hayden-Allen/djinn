@@ -4,10 +4,6 @@
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
 
 - now
-	- s_num_ubos/s_transforms_per_ubo
-		- INSTANCE_TYPE, INSTANCE_FIELD, #define d_instance
-		- sync these values between mesh_instance_batch and shaders (preprocessor, always use minimum?)
-		- preprocessor to compile with maximum array size of instance struct
 	- miniaudio include
 	- mesh_instance_batch testing
 		- create instances with different shaders

@@ -40,7 +40,7 @@ include_directories(src/
                     lib/quickjspp
                     lib/stb/)
 
-file(GLOB VENDORS_SOURCES lib/glad/src/glad.c lib/imgui/*.cpp lib/imgui/backends/imgui_impl_glfw.cpp lib/imgui/backends/imgui_impl_opengl3.cpp lib/miniaudio.c lib/nanovg/src/nanovg.c lib/glad/src/glad.cpp
+file(GLOB VENDORS_SOURCES lib/glad/src/glad.c lib/imgui/*.cpp lib/imgui/backends/imgui_impl_glfw.cpp lib/imgui/backends/imgui_impl_opengl3.cpp lib/nanovg/src/nanovg.c lib/glad/src/glad.cpp
         lib/quickjspp/cutils.c
         lib/quickjspp/libbf.c
         lib/quickjspp/libregexp.c

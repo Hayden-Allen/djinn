@@ -16,7 +16,7 @@ namespace djinn
 		auto const& fields = batch_shaders->get_instance_fields();
 		for (shaders::instance_field const& f : fields)
 		{
-			u32 const num_floats = mgl::get_shader_type_size_bytes(f.type) / sizeof(f32) * f.arr_count;
+			u32 const num_floats = glsl_type_size_bytes(f.type) / sizeof(f32) * f.arr_count;
 			std::vector<f32> data(num_floats);
 			m_fields.emplace_back(data, f.type, f.arr_count, f.offset_bytes);
 			m_field_index.insert({ f.name, m_fields.size() - 1 });
@@ -31,7 +31,7 @@ namespace djinn
 		ASSERT(it != m_field_index.end());
 		mesh_instance_field& field = m_fields.at(it->second);
 		ASSERT(index < (u32)field.arr_count);
-		ASSERT(data.size() * sizeof(f32) == mgl::get_shader_type_size_bytes(field.type));
+		ASSERT(data.size() * sizeof(f32) == glsl_type_size_bytes(field.type));
 		std::copy(data.begin(), data.end(), field.data.begin() + index);
 		m_batch->update(m_batch_index, field);
 	}

@@ -3,6 +3,8 @@
 #include "script/js.h"
 #include "core/constants.h"
 #include "asset_service.h"
+#define MINIAUDIO_IMPLEMENTATION
+#include "miniaudio.h"
 
 namespace djinn::js::sound_service
 {

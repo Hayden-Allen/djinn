@@ -10,24 +10,21 @@ namespace djinn
 		m_mesh(mesh),
 		m_shaders(shaders)
 	{
-		/*s_num_ubos = mgl::get_param<u32>(GL_MAX_VERTEX_UNIFORM_BLOCKS);
-		s_transforms_per_ubo = mgl::get_param<u32>(GL_MAX_UNIFORM_BLOCK_SIZE) / s_mat_size;*/
-		s_num_ubos = 12;
-		m_instances_per_ubo = 256;
-		u32 total_floats = 16; // 16 floats in mat4 (transform)
+		u32 total_floats = shaders->get_base_offset_bytes() / sizeof(f32);
 		for (auto const& field : shaders->get_instance_fields())
-			total_floats += mgl::get_shader_type_size_bytes(field.type) / sizeof(f32);
+			total_floats += glsl_type_size_bytes(field.type) / sizeof(f32);
 		m_floats_per_instance = total_floats;
+		m_instances_per_ubo = c::shader::ubo_size_bytes / (m_floats_per_instance * sizeof(f32));
 		add_block();
 	}
 	mesh_instance_batch::mesh_instance_batch(mesh_instance_batch&& other) noexcept :
 		m_mesh(other.m_mesh),
 		m_shaders(other.m_shaders),
 		m_instances(std::move(other.m_instances)),
-		m_transforms(std::move(other.m_transforms)),
+		m_ubos(std::move(other.m_ubos)),
 		m_openings(std::move(other.m_openings)),
-		m_transform_indices(std::move(other.m_transform_indices)),
-		m_max_transform_index(std::move(other.m_max_transform_index)),
+		m_instance_indices(std::move(other.m_instance_indices)),
+		m_max_instance_index(std::move(other.m_max_instance_index)),
 		m_next(other.m_next),
 		m_valid(other.m_valid),
 		m_instances_per_ubo(other.m_instances_per_ubo),
@@ -72,26 +69,26 @@ namespace djinn
 		m_valid--;
 		// check if we can delete a UBO now
 		if (m_valid % m_instances_per_ubo == m_instances_per_ubo - 1)
-			m_transforms.pop_back();
+			m_ubos.pop_back();
 
 		// slot in m_instances whose transform is at the end of the UBOs
-		u64 const end_transform_index = m_max_transform_index.back();
+		u64 const end_transform_index = m_max_instance_index.back();
 		// bind slot who currently writes to the end to write to the now-empty slot
-		m_transform_indices[end_transform_index] = m_transform_indices[index];
+		m_instance_indices[end_transform_index] = m_instance_indices[index];
 		// bind removed slot to write to nothing
-		m_transform_indices[index] = MAX_VALUE_T(u64);
+		m_instance_indices[index] = MAX_VALUE_T(u64);
 		// slot who wrote to the end no longer does, remove it from the max stack
-		m_max_transform_index.pop_back();
+		m_max_instance_index.pop_back();
 	}
 	void mesh_instance_batch::update(u64 const index, mesh_instance_field const& field)
 	{
-		ASSERT(index < m_transform_indices.size());
-		u64 const total_index = m_transform_indices[index];
+		ASSERT(index < m_instance_indices.size());
+		u64 const total_index = m_instance_indices[index];
 		u64 const block_index = total_index / m_instances_per_ubo;
 		u64 const transform_index = total_index % m_instances_per_ubo;
-		ASSERT(block_index < m_transforms.size());
+		ASSERT(block_index < m_ubos.size());
 		u64 const offset_bytes = field.offset_bytes + (m_floats_per_instance * sizeof(f32) * total_index);
-		m_transforms[block_index].update(field.data.data(), (u32)field.data.size(), (u32)offset_bytes);
+		m_ubos[block_index].update(field.data.data(), (u32)field.data.size(), (u32)offset_bytes);
 	}
 	void mesh_instance_batch::draw(sptr<mgl::context> const& ctx, static_render_object const& ro)
 	{
@@ -103,9 +100,9 @@ namespace djinn
 		}
 		// bind first block to 0, so all blocks will be bound in [0, n)
 		m_shaders->uniform_block_binding(c::uniform::instance_block_type, 0);
-		for (u32 i = 0; i < (u32)m_transforms.size(); i++)
+		for (u32 i = 0; i < (u32)m_ubos.size(); i++)
 		{
-			m_transforms[i].bind(i);
+			m_ubos[i].bind(i);
 		}
 		ctx->draw_instanced(ro, *m_shaders.get(), m_valid);
 	}
@@ -114,31 +111,31 @@ namespace djinn
 
 	void mesh_instance_batch::add_block()
 	{
-		m_transforms.emplace_back(m_instances_per_ubo * m_floats_per_instance);
+		m_ubos.emplace_back(m_instances_per_ubo * m_floats_per_instance);
 	}
 	void mesh_instance_batch::set_transform_index(u64 const index)
 	{
 		// set or create value in index list
-		ASSERT(index <= m_transform_indices.size());
-		if (index == m_transform_indices.size())
-			m_transform_indices.push_back(m_valid);
+		ASSERT(index <= m_instance_indices.size());
+		if (index == m_instance_indices.size())
+			m_instance_indices.push_back(m_valid);
 		else
-			m_transform_indices[index] = m_valid;
+			m_instance_indices[index] = m_valid;
 		// update max stack
-		if (m_max_transform_index.empty() || index > m_max_transform_index.back())
-			m_max_transform_index.push_back(index);
+		if (m_max_instance_index.empty() || index > m_max_instance_index.back())
+			m_max_instance_index.push_back(index);
 		// create new ubo if needed
-		if (index / m_instances_per_ubo >= m_transforms.size())
+		if (index / m_instances_per_ubo >= m_ubos.size())
 			add_block();
 	}
 	void mesh_instance_batch::update_transform(u64 const index, tmat<space::OBJECT, space::WORLD> const& transform)
 	{
-		ASSERT(index < m_transform_indices.size());
-		u64 const total_index = m_transform_indices[index];
+		ASSERT(index < m_instance_indices.size());
+		u64 const total_index = m_instance_indices[index];
 		u64 const block_index = total_index / m_instances_per_ubo;
 		u64 const transform_index = total_index % m_instances_per_ubo;
-		ASSERT(block_index < m_transforms.size());
+		ASSERT(block_index < m_ubos.size());
 		u64 const offset_bytes = (m_floats_per_instance * sizeof(f32) * total_index);
-		m_transforms[block_index].update(transform.e, 16, (u32)offset_bytes);
+		m_ubos[block_index].update(transform.e, 16, (u32)offset_bytes);
 	}
 } // namespace djinn
