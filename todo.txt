@@ -4,6 +4,7 @@
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
 
 - now
+	- struct_vertex_array - need to keep existing f32
 	- miniaudio include
 	- mesh_instance_batch testing
 		- create instances with different shaders
