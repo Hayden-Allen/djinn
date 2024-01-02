@@ -34,3 +34,6 @@
 [submodule "lib/haul"]
 	path = lib/haul
 	url = https://github.com/Hayden-Allen/haul.git
+[submodule "lib/model3d"]
+	path = lib/model3d
+	url = https://gitlab.com/bztsrc/model3d.git

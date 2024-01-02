@@ -38,7 +38,7 @@ include_directories(src/
 		    lib/model3d
 		    lib/nanovg/src
                     lib/quickjspp
-                    lib/stb/)
+                    lib/)
 
 file(GLOB VENDORS_SOURCES lib/glad/src/glad.c lib/imgui/*.cpp lib/imgui/backends/imgui_impl_glfw.cpp lib/imgui/backends/imgui_impl_opengl3.cpp lib/nanovg/src/nanovg.c lib/glad/src/glad.cpp
         lib/quickjspp/cutils.c

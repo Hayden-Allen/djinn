@@ -5,7 +5,7 @@
 #include "scene_service.h"
 #include "core/constants.h"
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "stb/stb_image.h"
 #define M3D_IMPLEMENTATION
 #include "m3d.h"
 
