@@ -38,10 +38,10 @@ namespace djinn
 				it->second.free();
 		}
 		template<typename U = T>
-		sptr<U, T> get(id_t const id)
+		sptr<U> get(id_t const id)
 		{
 			ASSERT(m_objects.contains(id))
-			return sptr<U, T>(m_objects.at(id));
+			return sptr<U>(m_objects.at(id));
 		}
 		bool has(id_t const id) const
 		{

@@ -46,10 +46,20 @@ namespace djinn::u
 	std::string read_file(std::string const& afp)
 	{
 		std::ifstream ifs(afp);
-		ASSERT(ifs.is_open())
+		ASSERT(ifs.is_open());
 		std::ostringstream sstr;
 		sstr << ifs.rdbuf();
 		return sstr.str();
+	}
+	std::vector<char> read_file_binary(std::string const& afp)
+	{
+		std::ifstream ifs(afp, std::ios::binary | std::ios::ate);
+		ASSERT(ifs.is_open());
+		u64 const size = ifs.tellg();
+		ifs.seekg(0, std::ios::beg);
+		std::vector<char> ret(size);
+		ifs.read((char*)ret.data(), size);
+		return ret;
 	}
 	std::string trim(std::string const& s)
 	{

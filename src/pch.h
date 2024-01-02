@@ -39,7 +39,6 @@ using namespace mgl;
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
-
 #include "miniaudio.h"
 
 
@@ -47,7 +46,8 @@ using namespace mgl;
 #ifdef DJINN_DIST
 #	define ASSERT(x)
 #else
-#	define ASSERT(x) if (!(x)) __debugbreak();
+#	define ASSERT(x) \
+		if (!(x)) __debugbreak();
 #endif
 #define MIN_VALUE_T(T) std::numeric_limits<T>::lowest()
 #define MIN_VALUE(x)   MIN_VALUE_T(decltype(x))

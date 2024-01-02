@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "mesh_instance.h"
-#include "mesh.h"
+#include "asset/mesh.h"
 #include "mesh_instance_batch.h"
 #include "asset/shaders.h"
 

@@ -1,11 +1,11 @@
 #pragma once
 #include "pch.h"
 #include "manager.h"
-#include "scene/mesh.h"
+#include "asset/generated_mesh.h"
 
 namespace djinn
 {
-	class mesh_manager final : public ref_counted_file_manager<mesh>
+	class mesh_manager final : public ref_counted_file_manager<generated_mesh>
 	{
 	public:
 		mesh_manager();

@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "mesh_instance_manager.h"
-#include "scene/mesh.h"
+#include "asset/mesh.h"
 
 namespace djinn
 {

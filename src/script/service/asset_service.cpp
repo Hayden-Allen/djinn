@@ -4,6 +4,10 @@
 #include "scene/camera_entity.h"
 #include "scene_service.h"
 #include "core/constants.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+#define M3D_IMPLEMENTATION
+#include "m3d.h"
 
 namespace djinn::js::asset_service
 {
@@ -51,6 +55,27 @@ namespace djinn::js::asset_service
 
 		JSValue ret = js::create_id(ctx, ::djinn::asset_service::get_mesh_manager()->create(vertex_count, vertex_layout, index_count, textures));
 		return ret;
+	}
+	JSValue load_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		std::string const& fp = js::extract_string(ctx, argv[0]);
+		ASSERT(fp.ends_with(".m3d"));
+		std::vector<char> const& bytes = u::read_file_binary(fp);
+		m3d_t const* const raw = m3d_load((u8*)bytes.data(), nullptr, nullptr, nullptr);
+		id_t id = 0;
+		// animated
+		if (raw->numbone)
+		{
+			ASSERT(false);
+		}
+		// static
+		else
+		{
+			// id = ::djinn::asset_service::get_static_mesh_manager()->load(raw);
+		}
+
+		return js::create_id(ctx, id);
 	}
 	JSValue destroy_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
