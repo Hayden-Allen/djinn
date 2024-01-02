@@ -13,4 +13,10 @@ namespace djinn::u
 	extern std::string trim(std::string const& s);
 	extern std::vector<std::string> split(std::string const& string, std::string const& delim);
 	extern bool iequals(std::string const& a, std::string const& b);
+	// https://stackoverflow.com/a/19195373
+	template<typename T>
+	u64 hash_combine(u64 const in, T const& v)
+	{
+		return in ^ (std::hash<T>{}(v) + 0x9e3779b9 + (in << 6) + (in >> 2));
+	}
 } // namespace djinn::u

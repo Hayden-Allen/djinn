@@ -7,11 +7,11 @@ namespace djinn
 {
 	class shader_manager;
 
-	class shader_watcher : public directory_watcher<shader_manager>
+	class shader_watcher : public haul::parent<directory_watcher<shader_manager>>
 	{
 	public:
 		shader_watcher(shader_manager* const manager) :
-			directory_watcher(c::base_dir::shader, manager)
+			haul::parent<directory_watcher<shader_manager>>(c::base_dir::shader, manager)
 		{}
 		DCM(shader_watcher);
 	};

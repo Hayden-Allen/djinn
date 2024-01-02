@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "sound_source_watcher.h"
 #include "core/util.h"
-#include "script/manager/sound_source_manager.h"
+#include "manager/sound_source_manager.h"
 
 namespace djinn
 {

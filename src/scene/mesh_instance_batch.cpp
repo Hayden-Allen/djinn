@@ -2,7 +2,6 @@
 #include "mesh_instance_batch.h"
 #include "core/constants.h"
 #include "mesh_instance.h"
-#include "asset/shaders.h"
 
 namespace djinn
 {
@@ -89,22 +88,6 @@ namespace djinn
 		ASSERT(block_index < m_ubos.size());
 		u64 const offset_bytes = field.offset_bytes + (m_floats_per_instance * sizeof(f32) * total_index);
 		m_ubos[block_index].update(field.data.data(), (u32)field.data.size(), (u32)offset_bytes);
-	}
-	void mesh_instance_batch::draw(sptr<mgl::context> const& ctx, static_render_object const& ro)
-	{
-		// TODO dirty flag/do this when transform function called
-		for (u64 i = 0; i < m_instances.size(); i++)
-		{
-			m_instances[i]->update_transform();
-			update_transform(i, m_instances[i]->get_world_transform());
-		}
-		// bind first block to 0, so all blocks will be bound in [0, n)
-		m_shaders->uniform_block_binding(c::uniform::instance_block_type, 0);
-		for (u32 i = 0; i < (u32)m_ubos.size(); i++)
-		{
-			m_ubos[i].bind(i);
-		}
-		ctx->draw_instanced(ro, *m_shaders.get(), m_valid);
 	}
 
 

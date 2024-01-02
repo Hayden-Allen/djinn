@@ -4,12 +4,10 @@
 
 namespace djinn
 {
-	shaders::shaders(std::string const& vert_fp, std::string const& frag_fp) :
+	shaders::shaders(std::string const& vert_afp, std::string const& frag_afp) :
 		m_type(shader_type::NONE)
 	{
-		std::string const& vert_src = preprocess(vert_fp);
-		std::string const& frag_src = u::read_file(frag_fp);
-		init(vert_src, frag_src, true);
+		init(vert_afp, frag_afp);
 	}
 
 
@@ -21,6 +19,12 @@ namespace djinn
 	u32 shaders::get_base_offset_bytes() const
 	{
 		return s_base_offset_bytes[(u64)m_type];
+	}
+	void shaders::init(std::string const& vert_afp, std::string const& frag_afp)
+	{
+		std::string const& vert_src = preprocess(vert_afp);
+		std::string const& frag_src = u::read_file(frag_afp);
+		super::init(vert_src, frag_src, true);
 	}
 
 
@@ -49,6 +53,9 @@ namespace djinn
 	{
 		std::ifstream in(fp);
 		ASSERT(in.is_open());
+
+		m_type = shader_type::NONE;
+		m_instance_fields.clear();
 
 		std::vector<std::pair<std::string, instance_field>> fields; // per-instance fields declared with FIELD() macros
 		u32 field_offset_bytes = 0;									// per-instance field byte offset accumulator

@@ -5,7 +5,7 @@
 
 namespace djinn
 {
-	class shaders final : public mgl::shaders
+	class shaders final : public haul::parent<mgl::shaders>
 	{
 	public:
 		struct instance_field
@@ -24,11 +24,12 @@ namespace djinn
 			COUNT
 		};
 	public:
-		shaders(std::string const& vert_fp, std::string const& frag_fp);
+		shaders(std::string const& vert_afp, std::string const& frag_afp);
 		DCM(shaders);
 	public:
 		std::vector<instance_field> const& get_instance_fields() const;
 		u32 get_base_offset_bytes() const;
+		void init(std::string const& vert_afp, std::string const& frag_afp);
 	private:
 		static inline constexpr u32 s_base_offset_bytes[(u64)shader_type::COUNT] = { 0, 64, 64 * 16, 64 };
 	private:

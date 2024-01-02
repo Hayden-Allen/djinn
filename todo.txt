@@ -4,11 +4,18 @@
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
 
 - now
+	- depth test
+	- instance normal matrix
+	- "static" shader type
 	- m3d
-		- load static
-		- draw static
-		- load animated
-		- draw animated
+		- asset/animated_mesh.h (factor static_mesh)
+		- script/manager/animated_mesh_manager.h (factor static_mesh_manager)
+		- asset_manager::m_animated_mesh_manager
+		- asset_manager::load_animated_mesh
+		- scene_service::set_mesh_instance_animation
+		- animate
+	- "animated" shader type
+	- mesh_watcher_base/static_mesh_watcher/animated_mesh_watcher
 	- mesh_instance_batch testing
 		- create instances with different shaders
 		- removing works at all

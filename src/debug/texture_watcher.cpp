@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "texture_watcher.h"
 #include "core/util.h"
-#include "script/manager/texture_manager.h"
+#include "manager/texture_manager.h"
 
 namespace djinn
 {

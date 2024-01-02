@@ -1,9 +1,9 @@
 #pragma once
 #include "pch.h"
 #include "service.h"
-#include "script/manager/entity_manager.h"
-#include "script/manager/camera_entity_manager.h"
-#include "script/manager/mesh_instance_manager.h"
+#include "manager/entity_manager.h"
+#include "manager/camera_entity_manager.h"
+#include "manager/mesh_instance_manager.h"
 
 namespace djinn
 {

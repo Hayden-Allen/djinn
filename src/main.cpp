@@ -83,12 +83,7 @@ int main(int argc, char* argv[])
 		DJINN_TIME(scene_service::update(c->time.delta), update_avg, NUM_FRAMES);
 		DJINN_TIME(sound_service::update(), sound_avg, NUM_FRAMES);
 		DJINN_TIME(scene_service::draw();, draw_avg, NUM_FRAMES);
-		DJINN_TIME(
-			asset_service::get_mesh_manager()->for_each([](sptr<mesh> mesh, id_t const id)
-				{
-					mesh->draw(render_service::get_context());
-				});
-			, gl_avg, NUM_FRAMES);
+		DJINN_TIME(asset_service::draw_meshes(), gl_avg, NUM_FRAMES);
 
 		DJINN_TIME(
 			nanovg_service::begin_frame(c->get_width(), c->get_height());

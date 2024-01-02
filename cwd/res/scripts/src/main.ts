@@ -40,6 +40,10 @@ export default class MainEntity extends Entity {
   private idSoundEmitter: number = 0
   private needsPlayAudio: boolean = true
 
+  private idStaticMesh: number = 0
+  private idStaticInstance: number = 0
+  private idStaticShader: number = 0
+
   __init() {
     this.skybox = Skybox.loadDirectory(
       {
@@ -72,9 +76,21 @@ export default class MainEntity extends Entity {
     this.idSoundSource = Asset.Sound.load("test.mp3")
     this.idSoundEmitter = Sound.Emitter.create(this.idSoundSource)
     this.needsPlayAudio = true
+
+    this.idStaticMesh = Asset.Mesh.loadStatic("cube_normals.m3d")
+    this.idStaticShader = Asset.Shader.load("cube.vert", "cube.frag")
+    this.idStaticInstance = Scene.MeshInstance.create(
+      this.idStaticMesh,
+      this.idStaticShader
+    )
   }
   __destroy() {
+    Scene.MeshInstance.destroy(this.idStaticInstance)
+    Asset.Mesh.destroy(this.idStaticMesh)
+    Asset.Shader.destroy(this.idStaticShader)
+
     this.skybox!.destroy()
+
     Sound.Emitter.stop(this.idSoundEmitter)
     Sound.Emitter.destroy(this.idSoundEmitter)
     Asset.Sound.destroy(this.idSoundSource)
@@ -108,6 +124,7 @@ export default class MainEntity extends Entity {
     //   u_color: this.color!.toArray(),
     // })
     Asset.Shader.setCameraUniforms(this.idShader, this.camera!.getId())
+    Asset.Shader.setCameraUniforms(this.idStaticShader, this.camera!.getId())
   }
   __ui() {
     Nanovg.fillStyle(1, 1, 1)
