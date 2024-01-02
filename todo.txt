@@ -4,8 +4,11 @@
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
 
 - now
-	- struct_vertex_array - need to keep existing f32
-	- miniaudio include
+	- m3d
+		- load static
+		- draw static
+		- load animated
+		- draw animated
 	- mesh_instance_batch testing
 		- create instances with different shaders
 		- removing works at all
@@ -13,7 +16,6 @@
 		- removing all instances using a shader deletes that instance
 
 - later
-	- m3d
 	- physics_manager/physics_service
 		- set transform functions
 		- Physics.copyTransformTo(idHitbox, idSceneObject) this is how physics world drives entity transforms
