@@ -77,6 +77,10 @@ namespace djinn::js
 	{
 		return helper::extract<f32, f64>(ctx, val, JS_ToFloat64);
 	}
+	bool extract_bool(JSContext* const ctx, JSValue const& val)
+	{
+		return JS_ToBool(ctx, val);
+	}
 	std::string extract_string(JSContext* const ctx, JSValue const& val)
 	{
 		char const* s = JS_ToCString(ctx, val);

@@ -116,7 +116,7 @@ namespace djinn
 		}
 		ASSERT(m_type == shader_type::BASIC); // TODO
 
-		// instance struct definition
+		// instance struct definition (CUSTOM and STATIC)
 		char buf[512] = { 0 };
 		sprintf_s(buf, "struct %s { mat4 %s; ", c::uniform::instance_struct.c_str(), c::uniform::instance_transform.c_str());
 		std::string struct_def = buf;
@@ -133,13 +133,13 @@ namespace djinn
 		struct_def += "};";
 		lines.insert(lines.begin() + 1, struct_def); // lines.begin() is #version
 
-		// instance ubo definition
+		// instance ubo definition (ALL)
 		u32 const max_structs_per_ubo =
 			c::shader::ubo_size_bytes / field_offset_bytes;
-		sprintf_s(buf, "layout(std140,binding=0) uniform %s { %s d_i[%u]; } %s[%u];", c::uniform::instance_block_type.c_str(), c::uniform::instance_struct.c_str(), max_structs_per_ubo, c::uniform::instances_uniform.c_str(), c::shader::num_ubos);
+		sprintf_s(buf, "layout(std140) uniform %s { %s d_i[%u]; } %s[%u];", c::uniform::instance_block_type.c_str(), c::uniform::instance_struct.c_str(), max_structs_per_ubo, c::uniform::instances_uniform.c_str(), c::shader::num_ubos);
 		lines.insert(lines.begin() + 2, buf); // add under struct definition
 
-		// instance struct macro definition
+		// instance struct macro definition (ALL)
 		sprintf_s(buf, "#define d_instance %s[gl_InstanceID/%u].d_i[gl_InstanceID-%u*(gl_InstanceID/%u)]", c::uniform::instances_uniform.c_str(), max_structs_per_ubo, max_structs_per_ubo, max_structs_per_ubo);
 		lines.insert(lines.begin() + 3, buf); // add under ubo definition
 

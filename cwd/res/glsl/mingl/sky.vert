@@ -1,4 +1,4 @@
-#version 330 core
+#version 410 core
 layout(location = 0) in vec3 i_pos;
 out vec3 v_tc;
 uniform mat4 u_vpr;

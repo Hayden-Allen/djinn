@@ -1,4 +1,4 @@
-#version 450 core
+#version 410 core
 TYPE(basic);
 layout(location = 0) in vec3 i_pos;
 layout(location = 1) in vec3 i_norm;

@@ -197,6 +197,9 @@ namespace djinn
 	void nanovg_service::end_frame()
 	{
 		nvgEndFrame(s_instance->m_context);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
 	}
 	void nanovg_service::register_functions(JSContext* const ctx)
 	{

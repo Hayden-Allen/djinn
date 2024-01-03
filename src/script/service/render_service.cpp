@@ -40,6 +40,13 @@ namespace djinn
 			ASSERT(argc == 0);
 			return js::create_f32(ctx, ::djinn::render_service::get_context()->get_aspect_ratio());
 		}
+		JSValue set_depth_mask(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+		{
+			ASSERT(argc == 1);
+			bool const mask = js::extract_bool(ctx, argv[0]);
+			glDepthMask(mask);
+			return JS_UNDEFINED;
+		}
 	} // namespace js::render_service
 
 
@@ -55,6 +62,7 @@ namespace djinn
 		super::register_function(ctx, "bindTexture", 2, js::render_service::bind_texture);
 		super::register_function(ctx, "bindCubemap", 2, js::render_service::bind_cubemap);
 		super::register_function(ctx, "getAspectRatio", 0, js::render_service::get_aspect_ratio);
+		super::register_function(ctx, "setDepthMask", 1, js::render_service::set_depth_mask);
 	}
 	sptr<mgl::context> render_service::get_context()
 	{

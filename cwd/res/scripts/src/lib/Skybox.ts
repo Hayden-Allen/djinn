@@ -1,6 +1,6 @@
 import "./globals.d"
 
-const { Asset, Scene, Util } = djinn
+const { Asset, Scene, Util, Render } = djinn
 
 interface SkyboxTextureOptions {
   minFilter: number

@@ -1,4 +1,4 @@
-#version 330 core
+#version 410 core
 layout(location = 0) in vec3 i_pos;
 layout(location = 1) in vec2 i_tc;
 uniform mat4 u_mvp;

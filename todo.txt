@@ -4,7 +4,9 @@
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
 
 - now
-	- depth test
+	- mgl::context version number param
+	- constants fp constexpr function
+	- mesh_instance::writes_depth
 	- instance normal matrix
 	- "static" shader type
 	- m3d

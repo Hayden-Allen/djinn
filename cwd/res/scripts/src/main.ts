@@ -77,7 +77,7 @@ export default class MainEntity extends Entity {
     this.idSoundEmitter = Sound.Emitter.create(this.idSoundSource)
     this.needsPlayAudio = true
 
-    this.idStaticMesh = Asset.Mesh.loadStatic("cube_normals.m3d")
+    this.idStaticMesh = Asset.Mesh.loadStatic("suzanne.m3d")
     this.idStaticShader = Asset.Shader.load("cube.vert", "cube.frag")
     this.idStaticInstance = Scene.MeshInstance.create(
       this.idStaticMesh,
