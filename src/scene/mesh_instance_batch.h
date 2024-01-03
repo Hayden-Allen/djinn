@@ -36,7 +36,7 @@ namespace djinn
 			ctx->draw_instanced(ro, *m_shaders.get(), m_valid);
 		}
 	private:
-		static inline constexpr u32 s_num_ubos = 12, s_floats_per_tmat = 16;
+		static inline constexpr u32 s_num_ubos = 12, s_floats_per_mat4 = 16, s_floats_per_mat3 = 12;
 	private:
 		wptr<mesh> m_mesh;
 		wptr<shaders> m_shaders;
