@@ -26,7 +26,7 @@ namespace djinn
 
 	class input_service final : public haul::parent<service<input_service>>
 	{
-		friend class super;
+		friend super;
 	public:
 		DCM(input_service);
 	public:

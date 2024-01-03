@@ -8,7 +8,7 @@ namespace djinn
 {
 	class sound_service final : public haul::parent<service<sound_service>>
 	{
-		friend class super;
+		friend super;
 	public:
 		DCM(sound_service);
 	public:

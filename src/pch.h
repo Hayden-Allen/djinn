@@ -1,4 +1,10 @@
 #pragma once
+
+#ifndef _WIN32
+#	define __debugbreak		__builtin_debugtrap
+#	define sprintf_s(buf, ...) snprintf((buf), sizeof(buf), __VA_ARGS__)
+#endif
+
 #include <stdio.h>
 #include <filesystem>
 #include <iostream>
@@ -13,12 +19,14 @@
 #include <thread>
 #include <array>
 
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-#undef min
-#undef max
-#undef near
-#undef far
+#ifdef _WIN32
+#	define WIN32_LEAN_AND_MEAN
+#	include <Windows.h>
+#	undef min
+#	undef max
+#	undef near
+#	undef far
+#endif
 
 #include "hapi/hapi.h"
 using namespace hapi;

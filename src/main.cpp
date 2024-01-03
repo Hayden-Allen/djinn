@@ -11,11 +11,13 @@
 #include "core/constants.h"
 #include "script/js.h"
 #ifndef DJINN_DIST
+#ifdef _WIN32
 #	include "debug/script_watcher.h"
 #	include "debug/shader_watcher.h"
 #	include "debug/texture_watcher.h"
 #	include "debug/cubemap_watcher.h"
 #	include "debug/sound_source_watcher.h"
+#endif
 #endif
 
 #define DJINN_PROFILE 0
@@ -45,12 +47,14 @@ int main(int argc, char* argv[])
 	sound_service::init();
 
 #ifndef DJINN_DIST
+#	ifdef _WIN32
 	shader_watcher shader_watcher(asset_service::get_shader_manager());
 	texture_watcher texture_watcher(asset_service::get_texture_manager());
 	cubemap_watcher cubemap_watcher(asset_service::get_cubemap_manager());
 	script_watcher_entity script_watcher_entity(scene_service::get_entity_manager());
 	script_watcher_camera script_watcher_camera(scene_service::get_camera_entity_manager());
 	sound_source_watcher sound_watcher(asset_service::get_sound_source_manager());
+#	endif
 #endif
 	scene_service::get_entity_manager()->load("main.js");
 
@@ -63,6 +67,7 @@ int main(int argc, char* argv[])
 #endif
 	{
 #ifndef DJINN_DIST
+#	ifdef _WIN32
 		// non blocking wait
 		shader_watcher.poll();
 		script_watcher_entity.poll();
@@ -70,6 +75,7 @@ int main(int argc, char* argv[])
 		texture_watcher.poll();
 		cubemap_watcher.poll();
 		sound_watcher.poll();
+#	endif
 #endif
 
 		c->begin_frame();

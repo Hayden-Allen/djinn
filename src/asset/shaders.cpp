@@ -136,7 +136,7 @@ namespace djinn
 		// instance ubo definition
 		u32 const max_structs_per_ubo =
 			c::shader::ubo_size_bytes / field_offset_bytes;
-		sprintf_s(buf, "layout(std140,binding=0) uniform %s { %s d_i[%u]; } %s[%u];", c::uniform::instance_block_type.c_str(), c::uniform::instance_struct.c_str(), max_structs_per_ubo, c::uniform::instances_uniform.c_str(), c::shader::num_ubos);
+		sprintf_s(buf, "layout(std140) uniform %s { %s d_i[%u]; } %s[%u];", c::uniform::instance_block_type.c_str(), c::uniform::instance_struct.c_str(), max_structs_per_ubo, c::uniform::instances_uniform.c_str(), c::shader::num_ubos);
 		lines.insert(lines.begin() + 2, buf); // add under struct definition
 
 		// instance struct macro definition

@@ -1,4 +1,4 @@
-#version 450 core
+#version 410 core
 TYPE(basic);
 FIELD(vec4, color);
 layout(location = 0) in vec2 i_pos;

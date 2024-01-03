@@ -6,7 +6,7 @@ namespace djinn
 {
 	class imgui_service final : public haul::parent<service<imgui_service>>
 	{
-		friend class super;
+		friend super;
 	public:
 		DCM(imgui_service);
 	public:

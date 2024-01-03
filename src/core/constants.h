@@ -5,12 +5,21 @@ namespace djinn::c
 {
 	namespace base_dir
 	{
+#ifdef _WIN32
 		static std::string const mesh = "../../../../cwd/res/mesh";
 		static std::string const script = "../../../../cwd/res/scripts/out";
 		static std::string const shader = "../../../../cwd/res/glsl";
 		static std::string const texture = "../../../../cwd/res/texture";
 		static std::string const font = "../../../../cwd/res/font";
 		static std::string const sound = "../../../../cwd/res/sound";
+#else
+		static std::string const mesh = "../../cwd/res/mesh";
+		static std::string const script = "../../cwd/res/scripts/out";
+		static std::string const shader = "../../cwd/res/glsl";
+		static std::string const texture = "../../cwd/res/texture";
+		static std::string const font = "../../cwd/res/font";
+		static std::string const sound = "../../cwd/res/sound";
+#endif
 	} // namespace base_dir
 	namespace uniform
 	{

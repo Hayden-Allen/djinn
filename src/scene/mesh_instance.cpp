@@ -18,7 +18,7 @@ namespace djinn
 		{
 			u32 const num_floats = glsl_type_size_bytes(f.type) / sizeof(f32) * f.arr_count;
 			std::vector<f32> data(num_floats);
-			m_fields.emplace_back(data, f.type, f.arr_count, f.offset_bytes);
+			m_fields.push_back({ data, f.type, f.arr_count, f.offset_bytes });
 			m_field_index.insert({ f.name, m_fields.size() - 1 });
 		}
 	}
