@@ -31,7 +31,9 @@ namespace djinn
 		u32 get_base_offset_bytes() const;
 		void init(std::string const& vert_afp, std::string const& frag_afp);
 	private:
-		static inline constexpr u32 s_base_offset_bytes[(u64)shader_type::COUNT] = { 0, 64, 64 * 16, 64 };
+		// sizeof(mat4) == 64
+		// sizeof(mat3) == sizeof(mat3x4) == 48 (alignment)
+		static inline constexpr u32 s_base_offset_bytes[(u64)shader_type::COUNT] = { 0, 64 + 48, 64 * 16, 64 + 48 };
 	private:
 		std::vector<instance_field> m_instance_fields;
 		shader_type m_type;

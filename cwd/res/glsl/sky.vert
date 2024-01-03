@@ -6,7 +6,7 @@ out vec3 v_tc;
 
 void main()
 {
-	mat4 transform = d_instance.d_transform;
+	mat4 transform = d_instance.d_model;
 	gl_Position = d_vpr * transform * vec4(500 * i_pos, 1);
 	v_tc = i_pos;
 }

@@ -118,7 +118,7 @@ namespace djinn
 
 		// instance struct definition (CUSTOM and STATIC)
 		char buf[512] = { 0 };
-		sprintf_s(buf, "struct %s { mat4 %s; ", c::uniform::instance_struct.c_str(), c::uniform::instance_transform.c_str());
+		sprintf_s(buf, "struct %s { mat4 %s; mat3 %s; ", c::uniform::instance_struct.c_str(), c::uniform::instance_model_mat.c_str(), c::uniform::instance_normal_mat.c_str());
 		std::string struct_def = buf;
 		for (auto const& pair : fields)
 		{

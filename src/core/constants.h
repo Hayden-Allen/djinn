@@ -6,20 +6,16 @@ namespace djinn::c
 	namespace base_dir
 	{
 #ifdef _WIN32
-		static std::string const mesh = "../../../../cwd/res/mesh";
-		static std::string const script = "../../../../cwd/res/scripts/out";
-		static std::string const shader = "../../../../cwd/res/glsl";
-		static std::string const texture = "../../../../cwd/res/texture";
-		static std::string const font = "../../../../cwd/res/font";
-		static std::string const sound = "../../../../cwd/res/sound";
+		static std::string const root = "../../../../";
 #else
-		static std::string const mesh = "../../cwd/res/mesh";
-		static std::string const script = "../../cwd/res/scripts/out";
-		static std::string const shader = "../../cwd/res/glsl";
-		static std::string const texture = "../../cwd/res/texture";
-		static std::string const font = "../../cwd/res/font";
-		static std::string const sound = "../../cwd/res/sound";
+		static std::string const root = "../../";
 #endif
+		static std::string const mesh = root + "cwd/res/mesh";
+		static std::string const script = root + "cwd/res/scripts/out";
+		static std::string const shader = root + "cwd/res/glsl";
+		static std::string const texture = root + "cwd/res/texture";
+		static std::string const font = root + "cwd/res/font";
+		static std::string const sound = root + "cwd/res/sound";
 	} // namespace base_dir
 	namespace uniform
 	{
@@ -30,7 +26,8 @@ namespace djinn::c
 		static std::string const instance_block_type = "d_instance_block";
 		static std::string const instances_uniform = "d_instances";
 		static std::string const instance_struct = "d_instance_struct";
-		static std::string const instance_transform = "d_transform";
+		static std::string const instance_model_mat = "d_model";
+		static std::string const instance_normal_mat = "d_normal";
 	} // namespace uniform
 	namespace shader
 	{

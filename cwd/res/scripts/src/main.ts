@@ -78,11 +78,12 @@ export default class MainEntity extends Entity {
     this.needsPlayAudio = true
 
     this.idStaticMesh = Asset.Mesh.loadStatic("suzanne.m3d")
-    this.idStaticShader = Asset.Shader.load("cube.vert", "cube.frag")
+    this.idStaticShader = Asset.Shader.load("basic.vert", "basic.frag")
     this.idStaticInstance = Scene.MeshInstance.create(
       this.idStaticMesh,
       this.idStaticShader
     )
+    Scene.setPosZ(this.idStaticInstance, -5)
   }
   __destroy() {
     Scene.MeshInstance.destroy(this.idStaticInstance)
@@ -116,6 +117,7 @@ export default class MainEntity extends Entity {
       // Sound.Emitter.play(this.idSoundEmitter)
       this.needsPlayAudio = false
     }
+    Scene.addRotY(this.idStaticInstance, dt)
     Scene.Entity.requestImgui(this.id)
   }
   __draw() {

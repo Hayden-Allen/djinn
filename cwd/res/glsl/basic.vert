@@ -8,7 +8,8 @@ out vec3 v_norm;
 
 void main()
 {
-	// mat4 transform = d_instance.d_transform;
-    gl_Position = d_vp * vec4(vec3(i_pos.x, i_pos.y, i_pos.z - 5), 1);
-    v_norm = i_norm;
+	mat4 transform = d_instance.d_model;
+    gl_Position = d_vp * transform * vec4(i_pos, 1);
+    v_norm = d_instance.d_normal * i_norm;
+    // v_norm = i_norm;
 }

@@ -114,11 +114,35 @@ namespace djinn
 	void mesh_instance_batch::update_transform(u64 const index, tmat<space::OBJECT, space::WORLD> const& transform)
 	{
 		ASSERT(index < m_instance_indices.size());
+		// absolute index across all blocks
 		u64 const total_index = m_instance_indices[index];
+		// index of block `total_index` falls within
 		u64 const block_index = total_index / m_instances_per_ubo;
-		u64 const transform_index = total_index % m_instances_per_ubo;
 		ASSERT(block_index < m_ubos.size());
-		u64 const offset_bytes = (m_floats_per_instance * sizeof(f32) * total_index);
-		m_ubos[block_index].update(transform.e, 16, (u32)offset_bytes);
+		// index within above block
+		u64 const transform_index = total_index % m_instances_per_ubo;
+		// byte offset within block
+		u64 const offset_bytes = (m_floats_per_instance * sizeof(f32) * transform_index);
+
+		m_ubos[block_index].update(transform.e, s_floats_per_mat4, (u32)offset_bytes);
+
+		tmat<space::OBJECT, space::WORLD> const& normal = transform.invert_copy().transpose_copy();
+		// mat3 == mat3x4 with layout(std140), so pad columns with 0
+		f32 const normal3[s_floats_per_mat3] = {
+			normal.i[0],
+			normal.i[1],
+			normal.i[2],
+			0,
+			normal.j[0],
+			normal.j[1],
+			normal.j[2],
+			0,
+			normal.k[0],
+			normal.k[1],
+			normal.k[2],
+			0,
+		};
+		u64 const normal_offset_bytes = offset_bytes + s_floats_per_mat4 * sizeof(f32);
+		m_ubos[block_index].update(normal3, s_floats_per_mat3, (u32)normal_offset_bytes);
 	}
 } // namespace djinn

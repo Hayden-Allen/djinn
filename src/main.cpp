@@ -11,13 +11,13 @@
 #include "core/constants.h"
 #include "script/js.h"
 #ifndef DJINN_DIST
-#ifdef _WIN32
-#	include "debug/script_watcher.h"
-#	include "debug/shader_watcher.h"
-#	include "debug/texture_watcher.h"
-#	include "debug/cubemap_watcher.h"
-#	include "debug/sound_source_watcher.h"
-#endif
+#	ifdef _WIN32
+#		include "debug/script_watcher.h"
+#		include "debug/shader_watcher.h"
+#		include "debug/texture_watcher.h"
+#		include "debug/cubemap_watcher.h"
+#		include "debug/sound_source_watcher.h"
+#	endif
 #endif
 
 #define DJINN_PROFILE 0
@@ -36,7 +36,11 @@ using namespace djinn;
 
 int main(int argc, char* argv[])
 {
-	optr<mgl::context> c(new mgl::context(1920, 1080, "mingl", { .vsync = false, .clear = { .b = 1 } }));
+#ifdef _WIN32
+	optr<mgl::context> c(new mgl::context(1920, 1080, "mingl", { .vsync = false, .clear = { .b = 1 }, .version = { 4, 3 } }));
+#else
+	optr<mgl::context> c(new mgl::context(1920, 1080, "mingl", { .vsync = false, .clear = { .b = 1 }, .version = { 4, 1 } }));
+#endif
 	asset_service::init();
 	render_service::init(c);
 	nanovg_service::init();

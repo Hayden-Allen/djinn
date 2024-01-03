@@ -4,10 +4,9 @@
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
 
 - now
-	- mgl::context version number param
-	- constants fp constexpr function
+	- generated_mesh => custom_mesh
+	- check order of GL_TEXTURE_CUBE_MAP_POSITIVE_X on macos
 	- mesh_instance::writes_depth
-	- instance normal matrix
 	- "static" shader type
 	- m3d
 		- asset/animated_mesh.h (factor static_mesh)
