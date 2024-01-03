@@ -6,7 +6,7 @@ namespace djinn
 {
 	class render_service final : public haul::parent<service<render_service>>
 	{
-		friend class super;
+		friend super;
 	public:
 		DCM(render_service);
 	public:

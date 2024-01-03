@@ -6,7 +6,7 @@ namespace djinn
 {
 	class util_service final : public haul::parent<service<util_service>>
 	{
-		friend class super;
+		friend super;
 	public:
 		DCM(util_service);
 	public:

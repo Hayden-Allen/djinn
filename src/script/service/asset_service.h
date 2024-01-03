@@ -12,7 +12,7 @@ namespace djinn
 {
 	class asset_service final : public haul::parent<service<asset_service>>
 	{
-		friend class super;
+		friend super;
 	public:
 		DCM(asset_service);
 	public:

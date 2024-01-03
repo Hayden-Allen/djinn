@@ -6,7 +6,7 @@ namespace djinn
 {
 	class nanovg_service final : public haul::parent<service<nanovg_service>>
 	{
-		friend class super;
+		friend super;
 	public:
 		DCM(nanovg_service);
 		~nanovg_service();

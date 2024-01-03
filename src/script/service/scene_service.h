@@ -9,7 +9,7 @@ namespace djinn
 {
 	class scene_service final : public haul::parent<service<scene_service>>
 	{
-		friend class super;
+		friend super;
 	public:
 		DCM(scene_service);
 	public:
