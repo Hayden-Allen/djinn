@@ -50,7 +50,7 @@ namespace djinn::js::asset_service
 		for (id_t const id : texture_ids)
 			textures.emplace_back(get_texture(id));
 
-		JSValue ret = js::create_id(ctx, ::djinn::asset_service::get_generated_mesh_manager()->create(vertex_count, vertex_layout, index_count, textures));
+		JSValue ret = js::create_id(ctx, ::djinn::asset_service::get_custom_mesh_manager()->create(vertex_count, vertex_layout, index_count, textures));
 		return ret;
 	}
 	JSValue load_static_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -63,8 +63,8 @@ namespace djinn::js::asset_service
 	{
 		ASSERT(argc == 1);
 		id_t const id = js::extract_id(ctx, argv[0]);
-		if (::djinn::asset_service::get_generated_mesh_manager()->has(id))
-			::djinn::asset_service::get_generated_mesh_manager()->destroy(id);
+		if (::djinn::asset_service::get_custom_mesh_manager()->has(id))
+			::djinn::asset_service::get_custom_mesh_manager()->destroy(id);
 		else if (::djinn::asset_service::get_static_mesh_manager()->has(id))
 		{
 			::djinn::asset_service::get_static_mesh_manager()->destroy(id);
@@ -81,7 +81,7 @@ namespace djinn::js::asset_service
 		id_t const id = js::extract_id(ctx, argv[0]);
 		std::vector<f32> const& vertices = js::extract_f32_array(ctx, argv[1]);
 		std::vector<u32> const& indices = js::extract_u32_array(ctx, argv[2]);
-		::djinn::asset_service::get_generated_mesh_manager()->update(id, vertices, indices);
+		::djinn::asset_service::get_custom_mesh_manager()->update(id, vertices, indices);
 		return JS_UNDEFINED;
 	}
 	JSValue load_shader(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -256,14 +256,6 @@ namespace djinn
 		super::register_function(ctx, "Sound", "load", 1, js::asset_service::load_sound_source);
 		super::register_function(ctx, "Sound", "destroy", 1, js::asset_service::destroy_sound_source);
 	}
-	generated_mesh_manager* asset_service::get_generated_mesh_manager()
-	{
-		return &s_instance->m_generated_mesh_manager;
-	}
-	static_mesh_manager* asset_service::get_static_mesh_manager()
-	{
-		return &s_instance->m_static_mesh_manager;
-	}
 	shader_manager* asset_service::get_shader_manager()
 	{
 		return &s_instance->m_shader_manager;
@@ -276,6 +268,14 @@ namespace djinn
 	{
 		return &s_instance->m_cubemap_manager;
 	}
+	custom_mesh_manager* asset_service::get_custom_mesh_manager()
+	{
+		return &s_instance->m_custom_mesh_manager;
+	}
+	static_mesh_manager* asset_service::get_static_mesh_manager()
+	{
+		return &s_instance->m_static_mesh_manager;
+	}
 	sound_source_manager* asset_service::get_sound_source_manager()
 	{
 		return &s_instance->m_sound_source_manager;
@@ -283,14 +283,14 @@ namespace djinn
 	sptr<mesh> asset_service::get_mesh(id_t const id)
 	{
 		// TODO
-		if (s_instance->m_generated_mesh_manager.has(id))
-			return s_instance->m_generated_mesh_manager.get(id);
+		if (s_instance->m_custom_mesh_manager.has(id))
+			return s_instance->m_custom_mesh_manager.get(id);
 		return s_instance->m_static_mesh_manager.get(id);
 	}
 	void asset_service::draw_meshes()
 	{
 		// TODO
-		s_instance->m_generated_mesh_manager.for_each([](sptr<mesh> mesh, id_t const id)
+		s_instance->m_custom_mesh_manager.for_each([](sptr<mesh> mesh, id_t const id)
 			{
 				mesh->draw(render_service::get_context());
 			});

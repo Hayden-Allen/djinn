@@ -1,15 +1,15 @@
 #pragma once
 #include "pch.h"
 #include "manager.h"
-#include "asset/generated_mesh.h"
+#include "asset/custom_mesh.h"
 
 namespace djinn
 {
-	class generated_mesh_manager final : public ref_counted_manager<generated_mesh>
+	class custom_mesh_manager final : public ref_counted_manager<custom_mesh>
 	{
 	public:
-		generated_mesh_manager();
-		DCM(generated_mesh_manager);
+		custom_mesh_manager();
+		DCM(custom_mesh_manager);
 	public:
 		id_t create(u32 const vertex_count, std::vector<u32> const& layout, u32 const index_count, std::vector<wptr<texture>> const& textures);
 		void destroy(id_t const id) override;

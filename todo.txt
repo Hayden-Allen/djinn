@@ -4,7 +4,6 @@
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
 
 - now
-	- generated_mesh => custom_mesh
 	- check order of GL_TEXTURE_CUBE_MAP_POSITIVE_X on macos
 	- mesh_instance::writes_depth
 	- "static" shader type
