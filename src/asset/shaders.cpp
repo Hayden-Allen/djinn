@@ -40,11 +40,11 @@ namespace djinn
 	}
 	shaders::shader_type shaders::string_to_shader_type(std::string const& type)
 	{
-		if (u::iequals(type, c::shader::type::basic))
-			return shader_type::BASIC;
-		else if (u::iequals(type, c::shader::type::animated))
+		if (u::iequals(type, c::shader::type::STATIC))
+			return shader_type::STATIC;
+		else if (u::iequals(type, c::shader::type::ANIMATED))
 			return shader_type::ANIMATED;
-		else if (u::iequals(type, c::shader::type::custom))
+		else if (u::iequals(type, c::shader::type::CUSTOM))
 			return shader_type::CUSTOM;
 		ASSERT(false);
 		return shader_type::NONE;
@@ -114,36 +114,53 @@ namespace djinn
 				lines.push_back(line);
 			}
 		}
-		ASSERT(m_type == shader_type::BASIC); // TODO
+		ASSERT(m_type == shader_type::CUSTOM || m_type == shader_type::STATIC); // TODO
+
+		std::vector<std::string> extra_lines;
+		char buf[512] = { 0 };
+
+		// vbo fields (STATIC)
+		if (m_type == shader_type::STATIC)
+		{
+			sprintf_s(buf, "layout(location=0) in vec3 %s;", c::shader::static_pos.c_str());
+			extra_lines.push_back(buf);
+			sprintf_s(buf, "layout(location=1) in vec3 %s;", c::shader::static_norm.c_str());
+			extra_lines.push_back(buf);
+			sprintf_s(buf, "layout(location=2) in vec2 %s;", c::shader::static_tex.c_str());
+			extra_lines.push_back(buf);
+		}
 
 		// instance struct definition (CUSTOM and STATIC)
-		char buf[512] = { 0 };
-		sprintf_s(buf, "struct %s { mat4 %s; mat3 %s; ", c::uniform::instance_struct.c_str(), c::uniform::instance_model_mat.c_str(), c::uniform::instance_normal_mat.c_str());
-		std::string struct_def = buf;
-		for (auto const& pair : fields)
+		if (m_type == shader_type::CUSTOM || m_type == shader_type::STATIC)
 		{
-			// array size of 1 is invalid in GLSL, so treat it as single variable instead
-			if (pair.second.arr_count > 1)
-				sprintf_s(buf, "%s %s[%d]; ", pair.first.c_str(),
-					pair.second.name.c_str(), pair.second.arr_count);
-			else
-				sprintf_s(buf, "%s %s; ", pair.first.c_str(), pair.second.name.c_str());
-			struct_def += buf;
+			sprintf_s(buf, "struct %s { mat4 %s; mat3 %s; ", c::shader::instance_struct.c_str(), c::shader::instance_model_mat.c_str(), c::shader::instance_normal_mat.c_str());
+			std::string struct_def = buf;
+			for (auto const& pair : fields)
+			{
+				// array size of 1 is invalid in GLSL, so treat it as single variable instead
+				if (pair.second.arr_count > 1)
+					sprintf_s(buf, "%s %s[%d]; ", pair.first.c_str(),
+						pair.second.name.c_str(), pair.second.arr_count);
+				else
+					sprintf_s(buf, "%s %s; ", pair.first.c_str(), pair.second.name.c_str());
+				struct_def += buf;
+			}
+			struct_def += "};";
+			extra_lines.push_back(struct_def);
 		}
-		struct_def += "};";
-		lines.insert(lines.begin() + 1, struct_def); // lines.begin() is #version
 
 		// instance ubo definition (ALL)
 		u32 const max_structs_per_ubo =
 			c::shader::ubo_size_bytes / field_offset_bytes;
-		sprintf_s(buf, "layout(std140) uniform %s { %s d_i[%u]; } %s[%u];", c::uniform::instance_block_type.c_str(), c::uniform::instance_struct.c_str(), max_structs_per_ubo, c::uniform::instances_uniform.c_str(), c::shader::num_ubos);
-		lines.insert(lines.begin() + 2, buf); // add under struct definition
+		sprintf_s(buf, "layout(std140) uniform %s { %s d_i[%u]; } %s[%u];", c::uniform::instance_block_type.c_str(), c::shader::instance_struct.c_str(), max_structs_per_ubo, c::uniform::instances.c_str(), c::shader::num_ubos);
+		extra_lines.push_back(buf);
 
 		// instance struct macro definition (ALL)
-		sprintf_s(buf, "#define d_instance %s[gl_InstanceID/%u].d_i[gl_InstanceID-%u*(gl_InstanceID/%u)]", c::uniform::instances_uniform.c_str(), max_structs_per_ubo, max_structs_per_ubo, max_structs_per_ubo);
-		lines.insert(lines.begin() + 3, buf); // add under ubo definition
+		sprintf_s(buf, "#define d_instance %s[gl_InstanceID/%u].d_i[gl_InstanceID-%u*(gl_InstanceID/%u)]", c::uniform::instances.c_str(), max_structs_per_ubo, max_structs_per_ubo, max_structs_per_ubo);
+		extra_lines.push_back(buf);
 
 		// join all lines
+		lines.insert(lines.begin() + 1, extra_lines.begin(), extra_lines.end());
 		std::stringstream sstr;
 		for (std::string const& line : lines)
 			sstr << line << "\n";

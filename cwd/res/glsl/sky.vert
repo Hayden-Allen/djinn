@@ -1,5 +1,5 @@
 #version 410 core
-TYPE(basic);
+TYPE(CUSTOM);
 layout(location = 0) in vec3 i_pos;
 uniform mat4 d_vpr;
 out vec3 v_tc;

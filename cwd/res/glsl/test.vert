@@ -1,5 +1,5 @@
 #version 410 core
-TYPE(basic);
+TYPE(CUSTOM);
 FIELD(vec4, color);
 layout(location = 0) in vec2 i_pos;
 layout(location = 1) in vec2 i_tex;

@@ -24,20 +24,23 @@ namespace djinn::c
 		static std::string const vp_mat = "d_vp";
 		static std::string const vpr_mat = "d_vpr";
 		static std::string const instance_block_type = "d_instance_block";
-		static std::string const instances_uniform = "d_instances";
-		static std::string const instance_struct = "d_instance_struct";
-		static std::string const instance_model_mat = "d_model";
-		static std::string const instance_normal_mat = "d_normal";
+		static std::string const instances = "d_instances";
 	} // namespace uniform
 	namespace shader
 	{
 		static u32 num_ubos = 12;
 		static u32 ubo_size_bytes = 16384;
+		static std::string const instance_struct = "d_instance_struct";
+		static std::string const instance_model_mat = "d_model";
+		static std::string const instance_normal_mat = "d_normal";
+		static std::string const static_pos = "d_pos";
+		static std::string const static_norm = "d_norm";
+		static std::string const static_tex = "d_tex";
 		namespace type
 		{
-			static std::string const basic = "basic";
-			static std::string const animated = "animated";
-			static std::string const custom = "custom";
+			static std::string const STATIC = "STATIC";
+			static std::string const ANIMATED = "ANIMATED";
+			static std::string const CUSTOM = "CUSTOM";
 		} // namespace type
 		namespace macro
 		{

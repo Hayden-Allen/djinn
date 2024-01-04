@@ -78,7 +78,7 @@ export default class MainEntity extends Entity {
     this.needsPlayAudio = true
 
     this.idStaticMesh = Asset.Mesh.loadStatic("suzanne.m3d")
-    this.idStaticShader = Asset.Shader.load("basic.vert", "basic.frag")
+    this.idStaticShader = Asset.Shader.load("static.vert", "static.frag")
     this.idStaticInstance = Scene.MeshInstance.create(
       this.idStaticMesh,
       this.idStaticShader

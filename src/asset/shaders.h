@@ -18,7 +18,7 @@ namespace djinn
 		enum class shader_type
 		{
 			NONE = 0,
-			BASIC,
+			STATIC,
 			ANIMATED,
 			CUSTOM,
 			COUNT
