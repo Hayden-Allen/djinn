@@ -88,7 +88,7 @@ namespace djinn
 				//	- FIELD(type, name, arr_count)
 				ASSERT(args.size() == 2 || args.size() == 3);
 
-				std::string type_name = args[0];
+				std::string const type_name = args[0];
 				GLenum const type = string_to_glsl_type(type_name);
 				std::string const& name = args[1];
 				// size of one element
@@ -102,7 +102,7 @@ namespace djinn
 					size_bytes *= arr_count;
 				}
 				// add this field
-				instance_field field = { name, type, arr_count, field_offset_bytes };
+				instance_field const field = { name, type, arr_count, field_offset_bytes };
 				fields.push_back({ type_name, field });
 				m_instance_fields.push_back(field);
 				// add total size of this field to total offset accumulator
@@ -114,7 +114,7 @@ namespace djinn
 				lines.push_back(line);
 			}
 		}
-		ASSERT(m_type == shader_type::CUSTOM || m_type == shader_type::STATIC); // TODO
+		ASSERT(m_type != shader_type::NONE);
 
 		std::vector<std::string> extra_lines;
 		char buf[512] = { 0 };
@@ -122,11 +122,25 @@ namespace djinn
 		// vbo fields (STATIC)
 		if (m_type == shader_type::STATIC)
 		{
-			sprintf_s(buf, "layout(location=0) in vec3 %s;", c::shader::static_pos.c_str());
+			sprintf_s(buf, "layout(location=0) in vec3 %s;", c::shader::vertex_pos.c_str());
 			extra_lines.push_back(buf);
-			sprintf_s(buf, "layout(location=1) in vec3 %s;", c::shader::static_norm.c_str());
+			sprintf_s(buf, "layout(location=1) in vec3 %s;", c::shader::vertex_norm.c_str());
 			extra_lines.push_back(buf);
-			sprintf_s(buf, "layout(location=2) in vec2 %s;", c::shader::static_tex.c_str());
+			sprintf_s(buf, "layout(location=2) in vec2 %s;", c::shader::vertex_tex.c_str());
+			extra_lines.push_back(buf);
+		}
+		else if (m_type == shader_type::ANIMATED)
+		{
+			sprintf_s(buf, "layout(location=0) in vec3 %s;", c::shader::vertex_pos.c_str());
+			extra_lines.push_back(buf);
+			sprintf_s(buf, "layout(location=1) in vec3 %s;", c::shader::vertex_norm.c_str());
+			extra_lines.push_back(buf);
+			sprintf_s(buf, "layout(location=2) in vec2 %s;", c::shader::vertex_tex.c_str());
+			extra_lines.push_back(buf);
+			ASSERT(c::shader::num_vertex_bones == 4); // can make a more sophistocated solution for these two if needed
+			sprintf_s(buf, "layout(location=3) in vec4 %s;", c::shader::vertex_bone_weight.c_str());
+			extra_lines.push_back(buf);
+			sprintf_s(buf, "layout(location=4) in uvec4 %s;", c::shader::vertex_bone_index.c_str());
 			extra_lines.push_back(buf);
 		}
 
@@ -134,20 +148,25 @@ namespace djinn
 		if (m_type == shader_type::CUSTOM || m_type == shader_type::STATIC)
 		{
 			sprintf_s(buf, "struct %s { mat4 %s; mat3 %s; ", c::shader::instance_struct.c_str(), c::shader::instance_model_mat.c_str(), c::shader::instance_normal_mat.c_str());
-			std::string struct_def = buf;
-			for (auto const& pair : fields)
-			{
-				// array size of 1 is invalid in GLSL, so treat it as single variable instead
-				if (pair.second.arr_count > 1)
-					sprintf_s(buf, "%s %s[%d]; ", pair.first.c_str(),
-						pair.second.name.c_str(), pair.second.arr_count);
-				else
-					sprintf_s(buf, "%s %s; ", pair.first.c_str(), pair.second.name.c_str());
-				struct_def += buf;
-			}
-			struct_def += "};";
-			extra_lines.push_back(struct_def);
 		}
+		else
+		{
+			ASSERT(m_type == shader_type::ANIMATED);
+			sprintf_s(buf, "struct %s { mat4 %s; mat4 %s[%u]; ", c::shader::instance_struct.c_str(), c::shader::instance_model_mat.c_str(), c::shader::instance_bones.c_str(), c::shader::num_bones);
+		}
+		std::string struct_def = buf;
+		for (auto const& pair : fields)
+		{
+			// array size of 1 is invalid in GLSL, so treat it as single variable instead
+			if (pair.second.arr_count > 1)
+				sprintf_s(buf, "%s %s[%d]; ", pair.first.c_str(),
+					pair.second.name.c_str(), pair.second.arr_count);
+			else
+				sprintf_s(buf, "%s %s; ", pair.first.c_str(), pair.second.name.c_str());
+			struct_def += buf;
+		}
+		struct_def += "};";
+		extra_lines.push_back(struct_def);
 
 		// instance ubo definition (ALL)
 		u32 const max_structs_per_ubo =
@@ -164,7 +183,7 @@ namespace djinn
 		std::stringstream sstr;
 		for (std::string const& line : lines)
 			sstr << line << "\n";
-		// printf("%s\n", sstr.str().c_str());
+		printf("%u\n\n%s\n", field_offset_bytes, sstr.str().c_str());
 		return sstr.str();
 	}
 } // namespace djinn

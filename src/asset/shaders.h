@@ -33,7 +33,12 @@ namespace djinn
 	private:
 		// sizeof(mat4) == 64
 		// sizeof(mat3) == sizeof(mat3x4) == 48 (alignment)
-		static inline constexpr u32 s_base_offset_bytes[(u64)shader_type::COUNT] = { 0, 64 + 48, 64 * 16, 64 + 48 };
+		static inline constexpr u32 s_base_offset_bytes[(u64)shader_type::COUNT] = {
+			0,
+			64 + 48,						// mat4 model + mat3 normal
+			64 + 64 * c::shader::num_bones, // mat4 model + mat4[] bones
+			64 + 48							// mat4 model + mat3 normal
+		};
 	private:
 		std::vector<instance_field> m_instance_fields;
 		shader_type m_type;

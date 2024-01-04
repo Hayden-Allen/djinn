@@ -2,7 +2,7 @@
 #include "pch.h"
 #include "service.h"
 #include "manager/custom_mesh_manager.h"
-#include "manager/static_mesh_manager.h"
+#include "manager/loaded_mesh_manager.h"
 #include "manager/shader_manager.h"
 #include "manager/texture_manager.h"
 #include "manager/cubemap_manager.h"
@@ -23,6 +23,7 @@ namespace djinn
 		static cubemap_manager* get_cubemap_manager();
 		static custom_mesh_manager* get_custom_mesh_manager();
 		static static_mesh_manager* get_static_mesh_manager();
+		static animated_mesh_manager* get_animated_mesh_manager();
 		static sound_source_manager* get_sound_source_manager();
 		static sptr<mesh> get_mesh(id_t const id);
 		static void draw_meshes();
@@ -32,6 +33,7 @@ namespace djinn
 		cubemap_manager m_cubemap_manager;
 		custom_mesh_manager m_custom_mesh_manager;
 		static_mesh_manager m_static_mesh_manager;
+		animated_mesh_manager m_animated_mesh_manager;
 		sound_source_manager m_sound_source_manager;
 	private:
 		asset_service();

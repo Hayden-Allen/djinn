@@ -2,6 +2,8 @@
 #include "mesh_instance_batch.h"
 #include "core/constants.h"
 #include "mesh_instance.h"
+#include "asset/mesh.h"
+#include "asset/animated_mesh.h"
 
 namespace djinn
 {
@@ -90,7 +92,21 @@ namespace djinn
 		m_ubos[block_index].update(field.data.data(), (u32)field.data.size(), (u32)offset_bytes);
 	}
 
-
+	static void transpose(m3db_t* bone)
+	{
+		for (u32 r = 0; r < 4; r++)
+			for (u32 c = 0; c <= r; c++)
+				std::swap(bone->mat4[r * 4 + c], bone->mat4[c * 4 + r]);
+	}
+	static void print(m3db_t* bone)
+	{
+		f32 const* const m = bone->mat4;
+		printf("%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n\n",
+			m[0], m[4], m[8], m[12],
+			m[1], m[5], m[9], m[13],
+			m[2], m[6], m[10], m[14],
+			m[3], m[7], m[11], m[15] );
+	}
 
 	void mesh_instance_batch::add_block()
 	{
@@ -122,27 +138,49 @@ namespace djinn
 		// index within above block
 		u64 const transform_index = total_index % m_instances_per_ubo;
 		// byte offset within block
-		u64 const offset_bytes = (m_floats_per_instance * sizeof(f32) * transform_index);
+		u64 offset_bytes = (m_floats_per_instance * sizeof(f32) * transform_index);
 
 		m_ubos[block_index].update(transform.e, s_floats_per_mat4, (u32)offset_bytes);
 
-		tmat<space::OBJECT, space::WORLD> const& normal = transform.invert_copy().transpose_copy();
-		// mat3 == mat3x4 with layout(std140), so pad columns with 0
-		f32 const normal3[s_floats_per_mat3] = {
-			normal.i[0],
-			normal.i[1],
-			normal.i[2],
-			0,
-			normal.j[0],
-			normal.j[1],
-			normal.j[2],
-			0,
-			normal.k[0],
-			normal.k[1],
-			normal.k[2],
-			0,
-		};
-		u64 const normal_offset_bytes = offset_bytes + s_floats_per_mat4 * sizeof(f32);
-		m_ubos[block_index].update(normal3, s_floats_per_mat3, (u32)normal_offset_bytes);
+		// upload normal matrix for static meshes
+		if (!m_mesh->is_animated())
+		{
+			tmat<space::OBJECT, space::WORLD> const& normal = transform.invert_copy().transpose_copy();
+			// mat3 == mat3x4 with layout(std140), so pad columns with 0
+			f32 const normal3[s_floats_per_mat3] = {
+				normal.i[0],
+				normal.i[1],
+				normal.i[2],
+				0,
+				normal.j[0],
+				normal.j[1],
+				normal.j[2],
+				0,
+				normal.k[0],
+				normal.k[1],
+				normal.k[2],
+				0,
+			};
+			offset_bytes += s_floats_per_mat4 * sizeof(f32);
+			m_ubos[block_index].update(normal3, s_floats_per_mat3, (u32)offset_bytes);
+		}
+		// upload bone matrices for animated meshes
+		else
+		{
+			ASSERT(m_mesh->is_animated());
+			m3db_t* const bones = ((animated_mesh*)m_mesh.get())->get_pose();
+			for (u32 i = 0; i < c::shader::num_bones; i++)
+			{
+				offset_bytes += s_floats_per_mat4 * sizeof(f32);
+				if (bones)
+				{
+					transpose(&bones[i]);
+					m_ubos[block_index].update(bones[i].mat4, s_floats_per_mat4, (u32)offset_bytes);
+				}
+				else
+					m_ubos[block_index].update(tmat<space::OBJECT, space::WORLD>().e, s_floats_per_mat4, (u32)offset_bytes);
+			}
+			M3D_FREE((void*)bones);
+		}
 	}
 } // namespace djinn

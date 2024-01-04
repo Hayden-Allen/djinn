@@ -8,6 +8,13 @@ namespace djinn
 
 
 
+	bool mesh::is_animated() const
+	{
+		return false;
+	}
+
+
+
 	mesh::mesh() {}
 
 

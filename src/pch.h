@@ -48,6 +48,8 @@ using namespace mgl;
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "miniaudio.h"
+
+#define M3D_NUMBONE 4
 #include "m3d.h"
 
 

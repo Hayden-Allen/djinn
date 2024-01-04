@@ -16,6 +16,7 @@ namespace djinn
 		virtual ~mesh();
 	public:
 		virtual void draw(sptr<mgl::context> const& ctx) = 0;
+		virtual bool is_animated() const;
 	protected:
 		std::unordered_map<wptr<shaders>, mesh_instance_batch> m_batches;
 	protected:

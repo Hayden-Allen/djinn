@@ -14,5 +14,7 @@ namespace djinn
 			haul::parent<directory_watcher<shader_manager>>(c::base_dir::shader, manager)
 		{}
 		DCM(shader_watcher);
+	public:
+		void handle_action(DWORD const action, std::string const& fp) override;
 	};
 } // namespace djinn

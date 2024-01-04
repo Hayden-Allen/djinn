@@ -44,6 +44,10 @@ export default class MainEntity extends Entity {
   private idStaticInstance: number = 0
   private idStaticShader: number = 0
 
+  private idAnimatedMesh: number = 0
+  private idAnimatedInstance: number = 0
+  private idAnimatedShader: number = 0
+
   __init() {
     this.skybox = Skybox.loadDirectory(
       {
@@ -83,12 +87,27 @@ export default class MainEntity extends Entity {
       this.idStaticMesh,
       this.idStaticShader
     )
-    Scene.setPosZ(this.idStaticInstance, -5)
+    Scene.setPosX(this.idStaticInstance, -2)
+    Scene.setPosZ(this.idStaticInstance, -3)
+
+    this.idAnimatedMesh = Asset.Mesh.loadAnimated("samba-dancing.m3d")
+    this.idAnimatedShader = Asset.Shader.load("animated.vert", "animated.frag")
+    this.idAnimatedInstance = Scene.MeshInstance.create(
+      this.idAnimatedMesh,
+      this.idAnimatedShader
+    )
+    Scene.setPosX(this.idAnimatedInstance, 2)
+    Scene.setPosZ(this.idAnimatedInstance, -3)
+    // Scene.setRotZ(this.idAnimatedInstance, Math.PI / 2)
+    // Scene.setRotY(this.idAnimatedInstance, Math.PI / 2)
   }
   __destroy() {
     Scene.MeshInstance.destroy(this.idStaticInstance)
     Asset.Mesh.destroy(this.idStaticMesh)
     Asset.Shader.destroy(this.idStaticShader)
+    Scene.MeshInstance.destroy(this.idAnimatedInstance)
+    Asset.Mesh.destroy(this.idAnimatedMesh)
+    Asset.Shader.destroy(this.idAnimatedShader)
 
     this.skybox!.destroy()
 
@@ -118,6 +137,7 @@ export default class MainEntity extends Entity {
       this.needsPlayAudio = false
     }
     Scene.addRotY(this.idStaticInstance, dt)
+    // Scene.addRotY(this.idAnimatedInstance, -dt)
     Scene.Entity.requestImgui(this.id)
   }
   __draw() {
@@ -127,6 +147,7 @@ export default class MainEntity extends Entity {
     // })
     Asset.Shader.setCameraUniforms(this.idShader, this.camera!.getId())
     Asset.Shader.setCameraUniforms(this.idStaticShader, this.camera!.getId())
+    Asset.Shader.setCameraUniforms(this.idAnimatedShader, this.camera!.getId())
   }
   __ui() {
     Nanovg.fillStyle(1, 1, 1)

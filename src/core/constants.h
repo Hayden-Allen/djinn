@@ -28,14 +28,19 @@ namespace djinn::c
 	} // namespace uniform
 	namespace shader
 	{
-		static u32 num_ubos = 12;
-		static u32 ubo_size_bytes = 16384;
+		static constexpr u32 num_ubos = 12;
+		static constexpr u32 ubo_size_bytes = 16384;
+		static constexpr u32 num_vertex_bones = M3D_NUMBONE;
+		static constexpr u32 num_bones = 68;
 		static std::string const instance_struct = "d_instance_struct";
 		static std::string const instance_model_mat = "d_model";
 		static std::string const instance_normal_mat = "d_normal";
-		static std::string const static_pos = "d_pos";
-		static std::string const static_norm = "d_norm";
-		static std::string const static_tex = "d_tex";
+		static std::string const instance_bones = "d_bones";
+		static std::string const vertex_pos = "d_pos";
+		static std::string const vertex_norm = "d_norm";
+		static std::string const vertex_tex = "d_tex";
+		static std::string const vertex_bone_index = "d_index";
+		static std::string const vertex_bone_weight = "d_weight";
 		namespace type
 		{
 			static std::string const STATIC = "STATIC";

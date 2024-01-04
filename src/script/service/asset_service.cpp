@@ -59,6 +59,12 @@ namespace djinn::js::asset_service
 		std::string const& fp = js::extract_string(ctx, argv[0]);
 		return js::create_id(ctx, ::djinn::asset_service::get_static_mesh_manager()->load(fp));
 	}
+	JSValue load_animated_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		std::string const& fp = js::extract_string(ctx, argv[0]);
+		return js::create_id(ctx, ::djinn::asset_service::get_animated_mesh_manager()->load(fp));
+	}
 	JSValue destroy_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
@@ -71,7 +77,7 @@ namespace djinn::js::asset_service
 		}
 		else
 		{
-			ASSERT(false);
+			::djinn::asset_service::get_animated_mesh_manager()->destroy(id);
 		}
 		return JS_UNDEFINED;
 	}
@@ -241,6 +247,7 @@ namespace djinn
 		super::register_function(ctx, "Mesh", "update", 3, js::asset_service::update_mesh);
 		super::register_function(ctx, "Mesh", "destroy", 1, js::asset_service::destroy_mesh);
 		super::register_function(ctx, "Mesh", "loadStatic", 1, js::asset_service::load_static_mesh);
+		super::register_function(ctx, "Mesh", "loadAnimated", 1, js::asset_service::load_animated_mesh);
 		super::register_function(ctx, "Shader", "load", 2, js::asset_service::load_shader);
 		super::register_function(ctx, "Shader", "destroy", 1, js::asset_service::destroy_shader);
 		super::register_function(ctx, "Shader", "setUniforms", 2, js::asset_service::set_shader_uniforms);
@@ -276,25 +283,33 @@ namespace djinn
 	{
 		return &s_instance->m_static_mesh_manager;
 	}
+	animated_mesh_manager* asset_service::get_animated_mesh_manager()
+	{
+		return &s_instance->m_animated_mesh_manager;
+	}
 	sound_source_manager* asset_service::get_sound_source_manager()
 	{
 		return &s_instance->m_sound_source_manager;
 	}
 	sptr<mesh> asset_service::get_mesh(id_t const id)
 	{
-		// TODO
 		if (s_instance->m_custom_mesh_manager.has(id))
 			return s_instance->m_custom_mesh_manager.get(id);
-		return s_instance->m_static_mesh_manager.get(id);
+		else if (s_instance->m_static_mesh_manager.has(id))
+			return s_instance->m_static_mesh_manager.get(id);
+		return s_instance->m_animated_mesh_manager.get(id);
 	}
 	void asset_service::draw_meshes()
 	{
-		// TODO
 		s_instance->m_custom_mesh_manager.for_each([](sptr<mesh> mesh, id_t const id)
 			{
 				mesh->draw(render_service::get_context());
 			});
 		s_instance->m_static_mesh_manager.for_each([](sptr<mesh> mesh, id_t const id)
+			{
+				mesh->draw(render_service::get_context());
+			});
+		s_instance->m_animated_mesh_manager.for_each([](sptr<mesh> mesh, id_t const id)
 			{
 				mesh->draw(render_service::get_context());
 			});
