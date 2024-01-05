@@ -139,7 +139,8 @@ namespace djinn
 		u64 const transform_index = total_index % m_instances_per_ubo;
 		// byte offset within block
 		u64 offset_bytes = (m_floats_per_instance * sizeof(f32) * transform_index);
-
+		
+		m_ubos[block_index].bind((u32)block_index);
 		m_ubos[block_index].update(transform.e, s_floats_per_mat4, (u32)offset_bytes);
 
 		// upload normal matrix for static meshes
@@ -168,13 +169,21 @@ namespace djinn
 		else
 		{
 			ASSERT(m_mesh->is_animated());
-			m3db_t* const bones = ((animated_mesh*)m_mesh.get())->get_pose();
-			for (u32 i = 0; i < c::shader::num_bones; i++)
+			animated_mesh* const am = ((animated_mesh*)m_mesh.get());
+			m3db_t* const bones = am->get_pose();
+			for (u32 i = 0; i < am->get_num_bones(); i++)
 			{
 				offset_bytes += s_floats_per_mat4 * sizeof(f32);
 				if (bones)
 				{
 					transpose(&bones[i]);
+					// print(&bones[i]);
+					f32 mat[16] = {
+						0, 1, 0, 0,
+						1, 0, 0, 0,
+						0, 0, 1, 0,
+						0, 0, 0, 1
+					};
 					m_ubos[block_index].update(bones[i].mat4, s_floats_per_mat4, (u32)offset_bytes);
 				}
 				else

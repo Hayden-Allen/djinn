@@ -140,7 +140,7 @@ namespace djinn
 			ASSERT(c::shader::num_vertex_bones == 4); // can make a more sophistocated solution for these two if needed
 			sprintf_s(buf, "layout(location=3) in vec4 %s;", c::shader::vertex_bone_weight.c_str());
 			extra_lines.push_back(buf);
-			sprintf_s(buf, "layout(location=4) in uvec4 %s;", c::shader::vertex_bone_index.c_str());
+			sprintf_s(buf, "layout(location=4) in vec4 %s;", c::shader::vertex_bone_index.c_str());
 			extra_lines.push_back(buf);
 		}
 

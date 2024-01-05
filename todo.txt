@@ -4,6 +4,7 @@
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
 
 - now
+	- uniform_buffer update auto bind
 	- check order of GL_TEXTURE_CUBE_MAP_POSITIVE_X on macos
 	- factor static_mesh/animated_mesh
 	- m3d
