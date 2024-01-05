@@ -11,7 +11,7 @@ namespace djinn
 		struct vertex
 		{
 			f32 pos[3], norm[3], tex[2], bone_weight[c::shader::num_vertex_bones];
-			f32 bone_idx[c::shader::num_vertex_bones];
+			u8 bone_idx[c::shader::num_vertex_bones];
 
 			vertex(m3dv_t const& _pos, m3dv_t const& _norm, m3dti_t const& _tex, m3ds_t const& _skin)
 			{
@@ -26,7 +26,7 @@ namespace djinn
 				for (u32 i = 0; i < c::shader::num_vertex_bones; i++)
 				{
 					bone_weight[i] = _skin.weight[i];
-					bone_idx[i] = (f32)_skin.boneid[i];
+					bone_idx[i] = _skin.boneid[i];
 				}
 				// printf("%u %f\n", bone_idx[0], bone_weight[0]);
 			}
@@ -57,8 +57,8 @@ namespace djinn
 		static std::vector<std::pair<GLenum, std::vector<u32>>> get_layout()
 		{
 			return {
-				{ GL_FLOAT, { 3, 3, 2, c::shader::num_vertex_bones, c::shader::num_vertex_bones } },
-				// { GL_UNSIGNED_BYTE, { c::shader::num_vertex_bones } }
+				{ GL_FLOAT, { 3, 3, 2, c::shader::num_vertex_bones } },
+				{ GL_UNSIGNED_BYTE, { c::shader::num_vertex_bones } }
 			};
 		}
 	};
