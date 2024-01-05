@@ -90,7 +90,7 @@ export default class MainEntity extends Entity {
     Scene.setPosX(this.idStaticInstance, -2)
     Scene.setPosZ(this.idStaticInstance, -3)
 
-    this.idAnimatedMesh = Asset.Mesh.loadAnimated("CesiumMan.m3d")
+    this.idAnimatedMesh = Asset.Mesh.loadAnimated("samba-dancing.m3d")
     this.idAnimatedShader = Asset.Shader.load("animated.vert", "animated.frag")
     this.idAnimatedInstance = Scene.MeshInstance.create(
       this.idAnimatedMesh,

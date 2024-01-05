@@ -95,19 +95,19 @@ int main(int argc, char* argv[])
 		DJINN_TIME(scene_service::draw();, draw_avg, NUM_FRAMES);
 		DJINN_TIME(asset_service::draw_meshes(), gl_avg, NUM_FRAMES);
 
-//		DJINN_TIME(
-//			nanovg_service::begin_frame(c->get_width(), c->get_height());
-//			scene_service::draw_ui();
-//			nanovg_service::end_frame();,
-//			ui_avg, NUM_FRAMES);
-//
-//#ifndef DJINN_DIST
-//		DJINN_TIME(
-//			imgui_service::begin_frame();
-//			scene_service::draw_imgui();
-//			imgui_service::end_frame();,
-//			imgui_avg, NUM_FRAMES);
-//#endif
+		DJINN_TIME(
+			nanovg_service::begin_frame(c->get_width(), c->get_height());
+			scene_service::draw_ui();
+			nanovg_service::end_frame();,
+			ui_avg, NUM_FRAMES);
+
+#ifndef DJINN_DIST
+		DJINN_TIME(
+			imgui_service::begin_frame();
+			scene_service::draw_imgui();
+			imgui_service::end_frame();,
+			imgui_avg, NUM_FRAMES);
+#endif
 
 		glfwSwapBuffers(c->window);
 	}
