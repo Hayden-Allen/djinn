@@ -45,7 +45,7 @@ export default class MainEntity extends Entity {
   private idStaticShader: number = 0
 
   private idAnimatedMesh: number = 0
-  private idAnimatedInstance: number = 0
+  private idAnimatedInstances: number[] = []
   private idAnimatedShader: number = 0
 
   __init() {
@@ -92,12 +92,13 @@ export default class MainEntity extends Entity {
 
     this.idAnimatedMesh = Asset.Mesh.loadAnimated("samba-dancing.m3d")
     this.idAnimatedShader = Asset.Shader.load("animated.vert", "animated.frag")
-    this.idAnimatedInstance = Scene.MeshInstance.create(
-      this.idAnimatedMesh,
-      this.idAnimatedShader
-    )
-    Scene.setPosX(this.idAnimatedInstance, 2)
-    Scene.setPosZ(this.idAnimatedInstance, -3)
+    for (var i = 0; i < 10; i++) {
+      this.idAnimatedInstances.push(
+        Scene.MeshInstance.create(this.idAnimatedMesh, this.idAnimatedShader)
+      )
+      Scene.setPosX(this.idAnimatedInstances[i], -5 + i)
+      Scene.setPosZ(this.idAnimatedInstances[i], -3)
+    }
     // Scene.setRotZ(this.idAnimatedInstance, Math.PI / 2)
     // Scene.setRotY(this.idAnimatedInstance, Math.PI / 2)
   }
@@ -105,7 +106,8 @@ export default class MainEntity extends Entity {
     Scene.MeshInstance.destroy(this.idStaticInstance)
     Asset.Mesh.destroy(this.idStaticMesh)
     Asset.Shader.destroy(this.idStaticShader)
-    Scene.MeshInstance.destroy(this.idAnimatedInstance)
+    for (var i = 0; i < this.idAnimatedInstances.length; i++)
+      Scene.MeshInstance.destroy(this.idAnimatedInstances[i])
     Asset.Mesh.destroy(this.idAnimatedMesh)
     Asset.Shader.destroy(this.idAnimatedShader)
 
@@ -120,7 +122,7 @@ export default class MainEntity extends Entity {
   }
   __load() {
     this.color.set(0, 1, 1, 0.5)
-    for (var i = 0; i < 100; i++) {
+    for (var i = 0; i < 1000; i++) {
       let e = Scene.load("TestEntity.js")
       e.bind(this.camera, this.color, this.idMesh, this.idShader)
       this.entities.push(e)

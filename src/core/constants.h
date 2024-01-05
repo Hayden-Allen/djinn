@@ -17,15 +17,6 @@ namespace djinn::c
 		static std::string const font = root + "cwd/res/font";
 		static std::string const sound = root + "cwd/res/sound";
 	} // namespace base_dir
-	namespace uniform
-	{
-		static std::string const view_mat = "d_view";
-		static std::string const proj_mat = "d_proj";
-		static std::string const vp_mat = "d_vp";
-		static std::string const vpr_mat = "d_vpr";
-		static std::string const instance_block_type = "d_instance_block";
-		static std::string const instances = "d_instances";
-	} // namespace uniform
 	namespace shader
 	{
 		static constexpr u32 num_ubos = 12;
@@ -53,4 +44,27 @@ namespace djinn::c
 			static std::string const instance_field = "FIELD";
 		} // namespace macro
 	}	  // namespace shader
+	namespace uniform
+	{
+		static std::string const view_mat = "d_view";
+		static std::string const proj_mat = "d_proj";
+		static std::string const vp_mat = "d_vp";
+		static std::string const vpr_mat = "d_vpr";
+		static std::string const instance_block_type = "d_instance_block";
+		static std::string const instances = "d_instances";
+		static std::string const instance_block_name[::djinn::c::shader::num_ubos] = {
+			"d_instance_block[0]",
+			"d_instance_block[1]",
+			"d_instance_block[2]",
+			"d_instance_block[3]",
+			"d_instance_block[4]",
+			"d_instance_block[5]",
+			"d_instance_block[6]",
+			"d_instance_block[7]",
+			"d_instance_block[8]",
+			"d_instance_block[9]",
+			"d_instance_block[10]",
+			"d_instance_block[11]",
+		};
+	} // namespace uniform
 } // namespace djinn::c

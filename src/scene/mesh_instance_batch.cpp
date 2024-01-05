@@ -84,11 +84,15 @@ namespace djinn
 	void mesh_instance_batch::update(u64 const index, mesh_instance_field const& field)
 	{
 		ASSERT(index < m_instance_indices.size());
+		// absolute index across all blocks
 		u64 const total_index = m_instance_indices[index];
+		// index of block `total_index` falls within
 		u64 const block_index = total_index / m_instances_per_ubo;
-		u64 const transform_index = total_index % m_instances_per_ubo;
 		ASSERT(block_index < m_ubos.size());
-		u64 const offset_bytes = field.offset_bytes + (m_floats_per_instance * sizeof(f32) * total_index);
+		// index within above block
+		u64 const transform_index = total_index % m_instances_per_ubo;
+		// byte offset within block
+		u64 offset_bytes = field.offset_bytes + (m_floats_per_instance * sizeof(f32) * transform_index);
 		m_ubos[block_index].update(field.data.data(), (u32)field.data.size(), (u32)offset_bytes);
 	}
 
@@ -110,6 +114,7 @@ namespace djinn
 
 	void mesh_instance_batch::add_block()
 	{
+		ASSERT(m_ubos.size() < c::shader::num_ubos);
 		m_ubos.emplace_back(m_instances_per_ubo * m_floats_per_instance);
 	}
 	void mesh_instance_batch::set_transform_index(u64 const index)
