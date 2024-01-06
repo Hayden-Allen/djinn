@@ -77,6 +77,9 @@ export default class GroundEntity extends Entity {
       ]
     )
     this.idShader = Asset.Shader.load("ground.vert", "ground.frag")
+    Asset.Shader.setUniforms(this.idShader, {
+      u_texture: 0,
+    })
     this.idInstance = Scene.MeshInstance.create(this.idMesh, this.idShader)
     Scene.setScale(this.idInstance, [5, 1, 5])
     Scene.setPosY(this.idInstance, -2)

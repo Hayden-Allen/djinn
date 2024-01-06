@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
 	scene_service::get_entity_manager()->load("main.js");
 
 #if DJINN_PROFILE
-	u32 const NUM_FRAMES = 500;
+	u32 const NUM_FRAMES = 1000;
 	f32 input_avg = 0, update_avg = 0, sound_avg = 0, draw_avg = 0, gl_avg = 0, ui_avg = 0, imgui_avg = 0, phys_avg = 0;
 	for (u32 i = 0; i < NUM_FRAMES; i++)
 #else
