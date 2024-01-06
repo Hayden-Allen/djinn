@@ -144,7 +144,8 @@ export default class MainEntity extends Entity {
     ) {
       Scene.MeshInstance.setAction(
         this.idAnimatedInstances[this.nextAnimated],
-        "Armature|mixamo.com|Layer0"
+        "Armature|mixamo.com|Layer0",
+        1 + this.nextAnimated / 10
       )
       this.nextAnimated++
     }

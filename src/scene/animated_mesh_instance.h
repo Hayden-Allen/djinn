@@ -12,10 +12,10 @@ namespace djinn
 		DCM(animated_mesh_instance);
 	public:
 		bool is_animated() const override;
-		void set_action(std::string const& name);
+		void set_action(std::string const& name, f32 const speed);
 		m3db_t* get_pose() const;
 	private:
 		animated_mesh::action const* m_current_action;
-		f32 m_action_start;
+		f32 m_action_start, m_action_speed;
 	};
 } // namespace djinn
