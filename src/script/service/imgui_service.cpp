@@ -93,7 +93,7 @@ namespace djinn
 		ImGuiStyle& style = ImGui::GetStyle();
 		ImGui_ImplGlfw_InitForOpenGL(ctx->window, false);
 		ImGui_ImplGlfw_InstallCallbacks(ctx->window);
-		ImGui_ImplOpenGL3_Init("#version 430 core");
+		ImGui_ImplOpenGL3_Init("#version 410 core");
 
 		// See also: https://github.com/TheCherno/Hazel/blob/master/Hazel/src/Hazel/ImGui/ImGuiLayer.cpp
 		auto& colors = ImGui::GetStyle().Colors;
