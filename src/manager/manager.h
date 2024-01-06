@@ -71,6 +71,7 @@ namespace djinn
 		}
 		virtual bool try_erase(id_t const id)
 		{
+			ASSERT(m_objects.contains(id));
 			optr<T>& ptr = m_objects.at(id);
 			ptr.free();
 			m_objects.erase(id);

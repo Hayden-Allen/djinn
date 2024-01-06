@@ -42,6 +42,7 @@ namespace djinn
 	protected:
 		tmat<space::OBJECT, space::PARENT> m_transform;
 		f32 m_pos[3] = { 0 }, m_rot[3] = { 0 }, m_scale[3] = { 1, 1, 1 };
+		bool m_transform_override = false;
 	protected:
 		scene_object(id_t const id);
 	};

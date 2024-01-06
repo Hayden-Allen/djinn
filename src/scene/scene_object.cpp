@@ -10,14 +10,19 @@ namespace djinn
 
 	void scene_object::update_transform()
 	{
-		tmat<space::OBJECT, space::PARENT> const& trans = tmat_util::translation<space::OBJECT, space::PARENT>(m_pos[0], m_pos[1], m_pos[2]);
-		tmat<space::OBJECT, space::OBJECT> const& rot = tmat_util::rotation_yxz<space::OBJECT>(m_rot[0], m_rot[1], m_rot[2]);
-		tmat<space::OBJECT, space::OBJECT> const& scale = tmat_util::scale<space::OBJECT>(m_scale[0], m_scale[1], m_scale[2]);
-		m_transform = trans * rot * scale;
+		if (!m_transform_override)
+		{
+			tmat<space::OBJECT, space::PARENT> const& trans = tmat_util::translation<space::OBJECT, space::PARENT>(m_pos[0], m_pos[1], m_pos[2]);
+			tmat<space::OBJECT, space::OBJECT> const& rot = tmat_util::rotation_yxz<space::OBJECT>(m_rot[0], m_rot[1], m_rot[2]);
+			tmat<space::OBJECT, space::OBJECT> const& scale = tmat_util::scale<space::OBJECT>(m_scale[0], m_scale[1], m_scale[2]);
+			m_transform = trans * rot * scale;
+		}
+		m_transform_override = false;
 	}
 	void scene_object::set_transform(tmat<space::OBJECT, space::PARENT> const& transform)
 	{
 		m_transform = transform;
+		m_transform_override = true;
 	}
 	void scene_object::set_world_transform(tmat<space::OBJECT, space::WORLD> const& transform)
 	{

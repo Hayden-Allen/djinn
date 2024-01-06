@@ -3,6 +3,7 @@ import type { ICamera } from "./lib/Camera.d"
 import Entity from "./lib/Entity"
 import Skybox from "./lib/Skybox"
 import TestEntity from "./TestEntity"
+import GroundEntity from "./GroundEntity"
 import Color from "./lib/Color"
 
 const { Asset, Render, Nanovg, Scene, ImGui, Sound, Physics } = djinn
@@ -52,6 +53,7 @@ export default class MainEntity extends Entity {
   private nextAnimated: number = 0
 
   private idPhysics: number = 0
+  private ground: GroundEntity | undefined
 
   __init() {
     this.skybox = Skybox.loadDirectory(
@@ -92,8 +94,6 @@ export default class MainEntity extends Entity {
       this.idStaticMesh,
       this.idStaticShader
     )
-    Scene.setPosX(this.idStaticInstance, -2)
-    Scene.setPosZ(this.idStaticInstance, -3)
 
     this.idAnimatedMesh = Asset.Mesh.loadAnimated("samba-dancing.m3d")
     this.idAnimatedShader = Asset.Shader.load("animated.vert", "animated.frag")
@@ -105,7 +105,9 @@ export default class MainEntity extends Entity {
       Scene.setPosZ(this.idAnimatedInstances[i], -3)
     }
 
-    this.idPhysics = Physics.create([1, 1, 1], [0, 0, 0], 1)
+    this.idPhysics = Physics.create([1, 1, 1], [-2, 5, -3], 1)
+    this.ground = Scene.load("GroundEntity.js")
+    this.ground?.bind(this.camera)
   }
   __destroy() {
     Scene.MeshInstance.destroy(this.idStaticInstance)
@@ -159,7 +161,6 @@ export default class MainEntity extends Entity {
       this.needsPlayAudio = false
     }
     Scene.addRotY(this.idStaticInstance, dt)
-    // Scene.addRotY(this.idAnimatedInstance, -dt)
     Scene.Entity.requestImgui(this.id)
   }
   __draw() {

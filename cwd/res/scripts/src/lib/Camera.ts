@@ -20,4 +20,7 @@ export default class Camera extends Entity implements _ICamera {
     Scene.addPosY(this.id, dy)
     Scene.addRot(this.id, [-my, -mx, 0])
   }
+  __unload() {
+    console.log("Destroy camera")
+  }
 }
