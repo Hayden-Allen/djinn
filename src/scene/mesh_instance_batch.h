@@ -30,7 +30,6 @@ namespace djinn
 			// bind first block to 0, so all blocks will be bound in [0, n)
 			for (u32 i = 0; i < (u32)m_ubos.size(); i++)
 			{
-				m_shaders->uniform_block_binding(c::uniform::instance_block_name[i], i);
 				m_ubos[i].bind(i);
 			}
 			ctx->draw_instanced(ro, *m_shaders.get(), m_valid);
