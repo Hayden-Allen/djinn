@@ -16,7 +16,7 @@ namespace djinn
 			for (auto& pair : m_afp2raw)
 			{
 				for (u32 i = 0; i < pair.second->numaction; i++)
-					free(pair.second->action[i].name);
+					delete[] pair.second->action[i].name;
 				delete pair.second;
 			}
 		}
@@ -84,7 +84,11 @@ namespace djinn
 			std::vector<char> data = u::read_file_binary(afp);
 			m3d_t* const raw = m3d_load((u8*)data.data(), nullptr, nullptr, nullptr);
 			for (u32 i = 0; i < raw->numaction; i++)
-				raw->action[i].name = _strdup(raw->action[i].name);
+			{
+				std::string backup(raw->action[i].name);
+				raw->action[i].name = new char[backup.size() + 1];
+				std::strcpy(raw->action[i].name, backup.data());
+			}
 			m_afp2raw.insert({ afp, raw });
 			return raw;
 		}

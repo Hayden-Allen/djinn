@@ -16,12 +16,16 @@ namespace djinn::js::util_service
 	{
 		ASSERT(argc == 1);
 		std::string const& dir = u::to_absolute(js::extract_string(ctx, argv[0]));
-		JSValue ret = JS_NewArray(ctx);
-		u32 i = 0;
+		std::vector<std::string> filenames;
 		for (auto const& entry : std::filesystem::directory_iterator(dir))
 		{
-			JS_SetPropertyUint32(ctx, ret, i, JS_NewString(ctx, entry.path().string().c_str()));
-			i++;
+			filenames.emplace_back(entry.path().string());
+		}
+		std::sort(filenames.begin(), filenames.end());
+		JSValue ret = JS_NewArray(ctx);
+		for (u32 i = 0; i < static_cast<u32>(filenames.size()); i++)
+		{
+			JS_SetPropertyUint32(ctx, ret, i, JS_NewString(ctx, filenames[i].c_str()));
 		}
 		return ret;
 	}
