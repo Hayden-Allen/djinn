@@ -183,7 +183,7 @@ namespace djinn
 		std::stringstream sstr;
 		for (std::string const& line : lines)
 			sstr << line << "\n";
-		printf("%u\n\n%s\n", field_offset_bytes, sstr.str().c_str());
+		// printf("%u\n\n%s\n", field_offset_bytes, sstr.str().c_str());
 		return sstr.str();
 	}
 } // namespace djinn

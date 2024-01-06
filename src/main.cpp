@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
 			imgui_avg, NUM_FRAMES);
 #endif
 
-		glfwSwapBuffers(c->window);
+		c->end_frame();
 	}
 #if DJINN_PROFILE
 	f32 avg_total = 1000 / c->avg_fps;

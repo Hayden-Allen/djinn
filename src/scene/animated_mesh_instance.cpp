@@ -17,7 +17,7 @@ namespace djinn
 
 	bool animated_mesh_instance::is_animated() const
 	{
-		return false;
+		return true;
 	}
 	void animated_mesh_instance::set_action(std::string const& name)
 	{

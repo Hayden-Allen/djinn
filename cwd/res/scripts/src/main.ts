@@ -48,6 +48,9 @@ export default class MainEntity extends Entity {
   private idAnimatedInstances: number[] = []
   private idAnimatedShader: number = 0
 
+  private frame: number = 0
+  private nextAnimated: number = 0
+
   __init() {
     this.skybox = Skybox.loadDirectory(
       {
@@ -134,6 +137,18 @@ export default class MainEntity extends Entity {
     this.entities = []
   }
   __main(dt: number) {
+    this.frame++
+    if (
+      this.nextAnimated < this.idAnimatedInstances.length &&
+      this.frame >= this.nextAnimated * 100
+    ) {
+      Scene.MeshInstance.setAction(
+        this.idAnimatedInstances[this.nextAnimated],
+        "Armature|mixamo.com|Layer0"
+      )
+      this.nextAnimated++
+    }
+
     if (this.needsPlayAudio) {
       // Sound.Emitter.play(this.idSoundEmitter)
       this.needsPlayAudio = false

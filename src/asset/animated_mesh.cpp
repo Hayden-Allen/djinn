@@ -84,18 +84,12 @@ namespace djinn
 
 		action const bind = { "bind", 0, -1 };
 		m_actions.insert({ "bind", bind });
-		/*for (u32 i = 0; i < raw->numaction; i++)
+		for (u32 i = 0; i < raw->numaction; i++)
 		{
 			m3da_t const& cur = raw->action[i];
-			char* s = cur.name;
-			while (*s)
-			{
-				printf("%c\n", *s);
-				s++;
-			}
 			action const a = { cur.name, cur.durationmsec, (s32)i };
 			m_actions.insert({ cur.name, a });
-		}*/
+		}
 	}
 	u32 animated_mesh::get_num_bones() const
 	{
@@ -107,7 +101,7 @@ namespace djinn
 	m3db_t* animated_mesh::get_pose(s32 const id, f32 const sec)
 	{
 		// m3db_t* const anim = m3d_pose(m_raw, m_current_action->id, (u32)delta);
-		m3db_t* const anim = m3d_pose(m_raw, 0, (u32)(sec * 1000));
+		m3db_t* const anim = m3d_pose(m_raw, id, (u32)(sec * 1000));
 		for (u32 i = 0; i < m_raw->numbone; i++)
 		{
 			f32 out[16] = { 0 };
