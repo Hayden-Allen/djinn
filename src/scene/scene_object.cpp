@@ -8,6 +8,24 @@ namespace djinn
 
 
 
+	void scene_object::update_transform()
+	{
+		tmat<space::OBJECT, space::PARENT> const& trans = tmat_util::translation<space::OBJECT, space::PARENT>(m_pos[0], m_pos[1], m_pos[2]);
+		tmat<space::OBJECT, space::OBJECT> const& rot = tmat_util::rotation_yxz<space::OBJECT>(m_rot[0], m_rot[1], m_rot[2]);
+		tmat<space::OBJECT, space::OBJECT> const& scale = tmat_util::scale<space::OBJECT>(m_scale[0], m_scale[1], m_scale[2]);
+		m_transform = trans * rot * scale;
+	}
+	void scene_object::set_transform(tmat<space::OBJECT, space::PARENT> const& transform)
+	{
+		m_transform = transform;
+	}
+	void scene_object::set_world_transform(tmat<space::OBJECT, space::WORLD> const& transform)
+	{
+		// TODO
+		// tmat<space::PARENT, space::WORLD> const& parent = accumulate_parent_mats();
+		// m_transform = transform * parent.invert_copy();
+		m_transform = transform.cast_copy<space::OBJECT, space::PARENT>();
+	}
 	tmat<space::OBJECT, space::PARENT> const& scene_object::get_transform() const
 	{
 		return m_transform;
@@ -136,14 +154,4 @@ namespace djinn
 	scene_object::scene_object(id_t const id) :
 		identifiable(id)
 	{}
-
-
-
-	void scene_object::update_transform()
-	{
-		tmat<space::OBJECT, space::PARENT> const& trans = tmat_util::translation<space::OBJECT, space::PARENT>(m_pos[0], m_pos[1], m_pos[2]);
-		tmat<space::OBJECT, space::OBJECT> const& rot = tmat_util::rotation_yxz<space::OBJECT>(m_rot[0], m_rot[1], m_rot[2]);
-		tmat<space::OBJECT, space::OBJECT> const& scale = tmat_util::scale<space::OBJECT>(m_scale[0], m_scale[1], m_scale[2]);
-		m_transform = trans * rot * scale;
-	}
 } // namespace djinn

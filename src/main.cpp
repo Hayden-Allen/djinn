@@ -8,6 +8,7 @@
 #include "script/service/input_service.h"
 #include "script/service/imgui_service.h"
 #include "script/service/sound_service.h"
+#include "script/service/physics_service.h"
 #include "core/constants.h"
 #include "script/js.h"
 #ifndef DJINN_DIST
@@ -49,6 +50,7 @@ int main(int argc, char* argv[])
 	input_service::init(c);
 	imgui_service::init(c);
 	sound_service::init();
+	physics_service::init();
 
 #ifndef DJINN_DIST
 #	ifdef _WIN32
@@ -64,7 +66,7 @@ int main(int argc, char* argv[])
 
 #if DJINN_PROFILE
 	u32 const NUM_FRAMES = 500;
-	f32 input_avg = 0, update_avg = 0, sound_avg = 0, draw_avg = 0, gl_avg = 0, ui_avg = 0, imgui_avg = 0;
+	f32 input_avg = 0, update_avg = 0, sound_avg = 0, draw_avg = 0, gl_avg = 0, ui_avg = 0, imgui_avg = 0, phys_avg = 0;
 	for (u32 i = 0; i < NUM_FRAMES; i++)
 #else
 	while (c->is_running())
@@ -87,11 +89,13 @@ int main(int argc, char* argv[])
 		char buf[128] = { 0 };
 		sprintf_s(buf, "djinn - %dfps", (s32)c->avg_fps);
 		c->set_title(buf);
+		f32 const dt = c->time.delta;
 
 		DJINN_TIME(input_service::update(), input_avg, NUM_FRAMES);
 
-		DJINN_TIME(scene_service::update(c->time.delta), update_avg, NUM_FRAMES);
+		DJINN_TIME(scene_service::update(dt), update_avg, NUM_FRAMES);
 		DJINN_TIME(sound_service::update(), sound_avg, NUM_FRAMES);
+		DJINN_TIME(physics_service::update(dt), phys_avg, NUM_FRAMES);
 		DJINN_TIME(scene_service::draw();, draw_avg, NUM_FRAMES);
 		DJINN_TIME(asset_service::draw_meshes(), gl_avg, NUM_FRAMES);
 
@@ -113,15 +117,19 @@ int main(int argc, char* argv[])
 	}
 #if DJINN_PROFILE
 	f32 avg_total = 1000 / c->avg_fps;
-	printf("UPDATE: %f (%.2f%%)\n", update_avg, update_avg / avg_total * 100);
-	printf("DRAW: %f (%.2f%%)\n", draw_avg, draw_avg / avg_total * 100);
-	printf("UI: %f (%.2f%%)\n", ui_avg, ui_avg / avg_total * 100);
-	printf("IMGUI: %f (%.2f%%)\n", imgui_avg, imgui_avg / avg_total * 100);
+	printf("__main: %f (%.2f%%)\n", update_avg, update_avg / avg_total * 100);
+	printf("SOUND: %f (%.2f%%)\n", sound_avg, sound_avg / avg_total * 100);
+	printf("PHYS: %f (%.2f%%)\n", phys_avg, phys_avg / avg_total * 100);
+	printf("__draw: %f (%.2f%%)\n", draw_avg, draw_avg / avg_total * 100);
+	printf("GL: %f (%.2f%%)\n", draw_avg, draw_avg / avg_total * 100);
+	printf("__ui: %f (%.2f%%)\n", ui_avg, ui_avg / avg_total * 100);
+	printf("__imgui: %f (%.2f%%)\n", imgui_avg, imgui_avg / avg_total * 100);
 	printf("TOTAL: %f\n", avg_total);
 #endif
 
 	scene_service::free_all();
 
+	physics_service::shutdown();
 	sound_service::shutdown();
 	render_service::shutdown();
 	nanovg_service::shutdown();

@@ -10,7 +10,9 @@ namespace djinn
 		DCM(scene_object);
 		virtual ~scene_object();
 	public:
-		void update_transform();
+		virtual void update_transform();
+		void set_transform(tmat<space::OBJECT, space::PARENT> const& transform);
+		void set_world_transform(tmat<space::OBJECT, space::WORLD> const& transform);
 		tmat<space::OBJECT, space::PARENT> const& get_transform() const;
 		tmat<space::OBJECT, space::WORLD> get_world_transform() const;
 	public:

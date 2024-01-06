@@ -11,6 +11,7 @@ namespace djinn
 		friend super;
 	public:
 		DCM(sound_service);
+		~sound_service();
 	public:
 		static void init();
 		static void shutdown();
@@ -25,6 +26,5 @@ namespace djinn
 		bool m_engine_ready = false;
 	private:
 		sound_service();
-		~sound_service() override;
 	};
 } // namespace djinn

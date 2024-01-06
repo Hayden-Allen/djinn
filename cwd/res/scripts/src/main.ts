@@ -5,7 +5,7 @@ import Skybox from "./lib/Skybox"
 import TestEntity from "./TestEntity"
 import Color from "./lib/Color"
 
-const { Asset, Render, Nanovg, Scene, ImGui, Sound } = djinn
+const { Asset, Render, Nanovg, Scene, ImGui, Sound, Physics } = djinn
 
 function genTexture(
   w: number,
@@ -50,6 +50,8 @@ export default class MainEntity extends Entity {
 
   private frame: number = 0
   private nextAnimated: number = 0
+
+  private idPhysics: number = 0
 
   __init() {
     this.skybox = Skybox.loadDirectory(
@@ -102,8 +104,8 @@ export default class MainEntity extends Entity {
       Scene.setPosX(this.idAnimatedInstances[i], -5 + i)
       Scene.setPosZ(this.idAnimatedInstances[i], -3)
     }
-    // Scene.setRotZ(this.idAnimatedInstance, Math.PI / 2)
-    // Scene.setRotY(this.idAnimatedInstance, Math.PI / 2)
+
+    this.idPhysics = Physics.create([1, 1, 1], [0, 0, 0], 1)
   }
   __destroy() {
     Scene.MeshInstance.destroy(this.idStaticInstance)
@@ -122,6 +124,8 @@ export default class MainEntity extends Entity {
     Asset.Mesh.destroy(this.idMesh)
     Asset.Shader.destroy(this.idShader)
     Asset.Texture.destroy(this.idTexture)
+
+    Physics.destroy(this.idPhysics)
   }
   __load() {
     this.color.set(0, 1, 1, 0.5)
@@ -166,6 +170,8 @@ export default class MainEntity extends Entity {
     Asset.Shader.setCameraUniforms(this.idShader, this.camera!.getId())
     Asset.Shader.setCameraUniforms(this.idStaticShader, this.camera!.getId())
     Asset.Shader.setCameraUniforms(this.idAnimatedShader, this.camera!.getId())
+
+    Physics.copyTransform(this.idPhysics, this.idStaticInstance)
   }
   __ui() {
     Nanovg.fillStyle(1, 1, 1)

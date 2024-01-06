@@ -1,9 +1,9 @@
 #pragma once
 
 #ifndef _WIN32
-#ifndef NDEBUG
-#define _DEBUG
-#endif
+#	ifndef NDEBUG
+#		define _DEBUG
+#	endif
 #	define __debugbreak		__builtin_debugtrap
 #	define sprintf_s(buf, ...) snprintf((buf), sizeof(buf), __VA_ARGS__)
 #endif
@@ -37,7 +37,7 @@ using namespace hapi;
 using namespace hats;
 #include "haul/haul.h"
 #ifdef _DEBUG
-#define GLAD_WRAPPER_ENABLED
+#	define GLAD_WRAPPER_ENABLED
 #endif
 #include "glad/glad.h"
 
@@ -57,6 +57,8 @@ using namespace mgl;
 
 #define M3D_NUMBONE 4
 #include "m3d.h"
+
+#include "btBulletDynamicsCommon.h"
 
 
 

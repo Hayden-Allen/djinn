@@ -43,6 +43,17 @@ namespace djinn::js::sound_service
 
 namespace djinn
 {
+	sound_service::~sound_service()
+	{
+		if (m_engine_ready)
+		{
+			ma_engine_uninit(&m_engine);
+			m_engine_ready = false;
+		}
+	}
+
+
+
 	void sound_service::init()
 	{
 		ASSERT(!s_instance);
@@ -92,14 +103,6 @@ namespace djinn
 		else
 		{
 			ASSERT(false);
-		}
-	}
-	sound_service::~sound_service()
-	{
-		if (m_engine_ready)
-		{
-			ma_engine_uninit(&m_engine);
-			m_engine_ready = false;
 		}
 	}
 } // namespace djinn

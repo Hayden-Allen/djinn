@@ -16,31 +16,19 @@ namespace djinn::js::scene_service
 		}
 		return ::djinn::scene_service::get_camera_entity_manager()->get(id).get();
 	}
-	static scene_object* get_scene_object(id_t const id)
-	{
-		if (::djinn::scene_service::get_entity_manager()->has(id))
-		{
-			return ::djinn::scene_service::get_entity_manager()->get(id).get();
-		}
-		else if (::djinn::scene_service::get_camera_entity_manager()->has(id))
-		{
-			return ::djinn::scene_service::get_camera_entity_manager()->get(id).get();
-		}
-		return ::djinn::scene_service::get_mesh_instance_manager()->get(id).get();
-	}
 	template<typename FN>
 	JSValue get_value(JSContext* const ctx, s32 const argc, JSValueConst* const argv, FN const& fn, u64 const index)
 	{
 		ASSERT(argc == 1);
 		id_t const id = js::extract_id(ctx, argv[0]);
-		return js::create_f32(ctx, (get_scene_object(id)->*fn)()[index]);
+		return js::create_f32(ctx, (::djinn::scene_service::get_scene_object(id).get()->*fn)()[index]);
 	}
 	template<typename FN>
 	JSValue get_values(JSContext* const ctx, s32 const argc, JSValueConst* const argv, FN const& fn)
 	{
 		ASSERT(argc == 1);
 		id_t const id = js::extract_id(ctx, argv[0]);
-		return js::create_f32_array(ctx, 3, (get_scene_object(id)->*fn)());
+		return js::create_f32_array(ctx, 3, (::djinn::scene_service::get_scene_object(id).get()->*fn)());
 	}
 	template<typename FN>
 	JSValue set_value(JSContext* const ctx, s32 const argc, JSValueConst* const argv, FN const& fn)
@@ -48,7 +36,7 @@ namespace djinn::js::scene_service
 		ASSERT(argc == 2);
 		id_t const id = js::extract_id(ctx, argv[0]);
 		f32 const f = js::extract_f32(ctx, argv[1]);
-		(get_scene_object(id)->*fn)(f);
+		(::djinn::scene_service::get_scene_object(id).get()->*fn)(f);
 		return JS_UNDEFINED;
 	}
 	template<typename FN>
@@ -58,7 +46,7 @@ namespace djinn::js::scene_service
 		id_t const id = js::extract_id(ctx, argv[0]);
 		std::vector<f32> const& arr = js::extract_f32_array(ctx, argv[1]);
 		ASSERT(arr.size() == 3);
-		(get_scene_object(id)->*fn)(arr[0], arr[1], arr[2]);
+		(::djinn::scene_service::get_scene_object(id).get()->*fn)(arr[0], arr[1], arr[2]);
 		return JS_UNDEFINED;
 	}
 	template<typename FN>
@@ -67,7 +55,7 @@ namespace djinn::js::scene_service
 		ASSERT(argc == 2);
 		id_t const id = js::extract_id(ctx, argv[0]);
 		f32 const f = js::extract_f32(ctx, argv[1]);
-		(get_scene_object(id)->*fn)(x * f, y * f, z * f);
+		(::djinn::scene_service::get_scene_object(id).get()->*fn)(x * f, y * f, z * f);
 		return JS_UNDEFINED;
 	}
 
@@ -517,6 +505,19 @@ namespace djinn
 				e->draw_imgui();
 			});
 	}
+	sptr<scene_object> scene_service::get_scene_object(id_t const id)
+	{
+		if (::djinn::scene_service::get_entity_manager()->has(id))
+		{
+			return ::djinn::scene_service::get_entity_manager()->get(id);
+		}
+		else if (::djinn::scene_service::get_camera_entity_manager()->has(id))
+		{
+			return ::djinn::scene_service::get_camera_entity_manager()->get(id);
+		}
+		return ::djinn::scene_service::get_mesh_instance_manager()->get(id);
+	}
+
 
 
 	scene_service::scene_service() :
