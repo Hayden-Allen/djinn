@@ -4,15 +4,10 @@
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
 
 - now
-	- u8 index
 	- uniform_buffer update auto bind
 	- check order of GL_TEXTURE_CUBE_MAP_POSITIVE_X on macos
 	- factor static_mesh/animated_mesh
 	- m3d
-		- asset/animated_mesh.h (factor static_mesh)
-		- script/manager/animated_mesh_manager.h (factor static_mesh_manager)
-		- asset_manager::m_animated_mesh_manager
-		- asset_manager::load_animated_mesh
 		- scene_service::set_mesh_instance_animation
 		- animate
 	- "animated" shader type

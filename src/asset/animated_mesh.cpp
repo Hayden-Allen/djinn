@@ -3,67 +3,6 @@
 
 namespace djinn
 {
-	animated_mesh::animated_mesh(m3d_t* const raw)
-	{
-		init(raw);
-	}
-
-
-	void animated_mesh::draw(sptr<mgl::context> const& ctx)
-	{
-		for (auto& pair : m_batches)
-			pair.second.draw(ctx, m_ro);
-	}
-	bool animated_mesh::is_animated() const
-	{
-		return true;
-	}
-	void animated_mesh::init(m3d_t* const raw)
-	{
-		// ASSERT(raw->numbone > 0);
-		m_raw = raw;
-
-		std::vector<vertex> vbo;
-		std::unordered_map<vertex, u32> vert2idx;
-		std::vector<u32> ibo;
-
-		for (u32 i = 0; i < raw->numface; i++)
-		{
-			m3df_t const& cur = raw->face[i];
-			for (u32 j = 0; j < 3; j++)
-			{
-				m3dv_t pos, norm;
-				m3dti_t tex;
-				m3ds_t skin;
-				if (cur.vertex[j] < raw->numvertex)
-				{
-					pos = raw->vertex[cur.vertex[j]];
-					ASSERT(pos.skinid < raw->numskin);
-					skin = raw->skin[pos.skinid];
-				}
-				if (cur.normal[j] < raw->numvertex)
-					norm = raw->vertex[cur.normal[j]];
-				if (cur.texcoord[j] < raw->numtmap)
-					tex = raw->tmap[cur.texcoord[j]];
-				vertex v(pos, norm, tex, skin);
-				auto const& it = vert2idx.find(v);
-				if (it != vert2idx.end())
-				{
-					ibo.push_back(it->second);
-				}
-				else
-				{
-					u32 const idx = (u32)vbo.size();
-					vbo.push_back(v);
-					vert2idx.insert({ v, idx });
-					ibo.push_back(idx);
-				}
-			}
-		}
-
-		m_ro.init(vbo.data(), vbo.size(), get_layout(), ibo.data(), ibo.size());
-	}
-
 	static void _m3d_mul(M3D_FLOAT* r, M3D_FLOAT* a, M3D_FLOAT* b)
 	{
 		r[0] = b[0] * a[0] + b[4] * a[1] + b[8] * a[2] + b[12] * a[3];
@@ -84,10 +23,91 @@ namespace djinn
 		r[15] = b[3] * a[12] + b[7] * a[13] + b[11] * a[14] + b[15] * a[15];
 	}
 
-	m3db_t* animated_mesh::get_pose() const
+
+
+	animated_mesh::animated_mesh(m3d_t* const raw) :
+		m_raw(raw)
 	{
-		static u32 frame = 0;
-		m3db_t* const anim = m3d_pose(m_raw, 0, frame++);
+		init(raw);
+	}
+
+
+
+	bool animated_mesh::is_animated() const
+	{
+		return true;
+	}
+	void animated_mesh::init(m3d_t* const raw)
+	{
+		// ASSERT(raw->numbone > 0);
+		m_raw = raw;
+
+		std::vector<animated_mesh_vertex> vbo;
+		std::unordered_map<animated_mesh_vertex, u32> vert2idx;
+		std::vector<u32> ibo;
+
+		for (u32 i = 0; i < raw->numface; i++)
+		{
+			m3df_t const& cur = raw->face[i];
+			for (u32 j = 0; j < 3; j++)
+			{
+				m3dv_t pos, norm;
+				m3dti_t tex;
+				m3ds_t skin;
+				if (cur.vertex[j] < raw->numvertex)
+				{
+					pos = raw->vertex[cur.vertex[j]];
+					ASSERT(pos.skinid < raw->numskin);
+					skin = raw->skin[pos.skinid];
+				}
+				if (cur.normal[j] < raw->numvertex)
+					norm = raw->vertex[cur.normal[j]];
+				if (cur.texcoord[j] < raw->numtmap)
+					tex = raw->tmap[cur.texcoord[j]];
+				animated_mesh_vertex v(pos, norm, tex, skin);
+				auto const& it = vert2idx.find(v);
+				if (it != vert2idx.end())
+				{
+					ibo.push_back(it->second);
+				}
+				else
+				{
+					u32 const idx = (u32)vbo.size();
+					vbo.push_back(v);
+					vert2idx.insert({ v, idx });
+					ibo.push_back(idx);
+				}
+			}
+		}
+
+		m_ro.init(vbo.data(), vbo.size(), get_layout(), ibo.data(), ibo.size());
+
+		action const bind = { "bind", 0, -1 };
+		m_actions.insert({ "bind", bind });
+		/*for (u32 i = 0; i < raw->numaction; i++)
+		{
+			m3da_t const& cur = raw->action[i];
+			char* s = cur.name;
+			while (*s)
+			{
+				printf("%c\n", *s);
+				s++;
+			}
+			action const a = { cur.name, cur.durationmsec, (s32)i };
+			m_actions.insert({ cur.name, a });
+		}*/
+	}
+	u32 animated_mesh::get_num_bones() const
+	{
+		return m_raw->numbone;
+	}
+
+
+
+	m3db_t* animated_mesh::get_pose(s32 const id, f32 const sec)
+	{
+		// m3db_t* const anim = m3d_pose(m_raw, m_current_action->id, (u32)delta);
+		m3db_t* const anim = m3d_pose(m_raw, 0, (u32)(sec * 1000));
 		for (u32 i = 0; i < m_raw->numbone; i++)
 		{
 			f32 out[16] = { 0 };
@@ -95,9 +115,5 @@ namespace djinn
 			memcpy(anim[i].mat4, out, sizeof(f32) * 16);
 		}
 		return anim;
-	}
-	u32 animated_mesh::get_num_bones() const
-	{
-		return m_raw->numbone;
 	}
 } // namespace djinn

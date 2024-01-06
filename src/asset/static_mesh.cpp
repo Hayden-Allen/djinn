@@ -3,22 +3,17 @@
 
 namespace djinn
 {
-	static_mesh::static_mesh(m3d_t const* const raw)
+	static_mesh::static_mesh(m3d_t* const raw)
 	{
 		init(raw);
 	}
 
 
 
-	void static_mesh::draw(sptr<mgl::context> const& ctx)
+	void static_mesh::init(m3d_t* const raw)
 	{
-		for (auto& pair : m_batches)
-			pair.second.draw(ctx, m_ro);
-	}
-	void static_mesh::init(m3d_t const* const raw)
-	{
-		std::vector<vertex> vbo;
-		std::unordered_map<vertex, u32> vert2idx;
+		std::vector<static_mesh_vertex> vbo;
+		std::unordered_map<static_mesh_vertex, u32> vert2idx;
 		std::vector<u32> ibo;
 
 		for (u32 i = 0; i < raw->numface; i++)
@@ -34,7 +29,7 @@ namespace djinn
 					norm = raw->vertex[cur.normal[j]];
 				if (cur.texcoord[j] < raw->numtmap)
 					tex = raw->tmap[cur.texcoord[j]];
-				vertex v(pos, norm, tex);
+				static_mesh_vertex v(pos, norm, tex);
 				auto const& it = vert2idx.find(v);
 				if (it != vert2idx.end())
 				{

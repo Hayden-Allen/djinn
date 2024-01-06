@@ -4,6 +4,7 @@
 #include "mesh_instance.h"
 #include "asset/mesh.h"
 #include "asset/animated_mesh.h"
+#include "animated_mesh_instance.h"
 
 namespace djinn
 {
@@ -109,7 +110,7 @@ namespace djinn
 			m[0], m[4], m[8], m[12],
 			m[1], m[5], m[9], m[13],
 			m[2], m[6], m[10], m[14],
-			m[3], m[7], m[11], m[15] );
+			m[3], m[7], m[11], m[15]);
 	}
 
 	void mesh_instance_batch::add_block()
@@ -144,7 +145,7 @@ namespace djinn
 		u64 const transform_index = total_index % m_instances_per_ubo;
 		// byte offset within block
 		u64 offset_bytes = (m_floats_per_instance * sizeof(f32) * transform_index);
-		
+
 		m_ubos[block_index].bind((u32)block_index);
 		m_ubos[block_index].update(transform.e, s_floats_per_mat4, (u32)offset_bytes);
 
@@ -174,8 +175,9 @@ namespace djinn
 		else
 		{
 			ASSERT(m_mesh->is_animated());
-			animated_mesh* const am = ((animated_mesh*)m_mesh.get());
-			m3db_t* const bones = am->get_pose();
+			animated_mesh const* const am = m_mesh.get<animated_mesh>();
+			sptr<animated_mesh_instance> ami = m_instances[index];
+			m3db_t* const bones = ami->get_pose();
 			for (u32 i = 0; i < am->get_num_bones(); i++)
 			{
 				offset_bytes += s_floats_per_mat4 * sizeof(f32);

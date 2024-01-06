@@ -35,6 +35,10 @@ namespace djinn
 		std::copy(data.begin(), data.end(), field.data.begin() + index);
 		m_batch->update(m_batch_index, field);
 	}
+	bool mesh_instance::is_animated() const
+	{
+		return false;
+	}
 
 
 
