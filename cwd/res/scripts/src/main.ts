@@ -6,7 +6,7 @@ import TestEntity from "./TestEntity"
 import GroundEntity from "./GroundEntity"
 import Color from "./lib/Color"
 
-const { Asset, Render, Nanovg, Scene, ImGui, Sound, Physics } = djinn
+const { Asset, Nanovg, Scene, ImGui, Sound } = djinn
 
 function genTexture(
   w: number,
@@ -105,8 +105,13 @@ export default class MainEntity extends Entity {
       Scene.setPosZ(this.idAnimatedInstances[i], -3)
     }
 
-    this.idPhysics = Physics.create([1, 1, 1], [-2, 5, -3], 1)
-    this.ground = Scene.load("GroundEntity.js")
+    this.idPhysics = Scene.Physics.create([1, 1, 1], [-2, 5, -3], 1)
+    try {
+      Scene.Physics.setAngularVelocity(this.idPhysics, [0, 1, 0])
+    } catch (e) {
+      console.log(e)
+    }
+    this.ground = Scene.Entity.load("GroundEntity.js")
     this.ground?.bind(this.camera)
   }
   __destroy() {
@@ -127,19 +132,19 @@ export default class MainEntity extends Entity {
     Asset.Shader.destroy(this.idShader)
     Asset.Texture.destroy(this.idTexture)
 
-    Physics.destroy(this.idPhysics)
+    Scene.Physics.destroy(this.idPhysics)
   }
   __load() {
     this.color.set(0, 1, 1, 0.5)
     for (var i = 0; i < 100; i++) {
-      let e = Scene.load("TestEntity.js")
+      let e = Scene.Entity.load("TestEntity.js")
       e.bind(this.camera, this.color, this.idMesh, this.idShader)
       this.entities.push(e)
     }
   }
   __unload() {
     for (var i = 0; i < this.entities.length; i++)
-      Scene.destroy(this.entities[i].getId())
+      Scene.Entity.destroy(this.entities[i].getId())
     this.entities = []
   }
   __main(dt: number) {
@@ -160,7 +165,6 @@ export default class MainEntity extends Entity {
       // Sound.Emitter.play(this.idSoundEmitter)
       this.needsPlayAudio = false
     }
-    Scene.addRotY(this.idStaticInstance, dt)
     Scene.Entity.requestImgui(this.id)
   }
   __draw() {
@@ -172,7 +176,7 @@ export default class MainEntity extends Entity {
     Asset.Shader.setCameraUniforms(this.idStaticShader, this.camera!.getId())
     Asset.Shader.setCameraUniforms(this.idAnimatedShader, this.camera!.getId())
 
-    Physics.copyTransform(this.idPhysics, this.idStaticInstance)
+    Scene.copyTransform(this.idPhysics, this.idStaticInstance)
   }
   __ui() {
     Nanovg.fillStyle(1, 1, 1)

@@ -68,6 +68,19 @@ namespace djinn::js::scene_service
 		get_entity(id)->request_imgui();
 		return JS_UNDEFINED;
 	}
+	JSValue copy_transform(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const phys_id = js::extract_id(ctx, argv[0]);
+		id_t const target_id = js::extract_id(ctx, argv[1]);
+		sptr<physics_object> po = ::djinn::scene_service::get_physics_object_manager()->get(phys_id);
+		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(target_id);
+		so->copy_transform(po);
+		return JS_UNDEFINED;
+	}
+
+
+
 	JSValue load_entity(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
@@ -86,6 +99,9 @@ namespace djinn::js::scene_service
 			::djinn::scene_service::get_camera_entity_manager()->destroy(id);
 		return JS_UNDEFINED;
 	}
+
+
+
 	JSValue load_camera(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
@@ -106,6 +122,9 @@ namespace djinn::js::scene_service
 		cam->configure(fovy, aspect, near, far);
 		return JS_UNDEFINED;
 	}
+
+
+
 	JSValue create_mesh_instance(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2);
@@ -162,203 +181,237 @@ namespace djinn::js::scene_service
 
 
 
+	JSValue create_physics_object(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 3);
+		std::vector<f32> const& dimsarr = js::extract_f32_array(ctx, argv[0]);
+		std::vector<f32> const& originarr = js::extract_f32_array(ctx, argv[1]);
+		ASSERT(dimsarr.size() == 3 && originarr.size() == 3);
+		f32 const mass = js::extract_f32(ctx, argv[2]);
+		ASSERT(mass >= 0.f);
+
+		btVector3 const dims(dimsarr[0], dimsarr[1], dimsarr[2]);
+		btVector3 const origin(originarr[0], originarr[1], originarr[2]);
+
+		return js::create_id(ctx, ::djinn::scene_service::get_physics_object_manager()->create(dims, origin, mass));
+	}
+	JSValue set_angular_velocity(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::vector<f32> const& arr = js::extract_f32_array(ctx, argv[1]);
+
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		so->set_angular_velocity(arr[0], arr[1], arr[2]);
+		return JS_UNDEFINED;
+	}
+	JSValue destroy_physics_object(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		::djinn::scene_service::get_physics_object_manager()->destroy(id);
+		return JS_UNDEFINED;
+	}
+
+
+
 	JSValue get_pos(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return get_values(ctx, argc, argv, &entity::get_pos);
+		return get_values(ctx, argc, argv, &scene_object_base::get_pos);
 	}
 	JSValue get_pos_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return get_value(ctx, argc, argv, &entity::get_pos, 0);
+		return get_value(ctx, argc, argv, &scene_object_base::get_pos, 0);
 	}
 	JSValue get_pos_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return get_value(ctx, argc, argv, &entity::get_pos, 1);
+		return get_value(ctx, argc, argv, &scene_object_base::get_pos, 1);
 	}
 	JSValue get_pos_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return get_value(ctx, argc, argv, &entity::get_pos, 2);
+		return get_value(ctx, argc, argv, &scene_object_base::get_pos, 2);
 	}
 	JSValue set_pos(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return set_values(ctx, argc, argv, &entity::set_pos);
+		return set_values(ctx, argc, argv, &scene_object_base::set_pos);
 	}
 	JSValue set_pos_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return set_value(ctx, argc, argv, &entity::set_pos_x);
+		return set_value(ctx, argc, argv, &scene_object_base::set_pos_x);
 	}
 	JSValue set_pos_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return set_value(ctx, argc, argv, &entity::set_pos_y);
+		return set_value(ctx, argc, argv, &scene_object_base::set_pos_y);
 	}
 	JSValue set_pos_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return set_value(ctx, argc, argv, &entity::set_pos_z);
+		return set_value(ctx, argc, argv, &scene_object_base::set_pos_z);
 	}
 	JSValue add_pos(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return set_values(ctx, argc, argv, &entity::add_pos);
+		return set_values(ctx, argc, argv, &scene_object_base::add_pos);
 	}
 	JSValue add_pos_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return add_value(ctx, argc, argv, &entity::add_pos, 1, 0, 0);
+		return add_value(ctx, argc, argv, &scene_object_base::add_pos, 1, 0, 0);
 	}
 	JSValue add_pos_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return add_value(ctx, argc, argv, &entity::add_pos, 0, 1, 0);
+		return add_value(ctx, argc, argv, &scene_object_base::add_pos, 0, 1, 0);
 	}
 	JSValue add_pos_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return add_value(ctx, argc, argv, &entity::add_pos, 0, 0, 1);
+		return add_value(ctx, argc, argv, &scene_object_base::add_pos, 0, 0, 1);
 	}
 	JSValue add_pos_local(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return set_values(ctx, argc, argv, &entity::add_pos_local);
+		return set_values(ctx, argc, argv, &scene_object_base::add_pos_local);
 	}
 	JSValue add_pos_local_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return add_value(ctx, argc, argv, &entity::add_pos_local, 1, 0, 0);
+		return add_value(ctx, argc, argv, &scene_object_base::add_pos_local, 1, 0, 0);
 	}
 	JSValue add_pos_local_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return add_value(ctx, argc, argv, &entity::add_pos_local, 0, 1, 0);
+		return add_value(ctx, argc, argv, &scene_object_base::add_pos_local, 0, 1, 0);
 	}
 	JSValue add_pos_local_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return add_value(ctx, argc, argv, &entity::add_pos_local, 0, 0, 1);
+		return add_value(ctx, argc, argv, &scene_object_base::add_pos_local, 0, 0, 1);
 	}
 
 
 
 	JSValue get_rot(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return get_values(ctx, argc, argv, &entity::get_rot);
+		return get_values(ctx, argc, argv, &scene_object_base::get_rot);
 	}
 	JSValue get_rot_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return get_value(ctx, argc, argv, &entity::get_rot, 0);
+		return get_value(ctx, argc, argv, &scene_object_base::get_rot, 0);
 	}
 	JSValue get_rot_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return get_value(ctx, argc, argv, &entity::get_rot, 1);
+		return get_value(ctx, argc, argv, &scene_object_base::get_rot, 1);
 	}
 	JSValue get_rot_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return get_value(ctx, argc, argv, &entity::get_rot, 2);
+		return get_value(ctx, argc, argv, &scene_object_base::get_rot, 2);
 	}
 	JSValue set_rot(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return set_values(ctx, argc, argv, &entity::set_rot);
+		return set_values(ctx, argc, argv, &scene_object_base::set_rot);
 	}
 	JSValue set_rot_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return set_value(ctx, argc, argv, &entity::set_rot_x);
+		return set_value(ctx, argc, argv, &scene_object_base::set_rot_x);
 	}
 	JSValue set_rot_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return set_value(ctx, argc, argv, &entity::set_rot_y);
+		return set_value(ctx, argc, argv, &scene_object_base::set_rot_y);
 	}
 	JSValue set_rot_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return set_value(ctx, argc, argv, &entity::set_rot_z);
+		return set_value(ctx, argc, argv, &scene_object_base::set_rot_z);
 	}
 	JSValue add_rot(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return set_values(ctx, argc, argv, &entity::add_rot);
+		return set_values(ctx, argc, argv, &scene_object_base::add_rot);
 	}
 	JSValue add_rot_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return add_value(ctx, argc, argv, &entity::add_rot, 1, 0, 0);
+		return add_value(ctx, argc, argv, &scene_object_base::add_rot, 1, 0, 0);
 	}
 	JSValue add_rot_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return add_value(ctx, argc, argv, &entity::add_rot, 0, 1, 0);
+		return add_value(ctx, argc, argv, &scene_object_base::add_rot, 0, 1, 0);
 	}
 	JSValue add_rot_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return add_value(ctx, argc, argv, &entity::add_rot, 0, 0, 1);
+		return add_value(ctx, argc, argv, &scene_object_base::add_rot, 0, 0, 1);
 	}
 	JSValue add_rot_local(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return set_values(ctx, argc, argv, &entity::add_rot_local);
+		return set_values(ctx, argc, argv, &scene_object_base::add_rot_local);
 	}
 	JSValue add_rot_local_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return add_value(ctx, argc, argv, &entity::add_rot_local, 1, 0, 0);
+		return add_value(ctx, argc, argv, &scene_object_base::add_rot_local, 1, 0, 0);
 	}
 	JSValue add_rot_local_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return add_value(ctx, argc, argv, &entity::add_rot_local, 0, 1, 0);
+		return add_value(ctx, argc, argv, &scene_object_base::add_rot_local, 0, 1, 0);
 	}
 	JSValue add_rot_local_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return add_value(ctx, argc, argv, &entity::add_rot_local, 0, 0, 1);
+		return add_value(ctx, argc, argv, &scene_object_base::add_rot_local, 0, 0, 1);
 	}
 
 
 
 	JSValue get_scale(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return get_values(ctx, argc, argv, &entity::get_scale);
+		return get_values(ctx, argc, argv, &scene_object_base::get_scale);
 	}
 	JSValue get_scale_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return get_value(ctx, argc, argv, &entity::get_scale, 0);
+		return get_value(ctx, argc, argv, &scene_object_base::get_scale, 0);
 	}
 	JSValue get_scale_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return get_value(ctx, argc, argv, &entity::get_scale, 1);
+		return get_value(ctx, argc, argv, &scene_object_base::get_scale, 1);
 	}
 	JSValue get_scale_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return get_value(ctx, argc, argv, &entity::get_scale, 2);
+		return get_value(ctx, argc, argv, &scene_object_base::get_scale, 2);
 	}
 	JSValue set_scale(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return set_values(ctx, argc, argv, &entity::set_scale);
+		return set_values(ctx, argc, argv, &scene_object_base::set_scale);
 	}
 	JSValue set_scale_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return set_value(ctx, argc, argv, &entity::set_scale_x);
+		return set_value(ctx, argc, argv, &scene_object_base::set_scale_x);
 	}
 	JSValue set_scale_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return set_value(ctx, argc, argv, &entity::set_scale_y);
+		return set_value(ctx, argc, argv, &scene_object_base::set_scale_y);
 	}
 	JSValue set_scale_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return set_value(ctx, argc, argv, &entity::set_scale_z);
+		return set_value(ctx, argc, argv, &scene_object_base::set_scale_z);
 	}
 	JSValue add_scale(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return set_values(ctx, argc, argv, &entity::add_scale);
+		return set_values(ctx, argc, argv, &scene_object_base::add_scale);
 	}
 	JSValue add_scale_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return add_value(ctx, argc, argv, &entity::add_scale, 1, 0, 0);
+		return add_value(ctx, argc, argv, &scene_object_base::add_scale, 1, 0, 0);
 	}
 	JSValue add_scale_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return add_value(ctx, argc, argv, &entity::add_scale, 0, 1, 0);
+		return add_value(ctx, argc, argv, &scene_object_base::add_scale, 0, 1, 0);
 	}
 	JSValue add_scale_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return add_value(ctx, argc, argv, &entity::add_scale, 0, 0, 1);
+		return add_value(ctx, argc, argv, &scene_object_base::add_scale, 0, 0, 1);
 	}
 	JSValue add_scale_local(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return set_values(ctx, argc, argv, &entity::add_scale_local);
+		return set_values(ctx, argc, argv, &scene_object_base::add_scale_local);
 	}
 	JSValue add_scale_local_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return add_value(ctx, argc, argv, &entity::add_scale_local, 1, 0, 0);
+		return add_value(ctx, argc, argv, &scene_object_base::add_scale_local, 1, 0, 0);
 	}
 	JSValue add_scale_local_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return add_value(ctx, argc, argv, &entity::add_scale_local, 0, 1, 0);
+		return add_value(ctx, argc, argv, &scene_object_base::add_scale_local, 0, 1, 0);
 	}
 	JSValue add_scale_local_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return add_value(ctx, argc, argv, &entity::add_scale_local, 0, 0, 1);
+		return add_value(ctx, argc, argv, &scene_object_base::add_scale_local, 0, 0, 1);
 	}
 } // namespace djinn::js::scene_service
 
@@ -388,12 +441,19 @@ namespace djinn
 		super::register_function(ctx, "MeshInstance", "setUniform", 2, js::scene_service::set_mesh_instance_uniform);
 		super::register_function(ctx, "MeshInstance", "setAction", 3, js::scene_service::set_mesh_instance_action);
 		super::register_function(ctx, "MeshInstance", "destroy", 1, js::scene_service::destroy_mesh_instance);
+
 		super::register_function(ctx, "Entity", "requestImgui", 1, js::scene_service::request_imgui);
-		super::register_function(ctx, "load", 1, js::scene_service::load_entity);
-		super::register_function(ctx, "destroy", 1, js::scene_service::destroy_entity);
+		super::register_function(ctx, "Entity", "load", 1, js::scene_service::load_entity);
+		super::register_function(ctx, "Entity", "destroy", 1, js::scene_service::destroy_entity);
+
 		super::register_function(ctx, "Camera", "load", 1, js::scene_service::load_camera);
 		super::register_function(ctx, "Camera", "configure", 5, js::scene_service::configure_camera);
 
+		super::register_function(ctx, "Physics", "create", 3, js::scene_service::create_physics_object);
+		super::register_function(ctx, "Physics", "setAngularVelocity", 2, js::scene_service::set_angular_velocity);
+		super::register_function(ctx, "Physics", "destroy", 1, js::scene_service::destroy_physics_object);
+
+		super::register_function(ctx, "copyTransform", 2, js::scene_service::copy_transform);
 		super::register_function(ctx, "getPos", 1, js::scene_service::get_pos);
 		super::register_function(ctx, "getPosX", 1, js::scene_service::get_pos_x);
 		super::register_function(ctx, "getPosY", 1, js::scene_service::get_pos_y);
@@ -457,6 +517,10 @@ namespace djinn
 	{
 		return &s_instance->m_mesh_instance_manager;
 	}
+	physics_object_manager* scene_service::get_physics_object_manager()
+	{
+		return &s_instance->m_physics_object_manager;
+	}
 	JSRuntime* scene_service::get_runtime()
 	{
 		return s_instance->m_runtime;
@@ -471,6 +535,7 @@ namespace djinn
 			{
 				e->update(dt);
 			});
+		s_instance->m_physics_object_manager.update(dt);
 	}
 	void scene_service::draw()
 	{
@@ -507,15 +572,13 @@ namespace djinn
 	}
 	sptr<scene_object> scene_service::get_scene_object(id_t const id)
 	{
-		if (::djinn::scene_service::get_entity_manager()->has(id))
-		{
-			return ::djinn::scene_service::get_entity_manager()->get(id);
-		}
-		else if (::djinn::scene_service::get_camera_entity_manager()->has(id))
-		{
-			return ::djinn::scene_service::get_camera_entity_manager()->get(id);
-		}
-		return ::djinn::scene_service::get_mesh_instance_manager()->get(id);
+		if (get_entity_manager()->has(id))
+			return get_entity_manager()->get(id);
+		else if (get_camera_entity_manager()->has(id))
+			return get_camera_entity_manager()->get(id);
+		else if (get_physics_object_manager()->has(id))
+			return get_physics_object_manager()->get(id);
+		return get_mesh_instance_manager()->get(id);
 	}
 
 
