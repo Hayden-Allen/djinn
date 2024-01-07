@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "shaders.h"
 #include "core/constants.h"
+#include "script/service/render_service.h"
 
 namespace djinn
 {

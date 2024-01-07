@@ -54,6 +54,10 @@ namespace djinn::js
 	{
 		return JS_NewBool(ctx, (s32)b);
 	}
+	JSValue create_u32(JSContext* const ctx, u32 const u)
+	{
+		return JS_NewUint32(ctx, u);
+	}
 	JSValue create_f32(JSContext* const ctx, f32 const f)
 	{
 		return JS_NewFloat64(ctx, f);
@@ -115,11 +119,6 @@ namespace djinn::js::global
 	void init_globals(JSContext* const ctx)
 	{
 		JSValue const global = JS_GetGlobalObject(ctx);
-
-		JS_SetPropertyStr(ctx, global, "GL_NEAREST", JS_NewUint32(ctx, GL_NEAREST));
-		JS_SetPropertyStr(ctx, global, "GL_LINEAR", JS_NewUint32(ctx, GL_LINEAR));
-		JS_SetPropertyStr(ctx, global, "GL_REPEAT", JS_NewUint32(ctx, GL_REPEAT));
-
 		JSValue const console = JS_NewObject(ctx);
 		JSValue const log = JS_NewCFunction(ctx, console_log, "log", 1);
 		JS_SetPropertyStr(ctx, global, "console", console);

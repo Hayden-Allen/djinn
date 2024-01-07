@@ -135,7 +135,7 @@ namespace djinn::js::scene_service
 		id_t const instance_id = ::djinn::scene_service::get_mesh_instance_manager()->create(mesh, shaders);
 		return js::create_id(ctx, instance_id);
 	}
-	JSValue set_mesh_instance_uniform(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	JSValue set_mesh_instance_uniforms(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2);
 		id_t const instance_id = js::extract_id(ctx, argv[0]);
@@ -194,6 +194,26 @@ namespace djinn::js::scene_service
 		btVector3 const origin(originarr[0], originarr[1], originarr[2]);
 
 		return js::create_id(ctx, ::djinn::scene_service::get_physics_object_manager()->create(dims, origin, mass));
+	}
+	JSValue set_friction(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		f32 const f = js::extract_f32(ctx, argv[1]);
+
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		so->set_friction(f);
+		return JS_UNDEFINED;
+	}
+	JSValue set_linear_velocity(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::vector<f32> const& arr = js::extract_f32_array(ctx, argv[1]);
+
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		so->set_linear_velocity(arr[0], arr[1], arr[2]);
+		return JS_UNDEFINED;
 	}
 	JSValue set_angular_velocity(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -438,11 +458,11 @@ namespace djinn
 	void scene_service::register_functions(JSContext* const ctx)
 	{
 		super::register_function(ctx, "MeshInstance", "create", 2, js::scene_service::create_mesh_instance);
-		super::register_function(ctx, "MeshInstance", "setUniform", 2, js::scene_service::set_mesh_instance_uniform);
+		super::register_function(ctx, "MeshInstance", "setUniforms", 2, js::scene_service::set_mesh_instance_uniforms);
 		super::register_function(ctx, "MeshInstance", "setAction", 3, js::scene_service::set_mesh_instance_action);
 		super::register_function(ctx, "MeshInstance", "destroy", 1, js::scene_service::destroy_mesh_instance);
 
-		super::register_function(ctx, "Entity", "requestImgui", 1, js::scene_service::request_imgui);
+		super::register_function(ctx, "Entity", "requestImGui", 1, js::scene_service::request_imgui);
 		super::register_function(ctx, "Entity", "load", 1, js::scene_service::load_entity);
 		super::register_function(ctx, "Entity", "destroy", 1, js::scene_service::destroy_entity);
 
@@ -450,6 +470,8 @@ namespace djinn
 		super::register_function(ctx, "Camera", "configure", 5, js::scene_service::configure_camera);
 
 		super::register_function(ctx, "Physics", "create", 3, js::scene_service::create_physics_object);
+		super::register_function(ctx, "Physics", "setFriction", 2, js::scene_service::set_friction);
+		super::register_function(ctx, "Physics", "setLinearVelocity", 2, js::scene_service::set_linear_velocity);
 		super::register_function(ctx, "Physics", "setAngularVelocity", 2, js::scene_service::set_angular_velocity);
 		super::register_function(ctx, "Physics", "destroy", 1, js::scene_service::destroy_physics_object);
 

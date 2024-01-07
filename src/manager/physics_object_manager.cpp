@@ -10,7 +10,7 @@ namespace djinn
 		m_cache = new btDbvtBroadphase();
 		m_solver = new btSequentialImpulseConstraintSolver();
 		m_world = new btDiscreteDynamicsWorld(m_dispatcher.get(), m_cache.get(), m_solver.get(), m_config.get());
-		m_world->setGravity(btVector3(0, -2, 0));
+		m_world->setGravity(btVector3(0, -10, 0));
 	}
 	physics_object_manager::~physics_object_manager()
 	{

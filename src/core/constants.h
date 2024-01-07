@@ -46,6 +46,7 @@ namespace djinn::c
 	}	  // namespace shader
 	namespace uniform
 	{
+		static std::string const time = "d_time";
 		static std::string const view_mat = "d_view";
 		static std::string const proj_mat = "d_proj";
 		static std::string const vp_mat = "d_vp";

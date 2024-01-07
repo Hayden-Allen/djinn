@@ -4,7 +4,7 @@
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
 
 - now
-	- merge physics_service into scene_service
+	- Scene.destroySelf()
 	- mesh_watcher_base/static_mesh_watcher/animated_mesh_watcher
 	- mesh_instance_batch testing
 		- create instances with different shaders

@@ -1,6 +1,6 @@
 import "./globals.d"
 
-const { Asset, Scene, Util, Render } = djinn
+const { Asset, Scene, Util } = djinn
 
 interface SkyboxTextureOptions {
   minFilter: number
@@ -83,9 +83,6 @@ export default class Skybox {
       ]
     )
     this.idInstance = Scene.MeshInstance.create(this.idMesh, this.idShader)
-    Scene.MeshInstance.setUniform(this.idInstance, {
-      // m: [[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], 0],
-    })
     Asset.Shader.setUniforms(this.idShader, {
       u_texture: 0,
     })
@@ -140,9 +137,6 @@ export default class Skybox {
   }
 
   draw(idCamera: number) {
-    // TODO: glDepthMask(false);
-    // Render.bindCubemap(this.idTexture, 0)
     Asset.Shader.setCameraUniforms(this.idShader, idCamera)
-    // Render.draw(this.idMesh, this.idShader)
   }
 }

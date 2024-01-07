@@ -8,7 +8,7 @@ namespace djinn::js::input_service
 	{
 		ASSERT(argc == 1);
 		s32 const key = js::extract_s32(ctx, argv[0]);
-		return js::create_bool(ctx, ::djinn::input_service::get_context()->get_key(key));
+		return js::create_u32(ctx, ::djinn::input_service::get_context()->get_key(key));
 	}
 	JSValue left_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -50,12 +50,12 @@ namespace djinn
 		super::register_function(ctx, "rightY", 0, js::input_service::right_y);
 
 		char buf[32] = { 0 };
-		for (char i = '0'; i < '9'; i++)
+		for (char i = '0'; i <= '9'; i++)
 		{
 			sprintf_s(buf, "KEY_%c", i);
 			super::register_property_u32(ctx, buf, (u32)i);
 		}
-		for (char i = 'A'; i < 'Z'; i++)
+		for (char i = 'A'; i <= 'Z'; i++)
 		{
 			sprintf_s(buf, "KEY_%c", i);
 			super::register_property_u32(ctx, buf, (u32)i);
@@ -109,7 +109,8 @@ namespace djinn
 			m_gamepad.lb = gamepad.buttons[GLFW_GAMEPAD_BUTTON_LEFT_BUMPER];
 			m_gamepad.rb = gamepad.buttons[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER];
 		}
-		else {
+		else
+		{
 			m_gamepad.left_x = key2f32(m_mapping.left_x_pos) - key2f32(m_mapping.left_x_neg);
 			m_gamepad.left_y = key2f32(m_mapping.left_y_pos) - key2f32(m_mapping.left_y_neg);
 			m_gamepad.right_x = key2f32(m_mapping.right_x_pos) - key2f32(m_mapping.right_x_neg);

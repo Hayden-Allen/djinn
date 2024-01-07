@@ -1,10 +1,9 @@
 import "./globals.d"
 import Entity from "./Entity"
-import type { _ICamera } from "./Camera.d"
 
 const { Render, Scene, Input } = djinn
 
-export default class Camera extends Entity implements _ICamera {
+export default class Camera extends Entity {
   __load() {
     const ar = Render.getAspectRatio()
     Scene.Camera.configure(this.id, 108 / ar, ar, 0.01, 1000)

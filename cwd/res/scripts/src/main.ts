@@ -1,37 +1,16 @@
 import "./lib/globals.d"
-import type { ICamera } from "./lib/Camera.d"
+import Camera from "./lib/Camera"
 import Entity from "./lib/Entity"
 import Skybox from "./lib/Skybox"
+import Color from "./lib/Color"
 import TestEntity from "./TestEntity"
 import GroundEntity from "./GroundEntity"
-import Color from "./lib/Color"
 
-const { Asset, Nanovg, Scene, ImGui, Sound } = djinn
-
-function genTexture(
-  w: number,
-  h: number,
-  rmask: number,
-  gmask: number,
-  bmask: number
-) {
-  const pixels = new Array(w * h * 4)
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      const off = y * (w * 4) + x * 4
-      const val = Math.round(255 * (x / (w * 2) + y / (h * 2)))
-      pixels[off + 0] = rmask * val
-      pixels[off + 1] = gmask * val
-      pixels[off + 2] = bmask * val
-      pixels[off + 3] = 255
-    }
-  }
-  return pixels
-}
+const { Asset, Render, Nanovg, Scene, ImGui, Sound, Input } = djinn
 
 export default class MainEntity extends Entity {
-  private skybox: Skybox | undefined
-  private camera: ICamera
+  private skybox: Optional<Skybox>
+  private camera: Optional<Camera>
   private color: Color = new Color(0, 0, 0, 1)
   private entities: TestEntity[] = []
   private idShader: number = 0
@@ -53,7 +32,7 @@ export default class MainEntity extends Entity {
   private nextAnimated: number = 0
 
   private idPhysics: number = 0
-  private ground: GroundEntity | undefined
+  private ground: Optional<GroundEntity>
 
   __init() {
     this.skybox = Skybox.loadDirectory(
@@ -64,16 +43,16 @@ export default class MainEntity extends Entity {
       {
         dir: "dir",
         textureOptions: {
-          minFilter: GL_NEAREST,
-          magFilter: GL_NEAREST,
+          minFilter: Render.GL_NEAREST,
+          magFilter: Render.GL_NEAREST,
         },
       }
     )
-    this.camera = Scene.Camera.load("lib/Camera.js")
-    this.idShader = Asset.Shader.load("test.vert", "test.frag")
+    this.camera = Scene.Camera.load("lib/Camera.js") as Camera
+    this.idShader = Asset.Shader.load("custom.vert", "custom.frag")
     this.idTexture = Asset.Texture.load("test.bmp", {
-      minFilter: GL_NEAREST,
-      magFilter: GL_LINEAR,
+      minFilter: Render.GL_NEAREST,
+      magFilter: Render.GL_LINEAR,
     })
     Asset.Shader.setUniforms(this.idShader, {
       u_texture: 0,
@@ -95,7 +74,7 @@ export default class MainEntity extends Entity {
       this.idStaticShader
     )
 
-    this.idAnimatedMesh = Asset.Mesh.loadAnimated("samba-dancing.m3d")
+    this.idAnimatedMesh = Asset.Mesh.loadAnimated("xbot.m3d")
     this.idAnimatedShader = Asset.Shader.load("animated.vert", "animated.frag")
     for (var i = 0; i < 10; i++) {
       this.idAnimatedInstances.push(
@@ -106,13 +85,11 @@ export default class MainEntity extends Entity {
     }
 
     this.idPhysics = Scene.Physics.create([1, 1, 1], [-2, 5, -3], 1)
-    try {
-      Scene.Physics.setAngularVelocity(this.idPhysics, [0, 1, 0])
-    } catch (e) {
-      console.log(e)
-    }
-    this.ground = Scene.Entity.load("GroundEntity.js")
-    this.ground?.bind(this.camera)
+    Scene.Physics.setFriction(this.idPhysics, 0)
+    Scene.Physics.setAngularVelocity(this.idPhysics, [0, 1, 0])
+
+    this.ground = Scene.Entity.load("GroundEntity.js") as GroundEntity
+    this.ground?.bind(this.camera!)
   }
   __destroy() {
     Scene.MeshInstance.destroy(this.idStaticInstance)
@@ -137,8 +114,8 @@ export default class MainEntity extends Entity {
   __load() {
     this.color.set(0, 1, 1, 0.5)
     for (var i = 0; i < 100; i++) {
-      let e = Scene.Entity.load("TestEntity.js")
-      e.bind(this.camera, this.color, this.idMesh, this.idShader)
+      let e = Scene.Entity.load("TestEntity.js") as TestEntity
+      e.bind(this.camera!, this.color, this.idMesh, this.idShader)
       this.entities.push(e)
     }
   }
@@ -155,7 +132,7 @@ export default class MainEntity extends Entity {
     ) {
       Scene.MeshInstance.setAction(
         this.idAnimatedInstances[this.nextAnimated],
-        "Armature|mixamo.com|Layer0",
+        "run_Armature",
         1 + this.nextAnimated / 10
       )
       this.nextAnimated++
@@ -165,7 +142,10 @@ export default class MainEntity extends Entity {
       // Sound.Emitter.play(this.idSoundEmitter)
       this.needsPlayAudio = false
     }
-    Scene.Entity.requestImgui(this.id)
+    Scene.Entity.requestImGui(this.id)
+
+    if (Input.getKey(Input.KEY_SPACE))
+      Scene.Physics.setLinearVelocity(this.idPhysics, [0, 5, 0])
   }
   __draw() {
     this.skybox!.draw(this.camera!.getId())

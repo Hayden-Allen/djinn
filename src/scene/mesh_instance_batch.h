@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "mesh_instance.h"
 #include "asset/shaders.h"
+#include "script/service/render_service.h"
 
 namespace djinn
 {
@@ -32,6 +33,8 @@ namespace djinn
 			{
 				m_ubos[i].bind(i);
 			}
+			if (m_shaders->has_uniform(c::uniform::time))
+				m_shaders->uniform_1f(c::uniform::time, render_service::get_context()->time.now);
 			ctx->draw_instanced(ro, *m_shaders.get(), m_valid);
 		}
 	private:

@@ -90,6 +90,7 @@ namespace djinn::js::asset_service
 		::djinn::asset_service::get_custom_mesh_manager()->update(id, vertices, indices);
 		return JS_UNDEFINED;
 	}
+
 	JSValue load_shader(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2);
@@ -127,6 +128,7 @@ namespace djinn::js::asset_service
 		::djinn::asset_service::get_shader_manager()->set_uniform_mat4(shader_id, c::uniform::vpr_mat, vpr.e);
 		return JS_UNDEFINED;
 	}
+
 	JSValue create_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2 || argc == 3);
@@ -167,6 +169,7 @@ namespace djinn::js::asset_service
 			::djinn::asset_service::get_texture_manager()->update(id, subpixels);
 		return JS_UNDEFINED;
 	}
+
 	JSValue create_cubemap(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2 || argc == 3);
@@ -217,6 +220,7 @@ namespace djinn::js::asset_service
 			::djinn::asset_service::get_cubemap_manager()->update(id, subpixels);
 		return JS_UNDEFINED;
 	}
+
 	JSValue load_sound_source(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
@@ -248,18 +252,22 @@ namespace djinn
 		super::register_function(ctx, "Mesh", "destroy", 1, js::asset_service::destroy_mesh);
 		super::register_function(ctx, "Mesh", "loadStatic", 1, js::asset_service::load_static_mesh);
 		super::register_function(ctx, "Mesh", "loadAnimated", 1, js::asset_service::load_animated_mesh);
+
 		super::register_function(ctx, "Shader", "load", 2, js::asset_service::load_shader);
 		super::register_function(ctx, "Shader", "destroy", 1, js::asset_service::destroy_shader);
 		super::register_function(ctx, "Shader", "setUniforms", 2, js::asset_service::set_shader_uniforms);
 		super::register_function(ctx, "Shader", "setCameraUniforms", 2, js::asset_service::set_shader_camera_uniforms);
+
 		super::register_function(ctx, "Texture", "create", 3, js::asset_service::create_texture);
 		super::register_function(ctx, "Texture", "load", 2, js::asset_service::load_texture);
 		super::register_function(ctx, "Texture", "destroy", 1, js::asset_service::destroy_texture);
 		super::register_function(ctx, "Texture", "update", 3, js::asset_service::update_texture);
+
 		super::register_function(ctx, "Cubemap", "create", 3, js::asset_service::create_cubemap);
 		super::register_function(ctx, "Cubemap", "load", 2, js::asset_service::load_cubemap);
 		super::register_function(ctx, "Cubemap", "destroy", 1, js::asset_service::destroy_cubemap);
 		super::register_function(ctx, "Cubemap", "update", 3, js::asset_service::update_cubemap);
+
 		super::register_function(ctx, "Sound", "load", 1, js::asset_service::load_sound_source);
 		super::register_function(ctx, "Sound", "destroy", 1, js::asset_service::destroy_sound_source);
 	}

@@ -18,6 +18,7 @@ namespace djinn::js
 	extern std::unordered_map<std::string, JSValue> extract_map(JSContext* const ctx, JSValue const& val);
 	extern JSValue create_id(JSContext* const ctx, u32 const id);
 	extern JSValue create_bool(JSContext* const ctx, bool const b);
+	extern JSValue create_u32(JSContext* const ctx, u32 const u);
 	extern JSValue create_f32(JSContext* const ctx, f32 const f);
 	extern JSValue create_f32_array(JSContext* const ctx, s64 const count, f32 const* const f);
 	template<typename FN>

@@ -15,6 +15,7 @@ namespace djinn
 		void update_transform() override;
 		tmat<space::OBJECT, space::PARENT> get_transform() const override;
 		tmat<space::OBJECT, space::WORLD> get_world_transform() const override;
+		void set_friction(f32 const f);
 		void set_linear_velocity(f32 const x, f32 const y, f32 const z);
 		void set_angular_velocity(f32 const x, f32 const y, f32 const z);
 	private:

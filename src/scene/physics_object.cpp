@@ -55,6 +55,10 @@ namespace djinn
 		m_rb->getMotionState()->getWorldTransform(mat);
 		return u::bullet2tmat<space::OBJECT, space::WORLD>(mat);
 	}
+	void physics_object::set_friction(f32 const f)
+	{
+		m_rb->setFriction(f);
+	}
 	void physics_object::set_linear_velocity(f32 const x, f32 const y, f32 const z)
 	{
 		m_rb->setLinearVelocity(btVector3(x, y, z));

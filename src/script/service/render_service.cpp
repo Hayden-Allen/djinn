@@ -7,18 +7,6 @@ namespace djinn
 {
 	namespace js::render_service
 	{
-		JSValue draw(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
-		{
-			/*ASSERT(argc == 2);
-			id_t const ro_id = js::extract_id(ctx, argv[0]);
-			id_t const shader_id = js::extract_id(ctx, argv[1]);
-			sptr<static_render_object> ro = ::djinn::asset_service::get_mesh_manager()->get(ro_id);
-			sptr<shaders> shaders = ::djinn::asset_service::get_shader_manager()->get(shader_id);
-			::djinn::render_service::get_context()->draw(*ro.get(), *shaders.get());
-			return JS_UNDEFINED;*/
-			ASSERT(false);
-			return JS_UNDEFINED;
-		}
 		JSValue bind_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 		{
 			ASSERT(argc == 2);
@@ -40,13 +28,6 @@ namespace djinn
 			ASSERT(argc == 0);
 			return js::create_f32(ctx, ::djinn::render_service::get_context()->get_aspect_ratio());
 		}
-		JSValue set_depth_mask(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
-		{
-			ASSERT(argc == 1);
-			bool const mask = js::extract_bool(ctx, argv[0]);
-			glDepthMask(mask);
-			return JS_UNDEFINED;
-		}
 	} // namespace js::render_service
 
 
@@ -58,11 +39,13 @@ namespace djinn
 	}
 	void render_service::register_functions(JSContext* const ctx)
 	{
-		super::register_function(ctx, "draw", 2, js::render_service::draw);
 		super::register_function(ctx, "bindTexture", 2, js::render_service::bind_texture);
 		super::register_function(ctx, "bindCubemap", 2, js::render_service::bind_cubemap);
 		super::register_function(ctx, "getAspectRatio", 0, js::render_service::get_aspect_ratio);
-		super::register_function(ctx, "setDepthMask", 1, js::render_service::set_depth_mask);
+
+		super::register_property_u32(ctx, "GL_NEAREST", GL_NEAREST);
+		super::register_property_u32(ctx, "GL_LINEAR", GL_LINEAR);
+		super::register_property_u32(ctx, "GL_REPEAT", GL_REPEAT);
 	}
 	sptr<mgl::context> render_service::get_context()
 	{

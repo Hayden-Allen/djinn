@@ -1,8 +1,8 @@
 import "./lib/globals.d"
 import Entity from "./lib/Entity"
-import type { ICamera } from "./lib/Camera.d"
+import Camera from "./lib/Camera"
 
-const { Asset, Scene, Physics } = djinn
+const { Asset, Scene } = djinn
 
 export default class GroundEntity extends Entity {
   private idMesh: number = 0
@@ -10,7 +10,7 @@ export default class GroundEntity extends Entity {
   private idPhysics: number = 0
   private idShader: number = 0
   private idTexture: number = 0
-  private camera: ICamera
+  private camera: Optional<Camera>
 
   __init() {
     this.idTexture = Asset.Texture.load("grass.png")
@@ -95,7 +95,7 @@ export default class GroundEntity extends Entity {
   __draw() {
     Asset.Shader.setCameraUniforms(this.idShader, this.camera!.getId())
   }
-  bind(cam: ICamera) {
+  bind(cam: Camera) {
     this.camera = cam
   }
 }
