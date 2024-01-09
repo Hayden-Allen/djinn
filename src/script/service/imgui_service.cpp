@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "imgui_service.h"
 #include "script/js.h"
+#include "core/util.h"
+#include "core/constants.h"
 
 namespace djinn
 {
@@ -51,7 +53,7 @@ namespace djinn
 			ImGui_ImplOpenGL3_DestroyFontsTexture();
 			ImGui::GetIO().Fonts->Clear();
 			s_instance->m_font_size = 20.0f * std::max(x_scale, y_scale);
-			ImGui::GetIO().Fonts->AddFontFromFileTTF("res/fonts/Jost-Regular.ttf", s_instance->m_font_size);
+			ImGui::GetIO().Fonts->AddFontFromFileTTF(u::to_absolute(c::base_dir::font, "Jost-Regular.ttf").c_str(), s_instance->m_font_size);
 			ImGui::GetIO().Fonts->Build();
 			ImGui_ImplOpenGL3_CreateFontsTexture();
 			s_instance->m_prev_x_scale = x_scale;
@@ -80,8 +82,8 @@ namespace djinn
 	imgui_service::imgui_service(sptr<mgl::context> ctx) :
 		haul::parent<service<imgui_service>>("ImGui"),
 		m_context(ctx),
-		m_prev_x_scale(1),
-		m_prev_y_scale(1),
+		m_prev_x_scale(-1),
+		m_prev_y_scale(-1),
 		m_font_size(20)
 	{
 		IMGUI_CHECKVERSION();
