@@ -5,6 +5,7 @@
 #include "manager/camera_entity_manager.h"
 #include "manager/mesh_instance_manager.h"
 #include "manager/physics_object_manager.h"
+#include "manager/phorm_manager.h"
 
 namespace djinn
 {
@@ -22,6 +23,7 @@ namespace djinn
 		static camera_entity_manager* get_camera_entity_manager();
 		static mesh_instance_manager* get_mesh_instance_manager();
 		static physics_object_manager* get_physics_object_manager();
+		static phorm_manager* get_phorm_manager();
 		static JSRuntime* get_runtime();
 		static void update(f32 const dt);
 		static void draw();
@@ -34,6 +36,7 @@ namespace djinn
 		camera_entity_manager m_camera_entity_manager;
 		mesh_instance_manager m_mesh_instance_manager;
 		physics_object_manager m_physics_object_manager;
+		phorm_manager m_phorm_manager;
 	private:
 		scene_service();
 	};

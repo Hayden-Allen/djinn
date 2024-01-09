@@ -61,6 +61,35 @@ namespace djinn::js::scene_service
 
 
 
+	JSValue load_phorms(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		std::string const& fp = js::extract_string(ctx, argv[0]);
+
+		std::vector<id_t> const& ids = ::djinn::scene_service::get_phorm_manager()->load_all(fp);
+		return js::create_id_array(ctx, (s64)ids.size(), ids.data());
+	}
+	JSValue set_phorm_shaders(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id_phorm = js::extract_id(ctx, argv[0]);
+		id_t const id_shaders = js::extract_id(ctx, argv[1]);
+
+		sptr<phorm> phorm = ::djinn::scene_service::get_phorm_manager()->get(id_phorm);
+		sptr<shaders> shaders = ::djinn::asset_service::get_shader_manager()->get(id_shaders);
+		phorm->set_shaders(shaders);
+		return JS_UNDEFINED;
+	}
+	JSValue destroy_phorm(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		::djinn::scene_service::get_phorm_manager()->destroy(id);
+		return JS_UNDEFINED;
+	}
+
+
+
 	JSValue request_imgui(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
@@ -457,6 +486,10 @@ namespace djinn
 	}
 	void scene_service::register_functions(JSContext* const ctx)
 	{
+		super::register_function(ctx, "Phorm", "load", 1, js::scene_service::load_phorms);
+		super::register_function(ctx, "Phorm", "setShaders", 2, js::scene_service::set_phorm_shaders);
+		super::register_function(ctx, "Phorm", "destroy", 1, js::scene_service::destroy_phorm);
+
 		super::register_function(ctx, "MeshInstance", "create", 2, js::scene_service::create_mesh_instance);
 		super::register_function(ctx, "MeshInstance", "setUniforms", 2, js::scene_service::set_mesh_instance_uniforms);
 		super::register_function(ctx, "MeshInstance", "setAction", 3, js::scene_service::set_mesh_instance_action);
@@ -543,6 +576,10 @@ namespace djinn
 	{
 		return &s_instance->m_physics_object_manager;
 	}
+	phorm_manager* scene_service::get_phorm_manager()
+	{
+		return &s_instance->m_phorm_manager;
+	}
 	JSRuntime* scene_service::get_runtime()
 	{
 		return s_instance->m_runtime;
@@ -568,6 +605,10 @@ namespace djinn
 		s_instance->m_camera_entity_manager.for_each([](sptr<camera_entity> e, id_t const id)
 			{
 				e->draw();
+			});
+		s_instance->m_phorm_manager.for_each([](sptr<phorm> p, id_t const id)
+			{
+				p->draw(render_service::get_context());
 			});
 	}
 	void scene_service::draw_ui()

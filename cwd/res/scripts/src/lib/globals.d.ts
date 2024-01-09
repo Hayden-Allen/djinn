@@ -156,6 +156,11 @@ declare interface _Scene_Camera {
     far: number
   ): void
 }
+declare interface _Scene_Phorm {
+  load(fp: string): number[]
+  setShaders(idPhorm: number, idShader: number): void
+  destroy(id: number): void
+}
 declare interface _Scene_Physics {
   create(dims: number[], origin: number[], mass: number): number
   setFriction(id: number, f: number): void
@@ -167,6 +172,7 @@ declare interface _Scene {
   MeshInstance: _Scene_MeshInstance
   Entity: _Scene_Entity
   Camera: _Scene_Camera
+  Phorm: _Scene_Phorm
   Physics: _Scene_Physics
 
   copyTransform(idFrom: number, idTo: number): void

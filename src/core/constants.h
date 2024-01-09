@@ -16,6 +16,7 @@ namespace djinn::c
 		static std::string const texture = root + "cwd/res/texture";
 		static std::string const font = root + "cwd/res/font";
 		static std::string const sound = root + "cwd/res/sound";
+		static std::string const phorm = root + "cwd/res/phorm";
 	} // namespace base_dir
 	namespace shader
 	{

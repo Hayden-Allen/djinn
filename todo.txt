@@ -4,6 +4,24 @@
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
 
 - now
+	- watcher force recompile/recompile all previously failed files after next save
+	- powertranzphormr
+		- mgl::input_file => haul::input_file
+		- save model matrix for each ro
+	- switch monitor crash
+	- retained_buffer::load => buffer::load (buffer doesn't get save though)
+	- load/save take haul::input_file* const
+	- shader_type::phorm? (d_model, d_normal)
+	- lights
+
+	- scene_object::set_visible
+	- load powertranzphormr scenes
+		- phorm_object extends scene_object that has static_render_object
+		- each exported mesh will be its own phorm_object
+		- no hitboxes - up to the user
+		- Scene.Physics.createAABB/createCapsule/createBVH that take a mesh or phorm_object
+		- provide library class to package phorm_object and physics_object
+	- physics_object::set_active
 	- Scene.destroySelf()
 	- mesh_watcher_base/static_mesh_watcher/animated_mesh_watcher
 	- mesh_instance_batch testing
@@ -11,12 +29,6 @@
 		- removing works at all
 		- removing instance at capacity threshold deletes now-unused ubo
 		- removing all instances using a shader deletes that instance
-
-- later
-	- physics_manager/physics_service
-		- set transform functions
-		- Physics.copyTransformTo(idHitbox, idSceneObject) this is how physics world drives entity transforms
-	- load powertranzphormr scenes
 
 - later
 	- framebuffer_u8/f32?

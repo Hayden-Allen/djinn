@@ -39,7 +39,7 @@ namespace djinn
 	}
 	void animated_mesh::init(m3d_t* const raw)
 	{
-		// ASSERT(raw->numbone > 0);
+		ASSERT(raw->numbone <= c::shader::num_bones);
 		m_raw = raw;
 
 		std::vector<animated_mesh_vertex> vbo;

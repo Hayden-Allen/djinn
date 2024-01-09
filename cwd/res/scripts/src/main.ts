@@ -34,6 +34,10 @@ export default class MainEntity extends Entity {
   private idPhysics: number = 0
   private ground: Optional<GroundEntity>
 
+  private idPhormShader: number = 0
+  private idPhormShader2: number = 0
+  private idPhorms: number[] = []
+
   __init() {
     this.skybox = Skybox.loadDirectory(
       {
@@ -90,6 +94,16 @@ export default class MainEntity extends Entity {
 
     this.ground = Scene.Entity.load("GroundEntity.js") as GroundEntity
     this.ground?.bind(this.camera!)
+
+    this.idPhormShader = Asset.Shader.load("phorm.vert", "phorm.frag")
+    this.idPhormShader2 = Asset.Shader.load("phorm2.vert", "phorm.frag")
+    this.idPhorms = Scene.Phorm.load("city.xport")
+    for (var i = 0; i < this.idPhorms.length - 1; i++)
+      Scene.Phorm.setShaders(this.idPhorms[i], this.idPhormShader)
+    Scene.Phorm.setShaders(
+      this.idPhorms[this.idPhorms.length - 1],
+      this.idPhormShader2
+    )
   }
   __destroy() {
     Scene.MeshInstance.destroy(this.idStaticInstance)
@@ -110,6 +124,12 @@ export default class MainEntity extends Entity {
     Asset.Texture.destroy(this.idTexture)
 
     Scene.Physics.destroy(this.idPhysics)
+
+    for (const id of this.idPhorms) {
+      Scene.Phorm.destroy(id)
+    }
+    Asset.Shader.destroy(this.idPhormShader)
+    Asset.Shader.destroy(this.idPhormShader2)
   }
   __load() {
     this.color.set(0, 1, 1, 0.5)
@@ -155,6 +175,8 @@ export default class MainEntity extends Entity {
     Asset.Shader.setCameraUniforms(this.idShader, this.camera!.getId())
     Asset.Shader.setCameraUniforms(this.idStaticShader, this.camera!.getId())
     Asset.Shader.setCameraUniforms(this.idAnimatedShader, this.camera!.getId())
+    Asset.Shader.setCameraUniforms(this.idPhormShader, this.camera!.getId())
+    Asset.Shader.setCameraUniforms(this.idPhormShader2, this.camera!.getId())
 
     Scene.copyTransform(this.idPhysics, this.idStaticInstance)
   }
