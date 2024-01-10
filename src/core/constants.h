@@ -25,7 +25,10 @@ namespace djinn::c
 		static constexpr u32 ubo_size_bytes = 16384;
 		static constexpr u32 num_vertex_bones = M3D_NUMBONE;
 		static constexpr u32 num_bones = 68;
+		// number of lights is also stored in the ubo, so -1
+		static constexpr u32 num_lights = (ubo_size_bytes / sizeof(mgl::light)) - 1;
 		static std::string const instance_struct = "d_instance_struct";
+		static std::string const light_struct = "d_light_struct";
 		static std::string const instance_model_mat = "d_model";
 		static std::string const instance_normal_mat = "d_normal";
 		static std::string const instance_bones = "d_bones";
@@ -57,6 +60,9 @@ namespace djinn::c
 	}	  // namespace shader
 	namespace uniform
 	{
+		static constexpr u64 light_ubo_index = ::djinn::c::shader::num_ubos - 1;
+		static std::string const light_block_name = "d_lights";
+		static std::string const light_block_type = "d_light";
 		static std::string const time = "d_time";
 		static std::string const view_mat = "d_view";
 		static std::string const proj_mat = "d_proj";

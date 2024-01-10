@@ -170,12 +170,17 @@ declare interface _Scene_Physics {
   setAngularVelocity(id: number, vel: number[]): void
   destroy(id: number): void
 }
+declare interface _Scene_Light {
+  create(): number
+  destroy(id: number): void
+}
 declare interface _Scene {
   MeshInstance: _Scene_MeshInstance
   Entity: _Scene_Entity
   Camera: _Scene_Camera
   Phorm: _Scene_Phorm
   Physics: _Scene_Physics
+  Light: _Scene_Light
 
   copyTransform(idFrom: number, idTo: number): void
   getPos(id: number): number[]

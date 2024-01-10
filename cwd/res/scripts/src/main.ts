@@ -38,6 +38,8 @@ export default class MainEntity extends Entity {
   private idPhormShader2: number = 0
   private idPhorms: number[] = []
 
+  private idLight: number = 0
+
   __init() {
     this.skybox = Skybox.loadDirectory(
       {
@@ -104,6 +106,8 @@ export default class MainEntity extends Entity {
       this.idPhorms[this.idPhorms.length - 1],
       this.idPhormShader2
     )
+
+    this.idLight = Scene.Light.create()
   }
   __destroy() {
     Scene.MeshInstance.destroy(this.idStaticInstance)
@@ -130,6 +134,8 @@ export default class MainEntity extends Entity {
     }
     Asset.Shader.destroy(this.idPhormShader)
     Asset.Shader.destroy(this.idPhormShader2)
+
+    Scene.Light.destroy(this.idLight)
   }
   __load() {
     this.color.set(0, 1, 1, 0.5)

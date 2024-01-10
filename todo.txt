@@ -4,6 +4,7 @@
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
 
 - now
+	- shaders::preprocess_frag (move light stuff here)
 	- lights
 		- light_manager has ubo
 		- light_manager is an indexed_list containing up to (c::shader::ubo_size_bytes / sizeof(mgl::light)) lights (85)

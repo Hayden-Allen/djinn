@@ -10,7 +10,7 @@ namespace djinn
 		DCM(scene_object);
 		virtual ~scene_object();
 	public:
-		void update_transform() override final;
+		void update_transform() override;
 		tmat<space::OBJECT, space::PARENT> get_transform() const override final;
 		tmat<space::OBJECT, space::WORLD> get_world_transform() const override final;
 	protected:

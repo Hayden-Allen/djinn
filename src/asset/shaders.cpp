@@ -27,6 +27,9 @@ namespace djinn
 		std::string const& vert_src = preprocess(vert_afp);
 		std::string const& frag_src = u::read_file(frag_afp);
 		super::init(vert_src, frag_src, true);
+
+		if (has_uniform(c::uniform::light_block_name))
+			uniform_block_binding(c::uniform::light_block_name, c::uniform::light_ubo_index);
 	}
 
 
@@ -203,6 +206,10 @@ namespace djinn
 		}
 
 		// lights
+		sprintf_s(buf, "struct %s { mat4 o2w, w2o; vec4 ca, cd, cs; float sp, rmax; float cos_tmin, cos_tmax; };", c::shader::light_struct.c_str());
+		extra_lines.push_back(buf);
+		sprintf_s(buf, "layout(std140) uniform %s { float d_num; %s d_l[%u]; } %s;", c::uniform::light_block_type.c_str(), c::shader::light_struct.c_str(), c::shader::num_lights, c::uniform::light_block_name.c_str());
+		extra_lines.push_back(buf);
 
 		// join all lines
 		lines.insert(lines.begin() + 1, extra_lines.begin(), extra_lines.end());

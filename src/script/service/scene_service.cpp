@@ -61,6 +61,21 @@ namespace djinn::js::scene_service
 
 
 
+	JSValue create_light(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 0);
+		return js::create_id(ctx, ::djinn::scene_service::get_light_manager()->create());
+	}
+	JSValue destroy_light(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		::djinn::scene_service::get_light_manager()->destroy(id);
+		return JS_UNDEFINED;
+	}
+
+
+
 	JSValue load_phorms(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
@@ -502,6 +517,9 @@ namespace djinn
 	}
 	void scene_service::register_functions(JSContext* const ctx)
 	{
+		super::register_function(ctx, "Light", "create", 0, js::scene_service::create_light);
+		super::register_function(ctx, "Light", "destroy", 1, js::scene_service::destroy_light);
+
 		super::register_function(ctx, "Phorm", "load", 1, js::scene_service::load_phorms);
 		super::register_function(ctx, "Phorm", "setShaders", 2, js::scene_service::set_phorm_shaders);
 		super::register_function(ctx, "Phorm", "setVisible", 2, js::scene_service::set_phorm_visible);
@@ -598,6 +616,10 @@ namespace djinn
 	{
 		return &s_instance->m_phorm_manager;
 	}
+	light_manager* scene_service::get_light_manager()
+	{
+		return &s_instance->m_light_manager;
+	}
 	JSRuntime* scene_service::get_runtime()
 	{
 		return s_instance->m_runtime;
@@ -613,6 +635,7 @@ namespace djinn
 				e->update(dt, time);
 			});
 		s_instance->m_physics_object_manager.update(dt);
+		s_instance->m_light_manager.update();
 	}
 	void scene_service::draw()
 	{
