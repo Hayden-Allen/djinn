@@ -8,6 +8,10 @@ namespace djinn
 
 
 
+	tmat<space::OBJECT, space::WORLD> scene_object_base::get_graphics_transform() const
+	{
+		return get_world_transform();
+	}
 	void scene_object_base::copy_transform(sptr<scene_object_base> const& other)
 	{
 		m_pos[0] = other->m_pos[0];

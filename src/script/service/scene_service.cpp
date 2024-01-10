@@ -80,6 +80,14 @@ namespace djinn::js::scene_service
 		phorm->set_shaders(shaders);
 		return JS_UNDEFINED;
 	}
+	JSValue set_phorm_visible(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id_phorm = js::extract_id(ctx, argv[0]);
+		bool const visible = js::extract_bool(ctx, argv[1]);
+		::djinn::scene_service::get_phorm_manager()->get(id_phorm)->set_visible(visible);
+		return JS_UNDEFINED;
+	}
 	JSValue destroy_phorm(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
@@ -198,6 +206,14 @@ namespace djinn::js::scene_service
 		sptr<animated_mesh_instance> ami = instance;
 
 		ami->set_action(action, speed);
+		return JS_UNDEFINED;
+	}
+	JSValue set_mesh_instance_visible(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		bool const visible = js::extract_bool(ctx, argv[1]);
+		::djinn::scene_service::get_mesh_instance_manager()->get(id)->set_visible(visible);
 		return JS_UNDEFINED;
 	}
 	JSValue destroy_mesh_instance(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -488,11 +504,13 @@ namespace djinn
 	{
 		super::register_function(ctx, "Phorm", "load", 1, js::scene_service::load_phorms);
 		super::register_function(ctx, "Phorm", "setShaders", 2, js::scene_service::set_phorm_shaders);
+		super::register_function(ctx, "Phorm", "setVisible", 2, js::scene_service::set_phorm_visible);
 		super::register_function(ctx, "Phorm", "destroy", 1, js::scene_service::destroy_phorm);
 
 		super::register_function(ctx, "MeshInstance", "create", 2, js::scene_service::create_mesh_instance);
 		super::register_function(ctx, "MeshInstance", "setUniforms", 2, js::scene_service::set_mesh_instance_uniforms);
 		super::register_function(ctx, "MeshInstance", "setAction", 3, js::scene_service::set_mesh_instance_action);
+		super::register_function(ctx, "MeshInstance", "setVisible", 2, js::scene_service::set_mesh_instance_visible);
 		super::register_function(ctx, "MeshInstance", "destroy", 1, js::scene_service::destroy_mesh_instance);
 
 		super::register_function(ctx, "Entity", "requestImGui", 1, js::scene_service::request_imgui);

@@ -1,6 +1,6 @@
 #pragma once
 #include "pch.h"
-#include "scene_object.h"
+#include "visibility_scene_object.h"
 
 namespace djinn
 {
@@ -18,7 +18,7 @@ namespace djinn
 
 
 
-	class mesh_instance : public scene_object
+	class mesh_instance : public visibility_scene_object
 	{
 		friend class mesh_instance_batch;
 		friend class mesh_instance_manager;

@@ -13,6 +13,7 @@ namespace djinn
 		virtual void update_transform() = 0;
 		virtual tmat<space::OBJECT, space::PARENT> get_transform() const = 0;
 		virtual tmat<space::OBJECT, space::WORLD> get_world_transform() const = 0;
+		virtual tmat<space::OBJECT, space::WORLD> get_graphics_transform() const;
 		void copy_transform(sptr<scene_object_base> const& other);
 	public:
 		f32 const* get_pos() const;

@@ -164,8 +164,12 @@ export default class MainEntity extends Entity {
     }
     Scene.Entity.requestImGui(this.id)
 
-    if (Input.getKey(Input.KEY_SPACE))
+    if (Input.getKey(Input.KEY_SPACE)) {
       Scene.Physics.setLinearVelocity(this.idPhysics, [0, 5, 0])
+      Scene.MeshInstance.setVisible(this.idStaticInstance, false)
+    } else {
+      Scene.MeshInstance.setVisible(this.idStaticInstance, true)
+    }
   }
   __draw() {
     this.skybox!.draw(this.camera!.getId())

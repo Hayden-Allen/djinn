@@ -139,6 +139,7 @@ declare interface _Scene_MeshInstance {
   create(idMesh: number, idShader: number): number
   setUniforms(id: number, map: object): void
   setAction(id: number, name: string, speed?: number): void
+  setVisible(id: number, visible: boolean): void
   destroy(id: number): void
 }
 declare interface _Scene_Entity {
@@ -159,6 +160,7 @@ declare interface _Scene_Camera {
 declare interface _Scene_Phorm {
   load(fp: string): number[]
   setShaders(idPhorm: number, idShader: number): void
+  setVisible(id: number, visible: boolean): void
   destroy(id: number): void
 }
 declare interface _Scene_Physics {

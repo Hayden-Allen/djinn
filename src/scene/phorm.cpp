@@ -5,7 +5,7 @@
 namespace djinn
 {
 	phorm::phorm(id_t const id, mgl::input_file* const in) :
-		scene_object(id),
+		visibility_scene_object(id),
 		m_shaders(nullptr)
 	{
 		m_ro.load(*in);

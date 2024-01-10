@@ -26,7 +26,7 @@ namespace djinn
 			for (u64 i = 0; i < m_instances.size(); i++)
 			{
 				m_instances[i]->update_transform();
-				update_transform(i, m_instances[i]->get_world_transform());
+				update_transform(i, m_instances[i]->get_graphics_transform());
 			}
 			// bind first block to 0, so all blocks will be bound in [0, n)
 			for (u32 i = 0; i < (u32)m_ubos.size(); i++)

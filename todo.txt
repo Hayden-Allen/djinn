@@ -4,11 +4,9 @@
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
 
 - now
-	- scene_object::set_visible
 	- shader_type::phorm? (d_model, d_normal)
 	- powertranzphormr
 		- mgl::input_file => haul::input_file
-		- save model matrix for each ro
 		- no lightmaps, shadows, atlas
 		- everything with an id or 1+ tags is exported separately (from root down)
 		- static meshes, lights, waypoints always exported
