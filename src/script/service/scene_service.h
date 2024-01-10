@@ -25,7 +25,7 @@ namespace djinn
 		static physics_object_manager* get_physics_object_manager();
 		static phorm_manager* get_phorm_manager();
 		static JSRuntime* get_runtime();
-		static void update(f32 const dt);
+		static void update(f32 const dt, f32 const time);
 		static void draw();
 		static void draw_ui();
 		static void draw_imgui();

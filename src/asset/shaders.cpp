@@ -19,6 +19,7 @@ namespace djinn
 	}
 	u32 shaders::get_base_offset_bytes() const
 	{
+		ASSERT(m_type != shader_type::PHORM);
 		return s_base_offset_bytes[(u64)m_type];
 	}
 	void shaders::init(std::string const& vert_afp, std::string const& frag_afp)
@@ -45,6 +46,8 @@ namespace djinn
 			return shader_type::STATIC;
 		else if (u::iequals(type, c::shader::type::ANIMATED))
 			return shader_type::ANIMATED;
+		else if (u::iequals(type, c::shader::type::PHORM))
+			return shader_type::PHORM;
 		else if (u::iequals(type, c::shader::type::CUSTOM))
 			return shader_type::CUSTOM;
 		ASSERT(false);
@@ -81,6 +84,7 @@ namespace djinn
 			// FIELD() macro statement
 			else if (line.starts_with(c::shader::macro::instance_field))
 			{
+				ASSERT(m_type != shader_type::PHORM);
 				// a TYPE() statement must proceed this line
 				ASSERT(field_offset_bytes > 0);
 				auto const& args = extract_args(line);
@@ -144,40 +148,59 @@ namespace djinn
 			sprintf_s(buf, "layout(location=4) in uvec4 %s;", c::shader::vertex_bone_index.c_str());
 			extra_lines.push_back(buf);
 		}
-
-		// instance struct definition (CUSTOM and STATIC)
-		if (m_type == shader_type::CUSTOM || m_type == shader_type::STATIC)
+		else if (m_type == shader_type::PHORM)
 		{
-			sprintf_s(buf, "struct %s { mat4 %s; mat3 %s; ", c::shader::instance_struct.c_str(), c::shader::instance_model_mat.c_str(), c::shader::instance_normal_mat.c_str());
+			sprintf_s(buf, "layout(location=0) in vec3 %s;", c::shader::vertex_pos.c_str());
+			extra_lines.push_back(buf);
+			sprintf_s(buf, "layout(location=1) in vec3 %s;", c::shader::vertex_norm.c_str());
+			extra_lines.push_back(buf);
+			for (u32 i = 0; i < 4; i++)
+			{
+				sprintf_s(buf, "layout(location=%u) in vec4 %s;", i + 2, c::shader::vertex_uvs[i].c_str());
+				extra_lines.push_back(buf);
+			}
+			sprintf_s(buf, "layout(location=6) in vec4 %s;", c::shader::vertex_texture_weights.c_str());
+			extra_lines.push_back(buf);
+			sprintf_s(buf, "layout(location=7) in vec4 %s;", c::shader::vertex_color.c_str());
+			extra_lines.push_back(buf);
 		}
-		else
-		{
-			ASSERT(m_type == shader_type::ANIMATED);
-			sprintf_s(buf, "struct %s { mat4 %s; mat4 %s[%u]; ", c::shader::instance_struct.c_str(), c::shader::instance_model_mat.c_str(), c::shader::instance_bones.c_str(), c::shader::num_bones);
-		}
-		std::string struct_def = buf;
-		for (auto const& pair : fields)
-		{
-			// array size of 1 is invalid in GLSL, so treat it as single variable instead
-			if (pair.second.arr_count > 1)
-				sprintf_s(buf, "%s %s[%d]; ", pair.first.c_str(),
-					pair.second.name.c_str(), pair.second.arr_count);
-			else
-				sprintf_s(buf, "%s %s; ", pair.first.c_str(), pair.second.name.c_str());
-			struct_def += buf;
-		}
-		struct_def += "};";
-		extra_lines.push_back(struct_def);
 
-		// instance ubo definition (ALL)
-		u32 const max_structs_per_ubo =
-			c::shader::ubo_size_bytes / field_offset_bytes;
-		sprintf_s(buf, "layout(std140) uniform %s { %s d_i[%u]; } %s[%u];", c::uniform::instance_block_type.c_str(), c::shader::instance_struct.c_str(), max_structs_per_ubo, c::uniform::instances.c_str(), c::shader::num_ubos);
-		extra_lines.push_back(buf);
+		// phorms do not use the instanced pipeline
+		if (m_type != shader_type::PHORM)
+		{
+			// instance struct definition (CUSTOM and STATIC)
+			if (m_type == shader_type::CUSTOM || m_type == shader_type::STATIC)
+			{
+				sprintf_s(buf, "struct %s { mat4 %s; mat3 %s; ", c::shader::instance_struct.c_str(), c::shader::instance_model_mat.c_str(), c::shader::instance_normal_mat.c_str());
+			}
+			else if (m_type == shader_type::ANIMATED)
+			{
+				sprintf_s(buf, "struct %s { mat4 %s; mat4 %s[%u]; ", c::shader::instance_struct.c_str(), c::shader::instance_model_mat.c_str(), c::shader::instance_bones.c_str(), c::shader::num_bones);
+			}
+			std::string struct_def = buf;
+			for (auto const& pair : fields)
+			{
+				// array size of 1 is invalid in GLSL, so treat it as single variable instead
+				if (pair.second.arr_count > 1)
+					sprintf_s(buf, "%s %s[%d]; ", pair.first.c_str(),
+						pair.second.name.c_str(), pair.second.arr_count);
+				else
+					sprintf_s(buf, "%s %s; ", pair.first.c_str(), pair.second.name.c_str());
+				struct_def += buf;
+			}
+			struct_def += "};";
+			extra_lines.push_back(struct_def);
 
-		// instance struct macro definition (ALL)
-		sprintf_s(buf, "#define d_instance %s[gl_InstanceID/%u].d_i[gl_InstanceID-%u*(gl_InstanceID/%u)]", c::uniform::instances.c_str(), max_structs_per_ubo, max_structs_per_ubo, max_structs_per_ubo);
-		extra_lines.push_back(buf);
+			// instance ubo definition (ALL)
+			u32 const max_structs_per_ubo =
+				c::shader::ubo_size_bytes / field_offset_bytes;
+			sprintf_s(buf, "layout(std140) uniform %s { %s d_i[%u]; } %s[%u];", c::uniform::instance_block_type.c_str(), c::shader::instance_struct.c_str(), max_structs_per_ubo, c::uniform::instances.c_str(), c::shader::num_ubos);
+			extra_lines.push_back(buf);
+
+			// instance struct macro definition (ALL)
+			sprintf_s(buf, "#define d_instance %s[gl_InstanceID/%u].d_i[gl_InstanceID-%u*(gl_InstanceID/%u)]", c::uniform::instances.c_str(), max_structs_per_ubo, max_structs_per_ubo, max_structs_per_ubo);
+			extra_lines.push_back(buf);
+		}
 
 		// join all lines
 		lines.insert(lines.begin() + 1, extra_lines.begin(), extra_lines.end());

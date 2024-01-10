@@ -1,19 +1,12 @@
 #version 410 core
-TYPE(custom);
-layout(location = 0) in vec3 i_pos;
-layout(location = 1) in vec3 i_norm;
-layout(location = 2) in vec4 i_uv0;
-layout(location = 3) in vec4 i_uv1;
-layout(location = 4) in vec4 i_uv2;
-layout(location = 5) in vec4 i_uv3;
-layout(location = 6) in vec4 i_weights;
-layout(location = 7) in vec4 i_rgba;
+TYPE(phorm);
 
-uniform mat4 d_vp;
+uniform mat4 d_vp, d_model;
+uniform mat3 d_normal;
 out vec3 v_norm;
 
 void main()
 {
-    gl_Position = d_vp * vec4(i_pos * .1, 1);
-    v_norm = i_norm;
+    gl_Position = d_vp * d_model * vec4(d_pos * .05, 1);
+    v_norm = d_normal * d_norm;
 }

@@ -602,15 +602,15 @@ namespace djinn
 	{
 		return s_instance->m_runtime;
 	}
-	void scene_service::update(f32 const dt)
+	void scene_service::update(f32 const dt, f32 const time)
 	{
 		s_instance->m_entity_manager.for_each([&](sptr<entity> e, id_t const id)
 			{
-				e->update(dt);
+				e->update(dt, time);
 			});
 		s_instance->m_camera_entity_manager.for_each([&](sptr<camera_entity> e, id_t const id)
 			{
-				e->update(dt);
+				e->update(dt, time);
 			});
 		s_instance->m_physics_object_manager.update(dt);
 	}
@@ -659,6 +659,8 @@ namespace djinn
 			return get_camera_entity_manager()->get(id);
 		else if (get_physics_object_manager()->has(id))
 			return get_physics_object_manager()->get(id);
+		else if (get_phorm_manager()->has(id))
+			return get_phorm_manager()->get(id);
 		return get_mesh_instance_manager()->get(id);
 	}
 

@@ -144,7 +144,7 @@ export default class MainEntity extends Entity {
       Scene.Entity.destroy(this.entities[i].getId())
     this.entities = []
   }
-  __main(dt: number) {
+  __main(dt: number, time: number) {
     this.frame++
     if (
       this.nextAnimated < this.idAnimatedInstances.length &&
@@ -169,6 +169,12 @@ export default class MainEntity extends Entity {
       Scene.MeshInstance.setVisible(this.idStaticInstance, false)
     } else {
       Scene.MeshInstance.setVisible(this.idStaticInstance, true)
+    }
+
+    for (const id of this.idPhorms) {
+      Scene.addRotY(id, dt)
+      const s = Math.abs(Math.sin(time))
+      Scene.setScale(id, [s, s, s])
     }
   }
   __draw() {

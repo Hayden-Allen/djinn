@@ -22,7 +22,7 @@ export default class TestEntity extends Entity {
   __destroy() {
     Scene.MeshInstance.destroy(this.idInstance)
   }
-  __main(dt: number) {
+  __main(dt: number, time: number) {
     for (var i = 0; i < this.meshPos.length; i++) {
       const newPos = this.meshPos[i] + dt * this.meshVel[i]
       if (newPos < -10) {

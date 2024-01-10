@@ -13,9 +13,9 @@ namespace djinn
 
 
 
-	void camera_entity::update(f32 const dt)
+	void camera_entity::update(f32 const dt, f32 const time)
 	{
-		entity::update(dt); // recomputes m_transform
+		entity::update(dt, time); // recomputes m_transform
 		m_view = m_transform.invert_cast_copy<space::WORLD, space::CAMERA>();
 		update_mats();
 	}

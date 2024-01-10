@@ -33,10 +33,19 @@ namespace djinn::c
 		static std::string const vertex_tex = "d_tex";
 		static std::string const vertex_bone_index = "d_index";
 		static std::string const vertex_bone_weight = "d_weight";
+		static std::string const vertex_uvs[4] = {
+			"d_uv0",
+			"d_uv1",
+			"d_uv2",
+			"d_uv3"
+		};
+		static std::string const vertex_texture_weights = "d_weights";
+		static std::string const vertex_color = "d_rgba";
 		namespace type
 		{
 			static std::string const STATIC = "STATIC";
 			static std::string const ANIMATED = "ANIMATED";
+			static std::string const PHORM = "PHORM";
 			static std::string const CUSTOM = "CUSTOM";
 		} // namespace type
 		namespace macro
@@ -52,6 +61,8 @@ namespace djinn::c
 		static std::string const proj_mat = "d_proj";
 		static std::string const vp_mat = "d_vp";
 		static std::string const vpr_mat = "d_vpr";
+		static std::string const model_mat = "d_model";
+		static std::string const normal_mat = "d_normal";
 		static std::string const instance_block_type = "d_instance_block";
 		static std::string const instances = "d_instances";
 		static std::string const instance_block_name[::djinn::c::shader::num_ubos] = {

@@ -15,7 +15,7 @@ namespace djinn
 		DCM(entity);
 		virtual ~entity();
 	public:
-		virtual void update(f32 const dt);
+		virtual void update(f32 const dt, f32 const time);
 		void draw();
 		void draw_ui();
 		void draw_imgui();
@@ -33,7 +33,7 @@ namespace djinn
 		void call_unload();
 		void call_init();
 		void call_destroy();
-		void call_main(f32 const dt);
+		void call_main(f32 const dt, f32 const time);
 		void check_exception(JSValue const val, std::string const& msg) const;
 		void clear_cache();
 	};

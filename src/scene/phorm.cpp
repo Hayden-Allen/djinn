@@ -13,10 +13,18 @@ namespace djinn
 
 
 
-	void phorm::draw(sptr<mgl::context> const& ctx) const
+	void phorm::draw(sptr<mgl::context> const& ctx)
 	{
 		ASSERT(m_shaders);
-		ctx->draw(m_ro, *m_shaders.get());
+		if (m_visible)
+		{
+			update_transform();
+			tmat<space::OBJECT, space::WORLD> const& model = get_graphics_transform();
+			std::vector<f32> const& normal = model.invert_copy().transpose_copy().mat3();
+			m_shaders->uniform_mat4(c::uniform::model_mat, model.e);
+			m_shaders->uniform_mat3(c::uniform::normal_mat, normal.data());
+			ctx->draw(m_ro, *m_shaders.get());
+		}
 	}
 	void phorm::set_shaders(sptr<shaders> const& shaders)
 	{

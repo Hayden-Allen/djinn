@@ -21,6 +21,7 @@ namespace djinn
 			STATIC,
 			ANIMATED,
 			CUSTOM,
+			PHORM,
 			COUNT
 		};
 	public:

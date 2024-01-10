@@ -7,7 +7,7 @@ export default class Entity {
   __destroy() {}
   __load() {}
   __unload() {}
-  __main(dt: number) {}
+  __main(dt: number, time: number) {}
   __draw() {}
   __ui() {}
   __imgui() {}

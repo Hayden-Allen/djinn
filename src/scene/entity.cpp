@@ -40,10 +40,10 @@ namespace djinn
 
 
 
-	void entity::update(f32 const dt)
+	void entity::update(f32 const dt, f32 const time)
 	{
 		m_request_imgui = false;
-		call_main(dt);
+		call_main(dt, time);
 		update_transform();
 	}
 	void entity::draw()
@@ -139,10 +139,13 @@ namespace djinn
 	{
 		call_reserved("__destroy", 0, nullptr);
 	}
-	void entity::call_main(f32 const dt)
+	void entity::call_main(f32 const dt, f32 const time)
 	{
 		JSValue dtval = JS_NewFloat64(m_ctx, dt);
-		call_reserved("__main", 1, &dtval);
+		JSValue timeval = JS_NewFloat64(m_ctx, time);
+		JSValue args[2] = { dtval, timeval };
+		call_reserved("__main", 2, args);
+		JS_FreeValue(m_ctx, timeval);
 		JS_FreeValue(m_ctx, dtval);
 	}
 	void entity::check_exception(JSValue const val, std::string const& msg) const
