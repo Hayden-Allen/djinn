@@ -28,7 +28,7 @@ namespace djinn
 				m_instances[i]->update_transform();
 				update_transform(i, m_instances[i]->get_graphics_transform());
 			}
-			// bind first block to 0, so all blocks will be bound in [0, n)
+
 			for (u32 i = 0; i < (u32)m_ubos.size(); i++)
 			{
 				m_ubos[i].bind(i);
@@ -38,12 +38,12 @@ namespace djinn
 			ctx->draw_instanced(ro, *m_shaders.get(), m_valid);
 		}
 	private:
-		static inline constexpr u32 s_num_ubos = 12, s_floats_per_mat4 = 16, s_floats_per_mat3 = 12;
+		static inline constexpr u32 s_floats_per_mat4 = 16, s_floats_per_mat3 = 12;
 	private:
 		wptr<mesh> m_mesh;
 		wptr<shaders> m_shaders;
-		std::vector<sptr<mesh_instance>> m_instances; // max size = s_num_ubos * s_transforms_per_ubo
-		std::vector<dynamic_uniform_buffer> m_ubos;	  // max size = s_num_ubos
+		std::vector<sptr<mesh_instance>> m_instances; // max size = num_batch_ubos * s_transforms_per_ubo
+		std::vector<dynamic_uniform_buffer> m_ubos;	  // max size = num_batch_ubos
 		std::vector<u64> m_openings;				  // empty slots in m_instances
 		std::vector<u64> m_instance_indices;		  // same size as m_instances. element at i is where m_instances[i] writes its transform in m_ubos
 		std::vector<u64> m_max_instance_index;		  // size = m_valid, stores the index of the max value in m_transform_indices

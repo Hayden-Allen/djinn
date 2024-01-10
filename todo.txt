@@ -4,7 +4,14 @@
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
 
 - now
-	- shader_type::phorm? (d_model, d_normal)
+	- lights
+		- light_manager has ubo
+		- light_manager is an indexed_list containing up to (c::shader::ubo_size_bytes / sizeof(mgl::light)) lights (85)
+		- all lights are updated each frame and sent to ubo
+		- ubo bound at c::uniform::light_ubo_index (11)
+		- in djinn::shaders(): uniform_block_binding(c::uniform::light_block_name, c::uniform::light_ubo_index)
+		- djinn::light extends visibility_scene_object
+	- scene graph
 	- powertranzphormr
 		- mgl::input_file => haul::input_file
 		- no lightmaps, shadows, atlas
@@ -15,7 +22,6 @@
 		- all of scene_ctx::m_mtls written out
 	- retained_buffer::load => buffer::load (buffer doesn't get save though)
 	- load/save take haul::input_file* const
-	- lights
 
 	- load powertranzphormr scenes
 		- phorm_object extends scene_object that has static_render_object

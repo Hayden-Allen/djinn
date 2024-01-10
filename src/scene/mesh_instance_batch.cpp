@@ -19,7 +19,7 @@ namespace djinn
 		m_instances_per_ubo = c::shader::ubo_size_bytes / (m_floats_per_instance * sizeof(f32));
 		add_block();
 
-		for (u32 i = 0; i < c::shader::num_ubos; i++)
+		for (u32 i = 0; i < c::shader::num_batch_ubos; i++)
 			m_shaders->uniform_block_binding(c::uniform::instance_block_name[i], i);
 	}
 	mesh_instance_batch::mesh_instance_batch(mesh_instance_batch&& other) noexcept :
@@ -118,7 +118,7 @@ namespace djinn
 
 	void mesh_instance_batch::add_block()
 	{
-		ASSERT(m_ubos.size() < c::shader::num_ubos);
+		ASSERT(m_ubos.size() <= c::shader::num_batch_ubos);
 		m_ubos.emplace_back(m_instances_per_ubo * m_floats_per_instance);
 	}
 	void mesh_instance_batch::set_transform_index(u64 const index)

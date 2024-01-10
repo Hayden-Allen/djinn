@@ -11,10 +11,7 @@ namespace djinn
 	tmat<space::OBJECT, space::WORLD> visibility_scene_object::get_graphics_transform() const
 	{
 		if (!m_visible)
-		{
-			f32 const zeros[16] = { 0 };
-			return tmat<space::OBJECT, space::WORLD>(zeros);
-		}
+			return tmat_util::zeros<space::OBJECT, space::WORLD>();
 		return get_world_transform();
 	}
 	void visibility_scene_object::set_visible(bool const visible)

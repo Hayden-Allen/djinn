@@ -21,6 +21,7 @@ namespace djinn::c
 	namespace shader
 	{
 		static constexpr u32 num_ubos = 12;
+		static constexpr u32 num_batch_ubos = 11;
 		static constexpr u32 ubo_size_bytes = 16384;
 		static constexpr u32 num_vertex_bones = M3D_NUMBONE;
 		static constexpr u32 num_bones = 68;
@@ -65,7 +66,7 @@ namespace djinn::c
 		static std::string const normal_mat = "d_normal";
 		static std::string const instance_block_type = "d_instance_block";
 		static std::string const instances = "d_instances";
-		static std::string const instance_block_name[::djinn::c::shader::num_ubos] = {
+		static std::string const instance_block_name[::djinn::c::shader::num_batch_ubos] = {
 			"d_instance_block[0]",
 			"d_instance_block[1]",
 			"d_instance_block[2]",
@@ -77,7 +78,6 @@ namespace djinn::c
 			"d_instance_block[8]",
 			"d_instance_block[9]",
 			"d_instance_block[10]",
-			"d_instance_block[11]",
 		};
 	} // namespace uniform
 } // namespace djinn::c
