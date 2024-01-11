@@ -5,6 +5,7 @@ import Skybox from "./lib/Skybox"
 import Color from "./lib/Color"
 import TestEntity from "./TestEntity"
 import GroundEntity from "./GroundEntity"
+import Xport from "./lib/Xport"
 
 const { Asset, Render, Nanovg, Scene, ImGui, Sound, Input } = djinn
 
@@ -36,10 +37,7 @@ export default class MainEntity extends Entity {
 
   private idPhormShader: number = 0
   private idPhormShader2: number = 0
-  private idPhorms: number[] = []
-
-  private idLight: number = 0
-  private idLight2: number = 0
+  private xport: Optional<Xport>
 
   __init() {
     this.skybox = Skybox.loadDirectory(
@@ -100,15 +98,22 @@ export default class MainEntity extends Entity {
 
     this.idPhormShader = Asset.Shader.load("phorm.vert", "phorm.frag")
     this.idPhormShader2 = Asset.Shader.load("phorm2.vert", "phorm.frag")
-    const { phorms, lights } = Scene.Xport.load("city_new.xport")
-    this.idPhorms = phorms
-    for (var i = 0; i < this.idPhorms.length - 1; i++)
-      Scene.Phorm.setShaders(this.idPhorms[i], this.idPhormShader)
+    // const { phorms, lights } = Scene.Xport.load("city_new.xport")
+    // this.idPhorms = phorms
+    // for (var i = 0; i < this.idPhorms.length - 1; i++)
+    //   Scene.Phorm.setShaders(this.idPhorms[i], this.idPhormShader)
+    // Scene.Phorm.setShaders(
+    //   this.idPhorms[this.idPhorms.length - 1],
+    //   this.idPhormShader2
+    // )
+    // this.idLight = lights[0]
+    this.xport = new Xport("city_new.xport")
+    for (var i = 0; i < this.xport.idPhorms.length - 1; i++)
+      Scene.Phorm.setShaders(this.xport.idPhorms[i], this.idPhormShader)
     Scene.Phorm.setShaders(
-      this.idPhorms[this.idPhorms.length - 1],
+      this.xport.idPhorms[this.xport.idPhorms.length - 1],
       this.idPhormShader2
     )
-    this.idLight = lights[0]
 
     // this.idLight = Scene.Light.create()
     // Scene.setPos(this.idLight, [0, -1, 0])
@@ -138,14 +143,9 @@ export default class MainEntity extends Entity {
 
     Scene.Physics.destroy(this.idPhysics)
 
-    for (const id of this.idPhorms) {
-      Scene.Phorm.destroy(id)
-    }
+    this.xport?.destroy()
     Asset.Shader.destroy(this.idPhormShader)
     Asset.Shader.destroy(this.idPhormShader2)
-
-    Scene.Light.destroy(this.idLight)
-    // Scene.Light.destroy(this.idLight2)
   }
   __load() {
     this.color.set(0, 1, 1, 0.5)
@@ -196,7 +196,7 @@ export default class MainEntity extends Entity {
     //   Scene.setScale(id, [s, s, s])
     // }
 
-    Scene.setPos(this.idLight, [Math.cos(time), -1, Math.sin(time)])
+    Scene.setPos(this.xport!.idLights[0], [Math.cos(time), -1, Math.sin(time)])
   }
   __draw() {
     this.skybox!.draw(this.camera!.getId())

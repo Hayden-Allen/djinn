@@ -22,5 +22,7 @@ namespace djinn
 		std::vector<sptr<light>> m_lights;
 		dynamic_uniform_buffer m_ubo;
 		std::vector<mgl::light> m_raw;
+	private:
+		id_t create(light* const l);
 	};
 } // namespace djinn

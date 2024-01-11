@@ -4,6 +4,9 @@
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
 
 - now
+	- waypoints
+	- implement different lights
+	- light preprocessor
 	- powertranzphormr
 		- mgl::input_file => haul::input_file
 		- no lightmaps, shadows, atlas
