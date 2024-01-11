@@ -172,6 +172,9 @@ declare interface _Scene_Physics {
 }
 declare interface _Scene_Light {
   create(): number
+  setAmbient(id: number, rgba: number[]): void
+  setDiffuse(id: number, rgba: number[]): void
+  setSpecular(id: number, rgba: number[]): void
   destroy(id: number): void
 }
 declare interface _Scene {

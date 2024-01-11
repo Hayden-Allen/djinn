@@ -39,6 +39,7 @@ export default class MainEntity extends Entity {
   private idPhorms: number[] = []
 
   private idLight: number = 0
+  private idLight2: number = 0
 
   __init() {
     this.skybox = Skybox.loadDirectory(
@@ -73,7 +74,7 @@ export default class MainEntity extends Entity {
     this.idSoundEmitter = Sound.Emitter.create(this.idSoundSource)
     this.needsPlayAudio = true
 
-    this.idStaticMesh = Asset.Mesh.loadStatic("suzanne.m3d")
+    this.idStaticMesh = Asset.Mesh.loadStatic("cube.m3d")
     this.idStaticShader = Asset.Shader.load("static.vert", "static.frag")
     this.idStaticInstance = Scene.MeshInstance.create(
       this.idStaticMesh,
@@ -108,6 +109,12 @@ export default class MainEntity extends Entity {
     )
 
     this.idLight = Scene.Light.create()
+    Scene.setPos(this.idLight, [0, -1, 0])
+    Scene.Light.setDiffuse(this.idLight, [1, 0, 0, 0.5])
+    Scene.Light.setAmbient(this.idLight, [0, 0, 1, 0.2])
+    Scene.Light.setSpecular(this.idLight, [0, 1, 0, 0.5])
+    this.idLight2 = Scene.Light.create()
+    Scene.setPos(this.idLight2, [0, -1, 0])
   }
   __destroy() {
     Scene.MeshInstance.destroy(this.idStaticInstance)
@@ -136,6 +143,7 @@ export default class MainEntity extends Entity {
     Asset.Shader.destroy(this.idPhormShader2)
 
     Scene.Light.destroy(this.idLight)
+    Scene.Light.destroy(this.idLight2)
   }
   __load() {
     this.color.set(0, 1, 1, 0.5)
@@ -177,11 +185,13 @@ export default class MainEntity extends Entity {
       Scene.MeshInstance.setVisible(this.idStaticInstance, true)
     }
 
-    for (const id of this.idPhorms) {
-      Scene.addRotY(id, dt)
-      const s = Math.abs(Math.sin(time))
-      Scene.setScale(id, [s, s, s])
-    }
+    // for (const id of this.idPhorms) {
+    //   Scene.addRotY(id, dt)
+    //   const s = Math.abs(Math.sin(time))
+    //   Scene.setScale(id, [s, s, s])
+    // }
+
+    Scene.setPos(this.idLight, [Math.cos(time), -1, Math.sin(time)])
   }
   __draw() {
     this.skybox!.draw(this.camera!.getId())

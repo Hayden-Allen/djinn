@@ -68,6 +68,7 @@ namespace djinn::c
 		static std::string const proj_mat = "d_proj";
 		static std::string const vp_mat = "d_vp";
 		static std::string const vpr_mat = "d_vpr";
+		static std::string const cam_pos = "d_cam_pos";
 		static std::string const model_mat = "d_model";
 		static std::string const normal_mat = "d_normal";
 		static std::string const instance_block_type = "d_instance_block";

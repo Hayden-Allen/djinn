@@ -4,14 +4,7 @@
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
 
 - now
-	- shaders::preprocess_frag (move light stuff here)
-	- lights
-		- light_manager has ubo
-		- light_manager is an indexed_list containing up to (c::shader::ubo_size_bytes / sizeof(mgl::light)) lights (85)
-		- all lights are updated each frame and sent to ubo
-		- ubo bound at c::uniform::light_ubo_index (11)
-		- in djinn::shaders(): uniform_block_binding(c::uniform::light_block_name, c::uniform::light_ubo_index)
-		- djinn::light extends visibility_scene_object
+	- texture hot reloading not working
 	- scene graph
 	- powertranzphormr
 		- mgl::input_file => haul::input_file

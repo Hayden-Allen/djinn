@@ -20,9 +20,13 @@ namespace djinn
 		{
 			update_transform();
 			tmat<space::OBJECT, space::WORLD> const& model = get_graphics_transform();
-			std::vector<f32> const& normal = model.invert_copy().transpose_copy().mat3();
-			m_shaders->uniform_mat4(c::uniform::model_mat, model.e);
-			m_shaders->uniform_mat3(c::uniform::normal_mat, normal.data());
+			if (m_shaders->has_uniform(c::uniform::model_mat))
+				m_shaders->uniform_mat4(c::uniform::model_mat, model.e);
+			if (m_shaders->has_uniform(c::uniform::normal_mat))
+			{
+				std::vector<f32> const& normal = model.invert_copy().transpose_copy().mat3();
+				m_shaders->uniform_mat3(c::uniform::normal_mat, normal.data());
+			}
 			ctx->draw(m_ro, *m_shaders.get());
 		}
 	}

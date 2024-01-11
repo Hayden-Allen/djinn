@@ -47,6 +47,7 @@ namespace djinn
 		static std::vector<std::string> extract_args(std::string const& line);
 		static shader_type string_to_shader_type(std::string const& type);
 	private:
-		std::string preprocess(std::string const& fp);
+		std::string preprocess_vert(std::string const& fp);
+		std::string preprocess_frag(std::string const& fp);
 	};
 } // namespace djinn

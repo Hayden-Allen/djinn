@@ -138,12 +138,6 @@ namespace djinn
 			break;
 		}
 	}
-	void shader_manager::set_uniform_mat4(id_t const id, std::string const& name, f32 const* const mat)
-	{
-		sptr<shaders> shaders = get(id);
-		if (shaders->has_uniform(name))
-			shaders->uniform_mat4(name, mat);
-	}
 
 
 

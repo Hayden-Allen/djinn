@@ -17,7 +17,6 @@ namespace djinn
 		void reload(std::string const& fp) override;
 		void rename(std::string const& old_fp, std::string const& new_fp) override;
 		void set_uniform(JSContext* const ctx, id_t const id, std::string const& name, JSValue const& js_val);
-		void set_uniform_mat4(id_t const id, std::string const& name, f32 const* const mat);
 	private:
 		struct shader_afps
 		{

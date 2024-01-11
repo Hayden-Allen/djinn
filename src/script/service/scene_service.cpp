@@ -66,6 +66,39 @@ namespace djinn::js::scene_service
 		ASSERT(argc == 0);
 		return js::create_id(ctx, ::djinn::scene_service::get_light_manager()->create());
 	}
+	JSValue set_light_color_ambient(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::vector<f32> const& rgba = js::extract_f32_array(ctx, argv[1]);
+		ASSERT(rgba.size() == 4);
+		mgl::light& l = ::djinn::scene_service::get_light_manager()->get(id)->get_raw();
+		for (u64 i = 0; i < rgba.size(); i++)
+			l.ca[i] = rgba[i];
+		return JS_UNDEFINED;
+	}
+	JSValue set_light_color_diffuse(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::vector<f32> const& rgba = js::extract_f32_array(ctx, argv[1]);
+		ASSERT(rgba.size() == 4);
+		mgl::light& l = ::djinn::scene_service::get_light_manager()->get(id)->get_raw();
+		for (u64 i = 0; i < rgba.size(); i++)
+			l.cd[i] = rgba[i];
+		return JS_UNDEFINED;
+	}
+	JSValue set_light_color_specular(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::vector<f32> const& rgba = js::extract_f32_array(ctx, argv[1]);
+		ASSERT(rgba.size() == 4);
+		mgl::light& l = ::djinn::scene_service::get_light_manager()->get(id)->get_raw();
+		for (u64 i = 0; i < rgba.size(); i++)
+			l.cs[i] = rgba[i];
+		return JS_UNDEFINED;
+	}
 	JSValue destroy_light(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
@@ -518,6 +551,9 @@ namespace djinn
 	void scene_service::register_functions(JSContext* const ctx)
 	{
 		super::register_function(ctx, "Light", "create", 0, js::scene_service::create_light);
+		super::register_function(ctx, "Light", "setAmbient", 2, js::scene_service::set_light_color_ambient);
+		super::register_function(ctx, "Light", "setDiffuse", 2, js::scene_service::set_light_color_diffuse);
+		super::register_function(ctx, "Light", "setSpecular", 2, js::scene_service::set_light_color_specular);
 		super::register_function(ctx, "Light", "destroy", 1, js::scene_service::destroy_light);
 
 		super::register_function(ctx, "Phorm", "load", 1, js::scene_service::load_phorms);
@@ -684,6 +720,8 @@ namespace djinn
 			return get_physics_object_manager()->get(id);
 		else if (get_phorm_manager()->has(id))
 			return get_phorm_manager()->get(id);
+		else if (get_light_manager()->has(id))
+			return get_light_manager()->get(id);
 		return get_mesh_instance_manager()->get(id);
 	}
 

@@ -20,4 +20,8 @@ namespace djinn
 	{
 		return m_raw;
 	}
+	mgl::light& light::get_raw()
+	{
+		return m_raw;
+	}
 } // namespace djinn

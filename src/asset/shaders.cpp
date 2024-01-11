@@ -24,8 +24,8 @@ namespace djinn
 	}
 	void shaders::init(std::string const& vert_afp, std::string const& frag_afp)
 	{
-		std::string const& vert_src = preprocess(vert_afp);
-		std::string const& frag_src = u::read_file(frag_afp);
+		std::string const& vert_src = preprocess_vert(vert_afp);
+		std::string const& frag_src = preprocess_frag(frag_afp);
 		super::init(vert_src, frag_src, true);
 
 		if (has_uniform(c::uniform::light_block_name))
@@ -56,7 +56,7 @@ namespace djinn
 		ASSERT(false);
 		return shader_type::NONE;
 	}
-	std::string shaders::preprocess(std::string const& fp)
+	std::string shaders::preprocess_vert(std::string const& fp)
 	{
 		std::ifstream in(fp);
 		ASSERT(in.is_open());
@@ -205,6 +205,32 @@ namespace djinn
 			extra_lines.push_back(buf);
 		}
 
+		// join all lines
+		lines.insert(lines.begin() + 1, extra_lines.begin(), extra_lines.end());
+		std::stringstream sstr;
+		for (std::string const& line : lines)
+			sstr << line << "\n";
+		// printf("%u\n\n%s\n", field_offset_bytes, sstr.str().c_str());
+		return sstr.str();
+	}
+	std::string shaders::preprocess_frag(std::string const& fp)
+	{
+		std::ifstream in(fp);
+		ASSERT(in.is_open());
+
+		std::vector<std::string> lines; // list of all lines in file
+		std::string line;				// current line
+		while (std::getline(in, line))
+		{
+			// whitespace and empty lines don't matter
+			line = u::trim(line);
+			if (line.empty())
+				continue;
+			lines.push_back(line);
+		}
+
+		std::vector<std::string> extra_lines;
+		char buf[512] = { 0 };
 		// lights
 		sprintf_s(buf, "struct %s { mat4 o2w, w2o; vec4 ca, cd, cs; float sp, rmax; float cos_tmin, cos_tmax; };", c::shader::light_struct.c_str());
 		extra_lines.push_back(buf);
@@ -216,7 +242,7 @@ namespace djinn
 		std::stringstream sstr;
 		for (std::string const& line : lines)
 			sstr << line << "\n";
-		// printf("%u\n\n%s\n", field_offset_bytes, sstr.str().c_str());
+		printf("%s\n", sstr.str().c_str());
 		return sstr.str();
 	}
 } // namespace djinn

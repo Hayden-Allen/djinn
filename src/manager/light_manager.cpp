@@ -26,9 +26,9 @@ namespace djinn
 		ASSERT(idx < m_lights.size());
 		if (m_lights.size() > 1)
 		{
-			sptr<light> const replacement = m_lights.back();
+			sptr<light> const& replacement = m_lights.back();
 			m_lights.pop_back();
-			m_lights[idx] = replacement;
+			m_lights[idx].bind(replacement);
 			m_id2idx[replacement->get_id()] = idx;
 		}
 		else
@@ -44,7 +44,10 @@ namespace djinn
 		m_ubo.update(&num_lights, 1, 0);
 
 		for (u64 i = 0; i < m_lights.size(); i++)
+		{
+			m_lights[i]->update_transform();
 			m_raw[i] = m_lights[i]->get_raw();
+		}
 
 		f32 const* const float_data = (f32*)m_raw.data();
 		u32 const num_floats = (u32)m_lights.size() * s_floats_per_light;
