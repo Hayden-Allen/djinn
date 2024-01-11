@@ -98,30 +98,13 @@ export default class MainEntity extends Entity {
 
     this.idPhormShader = Asset.Shader.load("phorm.vert", "phorm.frag")
     this.idPhormShader2 = Asset.Shader.load("phorm2.vert", "phorm.frag")
-    // const { phorms, lights } = Scene.Xport.load("city_new.xport")
-    // this.idPhorms = phorms
-    // for (var i = 0; i < this.idPhorms.length - 1; i++)
-    //   Scene.Phorm.setShaders(this.idPhorms[i], this.idPhormShader)
-    // Scene.Phorm.setShaders(
-    //   this.idPhorms[this.idPhorms.length - 1],
-    //   this.idPhormShader2
-    // )
-    // this.idLight = lights[0]
-    this.xport = new Xport("city_new.xport")
+    this.xport = new Xport("city2.xport")
     for (var i = 0; i < this.xport.idPhorms.length - 1; i++)
       Scene.Phorm.setShaders(this.xport.idPhorms[i], this.idPhormShader)
     Scene.Phorm.setShaders(
       this.xport.idPhorms[this.xport.idPhorms.length - 1],
       this.idPhormShader2
     )
-
-    // this.idLight = Scene.Light.create()
-    // Scene.setPos(this.idLight, [0, -1, 0])
-    // Scene.Light.setDiffuse(this.idLight, [1, 0, 0, 0.5])
-    // Scene.Light.setAmbient(this.idLight, [0, 0, 1, 0.2])
-    // Scene.Light.setSpecular(this.idLight, [0, 1, 0, 0.5])
-    // this.idLight2 = Scene.Light.create()
-    // Scene.setPos(this.idLight2, [0, -1, 0])
   }
   __destroy() {
     Scene.MeshInstance.destroy(this.idStaticInstance)

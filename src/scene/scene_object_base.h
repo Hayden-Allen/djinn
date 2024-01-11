@@ -43,5 +43,7 @@ namespace djinn
 		f32 m_pos[3] = { 0 }, m_rot[3] = { 0 }, m_scale[3] = { 1, 1, 1 };
 	protected:
 		scene_object_base(id_t const id);
+	protected:
+		void extract_transform(tmat<space::OBJECT, space::PARENT> const& mat);
 	};
 } // namespace djinn

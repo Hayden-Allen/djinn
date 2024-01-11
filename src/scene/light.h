@@ -1,10 +1,11 @@
 #pragma once
 #include "pch.h"
 #include "visibility_scene_object.h"
+#include "xport.h"
 
 namespace djinn
 {
-	class light final : public visibility_scene_object
+	class light final : public visibility_scene_object, public xport
 	{
 	public:
 		light(id_t const id);

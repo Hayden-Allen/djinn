@@ -1,12 +1,13 @@
 #pragma once
 #include "pch.h"
 #include "visibility_scene_object.h"
+#include "xport.h"
 
 namespace djinn
 {
 	class shaders;
 
-	class phorm final : public visibility_scene_object
+	class phorm final : public visibility_scene_object, public xport
 	{
 	public:
 		phorm(id_t const id, mgl::input_file* const in);

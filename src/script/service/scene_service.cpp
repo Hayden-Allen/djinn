@@ -61,6 +61,21 @@ namespace djinn::js::scene_service
 
 
 
+	JSValue create_waypoint(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 0);
+		return js::create_id(ctx, ::djinn::scene_service::get_waypoint_manager()->create());
+	}
+	JSValue destroy_waypoint(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		::djinn::scene_service::get_waypoint_manager()->destroy(id);
+		return JS_UNDEFINED;
+	}
+
+
+
 	JSValue create_light(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 0);
@@ -118,10 +133,11 @@ namespace djinn::js::scene_service
 
 		std::vector<id_t> const& phorms = ::djinn::scene_service::get_phorm_manager()->load_all(&in);
 		std::vector<id_t> const& lights = ::djinn::scene_service::get_light_manager()->load_all(&in);
-		// return js::create_id_array(ctx, (s64)ids.size(), ids.data());
+		std::vector<id_t> const& waypoints = ::djinn::scene_service::get_waypoint_manager()->load_all(&in);
 		JSValue map = JS_NewObject(ctx);
 		JS_SetPropertyStr(ctx, map, "phorms", js::create_id_array(ctx, (s64)phorms.size(), phorms.data()));
 		JS_SetPropertyStr(ctx, map, "lights", js::create_id_array(ctx, (s64)lights.size(), lights.data()));
+		JS_SetPropertyStr(ctx, map, "waypoints", js::create_id_array(ctx, (s64)waypoints.size(), waypoints.data()));
 		return map;
 	}
 	JSValue set_phorm_shaders(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -573,6 +589,9 @@ namespace djinn
 	}
 	void scene_service::register_functions(JSContext* const ctx)
 	{
+		super::register_function(ctx, "Waypoint", "create", 0, js::scene_service::create_waypoint);
+		super::register_function(ctx, "Waypoint", "destroy", 1, js::scene_service::destroy_waypoint);
+
 		super::register_function(ctx, "Light", "create", 0, js::scene_service::create_light);
 		super::register_function(ctx, "Light", "setAmbient", 2, js::scene_service::set_light_color_ambient);
 		super::register_function(ctx, "Light", "setDiffuse", 2, js::scene_service::set_light_color_diffuse);
@@ -682,6 +701,10 @@ namespace djinn
 	{
 		return &s_instance->m_light_manager;
 	}
+	waypoint_manager* scene_service::get_waypoint_manager()
+	{
+		return &s_instance->m_waypoint_manager;
+	}
 	JSRuntime* scene_service::get_runtime()
 	{
 		return s_instance->m_runtime;
@@ -748,6 +771,8 @@ namespace djinn
 			return get_phorm_manager()->get(id);
 		else if (get_light_manager()->has(id))
 			return get_light_manager()->get(id);
+		else if (get_waypoint_manager()->has(id))
+			return get_waypoint_manager()->get(id);
 		return get_mesh_instance_manager()->get(id);
 	}
 

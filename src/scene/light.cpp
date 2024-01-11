@@ -8,9 +8,12 @@ namespace djinn
 	{}
 
 	light::light(id_t const id, mgl::input_file* const in) :
-		visibility_scene_object(id)
+		visibility_scene_object(id),
+		xport(in)
 	{
 		m_raw.load(in);
+		// TODO multiply by accumulated parent inverse
+		extract_transform(m_raw.mat.cast_copy<space::OBJECT, space::PARENT>());
 	}
 
 

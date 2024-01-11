@@ -83,23 +83,6 @@ namespace djinn
 		m_rb->getMotionState()->getWorldTransform(raw);
 		// TODO multiply by accumulate_parent_mats.invert_copy();
 		tmat<space::OBJECT, space::PARENT> const& mat = u::bullet2tmat<space::OBJECT, space::PARENT>(raw);
-		m_pos[0] = mat.t[0];
-		m_pos[1] = mat.t[1];
-		m_pos[2] = mat.t[2];
-		m_scale[0] = mat.get_i().length();
-		m_scale[1] = mat.get_j().length();
-		m_scale[2] = mat.get_k().length();
-
-		m_rot[0] = asin(mat.m[2][1]);
-		if (abs(mat.m[2][1]) < 0.9999999)
-		{
-			m_rot[1] = atan2(mat.m[0][2], mat.m[2][2]);
-			m_rot[2] = atan2(mat.m[0][1], mat.m[1][1]);
-		}
-		else
-		{
-			m_rot[1] = atan2(-mat.m[0][2], mat.m[0][0]);
-			m_rot[2] = 0;
-		}
+		extract_transform(mat);
 	}
 } // namespace djinn

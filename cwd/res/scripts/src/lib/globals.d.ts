@@ -160,6 +160,7 @@ declare interface _Scene_Camera {
 declare interface _Xport {
   phorms: number[]
   lights: number[]
+  waypoints: number[]
 }
 declare interface _Scene_Xport {
   load(fp: string): _Xport
@@ -185,6 +186,10 @@ declare interface _Scene_Light {
   setSpecular(id: number, rgba: number[]): void
   destroy(id: number): void
 }
+declare interface _Scene_Waypoint {
+  create(): number
+  destroy(id: number): void
+}
 declare interface _Scene {
   MeshInstance: _Scene_MeshInstance
   Entity: _Scene_Entity
@@ -193,6 +198,7 @@ declare interface _Scene {
   Physics: _Scene_Physics
   Light: _Scene_Light
   Xport: _Scene_Xport
+  Waypoint: _Scene_Waypoint
 
   copyTransform(idFrom: number, idTo: number): void
   getPos(id: number): number[]
