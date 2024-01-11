@@ -4,39 +4,22 @@
 
 namespace djinn
 {
-	phorm_manager::phorm_manager() :
-		ref_counted_file_manager(c::base_dir::phorm)
+	phorm_manager::phorm_manager()
 	{}
 
 
 
-	std::vector<id_t> phorm_manager::load_all(std::string const& fp)
+	std::vector<id_t> phorm_manager::load_all(mgl::input_file* const in)
 	{
-		std::string const& afp = to_absolute(fp);
-		mgl::input_file in(afp);
-
-		u64 const ro_count = in.ulong();
+		u64 const ro_count = in->ulong();
 		std::vector<id_t> ids;
 		ids.reserve(ro_count);
 		for (u64 i = 0; i < ro_count; i++)
 		{
-			phorm* const p = new phorm(s_next_id, &in);
+			phorm* const p = new phorm(s_next_id, in);
 			ids.push_back(insert(p));
 		}
 		return ids;
-	}
-	id_t phorm_manager::load(std::string const& fp)
-	{
-		ASSERT(false);
-		return 0;
-	}
-	void phorm_manager::reload(std::string const& fp)
-	{
-		ASSERT(false);
-	}
-	void phorm_manager::rename(std::string const& old_fp, std::string const& new_fp)
-	{
-		ASSERT(false);
 	}
 	void phorm_manager::destroy(id_t const id)
 	{

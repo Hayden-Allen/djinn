@@ -11,6 +11,20 @@ namespace djinn
 
 
 
+	std::vector<id_t> light_manager::load_all(mgl::input_file* const in)
+	{
+		u64 const count = in->ulong();
+		std::vector<id_t> ids;
+		ids.reserve(count);
+		for (u64 i = 0; i < count; i++)
+		{
+			light* const l = new light(s_next_id, in);
+			id_t const id = insert(l);
+			ids.push_back(id);
+			m_lights.push_back(get(id));
+		}
+		return ids;
+	}
 	id_t light_manager::create()
 	{
 		id_t const id = insert(new light(s_next_id));

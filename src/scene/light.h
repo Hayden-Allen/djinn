@@ -8,6 +8,7 @@ namespace djinn
 	{
 	public:
 		light(id_t const id);
+		light(id_t const id, mgl::input_file* const in);
 		DCM(light);
 	public:
 		void update_transform() override;

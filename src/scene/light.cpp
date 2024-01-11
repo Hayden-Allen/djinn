@@ -7,6 +7,12 @@ namespace djinn
 		visibility_scene_object(id)
 	{}
 
+	light::light(id_t const id, mgl::input_file* const in) :
+		visibility_scene_object(id)
+	{
+		m_raw.load(in);
+	}
+
 
 
 	void light::update_transform()

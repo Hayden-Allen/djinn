@@ -157,8 +157,14 @@ declare interface _Scene_Camera {
     far: number
   ): void
 }
+declare interface _Xport {
+  phorms: number[]
+  lights: number[]
+}
+declare interface _Scene_Xport {
+  load(fp: string): _Xport
+}
 declare interface _Scene_Phorm {
-  load(fp: string): number[]
   setShaders(idPhorm: number, idShader: number): void
   setVisible(id: number, visible: boolean): void
   destroy(id: number): void
@@ -186,6 +192,7 @@ declare interface _Scene {
   Phorm: _Scene_Phorm
   Physics: _Scene_Physics
   Light: _Scene_Light
+  Xport: _Scene_Xport
 
   copyTransform(idFrom: number, idTo: number): void
   getPos(id: number): number[]

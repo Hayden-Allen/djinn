@@ -109,13 +109,20 @@ namespace djinn::js::scene_service
 
 
 
-	JSValue load_phorms(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	JSValue load_xport(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
 		std::string const& fp = js::extract_string(ctx, argv[0]);
+		std::string const& afp = u::to_absolute(c::base_dir::xport, fp);
+		mgl::input_file in(afp);
 
-		std::vector<id_t> const& ids = ::djinn::scene_service::get_phorm_manager()->load_all(fp);
-		return js::create_id_array(ctx, (s64)ids.size(), ids.data());
+		std::vector<id_t> const& phorms = ::djinn::scene_service::get_phorm_manager()->load_all(&in);
+		std::vector<id_t> const& lights = ::djinn::scene_service::get_light_manager()->load_all(&in);
+		// return js::create_id_array(ctx, (s64)ids.size(), ids.data());
+		JSValue map = JS_NewObject(ctx);
+		JS_SetPropertyStr(ctx, map, "phorms", js::create_id_array(ctx, (s64)phorms.size(), phorms.data()));
+		JS_SetPropertyStr(ctx, map, "lights", js::create_id_array(ctx, (s64)lights.size(), lights.data()));
+		return map;
 	}
 	JSValue set_phorm_shaders(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -572,7 +579,8 @@ namespace djinn
 		super::register_function(ctx, "Light", "setSpecular", 2, js::scene_service::set_light_color_specular);
 		super::register_function(ctx, "Light", "destroy", 1, js::scene_service::destroy_light);
 
-		super::register_function(ctx, "Phorm", "load", 1, js::scene_service::load_phorms);
+		super::register_function(ctx, "Xport", "load", 1, js::scene_service::load_xport);
+
 		super::register_function(ctx, "Phorm", "setShaders", 2, js::scene_service::set_phorm_shaders);
 		super::register_function(ctx, "Phorm", "setVisible", 2, js::scene_service::set_phorm_visible);
 		super::register_function(ctx, "Phorm", "destroy", 1, js::scene_service::destroy_phorm);
