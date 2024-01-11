@@ -13,6 +13,5 @@ namespace djinn
 		DCM(phorm_manager);
 	public:
 		std::vector<id_t> load_all(mgl::input_file* const in) override;
-		void destroy(id_t const id) override;
 	};
 } // namespace djinn

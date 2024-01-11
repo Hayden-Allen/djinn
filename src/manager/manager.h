@@ -27,7 +27,10 @@ namespace djinn
 			free_all();
 		}
 	public:
-		virtual void destroy(id_t const id) = 0;
+		virtual void destroy(id_t const id)
+		{
+			try_erase(id);
+		}
 		void free_all()
 		{
 			std::map<id_t, optr<T>> sorted;

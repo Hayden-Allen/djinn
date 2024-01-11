@@ -13,7 +13,6 @@ namespace djinn
 		~physics_object_manager();
 	public:
 		id_t create(btVector3 const& dims, btVector3 const& origin, f32 const mass);
-		void destroy(id_t const id) override;
 		void update(f32 const dt);
 	private:
 		optr<btDefaultCollisionConfiguration> m_config;

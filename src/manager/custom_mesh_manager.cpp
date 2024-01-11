@@ -14,10 +14,6 @@ namespace djinn
 	{
 		return insert(new custom_mesh(vertex_count, layout, index_count, textures));
 	}
-	void custom_mesh_manager::destroy(id_t const id)
-	{
-		try_erase(id);
-	}
 	void custom_mesh_manager::update(id_t const id, std::vector<f32> const& vertices, std::vector<u32> const& indices)
 	{
 		get(id)->update(vertices, indices);

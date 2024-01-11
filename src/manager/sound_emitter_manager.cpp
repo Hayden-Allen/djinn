@@ -14,8 +14,4 @@ namespace djinn
 		id_t const id = insert(emitter);
 		return id;
 	}
-	void sound_emitter_manager::destroy(id_t const id)
-	{
-		try_erase(id);
-	}
 } // namespace djinn

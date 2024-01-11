@@ -13,6 +13,5 @@ namespace djinn
 		DCM(sound_emitter_manager);
 	public:
 		id_t create(sptr<sound_source>& source);
-		void destroy(id_t const id) override;
 	};
 } // namespace djinn

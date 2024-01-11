@@ -26,6 +26,6 @@ namespace djinn
 	}
 	void waypoint_manager::destroy(id_t const id)
 	{
-		try_erase(id);
+		manager::destroy(id);
 	}
 } // namespace djinn

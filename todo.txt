@@ -5,10 +5,7 @@
 	- Scene.destroySelf()
 
 - now
-	- waypoints
-	- default manager::destroy?
 	- implement different lights
-	- light preprocessor
 	- OOP stl
 
 	- powertranzphormr

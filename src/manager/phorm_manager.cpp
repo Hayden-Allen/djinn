@@ -21,8 +21,4 @@ namespace djinn
 		}
 		return ids;
 	}
-	void phorm_manager::destroy(id_t const id)
-	{
-		try_erase(id);
-	}
 } // namespace djinn

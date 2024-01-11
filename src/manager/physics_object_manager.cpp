@@ -28,10 +28,6 @@ namespace djinn
 		id_t const id = insert(new physics_object(s_next_id, m_world, dims, origin, mass));
 		return id;
 	}
-	void physics_object_manager::destroy(id_t const id)
-	{
-		try_erase(id);
-	}
 	void physics_object_manager::update(f32 const dt)
 	{
 		for (auto& pair : m_objects)

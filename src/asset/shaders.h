@@ -49,5 +49,14 @@ namespace djinn
 	private:
 		std::string preprocess_vert(std::string const& fp);
 		std::string preprocess_frag(std::string const& fp);
+		void pushf(std::vector<std::string>* const lines, char const* const fmt, ...)
+		{
+			va_list args;
+			va_start(args, fmt);
+			char buf[512] = { 0 };
+			vsprintf_s(buf, fmt, args);
+			lines->push_back(buf);
+			va_end(args);
+		}
 	};
 } // namespace djinn

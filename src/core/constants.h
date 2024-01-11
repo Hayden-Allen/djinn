@@ -45,6 +45,9 @@ namespace djinn::c
 		};
 		static std::string const vertex_texture_weights = "d_weights";
 		static std::string const vertex_color = "d_rgba";
+		static std::string const light_ambient = "d_ambient";
+		static std::string const light_diffuse = "d_diffuse";
+		static std::string const light_specular = "d_specular";
 		namespace type
 		{
 			static std::string const STATIC = "STATIC";
@@ -56,6 +59,7 @@ namespace djinn::c
 		{
 			static std::string const type = "TYPE";
 			static std::string const instance_field = "FIELD";
+			static std::string const light_sum = "LIGHT_SUM";
 		} // namespace macro
 	}	  // namespace shader
 	namespace uniform

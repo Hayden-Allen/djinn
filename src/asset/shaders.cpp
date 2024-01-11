@@ -125,52 +125,39 @@ namespace djinn
 		ASSERT(m_type != shader_type::NONE);
 
 		std::vector<std::string> extra_lines;
-		char buf[512] = { 0 };
 
 		// vbo fields (STATIC)
 		if (m_type == shader_type::STATIC)
 		{
-			sprintf_s(buf, "layout(location=0) in vec3 %s;", c::shader::vertex_pos.c_str());
-			extra_lines.push_back(buf);
-			sprintf_s(buf, "layout(location=1) in vec3 %s;", c::shader::vertex_norm.c_str());
-			extra_lines.push_back(buf);
-			sprintf_s(buf, "layout(location=2) in vec2 %s;", c::shader::vertex_tex.c_str());
-			extra_lines.push_back(buf);
+			pushf(&extra_lines, "layout(location=0) in vec3 %s;", c::shader::vertex_pos.c_str());
+			pushf(&extra_lines, "layout(location=1) in vec3 %s;", c::shader::vertex_norm.c_str());
+			pushf(&extra_lines, "layout(location=2) in vec2 %s;", c::shader::vertex_tex.c_str());
 		}
 		else if (m_type == shader_type::ANIMATED)
 		{
-			sprintf_s(buf, "layout(location=0) in vec3 %s;", c::shader::vertex_pos.c_str());
-			extra_lines.push_back(buf);
-			sprintf_s(buf, "layout(location=1) in vec3 %s;", c::shader::vertex_norm.c_str());
-			extra_lines.push_back(buf);
-			sprintf_s(buf, "layout(location=2) in vec2 %s;", c::shader::vertex_tex.c_str());
-			extra_lines.push_back(buf);
+			pushf(&extra_lines, "layout(location=0) in vec3 %s;", c::shader::vertex_pos.c_str());
+			pushf(&extra_lines, "layout(location=1) in vec3 %s;", c::shader::vertex_norm.c_str());
+			pushf(&extra_lines, "layout(location=2) in vec2 %s;", c::shader::vertex_tex.c_str());
 			ASSERT(c::shader::num_vertex_bones == 4); // can make a more sophistocated solution for these two if needed
-			sprintf_s(buf, "layout(location=3) in vec4 %s;", c::shader::vertex_bone_weight.c_str());
-			extra_lines.push_back(buf);
-			sprintf_s(buf, "layout(location=4) in uvec4 %s;", c::shader::vertex_bone_index.c_str());
-			extra_lines.push_back(buf);
+			pushf(&extra_lines, "layout(location=3) in vec4 %s;", c::shader::vertex_bone_weight.c_str());
+			pushf(&extra_lines, "layout(location=4) in uvec4 %s;", c::shader::vertex_bone_index.c_str());
 		}
 		else if (m_type == shader_type::PHORM)
 		{
-			sprintf_s(buf, "layout(location=0) in vec3 %s;", c::shader::vertex_pos.c_str());
-			extra_lines.push_back(buf);
-			sprintf_s(buf, "layout(location=1) in vec3 %s;", c::shader::vertex_norm.c_str());
-			extra_lines.push_back(buf);
+			pushf(&extra_lines, "layout(location=0) in vec3 %s;", c::shader::vertex_pos.c_str());
+			pushf(&extra_lines, "layout(location=1) in vec3 %s;", c::shader::vertex_norm.c_str());
 			for (u32 i = 0; i < 4; i++)
 			{
-				sprintf_s(buf, "layout(location=%u) in vec4 %s;", i + 2, c::shader::vertex_uvs[i].c_str());
-				extra_lines.push_back(buf);
+				pushf(&extra_lines, "layout(location=%u) in vec4 %s;", i + 2, c::shader::vertex_uvs[i].c_str());
 			}
-			sprintf_s(buf, "layout(location=6) in vec4 %s;", c::shader::vertex_texture_weights.c_str());
-			extra_lines.push_back(buf);
-			sprintf_s(buf, "layout(location=7) in vec4 %s;", c::shader::vertex_color.c_str());
-			extra_lines.push_back(buf);
+			pushf(&extra_lines, "layout(location=6) in vec4 %s;", c::shader::vertex_texture_weights.c_str());
+			pushf(&extra_lines, "layout(location=7) in vec4 %s;", c::shader::vertex_color.c_str());
 		}
 
 		// phorms do not use the instanced pipeline
 		if (m_type != shader_type::PHORM)
 		{
+			char buf[512] = { 0 };
 			// instance struct definition (CUSTOM and STATIC)
 			if (m_type == shader_type::CUSTOM || m_type == shader_type::STATIC)
 			{
@@ -197,12 +184,10 @@ namespace djinn
 			// instance ubo definition (ALL)
 			u32 const max_structs_per_ubo =
 				c::shader::ubo_size_bytes / field_offset_bytes;
-			sprintf_s(buf, "layout(std140) uniform %s { %s d_i[%u]; } %s[%u];", c::uniform::instance_block_type.c_str(), c::shader::instance_struct.c_str(), max_structs_per_ubo, c::uniform::instances.c_str(), c::shader::num_batch_ubos);
-			extra_lines.push_back(buf);
+			pushf(&extra_lines, "layout(std140) uniform %s { %s d_i[%u]; } %s[%u];", c::uniform::instance_block_type.c_str(), c::shader::instance_struct.c_str(), max_structs_per_ubo, c::uniform::instances.c_str(), c::shader::num_batch_ubos);
 
 			// instance struct macro definition (ALL)
-			sprintf_s(buf, "#define d_instance %s[gl_InstanceID/%u].d_i[gl_InstanceID-%u*(gl_InstanceID/%u)]", c::uniform::instances.c_str(), max_structs_per_ubo, max_structs_per_ubo, max_structs_per_ubo);
-			extra_lines.push_back(buf);
+			pushf(&extra_lines, "#define d_instance %s[gl_InstanceID/%u].d_i[gl_InstanceID-%u*(gl_InstanceID/%u)]", c::uniform::instances.c_str(), max_structs_per_ubo, max_structs_per_ubo, max_structs_per_ubo);
 		}
 
 		// join all lines
@@ -226,16 +211,36 @@ namespace djinn
 			line = u::trim(line);
 			if (line.empty())
 				continue;
-			lines.push_back(line);
+			if (line.starts_with(c::shader::macro::light_sum))
+			{
+				auto const& args = extract_args(line);
+				ASSERT(args.size() == 2);
+				char const* const N = args[0].c_str();
+				char const* const V = args[1].c_str();
+				char const* const amb = c::shader::light_ambient.c_str();
+				char const* const diff = c::shader::light_diffuse.c_str();
+				char const* const spec = c::shader::light_specular.c_str();
+				pushf(&lines, "vec3 %s=vec3(0),%s=vec3(0),%s=vec3(0);", amb, diff, spec);
+				pushf(&lines, "for(int i=0;i<int(d_lights.d_num);i++){");
+				pushf(&lines, "vec3 L=normalize(d_lights.d_l[i].o2w[3].xyz);");
+				pushf(&lines, "vec3 R=reflect(L,%s);", N);
+				pushf(&lines, "float NdL=max(0,dot(%s,-L));", N);
+				pushf(&lines, "float RdV=max(0,dot(R,%s));", V);
+				pushf(&lines, "%s+=d_lights.d_l[i].ca.rgb*d_lights.d_l[i].ca.a;", amb);
+				pushf(&lines, "%s+=NdL*d_lights.d_l[i].cd.rgb*d_lights.d_l[i].cd.a;", diff);
+				pushf(&lines, "%s+=pow(RdV,32)*d_lights.d_l[i].cs.rgb*d_lights.d_l[i].cs.a;", spec);
+				pushf(&lines, "}");
+			}
+			else
+			{
+				lines.push_back(line);
+			}
 		}
 
 		std::vector<std::string> extra_lines;
-		char buf[512] = { 0 };
 		// lights
-		sprintf_s(buf, "struct %s { mat4 o2w, w2o; vec4 ca, cd, cs; float sp, rmax; float cos_tmin, cos_tmax; };", c::shader::light_struct.c_str());
-		extra_lines.push_back(buf);
-		sprintf_s(buf, "layout(std140) uniform %s { float d_num; %s d_l[%u]; } %s;", c::uniform::light_block_type.c_str(), c::shader::light_struct.c_str(), c::shader::num_lights, c::uniform::light_block_name.c_str());
-		extra_lines.push_back(buf);
+		pushf(&extra_lines, "struct %s { mat4 o2w, w2o; vec4 ca, cd, cs; float sp, rmax; float cos_tmin, cos_tmax; };", c::shader::light_struct.c_str());
+		pushf(&extra_lines, "layout(std140) uniform %s { float d_num; %s d_l[%u]; } %s;", c::uniform::light_block_type.c_str(), c::shader::light_struct.c_str(), c::shader::num_lights, c::uniform::light_block_name.c_str());
 
 		// join all lines
 		lines.insert(lines.begin() + 1, extra_lines.begin(), extra_lines.end());
