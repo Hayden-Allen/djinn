@@ -8,7 +8,7 @@ namespace djinn
 	void shader_watcher::handle_action(DWORD const action, std::string const& fp)
 	{
 		if (action == FILE_ACTION_MODIFIED)
-			u::sleep(1000);
+			u::sleep(500);
 		super::handle_action(action, fp);
 	}
 } // namespace djinn

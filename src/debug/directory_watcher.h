@@ -66,6 +66,7 @@ namespace djinn
 		{
 			switch (action)
 			{
+			case FILE_ACTION_ADDED:
 			case FILE_ACTION_MODIFIED:
 				m_manager->reload(fp);
 				break;
@@ -73,7 +74,6 @@ namespace djinn
 			case FILE_ACTION_RENAMED_OLD_NAME:
 				m_old_fp = fp;
 				break;
-			case FILE_ACTION_ADDED:
 			case FILE_ACTION_RENAMED_NEW_NAME:
 				m_manager->rename(m_old_fp, fp);
 				break;

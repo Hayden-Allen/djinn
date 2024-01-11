@@ -18,6 +18,7 @@ namespace djinn
 		void set_friction(f32 const f);
 		void set_linear_velocity(f32 const x, f32 const y, f32 const z);
 		void set_angular_velocity(f32 const x, f32 const y, f32 const z);
+		void set_collision_enabled(bool const enabled);
 	private:
 		sptr<btDiscreteDynamicsWorld> m_world;
 		optr<btRigidBody> m_rb;

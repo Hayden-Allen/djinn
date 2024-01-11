@@ -184,6 +184,9 @@ export default class MainEntity extends Entity {
     } else {
       Scene.MeshInstance.setVisible(this.idStaticInstance, true)
     }
+    if (Input.getKey(Input.KEY_SHIFT))
+      Scene.Physics.disableCollision(this.idPhysics)
+    else Scene.Physics.enableCollision(this.idPhysics)
 
     // for (const id of this.idPhorms) {
     //   Scene.addRotY(id, dt)

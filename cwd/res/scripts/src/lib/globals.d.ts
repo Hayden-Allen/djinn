@@ -168,6 +168,8 @@ declare interface _Scene_Physics {
   setFriction(id: number, f: number): void
   setLinearVelocity(id: number, vel: number[]): void
   setAngularVelocity(id: number, vel: number[]): void
+  enableCollision(id: number): void
+  disableCollision(id: number): void
   destroy(id: number): void
 }
 declare interface _Scene_Light {

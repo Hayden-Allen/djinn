@@ -318,6 +318,22 @@ namespace djinn::js::scene_service
 		so->set_angular_velocity(arr[0], arr[1], arr[2]);
 		return JS_UNDEFINED;
 	}
+	JSValue enable_collision(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		so->set_collision_enabled(true);
+		return JS_UNDEFINED;
+	}
+	JSValue disable_collision(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		so->set_collision_enabled(false);
+		return JS_UNDEFINED;
+	}
 	JSValue destroy_physics_object(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
@@ -578,6 +594,8 @@ namespace djinn
 		super::register_function(ctx, "Physics", "setFriction", 2, js::scene_service::set_friction);
 		super::register_function(ctx, "Physics", "setLinearVelocity", 2, js::scene_service::set_linear_velocity);
 		super::register_function(ctx, "Physics", "setAngularVelocity", 2, js::scene_service::set_angular_velocity);
+		super::register_function(ctx, "Physics", "enableCollision", 1, js::scene_service::enable_collision);
+		super::register_function(ctx, "Physics", "disableCollision", 1, js::scene_service::disable_collision);
 		super::register_function(ctx, "Physics", "destroy", 1, js::scene_service::destroy_physics_object);
 
 		super::register_function(ctx, "copyTransform", 2, js::scene_service::copy_transform);

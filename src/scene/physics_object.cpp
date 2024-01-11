@@ -67,6 +67,13 @@ namespace djinn
 	{
 		m_rb->setAngularVelocity(btVector3(x, y, z));
 	}
+	void physics_object::set_collision_enabled(bool const enabled)
+	{
+		if (enabled)
+			m_rb->setCollisionFlags(m_rb->getCollisionFlags() & ~btCollisionObject::CF_NO_CONTACT_RESPONSE);
+		else
+			m_rb->setCollisionFlags(m_rb->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+	}
 
 
 
