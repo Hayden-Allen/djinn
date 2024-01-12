@@ -311,6 +311,10 @@ namespace djinn
 	{
 		return &s_instance->m_sound_source_manager;
 	}
+	material_manager* asset_service::get_material_manager()
+	{
+		return &s_instance->m_material_manager;
+	}
 	sptr<mesh> asset_service::get_mesh(id_t const id)
 	{
 		if (s_instance->m_custom_mesh_manager.has(id))

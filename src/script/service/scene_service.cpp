@@ -134,7 +134,7 @@ namespace djinn::js::scene_service
 
 		std::vector<id_t> const& textures = ::djinn::asset_service::get_texture_manager()->load_all(&in);
 
-		std::unordered_map<u32, material*> mats;
+		/*std::unordered_map<u32, material*> mats;
 		u64 const num_materials = in.ulong();
 		mats.reserve(num_materials);
 		for (u64 i = 0; i < num_materials; i++)
@@ -143,9 +143,11 @@ namespace djinn::js::scene_service
 			mats.insert({ idx, new material(&in, textures) });
 		}
 		for (auto const& pair : mats)
-			delete pair.second;
+			delete pair.second;*/
 
-		std::vector<id_t> const& phorms = ::djinn::scene_service::get_phorm_manager()->load_all(&in);
+		std::unordered_map<u32, sptr<material>> const& materials = ::djinn::asset_service::get_material_manager()->load_all(&in, textures);
+
+		std::vector<id_t> const& phorms = ::djinn::scene_service::get_phorm_manager()->load_all(&in, materials);
 		std::vector<id_t> const& lights = ::djinn::scene_service::get_light_manager()->load_all(&in);
 		std::vector<id_t> const& waypoints = ::djinn::scene_service::get_waypoint_manager()->load_all(&in);
 

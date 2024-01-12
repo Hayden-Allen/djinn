@@ -3,7 +3,7 @@
 #define M3D_IMPLEMENTATION
 #include "m3d.h"
 #ifndef NDEBUG
-#define GLAD_WRAPPER_ENABLED
+#	define GLAD_WRAPPER_ENABLED
 #endif
 #define GLAD_WRAPPER_IMPLEMENTATION
 #include "glad/glad.h"

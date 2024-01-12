@@ -13,5 +13,6 @@ namespace djinn
 		DCM(phorm_manager);
 	public:
 		std::vector<id_t> load_all(mgl::input_file* const in) override;
+		std::vector<id_t> load_all(mgl::input_file* const in, std::unordered_map<u32, sptr<material>> const& mats);
 	};
 } // namespace djinn

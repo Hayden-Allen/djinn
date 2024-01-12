@@ -9,7 +9,6 @@
 	- powertranzphormr
 		- mgl::input_file => haul::input_file
 	- export smnodes
-	- phorm materials (material manager? probably not)
 	- implement different lights
 	- OOP stl
 

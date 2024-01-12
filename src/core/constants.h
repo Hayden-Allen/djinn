@@ -67,6 +67,7 @@ namespace djinn::c
 		static constexpr u64 light_ubo_index = ::djinn::c::shader::num_ubos - 1;
 		static std::string const light_block_name = "d_lights";
 		static std::string const light_block_type = "d_light";
+		static std::string const phorm_textures = "d_phorm_tex";
 		static std::string const time = "d_time";
 		static std::string const view_mat = "d_view";
 		static std::string const proj_mat = "d_proj";

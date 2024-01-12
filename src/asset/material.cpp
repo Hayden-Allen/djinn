@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "material.h"
+#include "script/service/asset_service.h"
 
 namespace djinn
 {
@@ -13,13 +14,19 @@ namespace djinn
 			u64 const idx = in->ulong();
 			if (idx == 0)
 			{
-				m_textures[i] = 0;
+				m_textures[i] = nullptr;
 			}
 			else
 			{
 				ASSERT(idx <= tex_ids.size())
-				m_textures[i] = tex_ids[idx - 1];
+				m_textures[i] = asset_service::get_texture_manager()->get(tex_ids[idx - 1]).get();
 			}
 		}
+	}
+	void material::bind() const
+	{
+		for (u64 i = 0; i < m_textures.size(); i++)
+			if (m_textures[i])
+				m_textures[i]->bind((u32)i);
 	}
 } // namespace djinn

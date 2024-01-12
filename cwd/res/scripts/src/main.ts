@@ -36,7 +36,6 @@ export default class MainEntity extends Entity {
   private ground: Optional<GroundEntity>
 
   private idPhormShader: number = 0
-  private idPhormShader2: number = 0
   private xport: Optional<Xport>
 
   __init() {
@@ -97,14 +96,9 @@ export default class MainEntity extends Entity {
     this.ground?.bind(this.camera!)
 
     this.idPhormShader = Asset.Shader.load("phorm.vert", "phorm.frag")
-    this.idPhormShader2 = Asset.Shader.load("phorm2.vert", "phorm.frag")
     this.xport = new Xport("city3.xport")
-    for (var i = 0; i < this.xport.idPhorms.length - 1; i++)
+    for (var i = 0; i < this.xport.idPhorms.length; i++)
       Scene.Phorm.setShaders(this.xport.idPhorms[i], this.idPhormShader)
-    Scene.Phorm.setShaders(
-      this.xport.idPhorms[this.xport.idPhorms.length - 1],
-      this.idPhormShader2
-    )
   }
   __destroy() {
     Scene.MeshInstance.destroy(this.idStaticInstance)
@@ -128,7 +122,6 @@ export default class MainEntity extends Entity {
 
     this.xport?.destroy()
     Asset.Shader.destroy(this.idPhormShader)
-    Asset.Shader.destroy(this.idPhormShader2)
   }
   __load() {
     this.color.set(0, 1, 1, 0.5)
@@ -190,7 +183,6 @@ export default class MainEntity extends Entity {
     Asset.Shader.setCameraUniforms(this.idStaticShader, this.camera!.getId())
     Asset.Shader.setCameraUniforms(this.idAnimatedShader, this.camera!.getId())
     Asset.Shader.setCameraUniforms(this.idPhormShader, this.camera!.getId())
-    Asset.Shader.setCameraUniforms(this.idPhormShader2, this.camera!.getId())
 
     Scene.copyTransform(this.idPhysics, this.idStaticInstance)
   }

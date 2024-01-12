@@ -7,6 +7,7 @@
 #include "manager/texture_manager.h"
 #include "manager/cubemap_manager.h"
 #include "manager/sound_source_manager.h"
+#include "manager/material_manager.h"
 
 namespace djinn
 {
@@ -25,6 +26,7 @@ namespace djinn
 		static static_mesh_manager* get_static_mesh_manager();
 		static animated_mesh_manager* get_animated_mesh_manager();
 		static sound_source_manager* get_sound_source_manager();
+		static material_manager* get_material_manager();
 		static sptr<mesh> get_mesh(id_t const id);
 		static void draw_meshes();
 	private:
@@ -35,6 +37,7 @@ namespace djinn
 		static_mesh_manager m_static_mesh_manager;
 		animated_mesh_manager m_animated_mesh_manager;
 		sound_source_manager m_sound_source_manager;
+		material_manager m_material_manager;
 	private:
 		asset_service();
 	};
