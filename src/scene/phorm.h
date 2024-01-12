@@ -16,7 +16,7 @@ namespace djinn
 		void draw(sptr<mgl::context> const& ctx);
 		void set_shaders(sptr<shaders> const& shaders);
 	private:
-		static_retained_render_object m_ro;
+		std::unordered_map<u32, static_retained_render_object> m_ros;
 		wptr<shaders> m_shaders;
 	};
 } // namespace djinn
