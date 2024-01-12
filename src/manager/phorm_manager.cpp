@@ -11,14 +11,24 @@ namespace djinn
 
 	std::vector<id_t> phorm_manager::load_xport(mgl::input_file* const in, std::unordered_map<u32, sptr<material>> const& mats)
 	{
-		u64 const count = in->ulong();
 		std::vector<id_t> ids;
-		ids.reserve(count);
-		for (u64 i = 0; i < count; i++)
+
+		u64 const sg_count = in->ulong();
+		printf("sg: %zu\n", sg_count);
+		for (u64 i = 0; i < sg_count; i++)
 		{
 			phorm* const p = new phorm(s_next_id, in, mats);
 			ids.push_back(insert(p));
 		}
+
+		u64 const sm_count = in->ulong();
+		printf("sm: %zu\n", sm_count);
+		for (u64 i = 0; i < sm_count; i++)
+		{
+			phorm* const p = new phorm(s_next_id, in, mats);
+			ids.push_back(insert(p));
+		}
+
 		return ids;
 	}
 } // namespace djinn

@@ -28,8 +28,7 @@ namespace djinn
 		std::string const& frag_src = preprocess_frag(frag_afp);
 		super::init(vert_src, frag_src, true);
 
-		if (has_uniform(c::uniform::light_block_name))
-			uniform_block_binding(c::uniform::light_block_name, c::uniform::light_ubo_index);
+		uniform_block_binding(c::uniform::light_block_name, c::uniform::light_ubo_index);
 	}
 
 

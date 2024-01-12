@@ -96,7 +96,7 @@ export default class MainEntity extends Entity {
     this.ground?.bind(this.camera!)
 
     this.idPhormShader = Asset.Shader.load("phorm.vert", "phorm.frag")
-    this.xport = new Xport("city3.xport")
+    this.xport = new Xport("city.xport")
     for (var i = 0; i < this.xport.idPhorms.length; i++)
       Scene.Phorm.setShaders(this.xport.idPhorms[i], this.idPhormShader)
   }
@@ -172,7 +172,7 @@ export default class MainEntity extends Entity {
     //   Scene.setScale(id, [s, s, s])
     // }
 
-    Scene.setPos(this.xport!.idLights[0], [Math.cos(time), -1, Math.sin(time)])
+    // Scene.setPos(this.xport!.idLights[0], [Math.cos(time), -1, Math.sin(time)])
   }
   __draw() {
     this.skybox!.draw(this.camera!.getId())

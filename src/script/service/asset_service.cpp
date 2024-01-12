@@ -121,23 +121,16 @@ namespace djinn::js::asset_service
 		id_t const camera_id = js::extract_id(ctx, argv[1]);
 		sptr<camera_entity> const cam = ::djinn::scene_service::get_camera_entity_manager()->get(camera_id);
 		sptr<shaders> shaders = ::djinn::asset_service::get_shader_manager()->get(shader_id);
-		if (shaders->has_uniform(c::uniform::view_mat))
-			shaders->uniform_mat4(c::uniform::view_mat, cam->get_view().e);
-		if (shaders->has_uniform(c::uniform::proj_mat))
-			shaders->uniform_mat4(c::uniform::proj_mat, cam->get_proj().e);
-		if (shaders->has_uniform(c::uniform::vp_mat))
-			shaders->uniform_mat4(c::uniform::vp_mat, cam->get_view_proj().e);
-		if (shaders->has_uniform(c::uniform::cam_pos))
-		{
-			f32 const* const pos = cam->get_pos();
-			shaders->uniform_3f(c::uniform::cam_pos, pos[0], pos[1], pos[2]);
-		}
-		if (shaders->has_uniform(c::uniform::vpr_mat))
-		{
-			// remove translation from view matrix
-			mat<space::WORLD, space::CLIP> const& vpr = cam->get_proj() * cam->get_view().basis_copy();
-			shaders->uniform_mat4(c::uniform::vpr_mat, vpr.e);
-		}
+
+		shaders->uniform_mat4(c::uniform::view_mat, cam->get_view().e);
+		shaders->uniform_mat4(c::uniform::proj_mat, cam->get_proj().e);
+		shaders->uniform_mat4(c::uniform::vp_mat, cam->get_view_proj().e);
+		f32 const* const pos = cam->get_pos();
+		shaders->uniform_3f(c::uniform::cam_pos, pos[0], pos[1], pos[2]);
+		// remove translation from view matrix
+		mat<space::WORLD, space::CLIP> const& vpr = cam->get_proj() * cam->get_view().basis_copy();
+		shaders->uniform_mat4(c::uniform::vpr_mat, vpr.e);
+
 		return JS_UNDEFINED;
 	}
 

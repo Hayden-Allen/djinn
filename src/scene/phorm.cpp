@@ -2,12 +2,13 @@
 #include "phorm.h"
 #include "asset/shaders.h"
 #include "asset/material.h"
-#include "script/service/asset_service.h"
+#include "script/service/render_service.h"
 
 namespace djinn
 {
 	phorm::phorm(id_t const id, mgl::input_file* const in, std::unordered_map<u32, sptr<material>> const& mats) :
 		visibility_scene_object(id),
+		xport(in),
 		m_shaders(nullptr)
 	{
 		// TODO matrix stored in the file is object2world
@@ -18,6 +19,8 @@ namespace djinn
 		for (u64 i = 0; i < ro_count; i++)
 		{
 			u32 const material_idx = in->uint();
+			printf("\t%zu\n", in->get_pos());
+			printf("\t%u | %u(%zu)\n", id, material_idx, i);
 			ASSERT(mats.contains(material_idx));
 			m_ros.emplace(mats.at(material_idx), *in);
 		}
@@ -32,18 +35,14 @@ namespace djinn
 		{
 			update_transform();
 			tmat<space::OBJECT, space::WORLD> const& model = get_graphics_transform();
-			if (m_shaders->has_uniform(c::uniform::model_mat))
-				m_shaders->uniform_mat4(c::uniform::model_mat, model.e);
-			if (m_shaders->has_uniform(c::uniform::normal_mat))
-			{
-				std::vector<f32> const& normal = model.invert_copy().transpose_copy().mat3();
-				m_shaders->uniform_mat3(c::uniform::normal_mat, normal.data());
-			}
+			m_shaders->uniform_mat4(c::uniform::model_mat, model.e);
+			std::vector<f32> const& normal = model.invert_copy().transpose_copy().mat3();
+			m_shaders->uniform_mat3(c::uniform::normal_mat, normal.data());
 
 			// done here for hot reloading
 			for (u32 i = 0; i < 4; i++)
-				if (m_shaders->has_uniform(c::uniform::phorm_textures[i]))
-					m_shaders->uniform_1i(c::uniform::phorm_textures[i], i);
+				m_shaders->uniform_1i(c::uniform::phorm_textures[i], i);
+			m_shaders->uniform_1f(c::uniform::time, render_service::get_context()->time.now);
 			for (auto const& pair : m_ros)
 			{
 				pair.first->bind();

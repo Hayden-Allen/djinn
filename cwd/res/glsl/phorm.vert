@@ -8,7 +8,7 @@ out vec4 v_rgba, v_weights, v_uv[4];
 
 void main()
 {
-    vec4 pos = vec4(d_pos * .05, 1);
+    vec4 pos = vec4(d_pos, 1);
     gl_Position = d_vp * d_model * pos;
     v_pos = vec3(d_model * pos);
     v_norm = d_normal * d_norm;

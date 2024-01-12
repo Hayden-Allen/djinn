@@ -9,6 +9,7 @@ export default class Camera extends Entity {
     Scene.Camera.configure(this.id, 108 / ar, ar, 0.01, 1000)
   }
   __main(dt: number, time: number) {
+    dt *= 2
     const dx = dt * Input.leftX()
     const dy =
       dt * (Input.getKey(Input.KEY_SPACE) - Input.getKey(Input.KEY_SHIFT))
