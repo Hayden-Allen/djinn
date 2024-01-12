@@ -6,6 +6,7 @@
 #	endif
 #	define __debugbreak		__builtin_debugtrap
 #	define sprintf_s(buf, ...) snprintf((buf), sizeof(buf), __VA_ARGS__)
+#	define vsprintf_s(buf, fmt, args) vsnprintf((buf), sizeof(buf), fmt, args);
 #endif
 
 #include <stdio.h>
@@ -37,7 +38,7 @@ using namespace hapi;
 using namespace hats;
 #include "haul/haul.h"
 #ifdef _DEBUG
-#	define GLAD_WRAPPER_ENABLED
+// #	define GLAD_WRAPPER_ENABLED // FIXME: We have disabled error checking for now, so we can keep compiling on macOS until we're able to fix the error
 #endif
 #include "glad/glad.h"
 
