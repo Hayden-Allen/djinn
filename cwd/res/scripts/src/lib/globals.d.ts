@@ -172,7 +172,26 @@ declare interface _Scene_Phorm {
   destroy(id: number): void
 }
 declare interface _Scene_Physics {
-  create(dims: number[], origin: number[], mass: number): number
+  createBox(dims: number[], origin: number[], mass: number): number
+  createSphere(radius: number, origin: number[], mass: number): number
+  createCapsuleX(
+    radius: number,
+    height: number,
+    origin: number[],
+    mass: number
+  ): number
+  createCapsuleY(
+    radius: number,
+    height: number,
+    origin: number[],
+    mass: number
+  ): number
+  createCapsuleZ(
+    radius: number,
+    height: number,
+    origin: number[],
+    mass: number
+  ): number
   createFromPhorm(idPhorm: number): number
   setFriction(id: number, f: number): void
   setLinearVelocity(id: number, vel: number[]): void

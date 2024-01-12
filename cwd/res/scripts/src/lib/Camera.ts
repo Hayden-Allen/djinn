@@ -7,6 +7,7 @@ export default class Camera extends Entity {
   __load() {
     const ar = Render.getAspectRatio()
     Scene.Camera.configure(this.id, 108 / ar, ar, 0.01, 1000)
+    Scene.setPosY(this.id, 15)
   }
   __main(dt: number, time: number) {
     dt *= 2

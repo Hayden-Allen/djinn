@@ -83,7 +83,7 @@ export default class GroundEntity extends Entity {
     this.idInstance = Scene.MeshInstance.create(this.idMesh, this.idShader)
     Scene.setScale(this.idInstance, [5, 1, 5])
     Scene.setPosY(this.idInstance, -2)
-    this.idPhysics = Scene.Physics.create([5, 1, 5], [0, -2, 0], 0)
+    this.idPhysics = Scene.Physics.createBox([5, 1, 5], [0, -2, 0], 0)
   }
   __destroy() {
     Scene.Physics.destroy(this.idPhysics)

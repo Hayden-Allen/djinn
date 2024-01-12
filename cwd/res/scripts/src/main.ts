@@ -88,9 +88,16 @@ export default class MainEntity extends Entity {
       Scene.setPosZ(this.idAnimatedInstances[i], -3)
     }
 
-    this.idPhysics = Scene.Physics.create([1, 1, 1], [0, 20, 0], 1)
-    Scene.Physics.setFriction(this.idPhysics, 0)
-    Scene.Physics.setAngularVelocity(this.idPhysics, [0, 1, 0])
+    // this.idPhysics = Scene.Physics.createSphere(Math.sqrt(3) / 2, [0, 20, 0], 1)
+    // this.idPhysics = Scene.Physics.createBox([1, 1, 1], [0, 20, 0], 1)
+    this.idPhysics = Scene.Physics.createCapsuleY(
+      Math.sqrt(3) / 2,
+      1,
+      [0, 20, 0],
+      1
+    )
+    // Scene.Physics.setFriction(this.idPhysics, 0)
+    // Scene.Physics.setAngularVelocity(this.idPhysics, [0, 1, 0])
 
     this.ground = Scene.Entity.load("GroundEntity.js") as GroundEntity
     this.ground?.bind(this.camera!)
@@ -156,21 +163,15 @@ export default class MainEntity extends Entity {
     }
     Scene.Entity.requestImGui(this.id)
 
-    if (Input.getKey(Input.KEY_SPACE)) {
-      Scene.Physics.setLinearVelocity(this.idPhysics, [0, 5, 0])
-      Scene.MeshInstance.setVisible(this.idStaticInstance, false)
-    } else {
-      Scene.MeshInstance.setVisible(this.idStaticInstance, true)
-    }
-    if (Input.getKey(Input.KEY_SHIFT))
-      Scene.Physics.disableCollision(this.idPhysics)
-    else Scene.Physics.enableCollision(this.idPhysics)
-
-    // for (const id of this.idPhorms) {
-    //   Scene.addRotY(id, dt)
-    //   const s = Math.abs(Math.sin(time))
-    //   Scene.setScale(id, [s, s, s])
+    // if (Input.getKey(Input.KEY_SPACE)) {
+    //   Scene.Physics.setLinearVelocity(this.idPhysics, [0, 5, 0])
+    //   Scene.MeshInstance.setVisible(this.idStaticInstance, false)
+    // } else {
+    //   Scene.MeshInstance.setVisible(this.idStaticInstance, true)
     // }
+    // if (Input.getKey(Input.KEY_SHIFT))
+    //   Scene.Physics.disableCollision(this.idPhysics)
+    // else Scene.Physics.enableCollision(this.idPhysics)
 
     // Scene.setPos(this.xport!.idLights[0], [Math.cos(time), -1, Math.sin(time)])
   }

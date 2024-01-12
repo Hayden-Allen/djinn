@@ -1,13 +1,13 @@
 #pragma once
 #include "pch.h"
 #include "service.h"
-#include "manager/entity_manager.h"
-#include "manager/camera_entity_manager.h"
-#include "manager/mesh_instance_manager.h"
-#include "manager/physics_object_manager.h"
-#include "manager/phorm_manager.h"
-#include "manager/light_manager.h"
-#include "manager/waypoint_manager.h"
+#include "manager/scene/entity_manager.h"
+#include "manager/scene/camera_entity_manager.h"
+#include "manager/scene/mesh_instance_manager.h"
+#include "manager/scene/physics_object_manager.h"
+#include "manager/xport/phorm_manager.h"
+#include "manager/xport/light_manager.h"
+#include "manager/xport/waypoint_manager.h"
 
 namespace djinn
 {

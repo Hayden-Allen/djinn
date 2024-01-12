@@ -5,6 +5,14 @@
 	- Scene.destroySelf()
 
 - now
+	- scene/physics
+	- scene/xport, manager/xport
+	- primitive_physics_object (box/sphere/capsule)
+	- single bvh
+	- load powertranzphormr scenes
+		- Scene.Physics.createAABB/createCapsule/createBVH that take a mesh or phorm_object
+		- provide library class to package phorm_object and physics_object
+
 	- HOT_RELOAD/NOT_RELOAD macro?
 	- phorm handle different material settings (alpha, cull, lighting)
 	- implement different lights
@@ -17,9 +25,6 @@
 	- retained_buffer::load => buffer::load (buffer doesn't get save though)
 	- load/save take haul::input_file* const
 
-	- load powertranzphormr scenes
-		- Scene.Physics.createAABB/createCapsule/createBVH that take a mesh or phorm_object
-		- provide library class to package phorm_object and physics_object
 	- mesh_watcher_base/static_mesh_watcher/animated_mesh_watcher
 	- mesh_instance_batch testing
 		- create instances with different shaders

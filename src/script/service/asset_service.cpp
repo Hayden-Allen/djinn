@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "asset_service.h"
 #include "script/js.h"
-#include "scene/camera_entity.h"
+#include "scene/entity/camera_entity.h"
 #include "scene_service.h"
 #include "core/constants.h"
 #include "render_service.h"

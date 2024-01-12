@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "shader_watcher.h"
 #include "core/util.h"
-#include "manager/shader_manager.h"
+#include "manager/asset/shader_manager.h"
 
 namespace djinn
 {

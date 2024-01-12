@@ -1,13 +1,13 @@
 #pragma once
 #include "pch.h"
 #include "service.h"
-#include "manager/custom_mesh_manager.h"
-#include "manager/loaded_mesh_manager.h"
-#include "manager/shader_manager.h"
-#include "manager/texture_manager.h"
-#include "manager/cubemap_manager.h"
-#include "manager/sound_source_manager.h"
-#include "manager/material_manager.h"
+#include "manager/asset/custom_mesh_manager.h"
+#include "manager/asset/loaded_mesh_manager.h"
+#include "manager/asset/shader_manager.h"
+#include "manager/asset/texture_manager.h"
+#include "manager/asset/cubemap_manager.h"
+#include "manager/asset/sound_source_manager.h"
+#include "manager/xport/material_manager.h"
 
 namespace djinn
 {

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "cubemap_watcher.h"
 #include "core/util.h"
-#include "manager/cubemap_manager.h"
+#include "manager/asset/cubemap_manager.h"
 
 namespace djinn
 {

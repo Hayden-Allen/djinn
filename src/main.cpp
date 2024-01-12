@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "scene/entity.h"
+#include "scene/entity/entity.h"
 #include "script/service/asset_service.h"
 #include "script/service/render_service.h"
 #include "script/service/nanovg_service.h"
