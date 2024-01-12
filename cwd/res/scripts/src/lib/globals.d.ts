@@ -192,7 +192,7 @@ declare interface _Scene_Physics {
     origin: number[],
     mass: number
   ): number
-  createFromPhorm(idPhorm: number): number
+  createBVH(idPhorm: number): number
   setFriction(id: number, f: number): void
   setLinearVelocity(id: number, vel: number[]): void
   setAngularVelocity(id: number, vel: number[]): void

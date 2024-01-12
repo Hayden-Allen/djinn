@@ -376,13 +376,12 @@ namespace djinn::js::scene_service
 
 		return js::create_id(ctx, ::djinn::scene_service::get_physics_object_manager()->create_capsule_z(radius, height, origin, mass));
 	}
-	JSValue create_physics_from_phorm(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	JSValue create_physics_bvh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
 		id_t const id = js::extract_id(ctx, argv[0]);
 		sptr<phorm> const& phorm = ::djinn::scene_service::get_phorm_manager()->get(id);
-		std::vector<id_t> const& ids = ::djinn::scene_service::get_physics_object_manager()->create_from_phorm(phorm);
-		return js::create_id_array(ctx, (s64)ids.size(), ids.data());
+		return js::create_id(ctx, ::djinn::scene_service::get_physics_object_manager()->create_bvh(phorm));
 	}
 	JSValue set_friction(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -695,7 +694,7 @@ namespace djinn
 		super::register_function(ctx, "Physics", "createCapsuleX", 4, js::scene_service::create_physics_capsule_x);
 		super::register_function(ctx, "Physics", "createCapsuleY", 4, js::scene_service::create_physics_capsule_y);
 		super::register_function(ctx, "Physics", "createCapsuleZ", 4, js::scene_service::create_physics_capsule_z);
-		super::register_function(ctx, "Physics", "createFromPhorm", 1, js::scene_service::create_physics_from_phorm);
+		super::register_function(ctx, "Physics", "createBVH", 1, js::scene_service::create_physics_bvh);
 		super::register_function(ctx, "Physics", "setFriction", 2, js::scene_service::set_friction);
 		super::register_function(ctx, "Physics", "setLinearVelocity", 2, js::scene_service::set_linear_velocity);
 		super::register_function(ctx, "Physics", "setAngularVelocity", 2, js::scene_service::set_angular_velocity);

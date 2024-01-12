@@ -16,9 +16,7 @@ export default class Xport {
     this.idLights = lights
     this.idWaypoints = waypoints
     for (const id of this.idPhorms) {
-      this.idHitboxes = this.idHitboxes.concat(
-        Scene.Physics.createFromPhorm(id)
-      )
+      this.idHitboxes.push(Scene.Physics.createBVH(id))
     }
   }
   destroy() {

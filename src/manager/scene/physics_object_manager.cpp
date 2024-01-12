@@ -48,16 +48,9 @@ namespace djinn
 	{
 		return insert(new capsule_physics_object(s_next_id, m_world, capsule_physics_object::axis::Z, radius, height, origin, mass));
 	}
-	std::vector<id_t> physics_object_manager::create_from_phorm(sptr<phorm> const& phorm)
+	id_t physics_object_manager::create_bvh(sptr<phorm> const& phorm)
 	{
-		std::vector<id_t> ret;
-		auto const& ros = phorm->get_render_objects();
-		for (auto const& pair : ros)
-		{
-			static_retained_render_object* const ptr = const_cast<static_retained_render_object*>(&pair.second);
-			ret.push_back(insert(new bvh_physics_object(s_next_id, m_world, ptr)));
-		}
-		return ret;
+		return insert(new bvh_physics_object(s_next_id, m_world, phorm));
 	}
 	void physics_object_manager::update(f32 const dt)
 	{

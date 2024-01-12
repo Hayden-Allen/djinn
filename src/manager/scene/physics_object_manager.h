@@ -19,7 +19,7 @@ namespace djinn
 		id_t create_capsule_x(f32 const radius, f32 const height, btVector3 const& origin, f32 const mass);
 		id_t create_capsule_y(f32 const radius, f32 const height, btVector3 const& origin, f32 const mass);
 		id_t create_capsule_z(f32 const radius, f32 const height, btVector3 const& origin, f32 const mass);
-		std::vector<id_t> create_from_phorm(sptr<phorm> const& phorm);
+		id_t create_bvh(sptr<phorm> const& phorm);
 		void update(f32 const dt);
 	private:
 		optr<btDefaultCollisionConfiguration> m_config;
