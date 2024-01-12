@@ -158,6 +158,7 @@ declare interface _Scene_Camera {
   ): void
 }
 declare interface _Xport {
+  textures: number[]
   phorms: number[]
   lights: number[]
   waypoints: number[]

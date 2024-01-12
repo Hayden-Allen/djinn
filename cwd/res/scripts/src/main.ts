@@ -98,7 +98,7 @@ export default class MainEntity extends Entity {
 
     this.idPhormShader = Asset.Shader.load("phorm.vert", "phorm.frag")
     this.idPhormShader2 = Asset.Shader.load("phorm2.vert", "phorm.frag")
-    this.xport = new Xport("city2.xport")
+    this.xport = new Xport("city3.xport")
     for (var i = 0; i < this.xport.idPhorms.length - 1; i++)
       Scene.Phorm.setShaders(this.xport.idPhorms[i], this.idPhormShader)
     Scene.Phorm.setShaders(

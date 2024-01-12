@@ -5,6 +5,7 @@
 #include "scene/camera_entity.h"
 #include "asset_service.h"
 #include "scene/animated_mesh_instance.h"
+#include "asset/material.h"
 
 namespace djinn::js::scene_service
 {
@@ -131,10 +132,25 @@ namespace djinn::js::scene_service
 		std::string const& afp = u::to_absolute(c::base_dir::xport, fp);
 		mgl::input_file in(afp);
 
+		std::vector<id_t> const& textures = ::djinn::asset_service::get_texture_manager()->load_all(&in);
+
+		std::unordered_map<u32, material*> mats;
+		u64 const num_materials = in.ulong();
+		mats.reserve(num_materials);
+		for (u64 i = 0; i < num_materials; i++)
+		{
+			u32 const idx = in.uint();
+			mats.insert({ idx, new material(&in, textures) });
+		}
+		for (auto const& pair : mats)
+			delete pair.second;
+
 		std::vector<id_t> const& phorms = ::djinn::scene_service::get_phorm_manager()->load_all(&in);
 		std::vector<id_t> const& lights = ::djinn::scene_service::get_light_manager()->load_all(&in);
 		std::vector<id_t> const& waypoints = ::djinn::scene_service::get_waypoint_manager()->load_all(&in);
+
 		JSValue map = JS_NewObject(ctx);
+		JS_SetPropertyStr(ctx, map, "textures", js::create_id_array(ctx, (s64)textures.size(), textures.data()));
 		JS_SetPropertyStr(ctx, map, "phorms", js::create_id_array(ctx, (s64)phorms.size(), phorms.data()));
 		JS_SetPropertyStr(ctx, map, "lights", js::create_id_array(ctx, (s64)lights.size(), lights.data()));
 		JS_SetPropertyStr(ctx, map, "waypoints", js::create_id_array(ctx, (s64)waypoints.size(), waypoints.data()));

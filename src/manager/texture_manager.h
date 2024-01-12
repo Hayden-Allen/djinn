@@ -1,16 +1,18 @@
 #pragma once
 #include "pch.h"
 #include "manager.h"
+#include "power_loader.h"
 
 namespace djinn
 {
-	class texture_manager final : public ref_counted_file_manager<texture>
+	class texture_manager final : public ref_counted_file_manager<texture>, public power_loader
 	{
 	public:
 		texture_manager();
 		DCM(texture_manager);
 	public:
 		id_t create(u32 const width, u32 const height, texture_options const& options);
+		std::vector<id_t> load_all(mgl::input_file* const in) override;
 		id_t load(std::string const& fp) override;
 		id_t load(std::string const& fp, texture_options const& options);
 		void destroy(id_t const id) override;

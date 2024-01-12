@@ -17,6 +17,18 @@ namespace djinn
 		m_id2options.insert({ id, options });
 		return id;
 	}
+	std::vector<id_t> texture_manager::load_all(mgl::input_file* const in)
+	{
+		u64 const count = in->ulong();
+		std::vector<id_t> ids;
+		ids.reserve(count);
+		for (u64 i = 0; i < count; i++)
+		{
+			retained_texture2d_rgba_u8* const t = new retained_texture2d_rgba_u8(in);
+			ids.push_back(insert(t));
+		}
+		return ids;
+	}
 	id_t texture_manager::load(std::string const& fp)
 	{
 		ASSERT(false)
@@ -43,8 +55,11 @@ namespace djinn
 	{
 		if (try_erase(id))
 		{
-			m_id2afp.erase_key(id);
-			m_id2options.erase(id);
+			if (m_id2afp.contains_key(id))
+			{
+				m_id2afp.erase_key(id);
+				m_id2options.erase(id);
+			}
 		}
 	}
 	void texture_manager::reload(std::string const& fp)
