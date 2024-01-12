@@ -88,7 +88,7 @@ export default class MainEntity extends Entity {
       Scene.setPosZ(this.idAnimatedInstances[i], -3)
     }
 
-    this.idPhysics = Scene.Physics.create([1, 1, 1], [-2, 5, -3], 1)
+    this.idPhysics = Scene.Physics.create([1, 1, 1], [0, 20, 0], 1)
     Scene.Physics.setFriction(this.idPhysics, 0)
     Scene.Physics.setAngularVelocity(this.idPhysics, [0, 1, 0])
 

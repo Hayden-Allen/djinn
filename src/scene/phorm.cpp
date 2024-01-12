@@ -12,8 +12,8 @@ namespace djinn
 		m_shaders(nullptr)
 	{
 		// TODO matrix stored in the file is object2world
-		in->read(m_transform.e, 16);
-		extract_transform(m_transform);
+		// in->read(m_transform.e, 16);
+		// extract_transform(m_transform);
 
 		u64 const ro_count = in->ulong();
 		for (u64 i = 0; i < ro_count; i++)
@@ -53,5 +53,9 @@ namespace djinn
 	void phorm::set_shaders(sptr<shaders> const& shaders)
 	{
 		m_shaders = shaders;
+	}
+	std::unordered_map<sptr<material>, static_retained_render_object> const& phorm::get_render_objects() const
+	{
+		return m_ros;
 	}
 } // namespace djinn

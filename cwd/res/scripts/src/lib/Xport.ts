@@ -7,6 +7,7 @@ export default class Xport {
   idPhorms: number[] = []
   idLights: number[] = []
   idWaypoints: number[] = []
+  idHitboxes: number[] = []
 
   constructor(fp: string) {
     const { textures, phorms, lights, waypoints } = Scene.Xport.load(fp)
@@ -14,11 +15,17 @@ export default class Xport {
     this.idPhorms = phorms
     this.idLights = lights
     this.idWaypoints = waypoints
+    for (const id of this.idPhorms) {
+      this.idHitboxes = this.idHitboxes.concat(
+        Scene.Physics.createFromPhorm(id)
+      )
+    }
   }
   destroy() {
     for (const id of this.idTextures) Asset.Texture.destroy(id)
     for (const id of this.idPhorms) Scene.Phorm.destroy(id)
     for (const id of this.idLights) Scene.Light.destroy(id)
     for (const id of this.idWaypoints) Scene.Waypoint.destroy(id)
+    for (const id of this.idHitboxes) Scene.Physics.destroy(id)
   }
 }

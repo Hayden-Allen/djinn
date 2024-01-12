@@ -5,6 +5,8 @@
 
 namespace djinn
 {
+	class phorm;
+
 	class physics_object_manager final : public ref_counted_manager<physics_object>
 	{
 	public:
@@ -13,6 +15,7 @@ namespace djinn
 		~physics_object_manager();
 	public:
 		id_t create(btVector3 const& dims, btVector3 const& origin, f32 const mass);
+		std::vector<id_t> create_from_phorm(sptr<phorm> const& phorm);
 		void update(f32 const dt);
 	private:
 		optr<btDefaultCollisionConfiguration> m_config;

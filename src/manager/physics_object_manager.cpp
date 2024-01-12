@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "physics_object_manager.h"
+#include "scene/phorm.h"
+#include "scene/bvh_physics_object.h"
 
 namespace djinn
 {
@@ -27,6 +29,17 @@ namespace djinn
 	{
 		id_t const id = insert(new physics_object(s_next_id, m_world, dims, origin, mass));
 		return id;
+	}
+	std::vector<id_t> physics_object_manager::create_from_phorm(sptr<phorm> const& phorm)
+	{
+		std::vector<id_t> ret;
+		auto const& ros = phorm->get_render_objects();
+		for (auto const& pair : ros)
+		{
+			static_retained_render_object* const ptr = const_cast<static_retained_render_object*>(&pair.second);
+			ret.push_back(insert(new bvh_physics_object(s_next_id, m_world, ptr)));
+		}
+		return ret;
 	}
 	void physics_object_manager::update(f32 const dt)
 	{

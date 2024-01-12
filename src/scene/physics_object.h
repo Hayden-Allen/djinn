@@ -4,13 +4,13 @@
 
 namespace djinn
 {
-	class physics_object final : public scene_object_base
+	class physics_object : public scene_object_base
 	{
 		friend class physics_object_manager;
 	public:
 		physics_object(id_t const id, sptr<btDiscreteDynamicsWorld> const& world, btVector3 const& dims, btVector3 const& origin, f32 const mass);
 		DCM(physics_object);
-		~physics_object();
+		virtual ~physics_object();
 	public:
 		void update_transform() override;
 		tmat<space::OBJECT, space::PARENT> get_transform() const override;
@@ -19,12 +19,14 @@ namespace djinn
 		void set_linear_velocity(f32 const x, f32 const y, f32 const z);
 		void set_angular_velocity(f32 const x, f32 const y, f32 const z);
 		void set_collision_enabled(bool const enabled);
-	private:
+	protected:
 		sptr<btDiscreteDynamicsWorld> m_world;
 		optr<btRigidBody> m_rb;
 		optr<btMotionState> m_motion;
 		optr<btCollisionShape> m_shape;
-	private:
+	protected:
+		physics_object(id_t const id, sptr<btDiscreteDynamicsWorld> const& world);
+	protected:
 		void copy_physics_transform();
 	};
 } // namespace djinn

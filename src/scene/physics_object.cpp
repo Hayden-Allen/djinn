@@ -77,6 +77,13 @@ namespace djinn
 
 
 
+	physics_object::physics_object(id_t const id, sptr<btDiscreteDynamicsWorld> const& world) :
+		scene_object_base(id),
+		m_world(world)
+	{}
+
+
+
 	void physics_object::copy_physics_transform()
 	{
 		btTransform raw;
