@@ -27,6 +27,9 @@
 		- removing instance at capacity threshold deletes now-unused ubo
 		- removing all instances using a shader deletes that instance
 
+	- copy other settings such as direction from scene_object properties to sound_emitter ??
+	- sound_service listener position should be controlled by primary camera ??
+
 - later
 	- framebuffer_u8/f32?
 	- deferred renderer
@@ -38,5 +41,3 @@
 
 - even later
 	- per-camera effects
-
-
