@@ -132,27 +132,15 @@ namespace djinn::js::scene_service
 		std::string const& afp = u::to_absolute(c::base_dir::xport, fp);
 		mgl::input_file in(afp);
 
-		std::vector<id_t> const& textures = ::djinn::asset_service::get_texture_manager()->load_all(&in);
-
-		/*std::unordered_map<u32, material*> mats;
-		u64 const num_materials = in.ulong();
-		mats.reserve(num_materials);
-		for (u64 i = 0; i < num_materials; i++)
-		{
-			u32 const idx = in.uint();
-			mats.insert({ idx, new material(&in, textures) });
-		}
-		for (auto const& pair : mats)
-			delete pair.second;*/
-
-		std::unordered_map<u32, sptr<material>> const& materials = ::djinn::asset_service::get_material_manager()->load_all(&in, textures);
-
-		std::vector<id_t> const& phorms = ::djinn::scene_service::get_phorm_manager()->load_all(&in, materials);
-		std::vector<id_t> const& lights = ::djinn::scene_service::get_light_manager()->load_all(&in);
-		std::vector<id_t> const& waypoints = ::djinn::scene_service::get_waypoint_manager()->load_all(&in);
+		auto const& [tex_ids, tex] = ::djinn::asset_service::get_texture_manager()->load_xport(&in);
+		// materials are not accesible to the scripts, just used internally for xports
+		std::unordered_map<u32, sptr<material>> const& materials = ::djinn::asset_service::get_material_manager()->load_xport(&in, tex);
+		std::vector<id_t> const& phorms = ::djinn::scene_service::get_phorm_manager()->load_xport(&in, materials);
+		std::vector<id_t> const& lights = ::djinn::scene_service::get_light_manager()->load_xport(&in);
+		std::vector<id_t> const& waypoints = ::djinn::scene_service::get_waypoint_manager()->load_xport(&in);
 
 		JSValue map = JS_NewObject(ctx);
-		JS_SetPropertyStr(ctx, map, "textures", js::create_id_array(ctx, (s64)textures.size(), textures.data()));
+		JS_SetPropertyStr(ctx, map, "textures", js::create_id_array(ctx, (s64)tex_ids.size(), tex_ids.data()));
 		JS_SetPropertyStr(ctx, map, "phorms", js::create_id_array(ctx, (s64)phorms.size(), phorms.data()));
 		JS_SetPropertyStr(ctx, map, "lights", js::create_id_array(ctx, (s64)lights.size(), lights.data()));
 		JS_SetPropertyStr(ctx, map, "waypoints", js::create_id_array(ctx, (s64)waypoints.size(), waypoints.data()));

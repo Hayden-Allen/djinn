@@ -17,17 +17,21 @@ namespace djinn
 		m_id2options.insert({ id, options });
 		return id;
 	}
-	std::vector<id_t> texture_manager::load_all(mgl::input_file* const in)
+	std::pair<std::vector<id_t>, std::vector<sptr<texture>>> texture_manager::load_xport(mgl::input_file* const in)
 	{
 		u64 const count = in->ulong();
 		std::vector<id_t> ids;
+		std::vector<sptr<texture>> tex;
 		ids.reserve(count);
+		tex.reserve(count);
 		for (u64 i = 0; i < count; i++)
 		{
 			retained_texture2d_rgba_u8* const t = new retained_texture2d_rgba_u8(in);
-			ids.push_back(insert(t));
+			id_t const id = insert(t);
+			ids.emplace_back(id);
+			tex.emplace_back(get(id));
 		}
-		return ids;
+		return { ids, tex };
 	}
 	id_t texture_manager::load(std::string const& fp)
 	{

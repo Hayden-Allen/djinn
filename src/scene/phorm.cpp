@@ -8,11 +8,10 @@ namespace djinn
 {
 	phorm::phorm(id_t const id, mgl::input_file* const in, std::unordered_map<u32, sptr<material>> const& mats) :
 		visibility_scene_object(id),
-		m_materials(mats),
 		m_shaders(nullptr)
 	{
+		// TODO matrix stored in the file is object2world
 		in->read(m_transform.e, 16);
-		// TODO this is object2world
 		extract_transform(m_transform);
 
 		u64 const ro_count = in->ulong();
@@ -20,8 +19,7 @@ namespace djinn
 		{
 			u32 const material_idx = in->uint();
 			ASSERT(mats.contains(material_idx));
-			static_retained_render_object ro(*in);
-			m_ros.emplace(material_idx, std::move(ro));
+			m_ros.emplace(mats.at(material_idx), *in);
 		}
 	}
 
@@ -48,8 +46,7 @@ namespace djinn
 					m_shaders->uniform_1i(c::uniform::phorm_textures[i], i);
 			for (auto const& pair : m_ros)
 			{
-				sptr<material> mat = m_materials.at(pair.first);
-				mat->bind();
+				pair.first->bind();
 				ctx->draw(pair.second, *m_shaders.get());
 			}
 		}

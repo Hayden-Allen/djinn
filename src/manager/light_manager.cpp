@@ -11,7 +11,7 @@ namespace djinn
 
 
 
-	std::vector<id_t> light_manager::load_all(mgl::input_file* const in)
+	std::vector<id_t> light_manager::load_xport(mgl::input_file* const in)
 	{
 		u64 const count = in->ulong();
 		std::vector<id_t> ids;

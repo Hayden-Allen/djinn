@@ -5,11 +5,13 @@
 	- Scene.destroySelf()
 
 - now
-
+	- shaders::try_uniform? or maybe just print warning instead of crashing
+	- HOT_RELOAD/NOT_RELOAD macro?
+	- export smnodes
+	- phorm handle different material settings (alpha, cull, lighting)
+	- implement different lights
 	- powertranzphormr
 		- mgl::input_file => haul::input_file
-	- export smnodes
-	- implement different lights
 	- OOP stl
 
 	- scene graph

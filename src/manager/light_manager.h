@@ -1,17 +1,16 @@
 #pragma once
 #include "manager.h"
-#include "power_loader.h"
 #include "scene/light.h"
 
 namespace djinn
 {
-	class light_manager final : public ref_counted_manager<light>, public power_loader
+	class light_manager final : public ref_counted_manager<light>
 	{
 	public:
 		light_manager();
 		DCM(light_manager);
 	public:
-		std::vector<id_t> load_all(mgl::input_file* const in) override;
+		std::vector<id_t> load_xport(mgl::input_file* const in);
 		id_t create();
 		void destroy(id_t const id) override;
 		void update();
