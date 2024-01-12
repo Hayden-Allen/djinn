@@ -12,15 +12,8 @@ namespace djinn
 		for (u32 i = 0; i < 4; i++)
 		{
 			u64 const idx = in->ulong();
-			if (idx == 0)
-			{
-				m_textures[i] = nullptr;
-			}
-			else
-			{
-				ASSERT(idx <= tex_ids.size())
-				m_textures[i] = asset_service::get_texture_manager()->get(tex_ids[idx - 1]).get();
-			}
+			ASSERT(idx < tex_ids.size())
+			m_textures[i] = asset_service::get_texture_manager()->get(tex_ids[idx]).get();
 		}
 	}
 	void material::bind() const

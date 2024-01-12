@@ -42,6 +42,10 @@ namespace djinn
 				m_shaders->uniform_mat3(c::uniform::normal_mat, normal.data());
 			}
 
+			// done here for hot reloading
+			for (u32 i = 0; i < 4; i++)
+				if (m_shaders->has_uniform(c::uniform::phorm_textures[i]))
+					m_shaders->uniform_1i(c::uniform::phorm_textures[i], i);
 			for (auto const& pair : m_ros)
 			{
 				sptr<material> mat = m_materials.at(pair.first);
@@ -53,14 +57,5 @@ namespace djinn
 	void phorm::set_shaders(sptr<shaders> const& shaders)
 	{
 		m_shaders = shaders;
-		if (m_shaders->has_uniform(c::uniform::phorm_textures))
-		{
-			u32 const indices[4] = { 0, 1, 2, 3 };
-			// m_shaders->uniform_1uiv(c::uniform::phorm_textures, 4, indices);
-			m_shaders->uniform_1i("d_phorm_tex0", 0);
-			m_shaders->uniform_1i("d_phorm_tex1", 1);
-			m_shaders->uniform_1i("d_phorm_tex2", 2);
-			m_shaders->uniform_1i("d_phorm_tex3", 3);
-		}
 	}
 } // namespace djinn
