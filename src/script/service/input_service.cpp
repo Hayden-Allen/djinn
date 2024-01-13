@@ -66,6 +66,7 @@ namespace djinn
 		super::register_property_u32(ctx, "KEY_UP", GLFW_KEY_UP);
 		super::register_property_u32(ctx, "KEY_SPACE", GLFW_KEY_SPACE);
 		super::register_property_u32(ctx, "KEY_SHIFT", GLFW_KEY_LEFT_SHIFT);
+		super::register_property_u32(ctx, "KEY_LEFT_CONTROL", GLFW_KEY_LEFT_CONTROL);
 	}
 	sptr<mgl::context> input_service::get_context()
 	{

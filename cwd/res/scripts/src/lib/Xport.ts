@@ -26,15 +26,11 @@ export default class Xport {
     })
   }
   destroy() {
-    console.log("A")
     for (const id of this.idTextures) Asset.Texture.destroy(id)
-    console.log("B")
     for (const id of this.idPhorms) Scene.Phorm.destroy(id)
     for (const id of this.idLights) Scene.Light.destroy(id)
     for (const id of this.idWaypoints) Scene.Waypoint.destroy(id)
     for (const id of this.idHitboxes) Scene.Physics.destroy(id)
-    console.log("C")
     this.skybox!.destroy()
-    console.log("D")
   }
 }

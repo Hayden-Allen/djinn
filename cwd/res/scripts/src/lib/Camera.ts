@@ -11,10 +11,15 @@ export default class Camera extends Entity {
   }
   __main(dt: number, time: number) {
     dt *= 2
-    const dx = dt * Input.leftX()
+    let move = 1
+    if (Input.getKey(Input.KEY_LEFT_CONTROL)) move = 10
+
+    const dx = dt * move * Input.leftX()
     const dy =
-      dt * (Input.getKey(Input.KEY_SPACE) - Input.getKey(Input.KEY_SHIFT))
-    const dz = dt * Input.leftY()
+      dt *
+      move *
+      (Input.getKey(Input.KEY_SPACE) - Input.getKey(Input.KEY_SHIFT))
+    const dz = dt * move * Input.leftY()
     const mx = dt * Input.rightX()
     const my = dt * Input.rightY()
     Scene.addPosLocal(this.id, [dx, 0, dz])

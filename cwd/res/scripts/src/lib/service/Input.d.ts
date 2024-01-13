@@ -46,4 +46,5 @@ declare interface _Input {
   KEY_UP: number
   KEY_SPACE: number
   KEY_SHIFT: number
+  KEY_LEFT_CONTROL: number
 }

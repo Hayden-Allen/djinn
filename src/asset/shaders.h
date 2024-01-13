@@ -31,6 +31,7 @@ namespace djinn
 		std::vector<instance_field> const& get_instance_fields() const;
 		u32 get_base_offset_bytes() const;
 		void init(std::string const& vert_afp, std::string const& frag_afp);
+		bool uniform_block_binding(std::string const& name, s32 const slot) const override;
 	private:
 		// sizeof(mat4) == 64
 		// sizeof(mat3) == sizeof(mat3x4) == 48 (alignment)
@@ -41,6 +42,7 @@ namespace djinn
 			64 + 48							// mat4 model + mat3 normal
 		};
 	private:
+		std::string m_vert_afp, m_frag_afp;
 		std::vector<instance_field> m_instance_fields;
 		shader_type m_type;
 	private:

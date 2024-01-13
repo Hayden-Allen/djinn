@@ -6,6 +6,8 @@
 namespace djinn
 {
 	shaders::shaders(std::string const& vert_afp, std::string const& frag_afp) :
+		m_vert_afp(vert_afp),
+		m_frag_afp(frag_afp),
 		m_type(shader_type::NONE)
 	{
 		init(vert_afp, frag_afp);
@@ -29,6 +31,15 @@ namespace djinn
 		super::init(vert_src, frag_src, true);
 
 		uniform_block_binding(c::uniform::light_block_name, c::uniform::light_ubo_index);
+	}
+	bool shaders::uniform_block_binding(std::string const& name, s32 const slot) const
+	{
+		if (!super::uniform_block_binding(name, slot))
+		{
+			printf("[WARNING] shaders(%s, %s):\n\tuniform_block_binding: Uniform block '%s' does not exist\n", m_vert_afp.c_str(), m_frag_afp.c_str(), name.c_str());
+			return false;
+		}
+		return true;
 	}
 
 
