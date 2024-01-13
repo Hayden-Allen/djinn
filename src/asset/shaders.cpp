@@ -257,7 +257,7 @@ namespace djinn
 		std::stringstream sstr;
 		for (std::string const& line : lines)
 			sstr << line << "\n";
-		// printf("%s\n", sstr.str().c_str());
+		// printf("%s\n%s\n", fp.c_str(), sstr.str().c_str());
 		return sstr.str();
 	}
 } // namespace djinn

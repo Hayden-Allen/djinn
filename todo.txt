@@ -8,7 +8,7 @@
 	- move ma_engine into sound_source_manager/asset_service?
 
 - now
-	- phorm handle different material settings (alpha, cull, lighting)
+	- constants cleanup
 	- animated_mesh::get_bone_pos/rot/scale
 	- better prettierrc
 	- scripts

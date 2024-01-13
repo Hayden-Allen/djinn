@@ -73,6 +73,7 @@ namespace djinn::c
 			"d_phorm_tex2",
 			"d_phorm_tex3",
 		};
+		static std::string const phorm_use_lighting = "d_use_lighting";
 		static std::string const time = "d_time";
 		static std::string const view_mat = "d_view";
 		static std::string const proj_mat = "d_proj";

@@ -3,6 +3,7 @@ layout(location = 0) out vec4 o_color;
 uniform sampler2D d_phorm_tex0, d_phorm_tex1, d_phorm_tex2, d_phorm_tex3;
 uniform vec3 d_cam_pos;
 uniform float d_time;
+uniform bool d_use_lighting;
 in vec3 v_pos, v_norm;
 in vec4 v_rgba, v_weights, v_uv[4];
 
@@ -21,6 +22,15 @@ void main()
         discard;
 
 	vec3 mixed_res = mix(multi_tex_res.rgb, v_rgba.rgb, v_rgba.a);
-    LIGHT_SUM(N, V);
-    o_color = vec4(mixed_res * min(d_ambient + d_diffuse + d_specular, vec3(1)), 1);
+    
+    vec3 amb = vec3(1), diff = vec3(0), spec = vec3(0);
+    if(d_use_lighting)
+    {
+        LIGHT_SUM(N, V);
+        amb = d_ambient;
+        diff = d_diffuse;
+        spec = d_specular;
+    }
+
+    o_color = vec4(mixed_res * min(amb + diff + spec, vec3(1)), 1);
 }

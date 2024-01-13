@@ -36,4 +36,8 @@ namespace djinn
 	{
 		return m_use_alpha;
 	}
+	bool material::use_lighting() const
+	{
+		return m_use_lighting;
+	}
 } // namespace djinn

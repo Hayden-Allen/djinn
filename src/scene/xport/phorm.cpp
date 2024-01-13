@@ -43,11 +43,13 @@ namespace djinn
 				if (pair.first->use_alpha())
 				{
 					ASSERT(m_alpha_shaders);
+					m_alpha_shaders->uniform_1i(c::uniform::phorm_use_lighting, pair.first->use_lighting());
 					ctx->draw(pair.second, *m_alpha_shaders.get());
 				}
 				else
 				{
 					ASSERT(m_shaders);
+					m_shaders->uniform_1i(c::uniform::phorm_use_lighting, pair.first->use_lighting());
 					ctx->draw(pair.second, *m_shaders.get());
 				}
 				pair.first->unbind();
