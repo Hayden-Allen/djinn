@@ -34,8 +34,11 @@ declare interface _Scene_Phorm {
 declare interface _Scene_MeshInstance {
   create(idMesh: MeshID, idShader: ShaderID): MeshInstanceID
   setUniforms(id: MeshInstanceID, map: object): void
-  setAction(id: MeshInstanceID, name: string, speed?: number): void
   setVisible(id: MeshInstanceID, visible: boolean): void
+  setAction(id: MeshInstanceID, name: string, speed?: number): void
+  getBonePos(id: MeshInstanceID, name: string): number[]
+  getBoneRot(id: MeshInstanceID, name: string): number[]
+  getBoneScale(id: MeshInstanceID, name: string): number[]
   destroy(id: MeshInstanceID): void
   destroyAll(ids: MeshInstanceID[]): void
 }

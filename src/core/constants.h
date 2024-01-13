@@ -25,6 +25,7 @@ namespace djinn::c
 		static constexpr u32 ubo_size_bytes = 16384;
 		static constexpr u32 num_vertex_bones = M3D_NUMBONE;
 		static constexpr u32 num_bones = 68;
+		static constexpr u32 num_phorm_textures = 4;
 		// number of lights is also stored in the ubo, so -1
 		static constexpr u32 num_lights = (ubo_size_bytes / sizeof(mgl::light)) - 1;
 		static std::string const instance_struct = "d_instance_struct";
@@ -67,7 +68,7 @@ namespace djinn::c
 		static constexpr u64 light_ubo_index = ::djinn::c::shader::num_ubos - 1;
 		static std::string const light_block_name = "d_lights";
 		static std::string const light_block_type = "d_light";
-		static std::string const phorm_textures[4] = {
+		static std::string const phorm_textures[::djinn::c::shader::num_phorm_textures] = {
 			"d_phorm_tex0",
 			"d_phorm_tex1",
 			"d_phorm_tex2",

@@ -38,4 +38,33 @@ namespace djinn::u
 	{
 		return in ^ (std::hash<T>{}(v) + 0x9e3779b9 + (in << 6) + (in >> 2));
 	}
+	template<space FROM, space TO>
+	void extract_pos(tmat<FROM, TO> const& mat, f32* const x, f32* const y, f32* const z)
+	{
+		*x = mat.t[0];
+		*y = mat.t[1];
+		*z = mat.t[2];
+	}
+	template<space FROM, space TO>
+	void extract_rot(tmat<FROM, TO> const& mat, f32* const x, f32* const y, f32* const z)
+	{
+		*x = asin(mat.m[2][1]);
+		if (abs(mat.m[2][1]) < 0.9999999)
+		{
+			*y = atan2(mat.m[0][2], mat.m[2][2]);
+			*z = atan2(mat.m[0][1], mat.m[1][1]);
+		}
+		else
+		{
+			*y = atan2(-mat.m[0][2], mat.m[0][0]);
+			*z = 0;
+		}
+	}
+	template<space FROM, space TO>
+	void extract_scale(tmat<FROM, TO> const& mat, f32* const x, f32* const y, f32* const z)
+	{
+		*x = mat.get_i().length();
+		*y = mat.get_j().length();
+		*z = mat.get_k().length();
+	}
 } // namespace djinn::u

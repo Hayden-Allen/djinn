@@ -149,6 +149,12 @@ export default class MainEntity extends Entity {
       )
       this.nextAnimated++
     }
+    console.log(
+      Scene.MeshInstance.getBoneScale(
+        this.idAnimatedInstances[0],
+        "mixamorig:LeftHand"
+      )
+    )
 
     if (this.needsPlayAudio) {
       // Scene.SoundEmitter.play(this.idSoundEmitter!)

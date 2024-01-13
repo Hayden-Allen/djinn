@@ -79,7 +79,7 @@ namespace djinn
 		shaders->uniform_mat3(c::uniform::normal_mat, normal.data());
 		shaders->uniform_1f(c::uniform::time, render_service::get_context()->time.now);
 		// done here for hot reloading
-		for (u32 i = 0; i < 4; i++)
+		for (u32 i = 0; i < c::shader::num_phorm_textures; i++)
 			shaders->uniform_1i(c::uniform::phorm_textures[i], i);
 	}
 } // namespace djinn

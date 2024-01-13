@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "material.h"
+#include "core/constants.h"
 
 namespace djinn
 {
@@ -9,13 +10,16 @@ namespace djinn
 		m_use_lighting = in->ubyte();
 		m_should_cull = in->ubyte();
 
-		for (u32 i = 0; i < 4; i++)
+		for (u32 i = 0; i < c::shader::num_phorm_textures; i++)
 		{
 			u64 const idx = in->ulong();
 			ASSERT(idx < tex.size())
 			m_textures.push_back(tex[idx]);
 		}
 	}
+
+
+
 	void material::bind() const
 	{
 		for (u64 i = 0; i < m_textures.size(); i++)

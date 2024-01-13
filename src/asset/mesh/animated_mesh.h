@@ -67,10 +67,13 @@ namespace djinn
 				{ GL_UNSIGNED_BYTE, { c::shader::num_vertex_bones } }
 			};
 		}
-		m3db_t* get_pose(s32 const id, f32 const sec);
+		std::vector<tmat<space::OBJECT, space::WORLD>> get_pose(s32 const id, f32 const sec);
+		u32 get_bone_index(std::string const& name) const;
 	private:
 		m3d_t* m_raw;
 		std::unordered_map<std::string, action> m_actions;
+		// std::vector<tmat<space::OBJECT, space::WORLD>> m_last_bones;
+		std::unordered_map<std::string, u32> m_name2idx;
 	};
 } // namespace djinn
 

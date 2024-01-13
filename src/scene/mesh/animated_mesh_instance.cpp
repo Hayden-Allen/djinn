@@ -27,10 +27,18 @@ namespace djinn
 		m_action_start = render_service::get_context()->time.now;
 		m_action_speed = speed;
 	}
-	m3db_t* animated_mesh_instance::get_pose() const
+	std::vector<tmat<space::OBJECT, space::WORLD>> const& animated_mesh_instance::get_pose() const
 	{
 		f32 const delta = render_service::get_context()->time.now - m_action_start;
 		sptr<animated_mesh> am = m_mesh;
-		return am->get_pose(m_current_action->id, delta * m_action_speed);
+		m_last_pose = am->get_pose(m_current_action->id, delta * m_action_speed);
+		return m_last_pose;
+	}
+	tmat<space::OBJECT, space::WORLD> animated_mesh_instance::get_bone_transform(std::string const& name)
+	{
+		if (m_last_pose.empty())
+			return tmat<space::OBJECT, space::WORLD>();
+		sptr<animated_mesh> am = m_mesh;
+		return m_last_pose.at(am->get_bone_index(name));
 	}
 } // namespace djinn

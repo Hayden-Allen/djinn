@@ -22,6 +22,12 @@ namespace djinn
 		r[14] = b[2] * a[12] + b[6] * a[13] + b[10] * a[14] + b[14] * a[15];
 		r[15] = b[3] * a[12] + b[7] * a[13] + b[11] * a[14] + b[15] * a[15];
 	}
+	static void _m3d_transpose(f32* const mat)
+	{
+		for (u32 r = 0; r < 4; r++)
+			for (u32 c = 0; c <= r; c++)
+				std::swap(mat[r * 4 + c], mat[c * 4 + r]);
+	}
 
 
 
@@ -29,6 +35,10 @@ namespace djinn
 		m_raw(raw)
 	{
 		init(raw);
+		for (u32 i = 0; i < raw->numbone; i++)
+		{
+			m_name2idx.insert({ raw->bone[i].name, i });
+		}
 	}
 
 
@@ -97,17 +107,25 @@ namespace djinn
 	}
 
 
-
-	m3db_t* animated_mesh::get_pose(s32 const id, f32 const sec)
+	std::vector<tmat<space::OBJECT, space::WORLD>> animated_mesh::get_pose(s32 const id, f32 const sec)
 	{
 		// m3db_t* const anim = m3d_pose(m_raw, m_current_action->id, (u32)delta);
+		std::vector<tmat<space::OBJECT, space::WORLD>> pose(m_raw->numbone);
 		m3db_t* const anim = m3d_pose(m_raw, id, (u32)(sec * 1000));
 		for (u32 i = 0; i < m_raw->numbone; i++)
 		{
 			f32 out[16] = { 0 };
 			_m3d_mul(out, anim[i].mat4, m_raw->bone[i].mat4);
-			memcpy(anim[i].mat4, out, sizeof(f32) * 16);
+			// memcpy(anim[i].mat4, out, sizeof(f32) * 16);
+			_m3d_transpose(out);
+			pose[i] = out;
 		}
-		return anim;
+		M3D_FREE((void*)anim);
+		return pose;
+	}
+	u32 animated_mesh::get_bone_index(std::string const& name) const
+	{
+		ASSERT(m_name2idx.contains(name));
+		return m_name2idx.at(name);
 	}
 } // namespace djinn
