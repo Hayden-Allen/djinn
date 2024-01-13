@@ -37,6 +37,19 @@ export default class MainEntity extends Entity {
   private idPhormAlphaShader?: ShaderID
   private xport?: Xport
 
+  private idWingMesh?: MeshID
+  private idWingInstance?: MeshInstanceID
+  private idWingShader?: ShaderID
+  private wingBoneNames: string[] = [
+    "mixamorig:LeftArm",
+    "mixamorig:LeftForeArm",
+    "mixamorig:LeftHand",
+    // "mixamorig:Hips",
+    "mixamorig:LeftUpLeg",
+    "mixamorig:LeftLeg",
+    "mixamorig:Spine1",
+  ]
+
   __init() {
     this.camera = Scene.Camera.load("lib/Camera.js") as Camera
     this.idShader = Asset.Shader.load("custom.vert", "custom.frag")
@@ -48,11 +61,11 @@ export default class MainEntity extends Entity {
       u_texture: 0,
     })
     this.idMesh = Asset.Mesh.create(4, [2, 2], 6, [this.idTexture])
-    Asset.Mesh.update(
-      this.idMesh,
-      [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1],
-      [0, 1, 2, 0, 2, 3]
-    )
+    // Asset.Mesh.update(
+    //   this.idMesh,
+    //   [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1],
+    //   [0, 1, 2, 0, 2, 3]
+    // )
     this.idSoundSource = Asset.Sound.load("test.mp3")
     this.idSoundEmitter = Scene.SoundEmitter.create(this.idSoundSource)
     this.needsPlayAudio = true
@@ -101,6 +114,13 @@ export default class MainEntity extends Entity {
         this.idPhormAlphaShader
       )
     }
+
+    this.idWingMesh = Asset.Mesh.create(this.wingBoneNames.length, [3], 15, [])
+    this.idWingShader = Asset.Shader.load("wing.vert", "wing.frag")
+    this.idWingInstance = Scene.MeshInstance.create(
+      this.idWingMesh,
+      this.idWingShader
+    )
   }
   __destroy() {
     Scene.MeshInstance.destroy(this.idStaticInstance!)
@@ -122,14 +142,18 @@ export default class MainEntity extends Entity {
     this.xport!.destroy()
     Asset.Shader.destroy(this.idPhormShader!)
     Asset.Shader.destroy(this.idPhormAlphaShader!)
+
+    Scene.MeshInstance.destroy(this.idWingInstance!)
+    Asset.Mesh.destroy(this.idWingMesh!)
+    Asset.Shader.destroy(this.idWingShader!)
   }
   __load() {
     this.color.set(0, 1, 1, 0.5)
-    for (var i = 0; i < 100; i++) {
-      let e = Scene.Entity.load("TestEntity.js") as TestEntity
-      e.bind(this.idMesh!, this.idShader!)
-      this.entities.push(e)
-    }
+    // for (var i = 0; i < 100; i++) {
+    //   let e = Scene.Entity.load("TestEntity.js") as TestEntity
+    //   e.bind(this.idMesh!, this.idShader!)
+    //   this.entities.push(e)
+    // }
   }
   __unload() {
     for (var i = 0; i < this.entities.length; i++)
@@ -137,6 +161,22 @@ export default class MainEntity extends Entity {
     this.entities = []
   }
   __main(dt: number, time: number) {
+    let bonePos: number[] = []
+    for (var i = 0; i < this.wingBoneNames.length; i++) {
+      const pos = Scene.MeshInstance.getBonePos(
+        this.idAnimatedInstances[1],
+        this.wingBoneNames[i]
+      )
+      bonePos = bonePos.concat(pos)
+    }
+    const idx = [0, 3, 1, 3, 2, 1, 4, 2, 3, 5, 1, 0, 5, 3, 1]
+    Asset.Mesh.update(this.idWingMesh!, bonePos, idx)
+    // Scene.copyTransform(this.idAnimatedInstances[1], this.idWingInstance!)
+    Scene.MeshInstance.setVisible(
+      this.idAnimatedInstances[1]!,
+      this.frame % 2 == 0
+    )
+
     this.frame++
     if (
       this.nextAnimated < this.idAnimatedInstances.length &&
@@ -145,16 +185,11 @@ export default class MainEntity extends Entity {
       Scene.MeshInstance.setAction(
         this.idAnimatedInstances[this.nextAnimated],
         "run_Armature",
-        1 + this.nextAnimated / 10
+        // 1 + this.nextAnimated / 10
+        0.1
       )
       this.nextAnimated++
     }
-    console.log(
-      Scene.MeshInstance.getBoneScale(
-        this.idAnimatedInstances[0],
-        "mixamorig:LeftHand"
-      )
-    )
 
     if (this.needsPlayAudio) {
       // Scene.SoundEmitter.play(this.idSoundEmitter!)
@@ -184,6 +219,7 @@ export default class MainEntity extends Entity {
       this.idPhormAlphaShader!,
       this.camera!.getId()
     )
+    Asset.Shader.setCameraUniforms(this.idWingShader!, this.camera!.getId())
 
     Scene.copyTransform(this.idPhysics!, this.idStaticInstance!)
   }

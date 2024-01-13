@@ -151,19 +151,13 @@ namespace djinn
 			ASSERT(m_mesh->is_animated());
 			animated_mesh const* const am = m_mesh.get<animated_mesh>();
 			sptr<animated_mesh_instance> ami = m_instances[index];
-			std::vector<tmat<space::OBJECT, space::WORLD>> const& bones = ami->get_pose();
+			m3db_t const* const bones = ami->get_pose();
 			for (u32 i = 0; i < am->get_num_bones(); i++)
 			{
-				/*if (bones)
-				{
-					transpose(&bones[i]);
-					m_ubos[block_index].update(bones[i].mat4, s_floats_per_mat4, (u32)offset_bytes);
-				}
-				else
-					m_ubos[block_index].update(tmat<space::OBJECT, space::WORLD>().e, s_floats_per_mat4, (u32)offset_bytes);*/
-				m_ubos[block_index].update(bones[i].e, s_floats_per_mat4, (u32)offset_bytes);
+				m_ubos[block_index].update(bones[i].mat4, s_floats_per_mat4, (u32)offset_bytes);
 				offset_bytes += s_floats_per_mat4 * sizeof(f32);
 			}
+			M3D_FREE((void*)bones);
 		}
 	}
 } // namespace djinn

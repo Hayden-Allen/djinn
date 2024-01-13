@@ -13,11 +13,11 @@ namespace djinn
 	public:
 		bool is_animated() const override;
 		void set_action(std::string const& name, f32 const speed);
-		std::vector<tmat<space::OBJECT, space::WORLD>> const& get_pose() const;
-		tmat<space::OBJECT, space::WORLD> get_bone_transform(std::string const& name);
+		m3db_t const* get_pose() const;
+		point<space::WORLD> get_bone_pos(std::string const& name);
 	private:
 		animated_mesh::action const* m_current_action;
 		f32 m_action_start, m_action_speed;
-		mutable std::vector<tmat<space::OBJECT, space::WORLD>> m_last_pose;
+		mutable std::vector<f32> m_skel; // num_bones * (pos, quat)
 	};
 } // namespace djinn

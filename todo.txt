@@ -8,7 +8,10 @@
 	- move ma_engine into sound_source_manager/asset_service?
 
 - now
-	- animated_mesh::get_bone_pos/rot/scale
+	- move m3d helper functions
+	- getBoneBasisX/Y/Z
+	- MeshInstance update verts?
+
 	- better prettierrc
 	- scripts
 		- get rid of render service?

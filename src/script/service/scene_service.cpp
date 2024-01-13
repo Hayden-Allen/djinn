@@ -344,36 +344,11 @@ namespace djinn::js::scene_service
 		sptr<mesh_instance> instance = ::djinn::scene_service::get_mesh_instance_manager()->get(id);
 		ASSERT(instance->is_animated());
 		sptr<animated_mesh_instance> ami = instance;
-		tmat<space::OBJECT, space::WORLD> const& mat = ami->get_bone_transform(name);
-		f32 pos[3] = { 0 };
-		u::extract_pos(mat, &pos[0], &pos[1], &pos[2]);
-		return js::create_f32_array(ctx, 3, pos);
-	}
-	JSValue get_mesh_instance_bone_rot(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
-	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::string const& name = js::extract_string(ctx, argv[1]);
-		sptr<mesh_instance> instance = ::djinn::scene_service::get_mesh_instance_manager()->get(id);
-		ASSERT(instance->is_animated());
-		sptr<animated_mesh_instance> ami = instance;
-		tmat<space::OBJECT, space::WORLD> const& mat = ami->get_bone_transform(name);
-		f32 rot[3] = { 0 };
-		u::extract_rot(mat, &rot[0], &rot[1], &rot[2]);
-		return js::create_f32_array(ctx, 3, rot);
-	}
-	JSValue get_mesh_instance_bone_scale(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
-	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::string const& name = js::extract_string(ctx, argv[1]);
-		sptr<mesh_instance> instance = ::djinn::scene_service::get_mesh_instance_manager()->get(id);
-		ASSERT(instance->is_animated());
-		sptr<animated_mesh_instance> ami = instance;
-		tmat<space::OBJECT, space::WORLD> const& mat = ami->get_bone_transform(name);
-		f32 scale[3] = { 0 };
-		u::extract_scale(mat, &scale[0], &scale[1], &scale[2]);
-		return js::create_f32_array(ctx, 3, scale);
+		// tmat<space::OBJECT, space::WORLD> const& mat = ami->get_bone_transform(name);
+		// f32 pos[3] = { 0 };
+		// u::extract_pos(mat, &pos[0], &pos[1], &pos[2]);
+		point<space::WORLD> const& pos = ami->get_bone_pos(name);
+		return js::create_f32_array(ctx, 3, pos.e);
 	}
 	JSValue destroy_mesh_instance(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -829,8 +804,6 @@ namespace djinn
 		super::register_function(ctx, "MeshInstance", "setVisible", 2, js::scene_service::set_mesh_instance_visible);
 		super::register_function(ctx, "MeshInstance", "setAction", 3, js::scene_service::set_mesh_instance_action);
 		super::register_function(ctx, "MeshInstance", "getBonePos", 2, js::scene_service::get_mesh_instance_bone_pos);
-		super::register_function(ctx, "MeshInstance", "getBoneRot", 2, js::scene_service::get_mesh_instance_bone_rot);
-		super::register_function(ctx, "MeshInstance", "getBoneScale", 2, js::scene_service::get_mesh_instance_bone_scale);
 		super::register_function(ctx, "MeshInstance", "destroy", 1, js::scene_service::destroy_mesh_instance);
 		super::register_function(ctx, "MeshInstance", "destroyAll", 1, js::scene_service::destroy_all_mesh_instance);
 		// ENTITY / CAMERA
