@@ -1,4 +1,4 @@
-import "./lib/globals.d"
+import "./lib/djinn.d"
 import Camera from "./lib/Camera"
 import Entity from "./lib/Entity"
 import Skybox from "./lib/Skybox"
@@ -14,28 +14,28 @@ export default class MainEntity extends Entity {
   private camera: Optional<Camera>
   private color: Color = new Color(0, 0, 0, 1)
   private entities: TestEntity[] = []
-  private idShader: number = 0
-  private idTexture: number = 0
-  private idMesh: number = 0
-  private idSoundSource: number = 0
-  private idSoundEmitter: number = 0
+  private idShader: ShaderID
+  private idTexture: TextureID
+  private idMesh: MeshID
+  private idSoundSource: SoundID
+  private idSoundEmitter: SoundEmitterID
   private needsPlayAudio: boolean = true
 
-  private idStaticMesh: number = 0
-  private idStaticInstance: number = 0
-  private idStaticShader: number = 0
+  private idStaticMesh: MeshID
+  private idStaticInstance: MeshInstanceID
+  private idStaticShader: ShaderID
 
-  private idAnimatedMesh: number = 0
-  private idAnimatedInstances: number[] = []
-  private idAnimatedShader: number = 0
+  private idAnimatedMesh: MeshID
+  private idAnimatedInstances: MeshInstanceID[] = []
+  private idAnimatedShader: ShaderID
 
   private frame: number = 0
   private nextAnimated: number = 0
 
-  private idPhysics: number = 0
+  private idPhysics: PhysicsID
   private ground: Optional<GroundEntity>
 
-  private idPhormShader: number = 0
+  private idPhormShader: ShaderID
   private xport: Optional<Xport>
 
   __init() {
@@ -109,11 +109,11 @@ export default class MainEntity extends Entity {
   }
   __destroy() {
     Scene.MeshInstance.destroy(this.idStaticInstance)
-    Asset.Mesh.destroy(this.idStaticMesh)
+    Asset.Mesh.destroy(this.idStaticMesh!)
     Asset.Shader.destroy(this.idStaticShader)
     for (var i = 0; i < this.idAnimatedInstances.length; i++)
       Scene.MeshInstance.destroy(this.idAnimatedInstances[i])
-    Asset.Mesh.destroy(this.idAnimatedMesh)
+    Asset.Mesh.destroy(this.idAnimatedMesh!)
     Asset.Shader.destroy(this.idAnimatedShader)
 
     this.skybox!.destroy()
@@ -121,7 +121,7 @@ export default class MainEntity extends Entity {
     Sound.Emitter.stop(this.idSoundEmitter)
     Sound.Emitter.destroy(this.idSoundEmitter)
     Asset.Sound.destroy(this.idSoundSource)
-    Asset.Mesh.destroy(this.idMesh)
+    Asset.Mesh.destroy(this.idMesh!)
     Asset.Shader.destroy(this.idShader)
     Asset.Texture.destroy(this.idTexture)
 
@@ -134,7 +134,7 @@ export default class MainEntity extends Entity {
     this.color.set(0, 1, 1, 0.5)
     for (var i = 0; i < 100; i++) {
       let e = Scene.Entity.load("TestEntity.js") as TestEntity
-      e.bind(this.camera!, this.color, this.idMesh, this.idShader)
+      e.bind(this.idMesh, this.idShader)
       this.entities.push(e)
     }
   }

@@ -1,13 +1,13 @@
-import "./globals.d"
+import "./djinn.d"
 
 const { Asset, Scene } = djinn
 
 export default class Xport {
-  idTextures: number[] = []
-  idPhorms: number[] = []
-  idLights: number[] = []
-  idWaypoints: number[] = []
-  idHitboxes: number[] = []
+  idTextures: TextureID[] = []
+  idPhorms: PhormID[] = []
+  idLights: LightID[] = []
+  idWaypoints: WaypointID[] = []
+  idHitboxes: PhysicsID[] = []
 
   constructor(fp: string) {
     const { textures, phorms, lights, waypoints } = Scene.Xport.load(fp)

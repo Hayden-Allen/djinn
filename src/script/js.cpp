@@ -24,7 +24,15 @@ namespace djinn::js
 	}
 	std::vector<id_t> extract_id_array(JSContext* const ctx, JSValue const& val)
 	{
-		return helper::extract_array<id_t, id_t>(ctx, val, JS_ToUint32);
+		s64 const length = extract_array_length(ctx, val);
+		std::vector<id_t> ret(length);
+		for (u32 i = 0; i < (u32)length; i++)
+		{
+			JSValueConst element = JS_GetPropertyUint32(ctx, val, i);
+			ret[i] = extract_id(ctx, element);
+			JS_FreeValue(ctx, element);
+		}
+		return ret;
 	}
 	std::vector<f32> extract_f32_array(JSContext* const ctx, JSValue const& val)
 	{
@@ -44,11 +52,14 @@ namespace djinn::js
 	}
 	id_t extract_id(JSContext* const ctx, JSValue const& val)
 	{
-		return extract_u32(ctx, val); // factor this out so we can change it easier
+		return extract_u32(ctx, JS_GetPropertyStr(ctx, val, "__id"));
 	}
 	JSValue create_id(JSContext* const ctx, u32 const id)
 	{
-		return JS_NewUint32(ctx, id); // factor this out so we can change it easier
+		JSValue const& __id = JS_NewUint32(ctx, id);
+		JSValue const& ret = JS_NewObject(ctx);
+		JS_SetPropertyStr(ctx, ret, "__id", __id);
+		return ret;
 	}
 	JSValue create_bool(JSContext* const ctx, bool const b)
 	{

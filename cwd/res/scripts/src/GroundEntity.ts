@@ -1,15 +1,15 @@
-import "./lib/globals.d"
+import "./lib/djinn.d"
 import Entity from "./lib/Entity"
 import Camera from "./lib/Camera"
 
 const { Asset, Scene } = djinn
 
 export default class GroundEntity extends Entity {
-  private idMesh: number = 0
-  private idInstance: number = 0
-  private idPhysics: number = 0
-  private idShader: number = 0
-  private idTexture: number = 0
+  private idMesh: MeshID
+  private idInstance: MeshInstanceID
+  private idPhysics: PhysicsID
+  private idShader: ShaderID
+  private idTexture: TextureID
   private camera: Optional<Camera>
 
   __init() {
@@ -88,7 +88,7 @@ export default class GroundEntity extends Entity {
   __destroy() {
     Scene.Physics.destroy(this.idPhysics)
     Scene.MeshInstance.destroy(this.idInstance)
-    Asset.Mesh.destroy(this.idMesh)
+    Asset.Mesh.destroy(this.idMesh!)
     Asset.Shader.destroy(this.idShader)
     Asset.Texture.destroy(this.idTexture)
   }

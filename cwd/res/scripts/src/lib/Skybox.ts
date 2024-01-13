@@ -1,4 +1,4 @@
-import "./globals.d"
+import "./djinn.d"
 
 const { Asset, Scene, Util } = djinn
 
@@ -35,18 +35,19 @@ interface SkyboxOptions {
 }
 
 export default class Skybox {
-  private idMesh: number = 0
-  private idInstance: number = 0
-  private idShader: number = 0
-  private idTexture: number = 0
+  private idMesh: MeshID
+  private idInstance: MeshInstanceID
+  private idShader: ShaderID
+  private idTexture: TextureID
 
-  constructor(idTexture: number, options: SkyboxOptions) {
+  constructor(idTexture: TextureID, options: SkyboxOptions) {
     this.idTexture = idTexture
     this.idShader = Asset.Shader.load(
       options.vertexShader,
       options.fragmentShader
     )
     this.idMesh = Asset.Mesh.create(8, [3], 36, [this.idTexture])
+    console.log(this.idMesh)
     Asset.Mesh.update(
       this.idMesh,
       [
@@ -131,12 +132,12 @@ export default class Skybox {
 
   destroy() {
     Scene.MeshInstance.destroy(this.idInstance)
-    Asset.Mesh.destroy(this.idMesh)
+    Asset.Mesh.destroy(this.idMesh!)
     Asset.Shader.destroy(this.idShader)
     Asset.Cubemap.destroy(this.idTexture)
   }
 
-  draw(idCamera: number) {
+  draw(idCamera: CameraID) {
     Asset.Shader.setCameraUniforms(this.idShader, idCamera)
   }
 }

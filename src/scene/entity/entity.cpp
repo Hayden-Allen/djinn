@@ -96,7 +96,7 @@ namespace djinn
 		if (!m_script_loaded)
 		{
 			m_this = JS_CallConstructor(m_ctx, m_default, 0, nullptr);
-			JS_SetPropertyStr(m_ctx, m_this, "id", JS_NewUint32(m_ctx, m_id));
+			JS_SetPropertyStr(m_ctx, m_this, "id", js::create_id(m_ctx, m_id));
 			call_init();
 		}
 

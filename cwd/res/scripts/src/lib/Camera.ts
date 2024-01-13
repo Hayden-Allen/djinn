@@ -1,4 +1,4 @@
-import "./globals.d"
+import "./djinn.d"
 import Entity from "./Entity"
 
 const { Render, Scene, Input } = djinn

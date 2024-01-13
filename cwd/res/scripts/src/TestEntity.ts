@@ -1,15 +1,13 @@
-import "./lib/globals.d"
-import Camera from "./lib/Camera"
+import "./lib/djinn.d"
 import Entity from "./lib/Entity"
 import Color from "./lib/Color"
 
 const { Scene } = djinn
 
 export default class TestEntity extends Entity {
-  private idInstance: number = 0
+  private idInstance: MeshInstanceID
   private meshPos: number[] = [0, 0, 0]
   private meshVel: number[] = [1, 1, 1]
-  private camera: Optional<Camera>
   private color: Optional<Color>
 
   __init() {
@@ -38,13 +36,8 @@ export default class TestEntity extends Entity {
     Scene.setPos(this.idInstance, this.meshPos)
   }
   __draw() {}
-  bind(cam: Camera, color: Color, idMesh: number, idShader: number) {
-    this.camera = cam
-    // this.color = color
+  bind(idMesh: MeshID, idShader: ShaderID) {
     this.idInstance = Scene.MeshInstance.create(idMesh, idShader)
-    const x = (Math.random() * 2 - 1) * 10
-    const y = (Math.random() * 2 - 1) * 10
-    const z = Math.random() * -10
     Scene.MeshInstance.setUniforms(this.idInstance, {
       color: [this.color!.toArray(), 0],
     })

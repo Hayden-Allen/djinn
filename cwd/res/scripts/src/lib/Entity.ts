@@ -1,5 +1,7 @@
+import "./service/id.d"
+
 export default class Entity {
-  protected id: number = -1
+  protected id: EntityID
   getId() {
     return this.id
   }
