@@ -5,10 +5,10 @@ import Color from "./lib/Color"
 const { Scene } = djinn
 
 export default class TestEntity extends Entity {
-  private idInstance: MeshInstanceID
+  private idInstance?: MeshInstanceID
   private meshPos: number[] = [0, 0, 0]
   private meshVel: number[] = [1, 1, 1]
-  private color: Optional<Color>
+  private color?: Color
 
   __init() {
     for (var i = 0; i < 3; i++) {
@@ -18,7 +18,7 @@ export default class TestEntity extends Entity {
     this.color = new Color(Math.random(), Math.random(), Math.random(), 0.5)
   }
   __destroy() {
-    Scene.MeshInstance.destroy(this.idInstance)
+    Scene.MeshInstance.destroy(this.idInstance!)
   }
   __main(dt: number, time: number) {
     for (var i = 0; i < this.meshPos.length; i++) {
@@ -33,7 +33,7 @@ export default class TestEntity extends Entity {
         this.meshPos[i] = newPos
       }
     }
-    Scene.setPos(this.idInstance, this.meshPos)
+    Scene.setPos(this.idInstance!, this.meshPos)
   }
   __draw() {}
   bind(idMesh: MeshID, idShader: ShaderID) {

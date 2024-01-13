@@ -9,7 +9,7 @@ export default class Xport {
   idLights: LightID[] = []
   idWaypoints: WaypointID[] = []
   idHitboxes: PhysicsID[] = []
-  skybox: Optional<Skybox>
+  skybox?: Skybox
 
   constructor(fp: string) {
     const { textures, skybox, phorms, lights, waypoints } = Scene.Xport.load(fp)
@@ -26,11 +26,11 @@ export default class Xport {
     })
   }
   destroy() {
-    for (const id of this.idTextures) Asset.Texture.destroy(id)
-    for (const id of this.idPhorms) Scene.Phorm.destroy(id)
-    for (const id of this.idLights) Scene.Light.destroy(id)
-    for (const id of this.idWaypoints) Scene.Waypoint.destroy(id)
-    for (const id of this.idHitboxes) Scene.Physics.destroy(id)
+    Asset.Texture.destroyAll(this.idTextures)
+    Scene.Phorm.destroyAll(this.idPhorms)
+    Scene.Light.destroyAll(this.idLights)
+    Scene.Waypoint.destroyAll(this.idWaypoints)
+    Scene.Physics.destroyAll(this.idHitboxes)
     this.skybox!.destroy()
   }
 }

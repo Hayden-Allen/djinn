@@ -74,6 +74,14 @@ namespace djinn::js::scene_service
 		::djinn::scene_service::get_waypoint_manager()->destroy(id);
 		return JS_UNDEFINED;
 	}
+	JSValue destroy_all_waypoint(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		std::vector<id_t> const& ids = js::extract_id_array(ctx, argv[0]);
+		for (id_t const id : ids)
+			::djinn::scene_service::get_waypoint_manager()->destroy(id);
+		return JS_UNDEFINED;
+	}
 
 
 
@@ -122,7 +130,14 @@ namespace djinn::js::scene_service
 		::djinn::scene_service::get_light_manager()->destroy(id);
 		return JS_UNDEFINED;
 	}
-
+	JSValue destroy_all_light(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		std::vector<id_t> const& ids = js::extract_id_array(ctx, argv[0]);
+		for (id_t const id : ids)
+			::djinn::scene_service::get_light_manager()->destroy(id);
+		return JS_UNDEFINED;
+	}
 
 
 	JSValue load_xport(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -174,6 +189,14 @@ namespace djinn::js::scene_service
 		::djinn::scene_service::get_phorm_manager()->destroy(id);
 		return JS_UNDEFINED;
 	}
+	JSValue destroy_all_phorm(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		std::vector<id_t> const& ids = js::extract_id_array(ctx, argv[0]);
+		for (id_t const id : ids)
+			::djinn::scene_service::get_phorm_manager()->destroy(id);
+		return JS_UNDEFINED;
+	}
 
 
 
@@ -213,6 +236,19 @@ namespace djinn::js::scene_service
 			::djinn::scene_service::get_entity_manager()->destroy(id);
 		else
 			::djinn::scene_service::get_camera_entity_manager()->destroy(id);
+		return JS_UNDEFINED;
+	}
+	JSValue destroy_all_entity(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		std::vector<id_t> const& ids = js::extract_id_array(ctx, argv[0]);
+		for (id_t const id : ids)
+		{
+			if (::djinn::scene_service::get_entity_manager()->has(id))
+				::djinn::scene_service::get_entity_manager()->destroy(id);
+			else
+				::djinn::scene_service::get_camera_entity_manager()->destroy(id);
+		}
 		return JS_UNDEFINED;
 	}
 
@@ -300,6 +336,14 @@ namespace djinn::js::scene_service
 		ASSERT(argc == 1);
 		id_t id = js::extract_id(ctx, argv[0]);
 		::djinn::scene_service::get_mesh_instance_manager()->destroy(id);
+		return JS_UNDEFINED;
+	}
+	JSValue destroy_all_mesh_instance(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		std::vector<id_t> const& ids = js::extract_id_array(ctx, argv[0]);
+		for (id_t const id : ids)
+			::djinn::scene_service::get_mesh_instance_manager()->destroy(id);
 		return JS_UNDEFINED;
 	}
 
@@ -436,6 +480,14 @@ namespace djinn::js::scene_service
 		ASSERT(argc == 1);
 		id_t const id = js::extract_id(ctx, argv[0]);
 		::djinn::scene_service::get_physics_object_manager()->destroy(id);
+		return JS_UNDEFINED;
+	}
+	JSValue destroy_all_physics_object(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		std::vector<id_t> const& ids = js::extract_id_array(ctx, argv[0]);
+		for (id_t const id : ids)
+			::djinn::scene_service::get_physics_object_manager()->destroy(id);
 		return JS_UNDEFINED;
 	}
 
@@ -665,28 +717,33 @@ namespace djinn
 	{
 		super::register_function(ctx, "Waypoint", "create", 0, js::scene_service::create_waypoint);
 		super::register_function(ctx, "Waypoint", "destroy", 1, js::scene_service::destroy_waypoint);
+		super::register_function(ctx, "Waypoint", "destroyAll", 1, js::scene_service::destroy_all_waypoint);
 
 		super::register_function(ctx, "Light", "create", 0, js::scene_service::create_light);
 		super::register_function(ctx, "Light", "setAmbient", 2, js::scene_service::set_light_color_ambient);
 		super::register_function(ctx, "Light", "setDiffuse", 2, js::scene_service::set_light_color_diffuse);
 		super::register_function(ctx, "Light", "setSpecular", 2, js::scene_service::set_light_color_specular);
 		super::register_function(ctx, "Light", "destroy", 1, js::scene_service::destroy_light);
+		super::register_function(ctx, "Light", "destroyAll", 1, js::scene_service::destroy_all_light);
 
 		super::register_function(ctx, "Xport", "load", 1, js::scene_service::load_xport);
 
 		super::register_function(ctx, "Phorm", "setShaders", 2, js::scene_service::set_phorm_shaders);
 		super::register_function(ctx, "Phorm", "setVisible", 2, js::scene_service::set_phorm_visible);
 		super::register_function(ctx, "Phorm", "destroy", 1, js::scene_service::destroy_phorm);
+		super::register_function(ctx, "Phorm", "destroyAll", 1, js::scene_service::destroy_all_phorm);
 
 		super::register_function(ctx, "MeshInstance", "create", 2, js::scene_service::create_mesh_instance);
 		super::register_function(ctx, "MeshInstance", "setUniforms", 2, js::scene_service::set_mesh_instance_uniforms);
 		super::register_function(ctx, "MeshInstance", "setAction", 3, js::scene_service::set_mesh_instance_action);
 		super::register_function(ctx, "MeshInstance", "setVisible", 2, js::scene_service::set_mesh_instance_visible);
 		super::register_function(ctx, "MeshInstance", "destroy", 1, js::scene_service::destroy_mesh_instance);
+		super::register_function(ctx, "MeshInstance", "destroyAll", 1, js::scene_service::destroy_all_mesh_instance);
 
 		super::register_function(ctx, "Entity", "requestImGui", 1, js::scene_service::request_imgui);
 		super::register_function(ctx, "Entity", "load", 1, js::scene_service::load_entity);
 		super::register_function(ctx, "Entity", "destroy", 1, js::scene_service::destroy_entity);
+		super::register_function(ctx, "Entity", "destroyAll", 1, js::scene_service::destroy_all_entity);
 
 		super::register_function(ctx, "Camera", "load", 1, js::scene_service::load_camera);
 		super::register_function(ctx, "Camera", "configure", 5, js::scene_service::configure_camera);
@@ -703,6 +760,7 @@ namespace djinn
 		super::register_function(ctx, "Physics", "enableCollision", 1, js::scene_service::enable_collision);
 		super::register_function(ctx, "Physics", "disableCollision", 1, js::scene_service::disable_collision);
 		super::register_function(ctx, "Physics", "destroy", 1, js::scene_service::destroy_physics_object);
+		super::register_function(ctx, "Physics", "destroyAll", 1, js::scene_service::destroy_all_physics_object);
 
 		super::register_function(ctx, "copyTransform", 2, js::scene_service::copy_transform);
 		super::register_function(ctx, "getPos", 1, js::scene_service::get_pos);

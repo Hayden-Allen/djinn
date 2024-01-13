@@ -5,12 +5,12 @@ import Camera from "./lib/Camera"
 const { Asset, Scene } = djinn
 
 export default class GroundEntity extends Entity {
-  private idMesh: MeshID
-  private idInstance: MeshInstanceID
-  private idPhysics: PhysicsID
-  private idShader: ShaderID
-  private idTexture: TextureID
-  private camera: Optional<Camera>
+  private idMesh?: MeshID
+  private idInstance?: MeshInstanceID
+  private idPhysics?: PhysicsID
+  private idShader?: ShaderID
+  private idTexture?: TextureID
+  private camera?: Camera
 
   __init() {
     this.idTexture = Asset.Texture.load("grass.png")
@@ -86,14 +86,14 @@ export default class GroundEntity extends Entity {
     this.idPhysics = Scene.Physics.createBox([5, 1, 5], [0, -2, 0], 0)
   }
   __destroy() {
-    Scene.Physics.destroy(this.idPhysics)
-    Scene.MeshInstance.destroy(this.idInstance)
+    Scene.Physics.destroy(this.idPhysics!)
+    Scene.MeshInstance.destroy(this.idInstance!)
     Asset.Mesh.destroy(this.idMesh!)
-    Asset.Shader.destroy(this.idShader)
-    Asset.Texture.destroy(this.idTexture)
+    Asset.Shader.destroy(this.idShader!)
+    Asset.Texture.destroy(this.idTexture!)
   }
   __draw() {
-    Asset.Shader.setCameraUniforms(this.idShader, this.camera!.getId())
+    Asset.Shader.setCameraUniforms(this.idShader!, this.camera!.getId())
   }
   bind(cam: Camera) {
     this.camera = cam

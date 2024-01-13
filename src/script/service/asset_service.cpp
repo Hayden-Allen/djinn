@@ -65,6 +65,15 @@ namespace djinn::js::asset_service
 		std::string const& fp = js::extract_string(ctx, argv[0]);
 		return js::create_id(ctx, ::djinn::asset_service::get_animated_mesh_manager()->load(fp));
 	}
+	JSValue update_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 3);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::vector<f32> const& vertices = js::extract_f32_array(ctx, argv[1]);
+		std::vector<u32> const& indices = js::extract_u32_array(ctx, argv[2]);
+		::djinn::asset_service::get_custom_mesh_manager()->update(id, vertices, indices);
+		return JS_UNDEFINED;
+	}
 	JSValue destroy_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
@@ -81,13 +90,23 @@ namespace djinn::js::asset_service
 		}
 		return JS_UNDEFINED;
 	}
-	JSValue update_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	JSValue destroy_all_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 3);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::vector<f32> const& vertices = js::extract_f32_array(ctx, argv[1]);
-		std::vector<u32> const& indices = js::extract_u32_array(ctx, argv[2]);
-		::djinn::asset_service::get_custom_mesh_manager()->update(id, vertices, indices);
+		ASSERT(argc == 1);
+		std::vector<id_t> const& ids = js::extract_id_array(ctx, argv[0]);
+		for (id_t const id : ids)
+		{
+			if (::djinn::asset_service::get_custom_mesh_manager()->has(id))
+				::djinn::asset_service::get_custom_mesh_manager()->destroy(id);
+			else if (::djinn::asset_service::get_static_mesh_manager()->has(id))
+			{
+				::djinn::asset_service::get_static_mesh_manager()->destroy(id);
+			}
+			else
+			{
+				::djinn::asset_service::get_animated_mesh_manager()->destroy(id);
+			}
+		}
 		return JS_UNDEFINED;
 	}
 
@@ -97,13 +116,6 @@ namespace djinn::js::asset_service
 		std::string const vert_fp = js::extract_string(ctx, argv[0]);
 		std::string const frag_fp = js::extract_string(ctx, argv[1]);
 		return js::create_id(ctx, ::djinn::asset_service::get_shader_manager()->load(vert_fp, frag_fp));
-	}
-	JSValue destroy_shader(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
-	{
-		ASSERT(argc == 1);
-		id_t id = js::extract_id(ctx, argv[0]);
-		::djinn::asset_service::get_shader_manager()->destroy(id);
-		return JS_UNDEFINED;
 	}
 	JSValue set_shader_uniforms(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -133,6 +145,21 @@ namespace djinn::js::asset_service
 
 		return JS_UNDEFINED;
 	}
+	JSValue destroy_shader(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t id = js::extract_id(ctx, argv[0]);
+		::djinn::asset_service::get_shader_manager()->destroy(id);
+		return JS_UNDEFINED;
+	}
+	JSValue destroy_all_shader(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		std::vector<id_t> const& ids = js::extract_id_array(ctx, argv[0]);
+		for (id_t const id : ids)
+			::djinn::asset_service::get_shader_manager()->destroy(id);
+		return JS_UNDEFINED;
+	}
 
 	JSValue create_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -153,13 +180,6 @@ namespace djinn::js::asset_service
 			options = parse_texture_options(ctx, argv[1]);
 		return js::create_id(ctx, ::djinn::asset_service::get_texture_manager()->load(fp, options));
 	}
-	JSValue destroy_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
-	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		::djinn::asset_service::get_texture_manager()->destroy(id);
-		return JS_UNDEFINED;
-	}
 	JSValue update_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2 || argc == 3);
@@ -172,6 +192,21 @@ namespace djinn::js::asset_service
 		}
 		else
 			::djinn::asset_service::get_texture_manager()->update(id, subpixels);
+		return JS_UNDEFINED;
+	}
+	JSValue destroy_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		::djinn::asset_service::get_texture_manager()->destroy(id);
+		return JS_UNDEFINED;
+	}
+	JSValue destroy_all_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		std::vector<id_t> const& ids = js::extract_id_array(ctx, argv[0]);
+		for (id_t const id : ids)
+			::djinn::asset_service::get_texture_manager()->destroy(id);
 		return JS_UNDEFINED;
 	}
 
@@ -198,13 +233,6 @@ namespace djinn::js::asset_service
 			options = parse_texture_options(ctx, argv[1]);
 		return js::create_id(ctx, ::djinn::asset_service::get_cubemap_manager()->load(fps_arr, options));
 	}
-	JSValue destroy_cubemap(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
-	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		::djinn::asset_service::get_cubemap_manager()->destroy(id);
-		return JS_UNDEFINED;
-	}
 	JSValue update_cubemap(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2 || argc == 3);
@@ -225,6 +253,21 @@ namespace djinn::js::asset_service
 			::djinn::asset_service::get_cubemap_manager()->update(id, subpixels);
 		return JS_UNDEFINED;
 	}
+	JSValue destroy_cubemap(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		::djinn::asset_service::get_cubemap_manager()->destroy(id);
+		return JS_UNDEFINED;
+	}
+	JSValue destroy_all_cubemap(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		std::vector<id_t> const& ids = js::extract_id_array(ctx, argv[0]);
+		for (id_t const id : ids)
+			::djinn::asset_service::get_cubemap_manager()->destroy(id);
+		return JS_UNDEFINED;
+	}
 
 	JSValue load_sound_source(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -237,6 +280,14 @@ namespace djinn::js::asset_service
 		ASSERT(argc == 1);
 		id_t const id = js::extract_id(ctx, argv[0]);
 		::djinn::asset_service::get_sound_source_manager()->destroy(id);
+		return JS_UNDEFINED;
+	}
+	JSValue destroy_all_sound_source(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		std::vector<id_t> const& ids = js::extract_id_array(ctx, argv[0]);
+		for (id_t const id : ids)
+			::djinn::asset_service::get_sound_source_manager()->destroy(id);
 		return JS_UNDEFINED;
 	}
 } // namespace djinn::js::asset_service
@@ -254,27 +305,32 @@ namespace djinn
 	{
 		super::register_function(ctx, "Mesh", "create", 4, js::asset_service::create_mesh);
 		super::register_function(ctx, "Mesh", "update", 3, js::asset_service::update_mesh);
-		super::register_function(ctx, "Mesh", "destroy", 1, js::asset_service::destroy_mesh);
 		super::register_function(ctx, "Mesh", "loadStatic", 1, js::asset_service::load_static_mesh);
 		super::register_function(ctx, "Mesh", "loadAnimated", 1, js::asset_service::load_animated_mesh);
+		super::register_function(ctx, "Mesh", "destroy", 1, js::asset_service::destroy_mesh);
+		super::register_function(ctx, "Mesh", "destroyAll", 1, js::asset_service::destroy_all_mesh);
 
 		super::register_function(ctx, "Shader", "load", 2, js::asset_service::load_shader);
-		super::register_function(ctx, "Shader", "destroy", 1, js::asset_service::destroy_shader);
 		super::register_function(ctx, "Shader", "setUniforms", 2, js::asset_service::set_shader_uniforms);
 		super::register_function(ctx, "Shader", "setCameraUniforms", 2, js::asset_service::set_shader_camera_uniforms);
+		super::register_function(ctx, "Shader", "destroy", 1, js::asset_service::destroy_shader);
+		super::register_function(ctx, "Shader", "destroyAll", 1, js::asset_service::destroy_all_shader);
 
 		super::register_function(ctx, "Texture", "create", 3, js::asset_service::create_texture);
 		super::register_function(ctx, "Texture", "load", 2, js::asset_service::load_texture);
-		super::register_function(ctx, "Texture", "destroy", 1, js::asset_service::destroy_texture);
 		super::register_function(ctx, "Texture", "update", 3, js::asset_service::update_texture);
+		super::register_function(ctx, "Texture", "destroy", 1, js::asset_service::destroy_texture);
+		super::register_function(ctx, "Texture", "destroyAll", 1, js::asset_service::destroy_all_texture);
 
 		super::register_function(ctx, "Cubemap", "create", 3, js::asset_service::create_cubemap);
 		super::register_function(ctx, "Cubemap", "load", 2, js::asset_service::load_cubemap);
-		super::register_function(ctx, "Cubemap", "destroy", 1, js::asset_service::destroy_cubemap);
 		super::register_function(ctx, "Cubemap", "update", 3, js::asset_service::update_cubemap);
+		super::register_function(ctx, "Cubemap", "destroy", 1, js::asset_service::destroy_cubemap);
+		super::register_function(ctx, "Cubemap", "destroyAll", 1, js::asset_service::destroy_all_cubemap);
 
 		super::register_function(ctx, "Sound", "load", 1, js::asset_service::load_sound_source);
 		super::register_function(ctx, "Sound", "destroy", 1, js::asset_service::destroy_sound_source);
+		super::register_function(ctx, "Sound", "destroyAll", 1, js::asset_service::destroy_all_sound_source);
 	}
 	shader_manager* asset_service::get_shader_manager()
 	{

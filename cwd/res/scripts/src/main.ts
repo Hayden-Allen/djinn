@@ -10,32 +10,32 @@ import Xport from "./lib/Xport"
 const { Asset, Render, Nanovg, Scene, ImGui, Sound, Input } = djinn
 
 export default class MainEntity extends Entity {
-  private camera: Optional<Camera>
+  private camera?: Camera
   private color: Color = new Color(0, 0, 0, 1)
   private entities: TestEntity[] = []
-  private idShader: ShaderID
-  private idTexture: TextureID
-  private idMesh: MeshID
-  private idSoundSource: SoundID
-  private idSoundEmitter: SoundEmitterID
+  private idShader?: ShaderID
+  private idTexture?: TextureID
+  private idMesh?: MeshID
+  private idSoundSource?: SoundID
+  private idSoundEmitter?: SoundEmitterID
   private needsPlayAudio: boolean = true
 
-  private idStaticMesh: MeshID
-  private idStaticInstance: MeshInstanceID
-  private idStaticShader: ShaderID
+  private idStaticMesh?: MeshID
+  private idStaticInstance?: MeshInstanceID
+  private idStaticShader?: ShaderID
 
-  private idAnimatedMesh: MeshID
+  private idAnimatedMesh?: MeshID
   private idAnimatedInstances: MeshInstanceID[] = []
-  private idAnimatedShader: ShaderID
+  private idAnimatedShader?: ShaderID
 
   private frame: number = 0
   private nextAnimated: number = 0
 
-  private idPhysics: PhysicsID
-  private ground: Optional<GroundEntity>
+  private idPhysics?: PhysicsID
+  private ground?: GroundEntity
 
-  private idPhormShader: ShaderID
-  private xport: Optional<Xport>
+  private idPhormShader?: ShaderID
+  private xport?: Xport
 
   __init() {
     this.camera = Scene.Camera.load("lib/Camera.js") as Camera
@@ -75,13 +75,13 @@ export default class MainEntity extends Entity {
     }
 
     // this.idPhysics = Scene.Physics.createSphere(Math.sqrt(3) / 2, [0, 20, 0], 1)
-    // this.idPhysics = Scene.Physics.createBox([1, 1, 1], [0, 20, 0], 1)
-    this.idPhysics = Scene.Physics.createCapsuleY(
-      Math.sqrt(3) / 2,
-      1,
-      [0, 20, 0],
-      1
-    )
+    this.idPhysics = Scene.Physics.createBox([1, 1, 1], [0, 50, 0], 1)
+    // this.idPhysics = Scene.Physics.createCapsuleY(
+    //   Math.sqrt(3) / 2,
+    //   1,
+    //   [0, 200, 0],
+    //   1
+    // )
     // Scene.Physics.setFriction(this.idPhysics, 0)
     // Scene.Physics.setAngularVelocity(this.idPhysics, [0, 1, 0])
 
@@ -94,31 +94,30 @@ export default class MainEntity extends Entity {
       Scene.Phorm.setShaders(this.xport.idPhorms[i], this.idPhormShader)
   }
   __destroy() {
-    Scene.MeshInstance.destroy(this.idStaticInstance)
-    Asset.Mesh.destroy(this.idStaticMesh)
-    Asset.Shader.destroy(this.idStaticShader)
-    for (var i = 0; i < this.idAnimatedInstances.length; i++)
-      Scene.MeshInstance.destroy(this.idAnimatedInstances[i])
-    Asset.Mesh.destroy(this.idAnimatedMesh)
-    Asset.Shader.destroy(this.idAnimatedShader)
+    Scene.MeshInstance.destroy(this.idStaticInstance!)
+    Asset.Mesh.destroy(this.idStaticMesh!)
+    Asset.Shader.destroy(this.idStaticShader!)
+    Scene.MeshInstance.destroyAll(this.idAnimatedInstances)
+    Asset.Mesh.destroy(this.idAnimatedMesh!)
+    Asset.Shader.destroy(this.idAnimatedShader!)
 
-    Sound.Emitter.stop(this.idSoundEmitter)
-    Sound.Emitter.destroy(this.idSoundEmitter)
-    Asset.Sound.destroy(this.idSoundSource)
-    Asset.Mesh.destroy(this.idMesh)
-    Asset.Shader.destroy(this.idShader)
-    Asset.Texture.destroy(this.idTexture)
+    Sound.Emitter.stop(this.idSoundEmitter!)
+    Sound.Emitter.destroy(this.idSoundEmitter!)
+    Asset.Sound.destroy(this.idSoundSource!)
+    Asset.Mesh.destroy(this.idMesh!)
+    Asset.Shader.destroy(this.idShader!)
+    Asset.Texture.destroy(this.idTexture!)
 
-    Scene.Physics.destroy(this.idPhysics)
+    Scene.Physics.destroy(this.idPhysics!)
 
     this.xport!.destroy()
-    Asset.Shader.destroy(this.idPhormShader)
+    Asset.Shader.destroy(this.idPhormShader!)
   }
   __load() {
     this.color.set(0, 1, 1, 0.5)
     for (var i = 0; i < 100; i++) {
       let e = Scene.Entity.load("TestEntity.js") as TestEntity
-      e.bind(this.idMesh, this.idShader)
+      e.bind(this.idMesh!, this.idShader!)
       this.entities.push(e)
     }
   }
@@ -161,12 +160,12 @@ export default class MainEntity extends Entity {
   }
   __draw() {
     this.xport!.skybox!.draw(this.camera!.getId())
-    Asset.Shader.setCameraUniforms(this.idShader, this.camera!.getId())
-    Asset.Shader.setCameraUniforms(this.idStaticShader, this.camera!.getId())
-    Asset.Shader.setCameraUniforms(this.idAnimatedShader, this.camera!.getId())
-    Asset.Shader.setCameraUniforms(this.idPhormShader, this.camera!.getId())
+    Asset.Shader.setCameraUniforms(this.idShader!, this.camera!.getId())
+    Asset.Shader.setCameraUniforms(this.idStaticShader!, this.camera!.getId())
+    Asset.Shader.setCameraUniforms(this.idAnimatedShader!, this.camera!.getId())
+    Asset.Shader.setCameraUniforms(this.idPhormShader!, this.camera!.getId())
 
-    Scene.copyTransform(this.idPhysics, this.idStaticInstance)
+    Scene.copyTransform(this.idPhysics!, this.idStaticInstance!)
   }
   __ui() {
     Nanovg.fillStyle(1, 1, 1)

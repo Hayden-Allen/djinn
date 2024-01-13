@@ -52,14 +52,11 @@ namespace djinn::js
 	}
 	id_t extract_id(JSContext* const ctx, JSValue const& val)
 	{
-		return extract_u32(ctx, JS_GetPropertyStr(ctx, val, "__id"));
+		return extract_u32(ctx, val);
 	}
 	JSValue create_id(JSContext* const ctx, u32 const id)
 	{
-		JSValue const& __id = JS_NewUint32(ctx, id);
-		JSValue const& ret = JS_NewObject(ctx);
-		JS_SetPropertyStr(ctx, ret, "__id", __id);
-		return ret;
+		return JS_NewUint32(ctx, id);
 	}
 	JSValue create_bool(JSContext* const ctx, bool const b)
 	{

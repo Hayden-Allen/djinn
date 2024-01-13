@@ -1,9 +1,18 @@
 import "./djinn.d"
-import Entity from "./Entity"
 
 const { Render, Scene, Input } = djinn
 
-export default class Camera extends Entity {
+export default class Camera {
+  protected id: CameraID = 0 as CameraID
+  getId() {
+    return this.id
+  }
+  __init() {}
+  __destroy() {}
+  __draw() {}
+  __ui() {}
+  __imgui() {}
+  __unload() {}
   __load() {
     const ar = Render.getAspectRatio()
     Scene.Camera.configure(this.id, 108 / ar, ar, 0.01, 1000)
@@ -25,8 +34,5 @@ export default class Camera extends Entity {
     Scene.addPosLocal(this.id, [dx, 0, dz])
     Scene.addPosY(this.id, dy)
     Scene.addRot(this.id, [-my, -mx, 0])
-  }
-  __unload() {
-    console.log("Destroy camera")
   }
 }

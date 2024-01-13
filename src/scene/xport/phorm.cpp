@@ -18,12 +18,18 @@ namespace djinn
 		u64 const ro_count = in->ulong();
 		for (u64 i = 0; i < ro_count; i++)
 		{
+			printf("\tG %zu\n", in->get_pos());
 			u32 const material_idx = in->uint();
-			printf("\t%zu\n", in->get_pos());
+			printf("\tH %zu\n", in->get_pos());
+			in->check_error();
+			printf("\tI %zu\n", in->get_pos());
 			printf("\t%u | %u(%zu)\n", id, material_idx, i);
 			ASSERT(mats.contains(material_idx));
-			m_ros.emplace(mats.at(material_idx), *in);
+			static_retained_render_object ro(*in);
+			m_ros.insert({ mats.at(material_idx), std::move(ro) });
+			// m_ros.emplace(mats.at(material_idx), *in);
 		}
+		printf("\tJ %zu\n", in->get_pos());
 	}
 
 

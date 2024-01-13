@@ -38,9 +38,9 @@ export default class Skybox {
   private idMesh: MeshID
   private idInstance: MeshInstanceID
   private idShader: ShaderID
-  private idTexture: TextureID
+  private idTexture: CubemapID
 
-  constructor(idTexture: TextureID, options: SkyboxOptions) {
+  constructor(idTexture: CubemapID, options: SkyboxOptions) {
     this.idTexture = idTexture
     this.idShader = Asset.Shader.load(
       options.vertexShader,

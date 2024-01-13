@@ -1,7 +1,7 @@
 import "./service/id.d"
 
 export default class Entity {
-  protected id: EntityID
+  protected id: EntityID = 0 as EntityID
   getId() {
     return this.id
   }

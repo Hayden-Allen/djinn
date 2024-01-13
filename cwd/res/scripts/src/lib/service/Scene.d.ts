@@ -14,11 +14,13 @@ declare interface _Scene_MeshInstance {
   setAction(id: MeshInstanceID, name: string, speed?: number): void
   setVisible(id: MeshInstanceID, visible: boolean): void
   destroy(id: MeshInstanceID): void
+  destroyAll(ids: MeshInstanceID[]): void
 }
 declare interface _Scene_Entity {
   load(fp: string): object
   requestImGui(id: EntityID): void
   destroy(id: EntityID): void
+  destroyAll(ids: EntityID[]): void
 }
 declare interface _Scene_Camera {
   load(fp: string): object
@@ -37,6 +39,7 @@ declare interface _Scene_Phorm {
   setShaders(idPhorm: PhormID, idShader: ShaderID): void
   setVisible(id: PhormID, visible: boolean): void
   destroy(id: PhormID): void
+  destroyAll(ids: PhormID[]): void
 }
 declare interface _Scene_Physics {
   createBox(dims: number[], origin: number[], mass: number): PhysicsID
@@ -66,6 +69,7 @@ declare interface _Scene_Physics {
   enableCollision(id: PhysicsID): void
   disableCollision(id: PhysicsID): void
   destroy(id: PhysicsID): void
+  destroyAll(ids: PhysicsID[]): void
 }
 declare interface _Scene_Light {
   create(): LightID
@@ -73,10 +77,12 @@ declare interface _Scene_Light {
   setDiffuse(id: LightID, rgba: number[]): void
   setSpecular(id: LightID, rgba: number[]): void
   destroy(id: LightID): void
+  destroyAll(ids: LightID[]): void
 }
 declare interface _Scene_Waypoint {
   create(): WaypointID
   destroy(id: WaypointID): void
+  destroyAll(ids: WaypointID[]): void
 }
 export declare interface _Scene {
   MeshInstance: _Scene_MeshInstance
