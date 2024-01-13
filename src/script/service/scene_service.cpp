@@ -133,6 +133,7 @@ namespace djinn::js::scene_service
 		mgl::input_file in(afp);
 
 		auto const& [tex_ids, tex] = ::djinn::asset_service::get_texture_manager()->load_xport(&in);
+		id_t const skybox_id = ::djinn::asset_service::get_cubemap_manager()->load_xport(&in);
 		// materials are not accesible to the scripts, just used internally for xports
 		std::unordered_map<u32, sptr<material>> const& materials = ::djinn::asset_service::get_material_manager()->load_xport(&in, tex);
 		std::vector<id_t> const& phorms = ::djinn::scene_service::get_phorm_manager()->load_xport(&in, materials);
@@ -141,6 +142,7 @@ namespace djinn::js::scene_service
 
 		JSValue map = JS_NewObject(ctx);
 		JS_SetPropertyStr(ctx, map, "textures", js::create_id_array(ctx, (s64)tex_ids.size(), tex_ids.data()));
+		JS_SetPropertyStr(ctx, map, "skybox", js::create_id(ctx, skybox_id));
 		JS_SetPropertyStr(ctx, map, "phorms", js::create_id_array(ctx, (s64)phorms.size(), phorms.data()));
 		JS_SetPropertyStr(ctx, map, "lights", js::create_id_array(ctx, (s64)lights.size(), lights.data()));
 		JS_SetPropertyStr(ctx, map, "waypoints", js::create_id_array(ctx, (s64)waypoints.size(), waypoints.data()));

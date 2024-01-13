@@ -2,6 +2,7 @@ import "./id.d"
 
 declare interface _Xport {
   textures: TextureID[]
+  skybox: CubemapID
   phorms: PhormID[]
   lights: LightID[]
   waypoints: WaypointID[]

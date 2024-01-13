@@ -47,7 +47,6 @@ export default class Skybox {
       options.fragmentShader
     )
     this.idMesh = Asset.Mesh.create(8, [3], 36, [this.idTexture])
-    console.log(this.idMesh)
     Asset.Mesh.update(
       this.idMesh,
       [

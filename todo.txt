@@ -5,16 +5,18 @@
 	- Scene.destroySelf()
 
 - now
+	- smnode uvs
+
 	- scripts
 		- move sound_emitter_manager into scene_service
 		- get rid of render service?
+		- *.destroyAll(ids: XID[]): void
 		- OOP stl
 	- disable bvh movement?
 	- HOT_RELOAD/NOT_RELOAD macro?
 	- phorm handle different material settings (alpha, cull, lighting)
 	- implement different lights
 
-	- xport skybox
 	- retained_buffer::load => buffer::load (buffer doesn't get save though)
 	- powertranzphormr mgl::input_file => haul::input_file
 	- load/save take haul::input_file* const

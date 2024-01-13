@@ -10,7 +10,6 @@ import Xport from "./lib/Xport"
 const { Asset, Render, Nanovg, Scene, ImGui, Sound, Input } = djinn
 
 export default class MainEntity extends Entity {
-  private skybox: Optional<Skybox>
   private camera: Optional<Camera>
   private color: Color = new Color(0, 0, 0, 1)
   private entities: TestEntity[] = []
@@ -39,19 +38,6 @@ export default class MainEntity extends Entity {
   private xport: Optional<Xport>
 
   __init() {
-    this.skybox = Skybox.loadDirectory(
-      {
-        vertexShader: "sky.vert",
-        fragmentShader: "sky.frag",
-      },
-      {
-        dir: "dir",
-        textureOptions: {
-          minFilter: Render.GL_NEAREST,
-          magFilter: Render.GL_NEAREST,
-        },
-      }
-    )
     this.camera = Scene.Camera.load("lib/Camera.js") as Camera
     this.idShader = Asset.Shader.load("custom.vert", "custom.frag")
     this.idTexture = Asset.Texture.load("test.bmp", {
@@ -103,31 +89,29 @@ export default class MainEntity extends Entity {
     this.ground?.bind(this.camera!)
 
     this.idPhormShader = Asset.Shader.load("phorm.vert", "phorm.frag")
-    this.xport = new Xport("city.xport")
+    this.xport = new Xport("hill.xport")
     for (var i = 0; i < this.xport.idPhorms.length; i++)
       Scene.Phorm.setShaders(this.xport.idPhorms[i], this.idPhormShader)
   }
   __destroy() {
     Scene.MeshInstance.destroy(this.idStaticInstance)
-    Asset.Mesh.destroy(this.idStaticMesh!)
+    Asset.Mesh.destroy(this.idStaticMesh)
     Asset.Shader.destroy(this.idStaticShader)
     for (var i = 0; i < this.idAnimatedInstances.length; i++)
       Scene.MeshInstance.destroy(this.idAnimatedInstances[i])
-    Asset.Mesh.destroy(this.idAnimatedMesh!)
+    Asset.Mesh.destroy(this.idAnimatedMesh)
     Asset.Shader.destroy(this.idAnimatedShader)
-
-    this.skybox!.destroy()
 
     Sound.Emitter.stop(this.idSoundEmitter)
     Sound.Emitter.destroy(this.idSoundEmitter)
     Asset.Sound.destroy(this.idSoundSource)
-    Asset.Mesh.destroy(this.idMesh!)
+    Asset.Mesh.destroy(this.idMesh)
     Asset.Shader.destroy(this.idShader)
     Asset.Texture.destroy(this.idTexture)
 
     Scene.Physics.destroy(this.idPhysics)
 
-    this.xport?.destroy()
+    this.xport!.destroy()
     Asset.Shader.destroy(this.idPhormShader)
   }
   __load() {
@@ -176,10 +160,7 @@ export default class MainEntity extends Entity {
     // Scene.setPos(this.xport!.idLights[0], [Math.cos(time), -1, Math.sin(time)])
   }
   __draw() {
-    this.skybox!.draw(this.camera!.getId())
-    // Asset.Shader.setUniforms(this.idShader, {
-    //   u_color: this.color!.toArray(),
-    // })
+    this.xport!.skybox!.draw(this.camera!.getId())
     Asset.Shader.setCameraUniforms(this.idShader, this.camera!.getId())
     Asset.Shader.setCameraUniforms(this.idStaticShader, this.camera!.getId())
     Asset.Shader.setCameraUniforms(this.idAnimatedShader, this.camera!.getId())
