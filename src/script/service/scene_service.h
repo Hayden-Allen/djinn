@@ -8,6 +8,7 @@
 #include "manager/xport/phorm_manager.h"
 #include "manager/xport/light_manager.h"
 #include "manager/xport/waypoint_manager.h"
+#include "manager/scene/sound_emitter_manager.h"
 
 namespace djinn
 {
@@ -28,6 +29,7 @@ namespace djinn
 		static phorm_manager* get_phorm_manager();
 		static light_manager* get_light_manager();
 		static waypoint_manager* get_waypoint_manager();
+		static sound_emitter_manager* get_sound_emitter_manager();
 		static JSRuntime* get_runtime();
 		static void update(f32 const dt, f32 const time);
 		static void draw();
@@ -43,6 +45,7 @@ namespace djinn
 		phorm_manager m_phorm_manager;
 		light_manager m_light_manager;
 		waypoint_manager m_waypoint_manager;
+		sound_emitter_manager m_emitter_manager;
 	private:
 		scene_service();
 	};

@@ -21,5 +21,19 @@ namespace djinn
 		for (u64 i = 0; i < m_textures.size(); i++)
 			if (m_textures[i])
 				m_textures[i]->bind((u32)i);
+		if (!m_should_cull)
+			glDisable(GL_CULL_FACE);
+	}
+	void material::unbind() const
+	{
+		for (u64 i = 0; i < m_textures.size(); i++)
+			if (m_textures[i])
+				m_textures[i]->unbind();
+		if (!m_should_cull)
+			glEnable(GL_CULL_FACE);
+	}
+	bool material::use_alpha() const
+	{
+		return m_use_alpha;
 	}
 } // namespace djinn

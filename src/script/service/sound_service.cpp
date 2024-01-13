@@ -8,35 +8,6 @@
 
 namespace djinn::js::sound_service
 {
-	JSValue create_sound_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
-	{
-		ASSERT(argc == 1);
-		id_t const sound_source_id = js::extract_id(ctx, argv[0]);
-		sptr<sound_source> source = ::djinn::asset_service::get_sound_source_manager()->get(sound_source_id);
-		id_t const instance_id = ::djinn::sound_service::get_sound_emitter_manager()->create(source);
-		return js::create_id(ctx, instance_id);
-	}
-	JSValue destroy_sound_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
-	{
-		ASSERT(argc == 1);
-		id_t id = js::extract_id(ctx, argv[0]);
-		::djinn::sound_service::get_sound_emitter_manager()->destroy(id);
-		return JS_UNDEFINED;
-	}
-	JSValue play_sound_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
-	{
-		ASSERT(argc == 1);
-		id_t id = js::extract_id(ctx, argv[0]);
-		::djinn::sound_service::get_sound_emitter_manager()->get(id)->play();
-		return JS_UNDEFINED;
-	}
-	JSValue stop_sound_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
-	{
-		ASSERT(argc == 1);
-		id_t id = js::extract_id(ctx, argv[0]);
-		::djinn::sound_service::get_sound_emitter_manager()->get(id)->stop();
-		return JS_UNDEFINED;
-	}
 } // namespace djinn::js::sound_service
 
 
@@ -67,10 +38,6 @@ namespace djinn
 	}
 	void sound_service::register_functions(JSContext* const ctx)
 	{
-		super::register_function(ctx, "Emitter", "create", 1, js::sound_service::create_sound_emitter);
-		super::register_function(ctx, "Emitter", "destroy", 1, js::sound_service::destroy_sound_emitter);
-		super::register_function(ctx, "Emitter", "play", 1, js::sound_service::play_sound_emitter);
-		super::register_function(ctx, "Emitter", "stop", 1, js::sound_service::stop_sound_emitter);
 	}
 	void sound_service::update()
 	{
@@ -83,11 +50,6 @@ namespace djinn
 	{
 		ASSERT(s_instance);
 		return s_instance->m_engine_ready ? &s_instance->m_engine : nullptr;
-	}
-	sound_emitter_manager* sound_service::get_sound_emitter_manager()
-	{
-		ASSERT(s_instance);
-		return &s_instance->m_sound_emitter_manager;
 	}
 
 

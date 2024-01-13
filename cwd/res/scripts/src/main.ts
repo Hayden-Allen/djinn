@@ -1,13 +1,12 @@
 import "./lib/djinn.d"
 import Camera from "./lib/Camera"
 import Entity from "./lib/Entity"
-import Skybox from "./lib/Skybox"
 import Color from "./lib/Color"
 import TestEntity from "./TestEntity"
 import GroundEntity from "./GroundEntity"
 import Xport from "./lib/Xport"
 
-const { Asset, Render, Nanovg, Scene, ImGui, Sound, Input } = djinn
+const { Asset, Render, Nanovg, Scene, ImGui, Input } = djinn
 
 export default class MainEntity extends Entity {
   private camera?: Camera
@@ -35,6 +34,7 @@ export default class MainEntity extends Entity {
   private ground?: GroundEntity
 
   private idPhormShader?: ShaderID
+  private idPhormAlphaShader?: ShaderID
   private xport?: Xport
 
   __init() {
@@ -54,7 +54,7 @@ export default class MainEntity extends Entity {
       [0, 1, 2, 0, 2, 3]
     )
     this.idSoundSource = Asset.Sound.load("test.mp3")
-    this.idSoundEmitter = Sound.Emitter.create(this.idSoundSource)
+    this.idSoundEmitter = Scene.SoundEmitter.create(this.idSoundSource)
     this.needsPlayAudio = true
 
     this.idStaticMesh = Asset.Mesh.loadStatic("cube.m3d")
@@ -89,9 +89,18 @@ export default class MainEntity extends Entity {
     this.ground?.bind(this.camera!)
 
     this.idPhormShader = Asset.Shader.load("phorm.vert", "phorm.frag")
+    this.idPhormAlphaShader = Asset.Shader.load(
+      "phorm.vert",
+      "phorm_alpha.frag"
+    )
     this.xport = new Xport("hill.xport")
-    for (var i = 0; i < this.xport.idPhorms.length; i++)
+    for (var i = 0; i < this.xport.idPhorms.length; i++) {
       Scene.Phorm.setShaders(this.xport.idPhorms[i], this.idPhormShader)
+      Scene.Phorm.setAlphaShaders(
+        this.xport.idPhorms[i],
+        this.idPhormAlphaShader
+      )
+    }
   }
   __destroy() {
     Scene.MeshInstance.destroy(this.idStaticInstance!)
@@ -101,8 +110,8 @@ export default class MainEntity extends Entity {
     Asset.Mesh.destroy(this.idAnimatedMesh!)
     Asset.Shader.destroy(this.idAnimatedShader!)
 
-    Sound.Emitter.stop(this.idSoundEmitter!)
-    Sound.Emitter.destroy(this.idSoundEmitter!)
+    Scene.SoundEmitter.stop(this.idSoundEmitter!)
+    Scene.SoundEmitter.destroy(this.idSoundEmitter!)
     Asset.Sound.destroy(this.idSoundSource!)
     Asset.Mesh.destroy(this.idMesh!)
     Asset.Shader.destroy(this.idShader!)
@@ -112,6 +121,7 @@ export default class MainEntity extends Entity {
 
     this.xport!.destroy()
     Asset.Shader.destroy(this.idPhormShader!)
+    Asset.Shader.destroy(this.idPhormAlphaShader!)
   }
   __load() {
     this.color.set(0, 1, 1, 0.5)
@@ -141,7 +151,7 @@ export default class MainEntity extends Entity {
     }
 
     if (this.needsPlayAudio) {
-      // Sound.Emitter.play(this.idSoundEmitter)
+      // Scene.SoundEmitter.play(this.idSoundEmitter!)
       this.needsPlayAudio = false
     }
     Scene.Entity.requestImGui(this.id)
@@ -164,6 +174,10 @@ export default class MainEntity extends Entity {
     Asset.Shader.setCameraUniforms(this.idStaticShader!, this.camera!.getId())
     Asset.Shader.setCameraUniforms(this.idAnimatedShader!, this.camera!.getId())
     Asset.Shader.setCameraUniforms(this.idPhormShader!, this.camera!.getId())
+    Asset.Shader.setCameraUniforms(
+      this.idPhormAlphaShader!,
+      this.camera!.getId()
+    )
 
     Scene.copyTransform(this.idPhysics!, this.idStaticInstance!)
   }

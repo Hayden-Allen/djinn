@@ -16,9 +16,13 @@ namespace djinn
 	public:
 		void draw(sptr<mgl::context> const& ctx);
 		void set_shaders(sptr<shaders> const& shaders);
+		void set_alpha_shaders(sptr<shaders> const& alpha_shaders);
 		std::unordered_map<sptr<material>, static_retained_render_object> const& get_render_objects() const;
 	private:
 		std::unordered_map<sptr<material>, static_retained_render_object> m_ros;
 		wptr<shaders> m_shaders;
+		wptr<shaders> m_alpha_shaders;
+	private:
+		void shader_setup(wptr<shaders> shaders);
 	};
 } // namespace djinn

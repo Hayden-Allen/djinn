@@ -3,16 +3,17 @@
 	- enforce all pos/rot/scale changes be done in __main?
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
 	- Scene.destroySelf()
-
-- now
-	- better prettierrc
-	- scripts
-		- move sound_emitter_manager into scene_service
-		- get rid of render service?
-		- OOP stl
 	- disable bvh movement?
 	- HOT_RELOAD/NOT_RELOAD macro?
+	- move ma_engine into sound_source_manager/asset_service?
+
+- now
 	- phorm handle different material settings (alpha, cull, lighting)
+	- animated_mesh::get_bone_pos/rot/scale
+	- better prettierrc
+	- scripts
+		- get rid of render service?
+		- OOP stl
 	- implement different lights
 
 	- retained_buffer::load => buffer::load (buffer doesn't get save though)

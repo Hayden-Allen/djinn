@@ -8,6 +8,29 @@ declare interface _Xport {
   waypoints: WaypointID[]
 }
 
+declare interface _Scene_Waypoint {
+  create(): WaypointID
+  destroy(id: WaypointID): void
+  destroyAll(ids: WaypointID[]): void
+}
+declare interface _Scene_Light {
+  create(): LightID
+  setAmbient(id: LightID, rgba: number[]): void
+  setDiffuse(id: LightID, rgba: number[]): void
+  setSpecular(id: LightID, rgba: number[]): void
+  destroy(id: LightID): void
+  destroyAll(ids: LightID[]): void
+}
+declare interface _Scene_Xport {
+  load(fp: string): _Xport
+}
+declare interface _Scene_Phorm {
+  setShaders(idPhorm: PhormID, idShader: ShaderID): void
+  setAlphaShaders(idPhorm: PhormID, idShader: ShaderID): void
+  setVisible(id: PhormID, visible: boolean): void
+  destroy(id: PhormID): void
+  destroyAll(ids: PhormID[]): void
+}
 declare interface _Scene_MeshInstance {
   create(idMesh: MeshID, idShader: ShaderID): MeshInstanceID
   setUniforms(id: MeshInstanceID, map: object): void
@@ -31,15 +54,6 @@ declare interface _Scene_Camera {
     near: number,
     far: number
   ): void
-}
-declare interface _Scene_Xport {
-  load(fp: string): _Xport
-}
-declare interface _Scene_Phorm {
-  setShaders(idPhorm: PhormID, idShader: ShaderID): void
-  setVisible(id: PhormID, visible: boolean): void
-  destroy(id: PhormID): void
-  destroyAll(ids: PhormID[]): void
 }
 declare interface _Scene_Physics {
   createBox(dims: number[], origin: number[], mass: number): PhysicsID
@@ -71,30 +85,23 @@ declare interface _Scene_Physics {
   destroy(id: PhysicsID): void
   destroyAll(ids: PhysicsID[]): void
 }
-declare interface _Scene_Light {
-  create(): LightID
-  setAmbient(id: LightID, rgba: number[]): void
-  setDiffuse(id: LightID, rgba: number[]): void
-  setSpecular(id: LightID, rgba: number[]): void
-  destroy(id: LightID): void
-  destroyAll(ids: LightID[]): void
-}
-declare interface _Scene_Waypoint {
-  create(): WaypointID
-  destroy(id: WaypointID): void
-  destroyAll(ids: WaypointID[]): void
+declare interface _Scene_SoundEmitter {
+  create(idSource: SoundID): SoundEmitterID
+  play(id: SoundEmitterID): void
+  stop(id: SoundEmitterID): void
+  destroy(id: SoundEmitterID): void
 }
 export declare interface _Scene {
-  MeshInstance: _Scene_MeshInstance
-  Entity: _Scene_Entity
   Camera: _Scene_Camera
+  Entity: _Scene_Entity
+  Light: _Scene_Light
+  MeshInstance: _Scene_MeshInstance
   Phorm: _Scene_Phorm
   Physics: _Scene_Physics
-  Light: _Scene_Light
-  Xport: _Scene_Xport
+  SoundEmitter: _Scene_SoundEmitter
   Waypoint: _Scene_Waypoint
+  Xport: _Scene_Xport
 
-  copyTransform(idFrom: SceneID, idTo: SceneID): void
   getPos(id: SceneID): number[]
   getPosX(id: SceneID): number
   getPosY(id: SceneID): number
@@ -111,7 +118,6 @@ export declare interface _Scene {
   addPosLocalX(id: SceneID, x: number): void
   addPosLocalY(id: SceneID, y: number): void
   addPosLocalZ(id: SceneID, z: number): void
-
   getRot(id: SceneID): number[]
   getRotX(id: SceneID): number
   getRotY(id: SceneID): number
@@ -128,7 +134,6 @@ export declare interface _Scene {
   addRotLocalX(id: SceneID, x: number): void
   addRotLocalY(id: SceneID, y: number): void
   addRotLocalZ(id: SceneID, z: number): void
-
   getScale(id: SceneID): number[]
   getScaleX(id: SceneID): number
   getScaleY(id: SceneID): number
@@ -145,4 +150,5 @@ export declare interface _Scene {
   addScaleLocalX(id: SceneID, x: number): void
   addScaleLocalY(id: SceneID, y: number): void
   addScaleLocalZ(id: SceneID, z: number): void
+  copyTransform(idFrom: SceneID, idTo: SceneID): void
 }

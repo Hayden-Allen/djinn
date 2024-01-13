@@ -1,8 +1,6 @@
 #pragma once
 #include "pch.h"
 #include "service.h"
-#include "manager/asset/sound_source_manager.h"
-#include "manager/scene/sound_emitter_manager.h"
 
 namespace djinn
 {
@@ -19,9 +17,7 @@ namespace djinn
 		static void update();
 	public:
 		static ma_engine* get_engine();
-		static sound_emitter_manager* get_sound_emitter_manager();
 	private:
-		sound_emitter_manager m_sound_emitter_manager;
 		ma_engine m_engine;
 		bool m_engine_ready = false;
 	private:

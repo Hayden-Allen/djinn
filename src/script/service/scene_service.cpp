@@ -9,6 +9,9 @@
 
 namespace djinn::js::scene_service
 {
+	//
+	//	HELPER
+	//
 	static entity* get_entity(id_t const id)
 	{
 		if (::djinn::scene_service::get_entity_manager()->has(id))
@@ -60,8 +63,9 @@ namespace djinn::js::scene_service
 		return JS_UNDEFINED;
 	}
 
-
-
+	//
+	//	WAYPOINT
+	//
 	JSValue create_waypoint(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 0);
@@ -83,8 +87,9 @@ namespace djinn::js::scene_service
 		return JS_UNDEFINED;
 	}
 
-
-
+	//
+	//	LIGHT
+	//
 	JSValue create_light(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 0);
@@ -139,7 +144,9 @@ namespace djinn::js::scene_service
 		return JS_UNDEFINED;
 	}
 
-
+	//
+	//	XPORT/PHORM
+	//
 	JSValue load_xport(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
@@ -174,6 +181,17 @@ namespace djinn::js::scene_service
 		phorm->set_shaders(shaders);
 		return JS_UNDEFINED;
 	}
+	JSValue set_phorm_alpha_shaders(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id_phorm = js::extract_id(ctx, argv[0]);
+		id_t const id_shaders = js::extract_id(ctx, argv[1]);
+
+		sptr<phorm> phorm = ::djinn::scene_service::get_phorm_manager()->get(id_phorm);
+		sptr<shaders> shaders = ::djinn::asset_service::get_shader_manager()->get(id_shaders);
+		phorm->set_alpha_shaders(shaders);
+		return JS_UNDEFINED;
+	}
 	JSValue set_phorm_visible(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2);
@@ -199,27 +217,9 @@ namespace djinn::js::scene_service
 	}
 
 
-
-	JSValue request_imgui(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
-	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		get_entity(id)->request_imgui();
-		return JS_UNDEFINED;
-	}
-	JSValue copy_transform(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
-	{
-		ASSERT(argc == 2);
-		id_t const phys_id = js::extract_id(ctx, argv[0]);
-		id_t const target_id = js::extract_id(ctx, argv[1]);
-		sptr<physics_object> po = ::djinn::scene_service::get_physics_object_manager()->get(phys_id);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(target_id);
-		so->copy_transform(po);
-		return JS_UNDEFINED;
-	}
-
-
-
+	//
+	//	ENTITY / CAMERA
+	//
 	JSValue load_entity(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
@@ -251,9 +251,6 @@ namespace djinn::js::scene_service
 		}
 		return JS_UNDEFINED;
 	}
-
-
-
 	JSValue load_camera(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
@@ -274,9 +271,17 @@ namespace djinn::js::scene_service
 		cam->configure(fovy, aspect, near, far);
 		return JS_UNDEFINED;
 	}
+	JSValue request_imgui(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		get_entity(id)->request_imgui();
+		return JS_UNDEFINED;
+	}
 
-
-
+	//
+	//	MESH INSTANCE
+	//
 	JSValue create_mesh_instance(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2);
@@ -347,8 +352,9 @@ namespace djinn::js::scene_service
 		return JS_UNDEFINED;
 	}
 
-
-
+	//
+	//	PHYSICS
+	//
 	JSValue create_physics_box(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 3);
@@ -491,8 +497,49 @@ namespace djinn::js::scene_service
 		return JS_UNDEFINED;
 	}
 
+	//
+	//	SOUND EMITTER
+	//
+	JSValue create_sound_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const source_id = js::extract_id(ctx, argv[0]);
+		sptr<sound_source> source = ::djinn::asset_service::get_sound_source_manager()->get(source_id);
+		return js::create_id(ctx, ::djinn::scene_service::get_sound_emitter_manager()->create(source));
+	}
+	JSValue play_sound_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		::djinn::scene_service::get_sound_emitter_manager()->get(id)->play();
+		return JS_UNDEFINED;
+	}
+	JSValue stop_sound_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		::djinn::scene_service::get_sound_emitter_manager()->get(id)->stop();
+		return JS_UNDEFINED;
+	}
+	JSValue destroy_sound_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		::djinn::scene_service::get_sound_emitter_manager()->destroy(id);
+		return JS_UNDEFINED;
+	}
+	JSValue destroy_all_sound_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		std::vector<id_t> const& ids = js::extract_id_array(ctx, argv[0]);
+		for (id_t const id : ids)
+			::djinn::scene_service::get_sound_emitter_manager()->destroy(id);
+		return JS_UNDEFINED;
+	}
 
-
+	//
+	//	COMMON
+	//
 	JSValue get_pos(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		return get_values(ctx, argc, argv, &scene_object_base::get_pos);
@@ -557,9 +604,6 @@ namespace djinn::js::scene_service
 	{
 		return add_value(ctx, argc, argv, &scene_object_base::add_pos_local, 0, 0, 1);
 	}
-
-
-
 	JSValue get_rot(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		return get_values(ctx, argc, argv, &scene_object_base::get_rot);
@@ -624,9 +668,6 @@ namespace djinn::js::scene_service
 	{
 		return add_value(ctx, argc, argv, &scene_object_base::add_rot_local, 0, 0, 1);
 	}
-
-
-
 	JSValue get_scale(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		return get_values(ctx, argc, argv, &scene_object_base::get_scale);
@@ -691,6 +732,16 @@ namespace djinn::js::scene_service
 	{
 		return add_value(ctx, argc, argv, &scene_object_base::add_scale_local, 0, 0, 1);
 	}
+	JSValue copy_transform(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const src_id = js::extract_id(ctx, argv[0]);
+		id_t const dst_id = js::extract_id(ctx, argv[1]);
+		sptr<scene_object> src = ::djinn::scene_service::get_scene_object(src_id);
+		sptr<scene_object> dst = ::djinn::scene_service::get_scene_object(dst_id);
+		dst->copy_transform(src);
+		return JS_UNDEFINED;
+	}
 } // namespace djinn::js::scene_service
 
 
@@ -715,39 +766,39 @@ namespace djinn
 	}
 	void scene_service::register_functions(JSContext* const ctx)
 	{
+		// WAYPOINT
 		super::register_function(ctx, "Waypoint", "create", 0, js::scene_service::create_waypoint);
 		super::register_function(ctx, "Waypoint", "destroy", 1, js::scene_service::destroy_waypoint);
 		super::register_function(ctx, "Waypoint", "destroyAll", 1, js::scene_service::destroy_all_waypoint);
-
+		// LIGHT
 		super::register_function(ctx, "Light", "create", 0, js::scene_service::create_light);
 		super::register_function(ctx, "Light", "setAmbient", 2, js::scene_service::set_light_color_ambient);
 		super::register_function(ctx, "Light", "setDiffuse", 2, js::scene_service::set_light_color_diffuse);
 		super::register_function(ctx, "Light", "setSpecular", 2, js::scene_service::set_light_color_specular);
 		super::register_function(ctx, "Light", "destroy", 1, js::scene_service::destroy_light);
 		super::register_function(ctx, "Light", "destroyAll", 1, js::scene_service::destroy_all_light);
-
+		// XPORT/PHORM
 		super::register_function(ctx, "Xport", "load", 1, js::scene_service::load_xport);
-
 		super::register_function(ctx, "Phorm", "setShaders", 2, js::scene_service::set_phorm_shaders);
+		super::register_function(ctx, "Phorm", "setAlphaShaders", 2, js::scene_service::set_phorm_alpha_shaders);
 		super::register_function(ctx, "Phorm", "setVisible", 2, js::scene_service::set_phorm_visible);
 		super::register_function(ctx, "Phorm", "destroy", 1, js::scene_service::destroy_phorm);
 		super::register_function(ctx, "Phorm", "destroyAll", 1, js::scene_service::destroy_all_phorm);
-
+		// MESH INSTANCE
 		super::register_function(ctx, "MeshInstance", "create", 2, js::scene_service::create_mesh_instance);
 		super::register_function(ctx, "MeshInstance", "setUniforms", 2, js::scene_service::set_mesh_instance_uniforms);
 		super::register_function(ctx, "MeshInstance", "setAction", 3, js::scene_service::set_mesh_instance_action);
 		super::register_function(ctx, "MeshInstance", "setVisible", 2, js::scene_service::set_mesh_instance_visible);
 		super::register_function(ctx, "MeshInstance", "destroy", 1, js::scene_service::destroy_mesh_instance);
 		super::register_function(ctx, "MeshInstance", "destroyAll", 1, js::scene_service::destroy_all_mesh_instance);
-
-		super::register_function(ctx, "Entity", "requestImGui", 1, js::scene_service::request_imgui);
+		// ENTITY / CAMERA
 		super::register_function(ctx, "Entity", "load", 1, js::scene_service::load_entity);
 		super::register_function(ctx, "Entity", "destroy", 1, js::scene_service::destroy_entity);
 		super::register_function(ctx, "Entity", "destroyAll", 1, js::scene_service::destroy_all_entity);
-
 		super::register_function(ctx, "Camera", "load", 1, js::scene_service::load_camera);
 		super::register_function(ctx, "Camera", "configure", 5, js::scene_service::configure_camera);
-
+		super::register_function(ctx, "Entity", "requestImGui", 1, js::scene_service::request_imgui);
+		// PHYSICS
 		super::register_function(ctx, "Physics", "createBox", 3, js::scene_service::create_physics_box);
 		super::register_function(ctx, "Physics", "createSphere", 3, js::scene_service::create_physics_sphere);
 		super::register_function(ctx, "Physics", "createCapsuleX", 4, js::scene_service::create_physics_capsule_x);
@@ -761,8 +812,13 @@ namespace djinn
 		super::register_function(ctx, "Physics", "disableCollision", 1, js::scene_service::disable_collision);
 		super::register_function(ctx, "Physics", "destroy", 1, js::scene_service::destroy_physics_object);
 		super::register_function(ctx, "Physics", "destroyAll", 1, js::scene_service::destroy_all_physics_object);
-
-		super::register_function(ctx, "copyTransform", 2, js::scene_service::copy_transform);
+		// SOUND EMITTER
+		super::register_function(ctx, "SoundEmitter", "create", 1, js::scene_service::create_sound_emitter);
+		super::register_function(ctx, "SoundEmitter", "play", 1, js::scene_service::play_sound_emitter);
+		super::register_function(ctx, "SoundEmitter", "stop", 1, js::scene_service::stop_sound_emitter);
+		super::register_function(ctx, "SoundEmitter", "destroy", 1, js::scene_service::destroy_sound_emitter);
+		super::register_function(ctx, "SoundEmitter", "destroyAll", 1, js::scene_service::destroy_all_sound_emitter);
+		// COMMON
 		super::register_function(ctx, "getPos", 1, js::scene_service::get_pos);
 		super::register_function(ctx, "getPosX", 1, js::scene_service::get_pos_x);
 		super::register_function(ctx, "getPosY", 1, js::scene_service::get_pos_y);
@@ -779,7 +835,6 @@ namespace djinn
 		super::register_function(ctx, "addPosLocalX", 2, js::scene_service::add_pos_local_x);
 		super::register_function(ctx, "addPosLocalY", 2, js::scene_service::add_pos_local_y);
 		super::register_function(ctx, "addPosLocalZ", 2, js::scene_service::add_pos_local_z);
-
 		super::register_function(ctx, "getRot", 1, js::scene_service::get_rot);
 		super::register_function(ctx, "getRotX", 1, js::scene_service::get_rot_x);
 		super::register_function(ctx, "getRotY", 1, js::scene_service::get_rot_y);
@@ -796,7 +851,6 @@ namespace djinn
 		super::register_function(ctx, "addRotLocalX", 2, js::scene_service::add_rot_local_x);
 		super::register_function(ctx, "addRotLocalY", 2, js::scene_service::add_rot_local_y);
 		super::register_function(ctx, "addRotLocalZ", 2, js::scene_service::add_rot_local_z);
-
 		super::register_function(ctx, "getScale", 1, js::scene_service::get_scale);
 		super::register_function(ctx, "getScaleX", 1, js::scene_service::get_scale_x);
 		super::register_function(ctx, "getScaleY", 1, js::scene_service::get_scale_y);
@@ -813,6 +867,7 @@ namespace djinn
 		super::register_function(ctx, "addScaleLocalX", 2, js::scene_service::add_scale_local_x);
 		super::register_function(ctx, "addScaleLocalY", 2, js::scene_service::add_scale_local_y);
 		super::register_function(ctx, "addScaleLocalZ", 2, js::scene_service::add_scale_local_z);
+		super::register_function(ctx, "copyTransform", 2, js::scene_service::copy_transform);
 	}
 	entity_manager* scene_service::get_entity_manager()
 	{
@@ -841,6 +896,10 @@ namespace djinn
 	waypoint_manager* scene_service::get_waypoint_manager()
 	{
 		return &s_instance->m_waypoint_manager;
+	}
+	sound_emitter_manager* scene_service::get_sound_emitter_manager()
+	{
+		return &s_instance->m_emitter_manager;
 	}
 	JSRuntime* scene_service::get_runtime()
 	{

@@ -4,7 +4,6 @@ import "./service/Input.d"
 import "./service/Nanovg.d"
 import "./service/Render.d"
 import type { _Scene } from "./service/Scene.d"
-import type { _Sound } from "./service/Sound.d"
 import "./service/Util.d"
 
 declare interface _Djinn {
@@ -14,7 +13,6 @@ declare interface _Djinn {
   Nanovg: _Nanovg
   Render: _Render
   Scene: _Scene
-  Sound: _Sound
   Util: _Util
 }
 
