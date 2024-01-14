@@ -10,7 +10,6 @@
 	- animation jumping on loop
 
 - now
-	- physics set velocity local broken
 	- camera set transform functions need to call update_mats()
 	- custom btMotionState?
 	- collapse scene_object into scene_object_base?

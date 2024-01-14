@@ -12,7 +12,7 @@ void main()
     vec3 L = normalize(vec3(0, 0, 1));
     float NdL = max(0, dot(N, -L));
 
-    if(v_tex_idx == 1)
+    if(v_tex_idx > 0)
         o_color = vec4(texture(u_texture_back, v_uv).rgb, 1);
     else
         o_color = vec4(texture(u_texture_front, v_uv).rgb, 1);

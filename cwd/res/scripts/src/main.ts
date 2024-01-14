@@ -56,7 +56,7 @@ export default class MainEntity extends Entity {
         //   [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1],
         //   [0, 1, 2, 0, 2, 3]
         // )
-        this.idSoundSource = Asset.Sound.load("test.mp3")
+        this.idSoundSource = Asset.Sound.load("white_out.mp3")
         this.idSoundEmitter = Scene.SoundEmitter.create(this.idSoundSource)
         this.needsPlayAudio = true
 
@@ -164,7 +164,7 @@ export default class MainEntity extends Entity {
         }
 
         if (this.needsPlayAudio) {
-            // Scene.SoundEmitter.play(this.idSoundEmitter)
+            Scene.SoundEmitter.play(this.idSoundEmitter)
             this.needsPlayAudio = false
         }
         Scene.Entity.requestImGui(this.id)

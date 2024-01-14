@@ -33,6 +33,7 @@ export default class Player extends Entity {
     private idHitbox: PhysicsID
     private isJumping: boolean = false
     private camAngleX: number = 0
+    private meshScale: number = 0.1
 
     // private worldPos: number[] = [-36, 103, -39] // top of tower
     private worldPos: number[] = [-29, 30, 39] // ground
@@ -44,44 +45,53 @@ export default class Player extends Entity {
     }
     __load() {
         // character
-        this.idMainMesh = Asset.Mesh.loadAnimated("xbot.m3d")
-        this.idMainShader = Asset.Shader.load("animated.vert", "animated.frag")
-        this.idMainInstance = Scene.MeshInstance.create(
-            this.idMainMesh,
-            this.idMainShader
-        )
-        Scene.MeshInstance.setAction(this.idMainInstance, "idle_Armature")
+        {
+            this.idMainMesh = Asset.Mesh.loadAnimated("xbot.m3d")
+            this.idMainShader = Asset.Shader.load(
+                "animated.vert",
+                "animated.frag"
+            )
+            this.idMainInstance = Scene.MeshInstance.create(
+                this.idMainMesh,
+                this.idMainShader
+            )
+            Scene.MeshInstance.setAction(this.idMainInstance, "idle_Armature")
+        }
         // procedural wing
-        this.idWingFrontTexture = Asset.Texture.load("wing_front.png")
-        this.idWingBackTexture = Asset.Texture.load("wing_back.png")
-        this.idWingMesh = Asset.Mesh.create(
-            this.wingBoneNames.length * 2,
-            [3, 3, 2, 1],
-            24,
-            [this.idWingFrontTexture, this.idWingBackTexture]
-        )
-        this.idWingShader = Asset.Shader.load("wing.vert", "wing.frag")
-        Asset.Shader.setUniforms(this.idWingShader, {
-            u_texture_front: 0,
-            u_texture_back: 1,
-        })
-        this.idWingInstance = Scene.MeshInstance.create(
-            this.idWingMesh,
-            this.idWingShader
-        )
-        const idx = [
-            5, 1, 0, 5, 2, 1, 3, 2, 5, 4, 2, 3, 7, 11, 6, 8, 11, 7, 8, 9, 11, 8,
-            10, 9,
-        ]
-        Asset.Mesh.updateIndices(this.idWingMesh, idx)
+        {
+            this.idWingFrontTexture = Asset.Texture.load("wing_front.png")
+            this.idWingBackTexture = Asset.Texture.load("wing_back.png")
+            this.idWingMesh = Asset.Mesh.create(
+                this.wingBoneNames.length * 2,
+                [3, 3, 2, 1],
+                24,
+                [this.idWingFrontTexture, this.idWingBackTexture]
+            )
+            this.idWingShader = Asset.Shader.load("wing.vert", "wing.frag")
+            Asset.Shader.setUniforms(this.idWingShader, {
+                u_texture_front: 0,
+                u_texture_back: 1,
+            })
+            this.idWingInstance = Scene.MeshInstance.create(
+                this.idWingMesh,
+                this.idWingShader
+            )
+            const idx = [
+                5, 1, 0, 5, 2, 1, 3, 2, 5, 4, 2, 3, 7, 11, 6, 8, 11, 7, 8, 9,
+                11, 8, 10, 9,
+            ]
+            Asset.Mesh.updateIndices(this.idWingMesh, idx)
+        }
         // hitbox
-        this.idHitbox = Scene.Physics.createCylinder(
-            1,
-            this.worldPos,
-            [0.2, 0.5, 0.2]
-        )
-        Scene.Physics.setFriction(this.idHitbox, 0)
-        Scene.Physics.setAngularFactor(this.idHitbox, [0, 1, 0])
+        {
+            this.idHitbox = Scene.Physics.createCylinder(
+                1,
+                this.worldPos,
+                [0.2, 0.5, 0.2]
+            )
+            Scene.Physics.setFriction(this.idHitbox, 0)
+            Scene.Physics.setAngularFactor(this.idHitbox, [0, 1, 0])
+        }
     }
     __unload() {
         Asset.Texture.destroyAll([
@@ -108,7 +118,7 @@ export default class Player extends Entity {
                     this.wingBoneNames[i]
                 )
                 if (this.isJumping) {
-                    const factor = 0.03
+                    const factor = 0.01
                     pos[0] += Math.random() * factor - factor / 2
                     pos[1] += Math.random() * factor - factor / 2
                     pos[2] += Math.random() * factor - factor / 2
@@ -151,7 +161,7 @@ export default class Player extends Entity {
                 actionSet = true
             }
             if (Input.getKey(Input.KEY_SPACE)) {
-                Scene.Physics.setVelocityY(this.idHitbox, 5)
+                Scene.Physics.setVelocityY(this.idHitbox, 20)
                 Scene.MeshInstance.setAction(this.idMainInstance, "bind")
                 actionSet = true
                 this.isJumping = true
@@ -171,30 +181,37 @@ export default class Player extends Entity {
         this.camAngleX -= dt * Input.rightY()
     }
     __draw() {
-        Scene.copyTransform(this.idHitbox, this.idMainInstance)
-
-        Scene.copyTransform(this.idMainInstance, this.camera!.getId())
-        Scene.addPosY(this.camera!.getId(), 1)
-        Scene.addPosLocalZ(this.camera!.getId(), 2)
-        Scene.addRotX(this.camera!.getId(), this.camAngleX)
-        Scene.copyTransform(this.camera!.getId(), this.camera!.getId())
-
-        // Scene.addPosZ(this.camera!.getId(), -2)
-        // Scene.addRotY(this.camera!.getId(), Math.PI)
-        // Scene.addRotX(this.camera!.getId(), -Math.PI / 6)
-
-        // Scene.addPosZ(this.camera!.getId(), 2)
-
-        Scene.addRotY(this.idMainInstance, Math.PI)
-        if (this.isJumping) {
-            Scene.addRotX(this.idMainInstance, Math.PI / 2)
-        }
-        Scene.copyTransform(this.idMainInstance, this.idWingInstance)
-
         this.worldPos = Scene.getPos(this.idHitbox)
         this.worldPos[1] += 1
         // console.log(this.worldPos)
 
+        Scene.copyTransform(this.idHitbox, this.camera!.getId())
+        Scene.addPosY(this.camera!.getId(), 1 * this.meshScale)
+
+        Scene.addPosLocalZ(this.camera!.getId(), 2 * this.meshScale)
+
+        // Scene.addPosZ(this.camera!.getId(), -2 * this.meshScale)
+        // Scene.addRotY(this.camera!.getId(), Math.PI)
+
+        // Scene.addPosZ(this.camera!.getId(), 2 * this.meshScale)
+
+        Scene.addRotX(this.camera!.getId(), this.camAngleX)
+        // TODO janky
+        Scene.copyTransform(this.camera!.getId(), this.camera!.getId())
+
+        Scene.copyTransform(this.idHitbox, this.idMainInstance)
+        Scene.setScale(this.idMainInstance, [
+            this.meshScale,
+            this.meshScale,
+            this.meshScale,
+        ])
+        Scene.addRotY(this.idMainInstance, Math.PI)
+        if (this.isJumping) {
+            // Scene.addRotX(this.idMainInstance, Math.PI / 2)
+        }
+        Scene.copyTransform(this.idMainInstance, this.idWingInstance)
+
+        // update shaders AFTER CAMERA TRANSFORM IS DONE BEING MODIFIED
         Asset.Shader.setCameraUniforms(this.idMainShader, this.camera!.getId())
         Asset.Shader.setCameraUniforms(this.idWingShader, this.camera!.getId())
     }
