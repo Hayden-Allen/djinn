@@ -88,9 +88,9 @@ namespace djinn
 	{
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
-		ImGuiIO& io = ImGui::GetIO();
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+		// ImGuiIO& io = ImGui::GetIO();
+		// io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+		// io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 		ImGui::StyleColorsDark();
 		ImGuiStyle& style = ImGui::GetStyle();
 		ImGui_ImplGlfw_InitForOpenGL(ctx->window, false);

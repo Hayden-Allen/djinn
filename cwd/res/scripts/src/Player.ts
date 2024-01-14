@@ -34,7 +34,8 @@ export default class Player extends Entity {
     private isJumping: boolean = false
     private camAngleX: number = 0
 
-    private worldPos: number[] = [-36, 103, -39]
+    // private worldPos: number[] = [-36, 103, -39] // top of tower
+    private worldPos: number[] = [-29, 30, 39] // ground
 
     bind(cam: Camera) {
         this.camera = cam
@@ -96,68 +97,76 @@ export default class Player extends Entity {
         Scene.Physics.destroy(this.idHitbox)
     }
     __main(dt: number, time: number) {
-        // wing
-        let frontWingVerts: number[] = []
-        let backWingVerts: number[] = []
-        for (var i = 0; i < this.wingBoneNames.length; i++) {
-            // pos
-            const pos = Scene.MeshInstance.getBonePos(
-                this.idMainInstance,
-                this.wingBoneNames[i]
-            )
-            if (this.isJumping) {
-                const factor = 0.03
-                pos[0] += Math.random() * factor - factor / 2
-                pos[1] += Math.random() * factor - factor / 2
-                pos[2] += Math.random() * factor - factor / 2
+        // wing mesh update
+        {
+            let frontWingVerts: number[] = []
+            let backWingVerts: number[] = []
+            for (var i = 0; i < this.wingBoneNames.length; i++) {
+                // pos
+                const pos = Scene.MeshInstance.getBonePos(
+                    this.idMainInstance,
+                    this.wingBoneNames[i]
+                )
+                if (this.isJumping) {
+                    const factor = 0.03
+                    pos[0] += Math.random() * factor - factor / 2
+                    pos[1] += Math.random() * factor - factor / 2
+                    pos[2] += Math.random() * factor - factor / 2
+                }
+                frontWingVerts = frontWingVerts.concat([...pos])
+                backWingVerts = backWingVerts.concat(pos)
+                // normal
+                const basis = Scene.MeshInstance.getBoneBasisZ(
+                    this.idMainInstance,
+                    this.wingBoneNames[i]
+                )
+                basis[1] *= -1
+                frontWingVerts = frontWingVerts.concat(basis)
+                const minusBasis = [-basis[0], -basis[1], -basis[2]]
+                backWingVerts = backWingVerts.concat(minusBasis)
+                // uv
+                frontWingVerts = frontWingVerts.concat(this.wingUVs[i])
+                backWingVerts = backWingVerts.concat(this.wingUVs[i])
+                // tex index
+                frontWingVerts.push(0)
+                backWingVerts.push(1)
             }
-            frontWingVerts = frontWingVerts.concat([...pos])
-            backWingVerts = backWingVerts.concat(pos)
-            // normal
-            const basis = Scene.MeshInstance.getBoneBasisZ(
-                this.idMainInstance,
-                this.wingBoneNames[i]
+            Asset.Mesh.updateVertices(
+                this.idWingMesh,
+                frontWingVerts.concat(backWingVerts)
             )
-            basis[1] *= -1
-            frontWingVerts = frontWingVerts.concat(basis)
-            const minusBasis = [-basis[0], -basis[1], -basis[2]]
-            backWingVerts = backWingVerts.concat(minusBasis)
-            // uv
-            frontWingVerts = frontWingVerts.concat(this.wingUVs[i])
-            backWingVerts = backWingVerts.concat(this.wingUVs[i])
-            // tex index
-            frontWingVerts.push(0)
-            backWingVerts.push(1)
         }
-        Asset.Mesh.updateVertices(
-            this.idWingMesh,
-            frontWingVerts.concat(backWingVerts)
-        )
-
         // movement
-        const dx = 5 * Input.leftX()
-        const dz = 5 * Input.leftY()
-        Scene.Physics.setVelocityLocalX(this.idHitbox, dx)
-        Scene.Physics.setVelocityLocalZ(this.idHitbox, dz)
-        let actionSet = false
-        if (dx != 0 || dz != 0) {
-            Scene.MeshInstance.setAction(this.idMainInstance, "run_Armature")
-            actionSet = true
+        {
+            const dx = 5 * Input.leftX()
+            const dz = 5 * Input.leftY()
+            Scene.Physics.setVelocityLocalX(this.idHitbox, dx)
+            Scene.Physics.setVelocityLocalZ(this.idHitbox, dz)
+            let actionSet = false
+            if (dx != 0 || dz != 0) {
+                Scene.MeshInstance.setAction(
+                    this.idMainInstance,
+                    "run_Armature"
+                )
+                actionSet = true
+            }
+            if (Input.getKey(Input.KEY_SPACE)) {
+                Scene.Physics.setVelocityY(this.idHitbox, 5)
+                Scene.MeshInstance.setAction(this.idMainInstance, "bind")
+                actionSet = true
+                this.isJumping = true
+            } else {
+                this.isJumping = false
+            }
+            if (!actionSet) {
+                Scene.MeshInstance.setAction(
+                    this.idMainInstance,
+                    "idle_Armature"
+                )
+            }
+            const ry = 2 * Input.rightX()
+            Scene.Physics.setAngularVelocity(this.idHitbox, [0, ry, 0])
         }
-        if (Input.getKey(Input.KEY_SPACE)) {
-            Scene.Physics.setVelocityY(this.idHitbox, 15)
-            Scene.MeshInstance.setAction(this.idMainInstance, "bind")
-            actionSet = true
-            this.isJumping = true
-        } else {
-            this.isJumping = false
-        }
-        if (!actionSet) {
-            Scene.MeshInstance.setAction(this.idMainInstance, "idle_Armature")
-        }
-        const ry = 2 * Input.rightX()
-        Scene.Physics.setAngularVelocity(this.idHitbox, [0, ry, 0])
-
         // camera
         this.camAngleX -= dt * Input.rightY()
     }
@@ -184,6 +193,7 @@ export default class Player extends Entity {
 
         this.worldPos = Scene.getPos(this.idHitbox)
         this.worldPos[1] += 1
+        // console.log(this.worldPos)
 
         Asset.Shader.setCameraUniforms(this.idMainShader, this.camera!.getId())
         Asset.Shader.setCameraUniforms(this.idWingShader, this.camera!.getId())
