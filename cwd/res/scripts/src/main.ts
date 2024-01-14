@@ -111,7 +111,6 @@ export default class MainEntity extends Entity {
             )
         }
 
-        console.log("main")
         this.player = Scene.Entity.load("Player.js") as Player
         this.player.bind(this.camera!)
     }

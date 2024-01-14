@@ -11,11 +11,10 @@
 
 - now
 	- setPos physics_object?
-	- load being called twice reload?
+	- custom btMotionState?
 	- angles rad=>deg
 
 	- addRot/addLocalRot weirdness
-	- custom btMotionState?
 	- scripts OOP stl
 	- implement different lights
 

@@ -11,7 +11,7 @@ namespace djinn
 	{
 	public:
 		cubemap_watcher(cubemap_manager* const manager) :
-			haul::parent<directory_watcher<cubemap_manager>>(c::base_dir::texture, manager)
+			haul::parent<directory_watcher<cubemap_manager>>(c::base_dir::texture, manager, 0)
 		{}
 		DCM(cubemap_watcher);
 	public:

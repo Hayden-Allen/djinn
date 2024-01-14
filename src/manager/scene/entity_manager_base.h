@@ -56,7 +56,9 @@ namespace djinn
 		}
 		void load_file(std::string const& afp)
 		{
-			m_afp2src.insert_or_assign(afp, u::read_file(afp));
+			std::string const& src = u::read_file(afp);
+			if (src.empty()) return;
+			m_afp2src.insert_or_assign(afp, src);
 			inject_script(afp);
 		}
 		id_t load_base(T* const t, std::string const& afp)

@@ -11,7 +11,7 @@ namespace djinn
 	{
 	public:
 		texture_watcher(texture_manager* const manager) :
-			haul::parent<directory_watcher<texture_manager>>(c::base_dir::texture, manager)
+			haul::parent<directory_watcher<texture_manager>>(c::base_dir::texture, manager, 0)
 		{}
 		DCM(texture_watcher);
 	public:

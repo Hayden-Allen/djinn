@@ -11,7 +11,7 @@ namespace djinn
 	{
 	public:
 		sound_source_watcher(sound_source_manager* const manager) :
-			haul::parent<directory_watcher<sound_source_manager>>(c::base_dir::sound, manager)
+			haul::parent<directory_watcher<sound_source_manager>>(c::base_dir::sound, manager, 0)
 		{}
 		DCM(sound_source_watcher);
 	public:

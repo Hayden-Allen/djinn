@@ -12,7 +12,7 @@ namespace djinn
 	{
 	public:
 		script_watcher_entity(entity_manager* const manager) :
-			directory_watcher(c::base_dir::script, manager)
+			directory_watcher(c::base_dir::script, manager, 1000)
 		{}
 		DCM(script_watcher_entity);
 	};
@@ -20,7 +20,7 @@ namespace djinn
 	{
 	public:
 		script_watcher_camera(camera_entity_manager* const manager) :
-			directory_watcher(c::base_dir::script, manager)
+			directory_watcher(c::base_dir::script, manager, 1000)
 		{}
 		DCM(script_watcher_camera);
 	};

@@ -11,7 +11,7 @@ namespace djinn
 	{
 	public:
 		shader_watcher(shader_manager* const manager) :
-			haul::parent<directory_watcher<shader_manager>>(c::base_dir::shader, manager)
+			haul::parent<directory_watcher<shader_manager>>(c::base_dir::shader, manager, 0)
 		{}
 		DCM(shader_watcher);
 	public:

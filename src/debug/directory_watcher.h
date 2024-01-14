@@ -8,9 +8,10 @@ namespace djinn
 	class directory_watcher
 	{
 	public:
-		directory_watcher(std::string const& base_dir, T* const manager) :
+		directory_watcher(std::string const& base_dir, T* const manager, u32 const cooldown_msec) :
 			m_manager(manager),
-			m_base_path(base_dir)
+			m_base_path(base_dir),
+			m_cooldown_msec(cooldown_msec)
 		{
 			m_dir_handle = CreateFile(
 				base_dir.c_str(),
@@ -53,7 +54,24 @@ namespace djinn
 					if (std::filesystem::is_directory(m_base_path / fp))
 						continue;
 
-					handle_action(cur->Action, fp);
+					std::string sfp(fp);
+					double const now_msec = glfwGetTime() * 1000;
+					auto const& it = m_last_time.find(sfp);
+					// if we've already handled this file, make sure it wasn't within the cooldown window before handling it again
+					if (it != m_last_time.end())
+					{
+						double const delta_msec = now_msec - it->second;
+						if (delta_msec >= (double)m_cooldown_msec)
+						{
+							handle_action(cur->Action, sfp);
+						}
+					}
+					// we haven't already handled this file
+					else
+					{
+						handle_action(cur->Action, sfp);
+					}
+					m_last_time[sfp] = now_msec;
 
 					offset += cur->NextEntryOffset;
 				} while (cur->NextEntryOffset != 0);
@@ -105,8 +123,10 @@ namespace djinn
 		T* const m_manager;
 		std::string m_old_fp;
 		std::filesystem::path m_base_path;
+		std::unordered_map<std::string, double> m_last_time;
 		HANDLE m_dir_handle;
 		OVERLAPPED m_overlapped;
+		u32 m_cooldown_msec;
 		char m_info_buffer[s_INFO_BUFFER_SIZE] = { 0 };
 	};
 } // namespace djinn

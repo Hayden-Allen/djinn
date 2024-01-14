@@ -72,7 +72,6 @@ export default class Player extends Entity {
         ]
         Asset.Mesh.updateIndices(this.idWingMesh, idx)
         // hitbox
-        console.log("LOAD", this.worldPos)
         this.idHitbox = Scene.Physics.createCylinder(
             1,
             this.worldPos,
@@ -134,8 +133,8 @@ export default class Player extends Entity {
         )
 
         // movement
-        const dx = 2 * Input.leftX()
-        const dz = 2 * Input.leftY()
+        const dx = 10 * Input.leftX()
+        const dz = 10 * Input.leftY()
         Scene.Physics.setVelocityLocalX(this.idHitbox, dx)
         Scene.Physics.setVelocityLocalZ(this.idHitbox, dz)
         let actionSet = false
