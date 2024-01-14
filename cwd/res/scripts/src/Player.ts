@@ -38,6 +38,8 @@ export default class Player extends Entity {
 
     bind(cam: Camera) {
         this.camera = cam
+        // Scene.copyTransform(this.idHitbox, this.camera!.getId())
+        // Scene.addPosLocalZ(this.camera!.getId(), 5)
     }
     __load() {
         // character
@@ -133,8 +135,8 @@ export default class Player extends Entity {
         )
 
         // movement
-        const dx = 10 * Input.leftX()
-        const dz = 10 * Input.leftY()
+        const dx = 5 * Input.leftX()
+        const dz = 5 * Input.leftY()
         Scene.Physics.setVelocityLocalX(this.idHitbox, dx)
         Scene.Physics.setVelocityLocalZ(this.idHitbox, dz)
         let actionSet = false
@@ -160,21 +162,19 @@ export default class Player extends Entity {
         this.camAngleX -= dt * Input.rightY()
     }
     __draw() {
-        Asset.Shader.setCameraUniforms(this.idMainShader, this.camera!.getId())
-        Asset.Shader.setCameraUniforms(this.idWingShader, this.camera!.getId())
-
         Scene.copyTransform(this.idHitbox, this.idMainInstance)
 
         Scene.copyTransform(this.idMainInstance, this.camera!.getId())
         Scene.addPosY(this.camera!.getId(), 1)
+        Scene.addPosLocalZ(this.camera!.getId(), 2)
+        Scene.addRotX(this.camera!.getId(), this.camAngleX)
+        Scene.copyTransform(this.camera!.getId(), this.camera!.getId())
+
         // Scene.addPosZ(this.camera!.getId(), -2)
         // Scene.addRotY(this.camera!.getId(), Math.PI)
         // Scene.addRotX(this.camera!.getId(), -Math.PI / 6)
 
         // Scene.addPosZ(this.camera!.getId(), 2)
-
-        Scene.addPosLocalZ(this.camera!.getId(), 2)
-        Scene.addRotX(this.camera!.getId(), this.camAngleX)
 
         Scene.addRotY(this.idMainInstance, Math.PI)
         if (this.isJumping) {
@@ -184,5 +184,8 @@ export default class Player extends Entity {
 
         this.worldPos = Scene.getPos(this.idHitbox)
         this.worldPos[1] += 1
+
+        Asset.Shader.setCameraUniforms(this.idMainShader, this.camera!.getId())
+        Asset.Shader.setCameraUniforms(this.idWingShader, this.camera!.getId())
     }
 }

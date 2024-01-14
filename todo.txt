@@ -10,8 +10,9 @@
 	- animation jumping on loop
 
 - now
-	- setPos physics_object?
 	- custom btMotionState?
+	- bullet debug draw
+	- setPos physics_object?
 	- angles rad=>deg
 
 	- addRot/addLocalRot weirdness

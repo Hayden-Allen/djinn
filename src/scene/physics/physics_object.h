@@ -1,12 +1,16 @@
 #pragma once
 #include "pch.h"
 #include "scene/scene_object_base.h"
+#include "core/util.h"
 
 namespace djinn
 {
+	class physics_object_motion_state;
+
 	class physics_object : public scene_object_base
 	{
 		friend class physics_object_manager;
+		friend class physics_object_motion_state;
 	public:
 		DCM(physics_object);
 		virtual ~physics_object();
@@ -31,9 +35,31 @@ namespace djinn
 		optr<btRigidBody> m_rb;
 		optr<btMotionState> m_motion;
 		optr<btCollisionShape> m_shape;
+		tmat<space::OBJECT, space::PARENT> m_transform;
 	protected:
 		physics_object(id_t const id, sptr<btDiscreteDynamicsWorld> const& world);
 	protected:
 		void copy_physics_transform();
+		void extract_physics_transform(btTransform const& world);
+	};
+
+	class physics_object_motion_state : public btMotionState
+	{
+	public:
+		physics_object_motion_state(physics_object* const obj) :
+			m_obj(obj)
+		{}
+		DCM(physics_object_motion_state);
+	public:
+		void getWorldTransform(btTransform& worldTrans) const override
+		{
+			worldTrans = u::tmat2bullet(m_obj->get_world_transform());
+		}
+		void setWorldTransform(btTransform const& worldTrans) override
+		{
+			m_obj->extract_physics_transform(worldTrans);
+		}
+	private:
+		physics_object* const m_obj;
 	};
 } // namespace djinn

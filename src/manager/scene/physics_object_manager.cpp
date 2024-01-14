@@ -62,6 +62,7 @@ namespace djinn
 		for (auto& pair : m_objects)
 			pair.second->update_transform();
 		m_world->stepSimulation(dt, 8);
+		// m_world->stepSimulation(dt);
 		for (auto& pair : m_objects)
 			pair.second->copy_physics_transform();
 	}

@@ -19,21 +19,23 @@ namespace djinn
 		tmat<space::OBJECT, space::PARENT> const& trans = tmat_util::translation<space::OBJECT, space::PARENT>(m_pos[0], m_pos[1], m_pos[2]);
 		tmat<space::OBJECT, space::OBJECT> const& rot = tmat_util::rotation_yxz<space::OBJECT>(m_rot[0], m_rot[1], m_rot[2]);
 		tmat<space::OBJECT, space::OBJECT> const& scale = tmat_util::scale<space::OBJECT>(m_scale[0], m_scale[1], m_scale[2]);
-		tmat<space::OBJECT, space::PARENT> const& mat = trans * rot * scale;
+		m_transform = trans * rot * scale;
 		// TODO mat * accumulate_parent_mats().invert_copy()
-		m_rb->getMotionState()->setWorldTransform(u::tmat2bullet(mat));
+		// m_rb->getMotionState()->setWorldTransform(u::tmat2bullet(mat));
 	}
 	tmat<space::OBJECT, space::PARENT> physics_object::get_transform() const
 	{
-		tmat<space::OBJECT, space::WORLD> const& obj2world = get_world_transform();
-		// TODO return obj2world * accumulate_parent_mats().invert_copy();
-		return obj2world.cast_copy<space::OBJECT, space::PARENT>();
+		// tmat<space::OBJECT, space::WORLD> const& obj2world = get_world_transform();
+		//// TODO return obj2world * accumulate_parent_mats().invert_copy();
+		// return obj2world.cast_copy<space::OBJECT, space::PARENT>();
+		return m_transform;
 	}
 	tmat<space::OBJECT, space::WORLD> physics_object::get_world_transform() const
 	{
-		btTransform mat;
+		/*btTransform mat;
 		m_rb->getMotionState()->getWorldTransform(mat);
-		return u::bullet2tmat<space::OBJECT, space::WORLD>(mat);
+		return u::bullet2tmat<space::OBJECT, space::WORLD>(mat);*/
+		return m_transform.cast_copy<space::OBJECT, space::WORLD>();
 	}
 	void physics_object::set_friction(f32 const f)
 	{
@@ -51,9 +53,10 @@ namespace djinn
 	}
 	void physics_object::set_velocity_y(f32 const y)
 	{
-		btVector3 v = m_rb->getLinearVelocity();
+		/*btVector3 v = m_rb->getLinearVelocity();
 		v.setY(y);
-		m_rb->setLinearVelocity(v);
+		m_rb->setLinearVelocity(v);*/
+		m_rb->applyCentralForce(btVector3(0, 20, 0));
 	}
 	void physics_object::set_velocity_z(f32 const z)
 	{
@@ -122,5 +125,11 @@ namespace djinn
 		// TODO multiply by accumulate_parent_mats.invert_copy();
 		tmat<space::OBJECT, space::PARENT> const& mat = u::bullet2tmat<space::OBJECT, space::PARENT>(raw);
 		extract_transform(mat);
+		update_transform();
+	}
+	void physics_object::extract_physics_transform(btTransform const& world)
+	{
+		extract_transform(u::bullet2tmat<space::OBJECT, space::PARENT>(world));
+		update_transform();
 	}
 } // namespace djinn
