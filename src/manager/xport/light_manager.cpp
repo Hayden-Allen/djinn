@@ -14,7 +14,7 @@ namespace djinn
 	std::vector<id_t> light_manager::load_xport(mgl::input_file* const in)
 	{
 		u64 const count = in->ulong();
-		printf("l: %zu\n", count);
+		// printf("l: %zu\n", count);
 		std::vector<id_t> ids;
 		ids.reserve(count);
 		for (u64 i = 0; i < count; i++)

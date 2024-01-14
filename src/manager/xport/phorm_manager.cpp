@@ -14,6 +14,7 @@ namespace djinn
 		std::vector<id_t> ids;
 
 		u64 const sg_count = in->ulong();
+		// printf("sg: %zu\n", sg_count);
 		for (u64 i = 0; i < sg_count; i++)
 		{
 			phorm* const p = new phorm(s_next_id, in, mats);
@@ -21,6 +22,7 @@ namespace djinn
 		}
 
 		u64 const sm_count = in->ulong();
+		// printf("sm: %zu\n", sm_count);
 		for (u64 i = 0; i < sm_count; i++)
 		{
 			phorm* const p = new phorm(s_next_id, in, mats);

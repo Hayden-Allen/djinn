@@ -6,16 +6,16 @@
 	- disable bvh movement?
 	- HOT_RELOAD/NOT_RELOAD macro?
 	- move ma_engine into sound_source_manager/asset_service?
+	- get rid of render service?
 
 - now
-	- move m3d helper functions
 	- getBoneBasisX/Y/Z
-	- MeshInstance update verts?
-
-	- better prettierrc
-	- scripts
-		- get rid of render service?
-		- OOP stl
+		- wing normals
+		- draw both sides
+		- abstract
+		- animate
+		- texture
+	- scripts OOP stl
 	- implement different lights
 
 	- retained_buffer::load => buffer::load (buffer doesn't get save though)

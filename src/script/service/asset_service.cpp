@@ -71,7 +71,23 @@ namespace djinn::js::asset_service
 		id_t const id = js::extract_id(ctx, argv[0]);
 		std::vector<f32> const& vertices = js::extract_f32_array(ctx, argv[1]);
 		std::vector<u32> const& indices = js::extract_u32_array(ctx, argv[2]);
-		::djinn::asset_service::get_custom_mesh_manager()->update(id, vertices, indices);
+		::djinn::asset_service::get_custom_mesh_manager()->get(id)->update(vertices, indices);
+		return JS_UNDEFINED;
+	}
+	JSValue update_mesh_vertices(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::vector<f32> const& vertices = js::extract_f32_array(ctx, argv[1]);
+		::djinn::asset_service::get_custom_mesh_manager()->get(id)->update(vertices);
+		return JS_UNDEFINED;
+	}
+	JSValue update_mesh_indices(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::vector<u32> const& indices = js::extract_u32_array(ctx, argv[1]);
+		::djinn::asset_service::get_custom_mesh_manager()->get(id)->update(indices);
 		return JS_UNDEFINED;
 	}
 	JSValue destroy_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -305,6 +321,8 @@ namespace djinn
 	{
 		super::register_function(ctx, "Mesh", "create", 4, js::asset_service::create_mesh);
 		super::register_function(ctx, "Mesh", "update", 3, js::asset_service::update_mesh);
+		super::register_function(ctx, "Mesh", "updateVertices", 2, js::asset_service::update_mesh_vertices);
+		super::register_function(ctx, "Mesh", "updateIndices", 2, js::asset_service::update_mesh_indices);
 		super::register_function(ctx, "Mesh", "loadStatic", 1, js::asset_service::load_static_mesh);
 		super::register_function(ctx, "Mesh", "loadAnimated", 1, js::asset_service::load_animated_mesh);
 		super::register_function(ctx, "Mesh", "destroy", 1, js::asset_service::destroy_mesh);

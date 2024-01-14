@@ -7,15 +7,15 @@ import type { _Scene } from "./service/Scene.d"
 import "./service/Util.d"
 
 declare interface _Djinn {
-  Asset: _Asset
-  ImGui: _ImGui
-  Input: _Input
-  Nanovg: _Nanovg
-  Render: _Render
-  Scene: _Scene
-  Util: _Util
+    Asset: _Asset
+    ImGui: _ImGui
+    Input: _Input
+    Nanovg: _Nanovg
+    Render: _Render
+    Scene: _Scene
+    Util: _Util
 }
 
 declare global {
-  const djinn: _Djinn
+    const djinn: _Djinn
 }

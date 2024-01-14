@@ -20,7 +20,7 @@ namespace djinn
 	std::pair<std::vector<id_t>, std::vector<sptr<texture>>> texture_manager::load_xport(mgl::input_file* const in)
 	{
 		u64 const count = in->ulong();
-		printf("t: %zu\n", count);
+		// printf("t: %zu\n", count);
 		std::vector<id_t> ids;
 		std::vector<sptr<texture>> tex;
 		ids.reserve(count);

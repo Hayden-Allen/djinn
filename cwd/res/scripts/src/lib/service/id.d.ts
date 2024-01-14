@@ -1,26 +1,33 @@
 // ASSET
-
-declare type MeshID = number & { __tag: "Mesh" }
-declare type ShaderID = number & { __tag: "Shader" }
-declare type TextureID = number & { __tag: "Texture" }
-declare type CubemapID = number & { __tag: "Cubemap" }
-declare type SoundID = number & { __tag: "Sound" }
+declare type _MeshID = number & { __tag: "Mesh" }
+declare type _ShaderID = number & { __tag: "Shader" }
+declare type _TextureID = number & { __tag: "Texture" }
+declare type _CubemapID = number & { __tag: "Cubemap" }
+declare type _SoundID = number & { __tag: "Sound" }
 
 // SCENE
-declare type MeshInstanceID = number & { __tag: "MeshInstance" }
-declare type EntityID = number & { __tag: "Entity" }
-declare type CameraID = number & { __tag: "Camera" }
-declare type PhormID = number & { __tag: "Phorm" }
-declare type PhysicsID = number & { __tag: "Physics" }
-declare type LightID = number & { __tag: "Light" }
-declare type WaypointID = number & { __tag: "Waypoint" }
-declare type SceneID =
-  | MeshInstanceID
-  | EntityID
-  | CameraID
-  | PhormID
-  | PhysicsID
-  | LightID
-  | WaypointID
+declare type _MeshInstanceID = number & { __tag: "MeshInstance" }
+declare type _EntityID = number & { __tag: "Entity" }
+declare type _CameraID = number & { __tag: "Camera" }
+declare type _PhormID = number & { __tag: "Phorm" }
+declare type _PhysicsID = number & { __tag: "Physics" }
+declare type _LightID = number & { __tag: "Light" }
+declare type _WaypointID = number & { __tag: "Waypoint" }
+declare type _SoundEmitterID = number & { __tag: "SoundEmitter" }
+declare type _SceneID = MeshInstanceID | EntityID | CameraID | PhormID | PhysicsID | LightID | WaypointID | SoundEmitterID
 
-declare type SoundEmitterID = number & { __tag: "SoundEmitter" }
+declare type MeshID = _MeshID | undefined
+declare type ShaderID = _ShaderID | undefined
+declare type TextureID = _TextureID | undefined
+declare type CubemapID = _CubemapID | undefined
+declare type SoundID = _SoundID | undefined
+
+declare type MeshInstanceID = _MeshInstanceID | undefined
+declare type EntityID = _EntityID | undefined
+declare type CameraID = _CameraID | undefined
+declare type PhormID = _PhormID | undefined
+declare type PhysicsID = _PhysicsID | undefined
+declare type LightID = _LightID | undefined
+declare type WaypointID = _WaypointID | undefined
+declare type SoundEmitterID = _SoundEmitterID | undefined
+declare type SceneID = _SceneID | undefined

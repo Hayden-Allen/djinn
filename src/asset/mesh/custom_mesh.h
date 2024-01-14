@@ -10,6 +10,8 @@ namespace djinn
 		custom_mesh(u32 const vertex_count, std::vector<u32> const& layout, u32 const index_count, std::vector<wptr<texture>> const& textures);
 		DCM(custom_mesh);
 	public:
+		void update(std::vector<f32> const& vertices);
+		void update(std::vector<u32> const& indices);
 		void update(std::vector<f32> const& vertices, std::vector<u32> const& indices);
 		void draw(sptr<mgl::context> const& ctx) override final;
 	private:

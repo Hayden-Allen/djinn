@@ -344,9 +344,6 @@ namespace djinn::js::scene_service
 		sptr<mesh_instance> instance = ::djinn::scene_service::get_mesh_instance_manager()->get(id);
 		ASSERT(instance->is_animated());
 		sptr<animated_mesh_instance> ami = instance;
-		// tmat<space::OBJECT, space::WORLD> const& mat = ami->get_bone_transform(name);
-		// f32 pos[3] = { 0 };
-		// u::extract_pos(mat, &pos[0], &pos[1], &pos[2]);
 		point<space::WORLD> const& pos = ami->get_bone_pos(name);
 		return js::create_f32_array(ctx, 3, pos.e);
 	}

@@ -1,16 +1,16 @@
 import "./service/id.d"
 
 export default class Entity {
-  protected id: EntityID = 0 as EntityID
-  getId() {
-    return this.id
-  }
-  __init() {}
-  __destroy() {}
-  __load() {}
-  __unload() {}
-  __main(dt: number, time: number) {}
-  __draw() {}
-  __ui() {}
-  __imgui() {}
+    protected id: EntityID = 0 as EntityID
+    getId() {
+        return this.id
+    }
+    __init() {}
+    __destroy() {}
+    __load() {}
+    __unload() {}
+    __main(dt: number, time: number) {}
+    __draw() {}
+    __ui() {}
+    __imgui() {}
 }

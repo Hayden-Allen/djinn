@@ -4,8 +4,8 @@
 #	ifndef NDEBUG
 #		define _DEBUG
 #	endif
-#	define __debugbreak		__builtin_debugtrap
-#	define sprintf_s(buf, ...) snprintf((buf), sizeof(buf), __VA_ARGS__)
+#	define __debugbreak			   __builtin_debugtrap
+#	define sprintf_s(buf, ...)		   snprintf((buf), sizeof(buf), __VA_ARGS__)
 #	define vsprintf_s(buf, fmt, args) vsnprintf((buf), sizeof(buf), fmt, args);
 #endif
 
@@ -57,7 +57,7 @@ using namespace mgl;
 #include "miniaudio.h"
 
 #define M3D_NUMBONE 4
-#include "m3d.h"
+#include "model3d/m3d.h"
 
 #include "btBulletDynamicsCommon.h"
 

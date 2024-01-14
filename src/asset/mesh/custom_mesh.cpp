@@ -11,6 +11,14 @@ namespace djinn
 
 
 
+	void custom_mesh::update(std::vector<f32> const& vertices)
+	{
+		m_ro.update(vertices.data(), (u32)vertices.size());
+	}
+	void custom_mesh::update(std::vector<u32> const& indices)
+	{
+		m_ro.update(indices.data(), (u32)indices.size());
+	}
 	void custom_mesh::update(std::vector<f32> const& vertices, std::vector<u32> const& indices)
 	{
 		m_ro.update(vertices.data(), (u32)vertices.size(), indices.data(), (u32)indices.size());
