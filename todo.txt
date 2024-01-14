@@ -7,14 +7,13 @@
 	- HOT_RELOAD/NOT_RELOAD macro?
 	- move ma_engine into sound_source_manager/asset_service?
 	- get rid of render service?
+	- animation jumping on loop
 
 - now
-	- getBoneBasisX/Y/Z
-		- wing normals
-		- draw both sides
-		- abstract
-		- animate
-		- texture
+	- lock hitbox rotation
+	- wing animate/texture
+	- scene_service factoring
+	- addRot/addLocalRot weirdness
 	- scripts OOP stl
 	- implement different lights
 

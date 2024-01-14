@@ -30,7 +30,7 @@ namespace djinn
 	{
 		if (m_script_loaded)
 		{
-			// call_unload();
+			call_unload();
 			call_destroy();
 			JS_FreeValue(m_ctx, m_this);
 			clear_cache();

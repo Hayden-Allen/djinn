@@ -344,8 +344,45 @@ namespace djinn::js::scene_service
 		sptr<mesh_instance> instance = ::djinn::scene_service::get_mesh_instance_manager()->get(id);
 		ASSERT(instance->is_animated());
 		sptr<animated_mesh_instance> ami = instance;
-		point<space::WORLD> const& pos = ami->get_bone_pos(name);
-		return js::create_f32_array(ctx, 3, pos.e);
+		// point<space::WORLD> const& pos = ami->get_bone_pos(name);
+		tmat<space::OBJECT, space::WORLD> const& mat = ami->get_bone_transform(name);
+		return js::create_f32_array(ctx, 3, mat.t);
+	}
+	JSValue get_mesh_instance_bone_basis_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::string const& name = js::extract_string(ctx, argv[1]);
+		sptr<mesh_instance> instance = ::djinn::scene_service::get_mesh_instance_manager()->get(id);
+		ASSERT(instance->is_animated());
+		sptr<animated_mesh_instance> ami = instance;
+		// point<space::WORLD> const& pos = ami->get_bone_pos(name);
+		tmat<space::OBJECT, space::WORLD> const& mat = ami->get_bone_transform(name);
+		return js::create_f32_array(ctx, 3, mat.i);
+	}
+	JSValue get_mesh_instance_bone_basis_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::string const& name = js::extract_string(ctx, argv[1]);
+		sptr<mesh_instance> instance = ::djinn::scene_service::get_mesh_instance_manager()->get(id);
+		ASSERT(instance->is_animated());
+		sptr<animated_mesh_instance> ami = instance;
+		// point<space::WORLD> const& pos = ami->get_bone_pos(name);
+		tmat<space::OBJECT, space::WORLD> const& mat = ami->get_bone_transform(name);
+		return js::create_f32_array(ctx, 3, mat.j);
+	}
+	JSValue get_mesh_instance_bone_basis_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::string const& name = js::extract_string(ctx, argv[1]);
+		sptr<mesh_instance> instance = ::djinn::scene_service::get_mesh_instance_manager()->get(id);
+		ASSERT(instance->is_animated());
+		sptr<animated_mesh_instance> ami = instance;
+		// point<space::WORLD> const& pos = ami->get_bone_pos(name);
+		tmat<space::OBJECT, space::WORLD> const& mat = ami->get_bone_transform(name);
+		return js::create_f32_array(ctx, 3, mat.k);
 	}
 	JSValue destroy_mesh_instance(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -456,14 +493,84 @@ namespace djinn::js::scene_service
 		so->set_friction(f);
 		return JS_UNDEFINED;
 	}
-	JSValue set_linear_velocity(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	JSValue set_velocity(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2);
 		id_t const id = js::extract_id(ctx, argv[0]);
 		std::vector<f32> const& arr = js::extract_f32_array(ctx, argv[1]);
 
 		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
-		so->set_linear_velocity(arr[0], arr[1], arr[2]);
+		so->set_velocity(arr[0], arr[1], arr[2]);
+		return JS_UNDEFINED;
+	}
+	JSValue set_velocity_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		f32 const v = js::extract_f32(ctx, argv[1]);
+
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		so->set_velocity_x(v);
+		return JS_UNDEFINED;
+	}
+	JSValue set_velocity_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		f32 const v = js::extract_f32(ctx, argv[1]);
+
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		so->set_velocity_y(v);
+		return JS_UNDEFINED;
+	}
+	JSValue set_velocity_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		f32 const v = js::extract_f32(ctx, argv[1]);
+
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		so->set_velocity_z(v);
+		return JS_UNDEFINED;
+	}
+	JSValue set_velocity_local(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::vector<f32> const& arr = js::extract_f32_array(ctx, argv[1]);
+
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		so->set_velocity_local(arr[0], arr[1], arr[2]);
+		return JS_UNDEFINED;
+	}
+	JSValue set_velocity_local_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		f32 const v = js::extract_f32(ctx, argv[1]);
+
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		so->set_velocity_local_x(v);
+		return JS_UNDEFINED;
+	}
+	JSValue set_velocity_local_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		f32 const v = js::extract_f32(ctx, argv[1]);
+
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		so->set_velocity_local_y(v);
+		return JS_UNDEFINED;
+	}
+	JSValue set_velocity_local_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		f32 const v = js::extract_f32(ctx, argv[1]);
+
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		so->set_velocity_local_z(v);
 		return JS_UNDEFINED;
 	}
 	JSValue set_angular_velocity(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -748,8 +855,8 @@ namespace djinn::js::scene_service
 		ASSERT(argc == 2);
 		id_t const src_id = js::extract_id(ctx, argv[0]);
 		id_t const dst_id = js::extract_id(ctx, argv[1]);
-		sptr<scene_object> src = ::djinn::scene_service::get_scene_object(src_id);
-		sptr<scene_object> dst = ::djinn::scene_service::get_scene_object(dst_id);
+		sptr<scene_object_base> src = ::djinn::scene_service::get_scene_object(src_id);
+		sptr<scene_object_base> dst = ::djinn::scene_service::get_scene_object(dst_id);
 		dst->copy_transform(src);
 		return JS_UNDEFINED;
 	}
@@ -801,6 +908,9 @@ namespace djinn
 		super::register_function(ctx, "MeshInstance", "setVisible", 2, js::scene_service::set_mesh_instance_visible);
 		super::register_function(ctx, "MeshInstance", "setAction", 3, js::scene_service::set_mesh_instance_action);
 		super::register_function(ctx, "MeshInstance", "getBonePos", 2, js::scene_service::get_mesh_instance_bone_pos);
+		super::register_function(ctx, "MeshInstance", "getBoneBasisX", 2, js::scene_service::get_mesh_instance_bone_basis_x);
+		super::register_function(ctx, "MeshInstance", "getBoneBasisY", 2, js::scene_service::get_mesh_instance_bone_basis_y);
+		super::register_function(ctx, "MeshInstance", "getBoneBasisZ", 2, js::scene_service::get_mesh_instance_bone_basis_z);
 		super::register_function(ctx, "MeshInstance", "destroy", 1, js::scene_service::destroy_mesh_instance);
 		super::register_function(ctx, "MeshInstance", "destroyAll", 1, js::scene_service::destroy_all_mesh_instance);
 		// ENTITY / CAMERA
@@ -818,7 +928,14 @@ namespace djinn
 		super::register_function(ctx, "Physics", "createCapsuleZ", 4, js::scene_service::create_physics_capsule_z);
 		super::register_function(ctx, "Physics", "createBVH", 1, js::scene_service::create_physics_bvh);
 		super::register_function(ctx, "Physics", "setFriction", 2, js::scene_service::set_friction);
-		super::register_function(ctx, "Physics", "setLinearVelocity", 2, js::scene_service::set_linear_velocity);
+		super::register_function(ctx, "Physics", "setVelocity", 2, js::scene_service::set_velocity);
+		super::register_function(ctx, "Physics", "setVelocityX", 2, js::scene_service::set_velocity_x);
+		super::register_function(ctx, "Physics", "setVelocityY", 2, js::scene_service::set_velocity_y);
+		super::register_function(ctx, "Physics", "setVelocityZ", 2, js::scene_service::set_velocity_z);
+		super::register_function(ctx, "Physics", "setVelocityLocal", 2, js::scene_service::set_velocity_local);
+		super::register_function(ctx, "Physics", "setVelocityLocalX", 2, js::scene_service::set_velocity_local_x);
+		super::register_function(ctx, "Physics", "setVelocityLocalY", 2, js::scene_service::set_velocity_local_y);
+		super::register_function(ctx, "Physics", "setVelocityLocalZ", 2, js::scene_service::set_velocity_local_z);
 		super::register_function(ctx, "Physics", "setAngularVelocity", 2, js::scene_service::set_angular_velocity);
 		super::register_function(ctx, "Physics", "enableCollision", 1, js::scene_service::enable_collision);
 		super::register_function(ctx, "Physics", "disableCollision", 1, js::scene_service::disable_collision);
@@ -967,7 +1084,7 @@ namespace djinn
 				e->draw_imgui();
 			});
 	}
-	sptr<scene_object> scene_service::get_scene_object(id_t const id)
+	sptr<scene_object_base> scene_service::get_scene_object(id_t const id)
 	{
 		if (get_entity_manager()->has(id))
 			return get_entity_manager()->get(id);

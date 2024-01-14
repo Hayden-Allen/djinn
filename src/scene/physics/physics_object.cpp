@@ -39,9 +39,56 @@ namespace djinn
 	{
 		m_rb->setFriction(f);
 	}
-	void physics_object::set_linear_velocity(f32 const x, f32 const y, f32 const z)
+	void physics_object::set_velocity(f32 const x, f32 const y, f32 const z)
 	{
 		m_rb->setLinearVelocity(btVector3(x, y, z));
+	}
+	void physics_object::set_velocity_x(f32 const x)
+	{
+		btVector3 v = m_rb->getLinearVelocity();
+		v.setX(x);
+		m_rb->setLinearVelocity(v);
+	}
+	void physics_object::set_velocity_y(f32 const y)
+	{
+		btVector3 v = m_rb->getLinearVelocity();
+		v.setY(y);
+		m_rb->setLinearVelocity(v);
+	}
+	void physics_object::set_velocity_z(f32 const z)
+	{
+		btVector3 v = m_rb->getLinearVelocity();
+		v.setZ(z);
+		m_rb->setLinearVelocity(v);
+	}
+	void physics_object::set_velocity_local(f32 const x, f32 const y, f32 const z)
+	{
+		btVector3 const v(x, y, z);
+		btVector3 const world = m_rb->getWorldTransform().getBasis().transpose() * v;
+		m_rb->setLinearVelocity(world);
+	}
+	void physics_object::set_velocity_local_x(f32 const x)
+	{
+		btVector3 local = m_rb->getWorldTransform().getBasis().transpose() * m_rb->getLinearVelocity();
+		local.setX(x);
+		btVector3 const world = m_rb->getWorldTransform().getBasis() * local;
+		m_rb->setLinearVelocity(world);
+	}
+	void physics_object::set_velocity_local_y(f32 const y)
+	{
+		btVector3 const& cur = m_rb->getLinearVelocity();
+		vec<space::WORLD> const wv(cur.x(), cur.y(), cur.z());
+		vec<space::OBJECT> v = wv.transform_copy(get_world_transform().invert_copy());
+		v.y = y;
+		set_velocity_local(v.x, v.y, v.z);
+	}
+	void physics_object::set_velocity_local_z(f32 const z)
+	{
+		btVector3 const& cur = m_rb->getLinearVelocity();
+		vec<space::WORLD> const wv(cur.x(), cur.y(), cur.z());
+		vec<space::OBJECT> v = wv.transform_copy(get_world_transform().invert_copy());
+		v.z = z;
+		set_velocity_local(v.x, v.y, v.z);
 	}
 	void physics_object::set_angular_velocity(f32 const x, f32 const y, f32 const z)
 	{

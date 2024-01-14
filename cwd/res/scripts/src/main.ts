@@ -5,6 +5,7 @@ import Color from "./lib/Color"
 import TestEntity from "./TestEntity"
 import GroundEntity from "./GroundEntity"
 import Xport from "./lib/Xport"
+import Player from "./Player"
 
 const { Asset, Render, Nanovg, Scene, ImGui, Input } = djinn
 
@@ -37,10 +38,7 @@ export default class MainEntity extends Entity {
     private idPhormAlphaShader: ShaderID
     private xport?: Xport
 
-    private idWingMesh: MeshID
-    private idWingInstance: MeshInstanceID
-    private idWingShader: ShaderID
-    private wingBoneNames: string[] = ["mixamorig:LeftArm", "mixamorig:LeftForeArm", "mixamorig:LeftHand", "mixamorig:LeftUpLeg", "mixamorig:LeftLeg", "mixamorig:Spine1"]
+    private player?: Player
 
     __init() {
         this.camera = Scene.Camera.load("lib/Camera.js") as Camera
@@ -64,12 +62,23 @@ export default class MainEntity extends Entity {
 
         this.idStaticMesh = Asset.Mesh.loadStatic("cube.m3d")
         this.idStaticShader = Asset.Shader.load("static.vert", "static.frag")
-        this.idStaticInstance = Scene.MeshInstance.create(this.idStaticMesh, this.idStaticShader)
+        this.idStaticInstance = Scene.MeshInstance.create(
+            this.idStaticMesh,
+            this.idStaticShader
+        )
 
         this.idAnimatedMesh = Asset.Mesh.loadAnimated("xbot.m3d")
-        this.idAnimatedShader = Asset.Shader.load("animated.vert", "animated.frag")
+        this.idAnimatedShader = Asset.Shader.load(
+            "animated.vert",
+            "animated.frag"
+        )
         for (var i = 0; i < 10; i++) {
-            this.idAnimatedInstances.push(Scene.MeshInstance.create(this.idAnimatedMesh, this.idAnimatedShader))
+            this.idAnimatedInstances.push(
+                Scene.MeshInstance.create(
+                    this.idAnimatedMesh,
+                    this.idAnimatedShader
+                )
+            )
             Scene.setPosX(this.idAnimatedInstances[i], -5 + i)
             Scene.setPosZ(this.idAnimatedInstances[i], -3)
         }
@@ -89,18 +98,21 @@ export default class MainEntity extends Entity {
         this.ground?.bind(this.camera)
 
         this.idPhormShader = Asset.Shader.load("phorm.vert", "phorm.frag")
-        this.idPhormAlphaShader = Asset.Shader.load("phorm.vert", "phorm_alpha.frag")
+        this.idPhormAlphaShader = Asset.Shader.load(
+            "phorm.vert",
+            "phorm_alpha.frag"
+        )
         this.xport = new Xport("hill.xport")
         for (var i = 0; i < this.xport.idPhorms.length; i++) {
             Scene.Phorm.setShaders(this.xport.idPhorms[i], this.idPhormShader)
-            Scene.Phorm.setAlphaShaders(this.xport.idPhorms[i], this.idPhormAlphaShader)
+            Scene.Phorm.setAlphaShaders(
+                this.xport.idPhorms[i],
+                this.idPhormAlphaShader
+            )
         }
 
-        this.idWingMesh = Asset.Mesh.create(this.wingBoneNames.length, [3], 15, [])
-        this.idWingShader = Asset.Shader.load("wing.vert", "wing.frag")
-        this.idWingInstance = Scene.MeshInstance.create(this.idWingMesh, this.idWingShader)
-        const idx = [0, 3, 1, 3, 2, 1, 4, 2, 3, 5, 1, 0, 5, 3, 1]
-        Asset.Mesh.updateIndices(this.idWingMesh, idx)
+        this.player = Scene.Entity.load("Player.js") as Player
+        this.player.bind(this.camera!)
     }
     __destroy() {
         Scene.MeshInstance.destroy(this.idStaticInstance)
@@ -122,10 +134,6 @@ export default class MainEntity extends Entity {
         this.xport!.destroy()
         Asset.Shader.destroy(this.idPhormShader)
         Asset.Shader.destroy(this.idPhormAlphaShader)
-
-        Scene.MeshInstance.destroy(this.idWingInstance)
-        Asset.Mesh.destroy(this.idWingMesh)
-        Asset.Shader.destroy(this.idWingShader)
     }
     __load() {
         this.color.set(0, 1, 1, 0.5)
@@ -136,20 +144,16 @@ export default class MainEntity extends Entity {
         // }
     }
     __unload() {
-        for (var i = 0; i < this.entities.length; i++) Scene.Entity.destroy(this.entities[i].getId())
+        for (var i = 0; i < this.entities.length; i++)
+            Scene.Entity.destroy(this.entities[i].getId())
         this.entities = []
     }
     __main(dt: number, time: number) {
-        let bonePos: number[] = []
-        for (var i = 0; i < this.wingBoneNames.length; i++) {
-            const pos = Scene.MeshInstance.getBonePos(this.idAnimatedInstances[1], this.wingBoneNames[i])
-            bonePos = bonePos.concat(pos)
-        }
-        Asset.Mesh.updateVertices(this.idWingMesh, bonePos)
-        Scene.MeshInstance.setVisible(this.idAnimatedInstances[1], this.frame % 2 == 0)
-
         this.frame++
-        if (this.nextAnimated < this.idAnimatedInstances.length && this.frame >= this.nextAnimated * 100) {
+        if (
+            this.nextAnimated < this.idAnimatedInstances.length &&
+            this.frame >= this.nextAnimated * 100
+        ) {
             Scene.MeshInstance.setAction(
                 this.idAnimatedInstances[this.nextAnimated],
                 "run_Armature",
@@ -180,11 +184,19 @@ export default class MainEntity extends Entity {
     __draw() {
         this.xport!.skybox!.draw(this.camera!.getId())
         Asset.Shader.setCameraUniforms(this.idShader, this.camera!.getId())
-        Asset.Shader.setCameraUniforms(this.idStaticShader, this.camera!.getId())
-        Asset.Shader.setCameraUniforms(this.idAnimatedShader, this.camera!.getId())
+        Asset.Shader.setCameraUniforms(
+            this.idStaticShader,
+            this.camera!.getId()
+        )
+        Asset.Shader.setCameraUniforms(
+            this.idAnimatedShader,
+            this.camera!.getId()
+        )
         Asset.Shader.setCameraUniforms(this.idPhormShader, this.camera!.getId())
-        Asset.Shader.setCameraUniforms(this.idPhormAlphaShader, this.camera!.getId())
-        Asset.Shader.setCameraUniforms(this.idWingShader, this.camera!.getId())
+        Asset.Shader.setCameraUniforms(
+            this.idPhormAlphaShader,
+            this.camera!.getId()
+        )
 
         Scene.copyTransform(this.idPhysics, this.idStaticInstance)
     }

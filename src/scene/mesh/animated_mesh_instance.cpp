@@ -27,9 +27,13 @@ namespace djinn
 	{
 		sptr<animated_mesh> am = m_mesh;
 		ASSERT(am->m_actions.contains(name));
-		m_current_action = &am->m_actions.at(name);
-		m_action_start = render_service::get_context()->time.now;
-		m_action_speed = speed;
+		animated_mesh::action* const new_action = &am->m_actions.at(name);
+		if (m_current_action != new_action)
+		{
+			m_current_action = new_action;
+			m_action_start = render_service::get_context()->time.now;
+			m_action_speed = speed;
+		}
 	}
 	m3db_t const* animated_mesh_instance::get_pose() const
 	{
@@ -58,14 +62,40 @@ namespace djinn
 		}
 		return bones;
 	}
-	point<space::WORLD> animated_mesh_instance::get_bone_pos(std::string const& name)
+	tmat<space::OBJECT, space::WORLD> animated_mesh_instance::get_bone_transform(std::string const& name) const
 	{
 		sptr<animated_mesh> am = m_mesh;
 		u32 const idx = am->get_bone_index(name);
-		point<space::OBJECT> po(
-			m_skel[idx * 7 + 0],
-			m_skel[idx * 7 + 1],
-			m_skel[idx * 7 + 2]);
-		return po.transform_copy(get_world_transform());
+		f32 const x = m_skel[idx * 7 + 0];
+		f32 const y = m_skel[idx * 7 + 1];
+		f32 const z = m_skel[idx * 7 + 2];
+		f32 const q0 = m_skel[idx * 7 + 3];
+		f32 const q1 = m_skel[idx * 7 + 4];
+		f32 const q2 = m_skel[idx * 7 + 5];
+		f32 const q3 = m_skel[idx * 7 + 6];
+
+		f32 mat[16] = { 0 };
+		/*mat[0] = 2 * (q0 * q0 + q1 * q1) - 1;
+		mat[1] = 2 * (q1 * q2 - q0 * q3);
+		mat[2] = 2 * (q1 * q3 + q0 * q2);
+		mat[4] = 2 * (q1 * q2 + q0 * q3);
+		mat[5] = 2 * (q0 * q0 + q2 * q2) - 1;
+		mat[6] = 2 * (q2 * q3 - q0 * q1);
+		mat[8] = 2 * (q1 * q3 - q0 * q2);
+		mat[9] = 2 * (q2 * q3 + q0 * q1);
+		mat[10] = 2 * (q0 * q0 + q3 * q3) - 1;*/
+		mat[0] = 2 * (q0 * q0 + q1 * q1) - 1;
+		mat[4] = 2 * (q1 * q2 - q0 * q3);
+		mat[8] = 2 * (q1 * q3 + q0 * q2);
+		mat[1] = 2 * (q1 * q2 + q0 * q3);
+		mat[5] = 2 * (q0 * q0 + q2 * q2) - 1;
+		mat[9] = 2 * (q2 * q3 - q0 * q1);
+		mat[2] = 2 * (q1 * q3 - q0 * q2);
+		mat[6] = 2 * (q2 * q3 + q0 * q1);
+		mat[10] = 2 * (q0 * q0 + q3 * q3) - 1;
+		mat[12] = x;
+		mat[13] = y;
+		mat[14] = z;
+		return mat;
 	}
 } // namespace djinn

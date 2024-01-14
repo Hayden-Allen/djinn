@@ -37,6 +37,9 @@ declare interface _Scene_MeshInstance {
     setVisible(id: MeshInstanceID, visible: boolean): void
     setAction(id: MeshInstanceID, name: string, speed?: number): void
     getBonePos(id: MeshInstanceID, name: string): number[]
+    getBoneBasisX(id: MeshInstanceID, name: string): number[]
+    getBoneBasisY(id: MeshInstanceID, name: string): number[]
+    getBoneBasisZ(id: MeshInstanceID, name: string): number[]
     destroy(id: MeshInstanceID): void
     destroyAll(ids: MeshInstanceID[]): void
 }
@@ -48,17 +51,45 @@ declare interface _Scene_Entity {
 }
 declare interface _Scene_Camera {
     load(fp: string): object
-    configure(id: CameraID, fovy: number, aspect: number, near: number, far: number): void
+    configure(
+        id: CameraID,
+        fovy: number,
+        aspect: number,
+        near: number,
+        far: number
+    ): void
 }
 declare interface _Scene_Physics {
     createBox(dims: number[], origin: number[], mass: number): PhysicsID
     createSphere(radius: number, origin: number[], mass: number): PhysicsID
-    createCapsuleX(radius: number, height: number, origin: number[], mass: number): PhysicsID
-    createCapsuleY(radius: number, height: number, origin: number[], mass: number): PhysicsID
-    createCapsuleZ(radius: number, height: number, origin: number[], mass: number): PhysicsID
+    createCapsuleX(
+        radius: number,
+        height: number,
+        origin: number[],
+        mass: number
+    ): PhysicsID
+    createCapsuleY(
+        radius: number,
+        height: number,
+        origin: number[],
+        mass: number
+    ): PhysicsID
+    createCapsuleZ(
+        radius: number,
+        height: number,
+        origin: number[],
+        mass: number
+    ): PhysicsID
     createBVH(idPhorm: PhormID): PhysicsID
     setFriction(id: PhysicsID, f: number): void
-    setLinearVelocity(id: PhysicsID, vel: number[]): void
+    setVelocity(id: PhysicsID, vel: number[]): void
+    setVelocityX(id: PhysicsID, vel: number): void
+    setVelocityY(id: PhysicsID, vel: number): void
+    setVelocityZ(id: PhysicsID, vel: number): void
+    setVelocityLocal(id: PhysicsID, vel: number[]): void
+    setVelocityLocalX(id: PhysicsID, vel: number): void
+    setVelocityLocalY(id: PhysicsID, vel: number): void
+    setVelocityLocalZ(id: PhysicsID, vel: number): void
     setAngularVelocity(id: PhysicsID, vel: number[]): void
     enableCollision(id: PhysicsID): void
     disableCollision(id: PhysicsID): void
