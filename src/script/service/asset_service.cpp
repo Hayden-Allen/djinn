@@ -126,6 +126,8 @@ namespace djinn::js::asset_service
 		return JS_UNDEFINED;
 	}
 
+
+
 	JSValue load_shader(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2);
@@ -177,6 +179,8 @@ namespace djinn::js::asset_service
 		return JS_UNDEFINED;
 	}
 
+
+
 	JSValue create_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2 || argc == 3);
@@ -225,6 +229,8 @@ namespace djinn::js::asset_service
 			::djinn::asset_service::get_texture_manager()->destroy(id);
 		return JS_UNDEFINED;
 	}
+
+
 
 	JSValue create_cubemap(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -284,6 +290,8 @@ namespace djinn::js::asset_service
 			::djinn::asset_service::get_cubemap_manager()->destroy(id);
 		return JS_UNDEFINED;
 	}
+
+
 
 	JSValue load_sound_source(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{

@@ -25,6 +25,7 @@ namespace djinn
 		void set_velocity_local_z(f32 const z);
 		void set_angular_velocity(f32 const x, f32 const y, f32 const z);
 		void set_collision_enabled(bool const enabled);
+		void set_angular_factor(f32 const x, f32 const y, f32 const z);
 	protected:
 		sptr<btDiscreteDynamicsWorld> m_world;
 		optr<btRigidBody> m_rb;

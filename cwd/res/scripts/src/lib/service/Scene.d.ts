@@ -60,25 +60,26 @@ declare interface _Scene_Camera {
     ): void
 }
 declare interface _Scene_Physics {
-    createBox(dims: number[], origin: number[], mass: number): PhysicsID
-    createSphere(radius: number, origin: number[], mass: number): PhysicsID
+    createBox(mass: number, origin: number[], dims: number[]): PhysicsID
+    createCylinder(mass: number, origin: number[], dims: number[]): PhysicsID
+    createSphere(mass: number, origin: number[], radius: number): PhysicsID
     createCapsuleX(
-        radius: number,
-        height: number,
+        mass: number,
         origin: number[],
-        mass: number
+        radius: number,
+        height: number
     ): PhysicsID
     createCapsuleY(
-        radius: number,
-        height: number,
+        mass: number,
         origin: number[],
-        mass: number
+        radius: number,
+        height: number
     ): PhysicsID
     createCapsuleZ(
-        radius: number,
-        height: number,
+        mass: number,
         origin: number[],
-        mass: number
+        radius: number,
+        height: number
     ): PhysicsID
     createBVH(idPhorm: PhormID): PhysicsID
     setFriction(id: PhysicsID, f: number): void
@@ -91,6 +92,7 @@ declare interface _Scene_Physics {
     setVelocityLocalY(id: PhysicsID, vel: number): void
     setVelocityLocalZ(id: PhysicsID, vel: number): void
     setAngularVelocity(id: PhysicsID, vel: number[]): void
+    setAngularFactor(id: PhysicsID, vel: number[]): void
     enableCollision(id: PhysicsID): void
     disableCollision(id: PhysicsID): void
     destroy(id: PhysicsID): void

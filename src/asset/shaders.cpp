@@ -36,7 +36,7 @@ namespace djinn
 	{
 		if (!super::uniform_block_binding(name, slot))
 		{
-			printf("[WARNING] shaders(%s, %s):\n\tuniform_block_binding: Uniform block '%s' does not exist\n", m_vert_afp.c_str(), m_frag_afp.c_str(), name.c_str());
+			// printf("[WARNING] shaders(%s, %s):\n\tuniform_block_binding: Uniform block '%s' does not exist\n", m_vert_afp.c_str(), m_frag_afp.c_str(), name.c_str());
 			return false;
 		}
 		return true;

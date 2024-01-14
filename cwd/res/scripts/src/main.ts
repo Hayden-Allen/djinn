@@ -84,7 +84,7 @@ export default class MainEntity extends Entity {
         }
 
         // this.idPhysics = Scene.Physics.createSphere(Math.sqrt(3) / 2, [0, 20, 0], 1)
-        this.idPhysics = Scene.Physics.createBox([1, 1, 1], [0, 50, 0], 1)
+        this.idPhysics = Scene.Physics.createBox(1, [0, 50, 0], [1, 1, 1])
         // this.idPhysics = Scene.Physics.createCapsuleY(
         //   Math.sqrt(3) / 2,
         //   1,
@@ -111,6 +111,7 @@ export default class MainEntity extends Entity {
             )
         }
 
+        console.log("main")
         this.player = Scene.Entity.load("Player.js") as Player
         this.player.bind(this.camera!)
     }

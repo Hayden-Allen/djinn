@@ -101,6 +101,10 @@ namespace djinn
 		else
 			m_rb->setCollisionFlags(m_rb->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
 	}
+	void physics_object::set_angular_factor(f32 const x, f32 const y, f32 const z)
+	{
+		m_rb->setAngularFactor(btVector3(x, y, z));
+	}
 
 
 

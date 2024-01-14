@@ -406,26 +406,41 @@ namespace djinn::js::scene_service
 	JSValue create_physics_box(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 3);
-		std::vector<f32> const& dimsarr = js::extract_f32_array(ctx, argv[0]);
-		std::vector<f32> const& originarr = js::extract_f32_array(ctx, argv[1]);
-		ASSERT(dimsarr.size() == 3 && originarr.size() == 3);
-		f32 const mass = js::extract_f32(ctx, argv[2]);
+		f32 const mass = js::extract_f32(ctx, argv[0]);
 		ASSERT(mass >= 0.f);
+		std::vector<f32> const& originarr = js::extract_f32_array(ctx, argv[1]);
+		ASSERT(originarr.size() == 3);
+		std::vector<f32> const& dimsarr = js::extract_f32_array(ctx, argv[2]);
 
 		btVector3 const dims(dimsarr[0], dimsarr[1], dimsarr[2]);
 		btVector3 const origin(originarr[0], originarr[1], originarr[2]);
 
 		return js::create_id(ctx, ::djinn::scene_service::get_physics_object_manager()->create_box(dims, origin, mass));
 	}
+	JSValue create_physics_cylinder(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 3);
+		f32 const mass = js::extract_f32(ctx, argv[0]);
+		ASSERT(mass >= 0.f);
+		std::vector<f32> const& originarr = js::extract_f32_array(ctx, argv[1]);
+		ASSERT(originarr.size() == 3);
+		std::vector<f32> const& dimsarr = js::extract_f32_array(ctx, argv[2]);
+		ASSERT(dimsarr.size() == 3);
+
+		btVector3 const dims(dimsarr[0], dimsarr[1], dimsarr[2]);
+		btVector3 const origin(originarr[0], originarr[1], originarr[2]);
+
+		return js::create_id(ctx, ::djinn::scene_service::get_physics_object_manager()->create_cylinder(dims, origin, mass));
+	}
 	JSValue create_physics_sphere(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 3);
-		f32 const radius = js::extract_f32(ctx, argv[0]);
-		ASSERT(radius > 0.f);
+		f32 const mass = js::extract_f32(ctx, argv[0]);
+		ASSERT(mass >= 0.f);
 		std::vector<f32> const& originarr = js::extract_f32_array(ctx, argv[1]);
 		ASSERT(originarr.size() == 3);
-		f32 const mass = js::extract_f32(ctx, argv[2]);
-		ASSERT(mass >= 0.f);
+		f32 const radius = js::extract_f32(ctx, argv[2]);
+		ASSERT(radius > 0.f);
 
 		btVector3 const origin(originarr[0], originarr[1], originarr[2]);
 
@@ -434,13 +449,13 @@ namespace djinn::js::scene_service
 	JSValue create_physics_capsule_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 4);
-		f32 const radius = js::extract_f32(ctx, argv[0]);
-		f32 const height = js::extract_f32(ctx, argv[1]);
-		ASSERT(radius > 0.f && height > 0.f);
-		std::vector<f32> const& originarr = js::extract_f32_array(ctx, argv[2]);
-		ASSERT(originarr.size() == 3);
-		f32 const mass = js::extract_f32(ctx, argv[3]);
+		f32 const mass = js::extract_f32(ctx, argv[0]);
 		ASSERT(mass >= 0.f);
+		std::vector<f32> const& originarr = js::extract_f32_array(ctx, argv[1]);
+		ASSERT(originarr.size() == 3);
+		f32 const radius = js::extract_f32(ctx, argv[2]);
+		f32 const height = js::extract_f32(ctx, argv[3]);
+		ASSERT(radius > 0.f && height > 0.f);
 
 		btVector3 const origin(originarr[0], originarr[1], originarr[2]);
 
@@ -449,13 +464,13 @@ namespace djinn::js::scene_service
 	JSValue create_physics_capsule_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 4);
-		f32 const radius = js::extract_f32(ctx, argv[0]);
-		f32 const height = js::extract_f32(ctx, argv[1]);
-		ASSERT(radius > 0.f && height > 0.f);
-		std::vector<f32> const& originarr = js::extract_f32_array(ctx, argv[2]);
-		ASSERT(originarr.size() == 3);
-		f32 const mass = js::extract_f32(ctx, argv[3]);
+		f32 const mass = js::extract_f32(ctx, argv[0]);
 		ASSERT(mass >= 0.f);
+		std::vector<f32> const& originarr = js::extract_f32_array(ctx, argv[1]);
+		ASSERT(originarr.size() == 3);
+		f32 const radius = js::extract_f32(ctx, argv[2]);
+		f32 const height = js::extract_f32(ctx, argv[3]);
+		ASSERT(radius > 0.f && height > 0.f);
 
 		btVector3 const origin(originarr[0], originarr[1], originarr[2]);
 
@@ -464,13 +479,12 @@ namespace djinn::js::scene_service
 	JSValue create_physics_capsule_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 4);
-		f32 const radius = js::extract_f32(ctx, argv[0]);
-		f32 const height = js::extract_f32(ctx, argv[1]);
-		ASSERT(radius > 0.f && height > 0.f);
-		std::vector<f32> const& originarr = js::extract_f32_array(ctx, argv[2]);
-		ASSERT(originarr.size() == 3);
-		f32 const mass = js::extract_f32(ctx, argv[3]);
+		f32 const mass = js::extract_f32(ctx, argv[0]);
 		ASSERT(mass >= 0.f);
+		std::vector<f32> const& originarr = js::extract_f32_array(ctx, argv[1]);
+		ASSERT(originarr.size() == 3);
+		f32 const radius = js::extract_f32(ctx, argv[2]);
+		f32 const height = js::extract_f32(ctx, argv[3]);
 
 		btVector3 const origin(originarr[0], originarr[1], originarr[2]);
 
@@ -581,6 +595,16 @@ namespace djinn::js::scene_service
 
 		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
 		so->set_angular_velocity(arr[0], arr[1], arr[2]);
+		return JS_UNDEFINED;
+	}
+	JSValue set_angular_factor(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::vector<f32> const& arr = js::extract_f32_array(ctx, argv[1]);
+
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		so->set_angular_factor(arr[0], arr[1], arr[2]);
 		return JS_UNDEFINED;
 	}
 	JSValue enable_collision(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -922,6 +946,7 @@ namespace djinn
 		super::register_function(ctx, "Entity", "requestImGui", 1, js::scene_service::request_imgui);
 		// PHYSICS
 		super::register_function(ctx, "Physics", "createBox", 3, js::scene_service::create_physics_box);
+		super::register_function(ctx, "Physics", "createCylinder", 3, js::scene_service::create_physics_cylinder);
 		super::register_function(ctx, "Physics", "createSphere", 3, js::scene_service::create_physics_sphere);
 		super::register_function(ctx, "Physics", "createCapsuleX", 4, js::scene_service::create_physics_capsule_x);
 		super::register_function(ctx, "Physics", "createCapsuleY", 4, js::scene_service::create_physics_capsule_y);
@@ -937,6 +962,7 @@ namespace djinn
 		super::register_function(ctx, "Physics", "setVelocityLocalY", 2, js::scene_service::set_velocity_local_y);
 		super::register_function(ctx, "Physics", "setVelocityLocalZ", 2, js::scene_service::set_velocity_local_z);
 		super::register_function(ctx, "Physics", "setAngularVelocity", 2, js::scene_service::set_angular_velocity);
+		super::register_function(ctx, "Physics", "setAngularFactor", 2, js::scene_service::set_angular_factor);
 		super::register_function(ctx, "Physics", "enableCollision", 1, js::scene_service::enable_collision);
 		super::register_function(ctx, "Physics", "disableCollision", 1, js::scene_service::disable_collision);
 		super::register_function(ctx, "Physics", "destroy", 1, js::scene_service::destroy_physics_object);

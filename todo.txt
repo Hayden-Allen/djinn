@@ -10,13 +10,16 @@
 	- animation jumping on loop
 
 - now
-	- lock hitbox rotation
-	- wing animate/texture
-	- scene_service factoring
+	- setPos physics_object?
+	- load being called twice reload?
+	- angles rad=>deg
+
 	- addRot/addLocalRot weirdness
+	- custom btMotionState?
 	- scripts OOP stl
 	- implement different lights
 
+	- scene_service factoring
 	- retained_buffer::load => buffer::load (buffer doesn't get save though)
 	- powertranzphormr mgl::input_file => haul::input_file
 	- load/save take haul::input_file* const

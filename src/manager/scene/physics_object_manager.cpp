@@ -2,6 +2,7 @@
 #include "physics_object_manager.h"
 #include "scene/xport/phorm.h"
 #include "scene/physics/box_physics_object.h"
+#include "scene/physics/cylinder_physics_object.h"
 #include "scene/physics/bvh_physics_object.h"
 #include "scene/physics/capsule_physics_object.h"
 #include "scene/physics/sphere_physics_object.h"
@@ -31,6 +32,10 @@ namespace djinn
 	id_t physics_object_manager::create_box(btVector3 const& dims, btVector3 const& origin, f32 const mass)
 	{
 		return insert(new box_physics_object(s_next_id, m_world, dims, origin, mass));
+	}
+	id_t physics_object_manager::create_cylinder(btVector3 const& dims, btVector3 const& origin, f32 const mass)
+	{
+		return insert(new cylinder_physics_object(s_next_id, m_world, dims, origin, mass));
 	}
 	id_t physics_object_manager::create_sphere(f32 const radius, btVector3 const& origin, f32 const mass)
 	{

@@ -15,6 +15,7 @@ namespace djinn
 		~physics_object_manager();
 	public:
 		id_t create_box(btVector3 const& dims, btVector3 const& origin, f32 const mass);
+		id_t create_cylinder(btVector3 const& dims, btVector3 const& origin, f32 const mass);
 		id_t create_sphere(f32 const radius, btVector3 const& origin, f32 const mass);
 		id_t create_capsule_x(f32 const radius, f32 const height, btVector3 const& origin, f32 const mass);
 		id_t create_capsule_y(f32 const radius, f32 const height, btVector3 const& origin, f32 const mass);
