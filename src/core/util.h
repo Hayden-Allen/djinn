@@ -13,6 +13,19 @@ namespace djinn::u
 	extern std::string trim(std::string const& s);
 	extern std::vector<std::string> split(std::string const& string, std::string const& delim);
 	extern bool iequals(std::string const& a, std::string const& b);
+
+
+
+	template<typename T>
+	T deg2rad(T const t)
+	{
+		return t * ::hats::c::PI / 180;
+	}
+	template<typename T>
+	T rad2deg(T const t)
+	{
+		return t * 180 / ::hats::c::PI;
+	}
 	template<space FROM, space TO>
 	btTransform tmat2bullet(tmat<FROM, TO> const& tmat)
 	{

@@ -11,6 +11,7 @@
 
 - now
 	- physics
+		- jump when stop moving on bvh
 		- fall through bvh
 		- physics_object_manager::update order needs to respect scene graph?
 	- graphics
@@ -19,8 +20,6 @@
 		- implement different lights
 		- vines z-fighting
 	- other
-		- pass arguments to __load()
-		- angles rad=>deg
 		- scripts OOP stl
 		- more scene_service factoring
 

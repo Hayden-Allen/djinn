@@ -41,7 +41,7 @@ namespace djinn
 	}
 	std::array<f32, 3> scene_object::get_rot() const
 	{
-		return { m_rot[0], m_rot[1], m_rot[2] };
+		return { u::rad2deg(m_rot[0]), u::rad2deg(m_rot[1]), u::rad2deg(m_rot[2]) };
 	}
 	vec<space::PARENT> scene_object::get_scale() const
 	{
@@ -58,7 +58,7 @@ namespace djinn
 	{
 		f32 x = 0, y = 0, z = 0;
 		u::extract_rot(get_world_transform(), &x, &y, &z);
-		return { x, y, z };
+		return { u::rad2deg(x), u::rad2deg(y), u::rad2deg(z) };
 	}
 	vec<space::WORLD> scene_object::get_scale_world() const
 	{
@@ -86,26 +86,26 @@ namespace djinn
 	{
 		m_transform.t[2] = z;
 	}
-	void scene_object::set_rot(f32 const x, f32 const y, f32 const z)
+	void scene_object::set_rot(f32 const x_deg, f32 const y_deg, f32 const z_deg)
 	{
-		m_rot[0] = x;
-		m_rot[1] = y;
-		m_rot[2] = z;
+		m_rot[0] = u::deg2rad(x_deg);
+		m_rot[1] = u::deg2rad(y_deg);
+		m_rot[2] = u::deg2rad(z_deg);
 		update_rot();
 	}
-	void scene_object::set_rot_x(f32 const x)
+	void scene_object::set_rot_x(f32 const x_deg)
 	{
-		m_rot[0] = x;
+		m_rot[0] = u::deg2rad(x_deg);
 		update_rot();
 	}
-	void scene_object::set_rot_y(f32 const y)
+	void scene_object::set_rot_y(f32 const y_deg)
 	{
-		m_rot[1] = y;
+		m_rot[1] = u::deg2rad(y_deg);
 		update_rot();
 	}
-	void scene_object::set_rot_z(f32 const z)
+	void scene_object::set_rot_z(f32 const z_deg)
 	{
-		m_rot[2] = z;
+		m_rot[2] = u::deg2rad(z_deg);
 		update_rot();
 	}
 	void scene_object::set_scale(vec<space::PARENT> const& scale)
@@ -157,19 +157,19 @@ namespace djinn
 		pos.z = z;
 		set_pos_world(pos);
 	}
-	void scene_object::set_rot_world(f32 const x, f32 const y, f32 const z)
+	void scene_object::set_rot_world(f32 const x_deg, f32 const y_deg, f32 const z_deg)
 	{
 		ASSERT(false);
 	}
-	void scene_object::set_rot_x_world(f32 const x)
+	void scene_object::set_rot_x_world(f32 const x_deg)
 	{
 		ASSERT(false);
 	}
-	void scene_object::set_rot_y_world(f32 const y)
+	void scene_object::set_rot_y_world(f32 const y_deg)
 	{
 		ASSERT(false);
 	}
-	void scene_object::set_rot_z_world(f32 const z)
+	void scene_object::set_rot_z_world(f32 const z_deg)
 	{
 		ASSERT(false);
 	}
@@ -205,26 +205,26 @@ namespace djinn
 	{
 		set_pos_z(get_pos().z + z);
 	}
-	void scene_object::add_rot(f32 const x, f32 const y, f32 const z)
+	void scene_object::add_rot(f32 const x_deg, f32 const y_deg, f32 const z_deg)
 	{
-		m_rot[0] += x;
-		m_rot[1] += y;
-		m_rot[2] += z;
+		m_rot[0] += u::deg2rad(x_deg);
+		m_rot[1] += u::deg2rad(y_deg);
+		m_rot[2] += u::deg2rad(z_deg);
 		update_rot();
 	}
-	void scene_object::add_rot_x(f32 const x)
+	void scene_object::add_rot_x(f32 const x_deg)
 	{
-		m_rot[0] += x;
+		m_rot[0] += u::deg2rad(x_deg);
 		update_rot();
 	}
-	void scene_object::add_rot_y(f32 const y)
+	void scene_object::add_rot_y(f32 const y_deg)
 	{
-		m_rot[1] += y;
+		m_rot[1] += u::deg2rad(y_deg);
 		update_rot();
 	}
-	void scene_object::add_rot_z(f32 const z)
+	void scene_object::add_rot_z(f32 const z_deg)
 	{
-		m_rot[2] += z;
+		m_rot[2] += u::deg2rad(z_deg);
 		update_rot();
 	}
 	void scene_object::add_scale(vec<space::PARENT> const& scale)
@@ -259,19 +259,19 @@ namespace djinn
 	{
 		set_pos_z_world(get_pos_world().z + z);
 	}
-	void scene_object::add_rot_world(f32 const x, f32 const y, f32 const z)
+	void scene_object::add_rot_world(f32 const x_deg, f32 const y_deg, f32 const z_deg)
 	{
 		ASSERT(false);
 	}
-	void scene_object::add_rot_x_world(f32 const x)
+	void scene_object::add_rot_x_world(f32 const x_deg)
 	{
 		ASSERT(false);
 	}
-	void scene_object::add_rot_y_world(f32 const y)
+	void scene_object::add_rot_y_world(f32 const y_deg)
 	{
 		ASSERT(false);
 	}
-	void scene_object::add_rot_z_world(f32 const z)
+	void scene_object::add_rot_z_world(f32 const z_deg)
 	{
 		ASSERT(false);
 	}
