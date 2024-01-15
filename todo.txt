@@ -10,20 +10,23 @@
 	- animation jumping on loop
 
 - now
-	- camera set transform functions need to call update_mats()
-	- custom btMotionState?
-	- collapse scene_object into scene_object_base?
-	- bullet debug draw
-	- fall through bvh
-	- setPos physics_object?
-	- angles rad=>deg
-	- vines z-fighting
+	- physics
+		- custom btMotionState?
+		- setPos physics_object?
+		- fall through bvh
+	- graphics
+		- bridge/roof sometimes not drawing
+		- implement different lights
+		- vines z-fighting
+	- other
+		- rotate in place | addRot/addLocalRot weirdness
+		- camera set transform functions need to call update_mats()
+		- collapse scene_object into scene_object_base?
+		- angles rad=>deg
+		- scripts OOP stl
+		- scene_service factoring
 
-	- addRot/addLocalRot weirdness
-	- scripts OOP stl
-	- implement different lights
-
-	- scene_service factoring
+- later
 	- retained_buffer::load => buffer::load (buffer doesn't get save though)
 	- powertranzphormr mgl::input_file => haul::input_file
 	- load/save take haul::input_file* const
@@ -36,7 +39,7 @@
 		- removing instance at capacity threshold deletes now-unused ubo
 		- removing all instances using a shader deletes that instance
 
-- later
+- even later
 	- framebuffer_u8/f32?
 	- deferred renderer
 	- scene graph/multiple cameras
@@ -45,7 +48,7 @@
 	- distribution asset pipeline
 	- virtual filesystem
 
-- even later
+- latest
 	- per-camera effects
 
 

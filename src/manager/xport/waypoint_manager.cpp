@@ -11,7 +11,7 @@ namespace djinn
 	std::vector<id_t> waypoint_manager::load_xport(mgl::input_file* const in)
 	{
 		u64 const count = in->ulong();
-		// printf("w: %zu\n", count);
+		printf("w: %zu\n", count);
 		std::vector<id_t> ids;
 		ids.reserve(count);
 		for (u64 i = 0; i < count; i++)

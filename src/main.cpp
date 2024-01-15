@@ -108,6 +108,9 @@ int main(int argc, char* argv[])
 			scene_service::draw_imgui();
 			imgui_service::end_frame();,
 			imgui_avg, NUM_FRAMES);
+
+		sptr<camera_entity> primary = scene_service::get_camera_entity_manager()->get_primary();
+		scene_service::get_physics_object_manager()->debug_draw(primary->get_view_proj());
 #endif
 
 		c->end_frame();

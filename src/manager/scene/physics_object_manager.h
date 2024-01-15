@@ -6,6 +6,7 @@
 namespace djinn
 {
 	class phorm;
+	class physics_debug_drawer;
 
 	class physics_object_manager final : public ref_counted_manager<physics_object>
 	{
@@ -22,11 +23,17 @@ namespace djinn
 		id_t create_capsule_z(f32 const radius, f32 const height, btVector3 const& origin, f32 const mass);
 		id_t create_bvh(sptr<phorm> const& phorm);
 		void update(f32 const dt);
+#ifndef DJINN_DIST
+		void debug_draw(mat<space::WORLD, space::CLIP> const& vp);
+#endif
 	private:
 		optr<btDefaultCollisionConfiguration> m_config;
 		optr<btCollisionDispatcher> m_dispatcher;
 		optr<btBroadphaseInterface> m_cache;
 		optr<btSequentialImpulseConstraintSolver> m_solver;
 		optr<btDiscreteDynamicsWorld> m_world;
+#ifndef DJINN_DIST
+		optr<physics_debug_drawer> m_drawer;
+#endif
 	};
 } // namespace djinn

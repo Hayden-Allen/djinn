@@ -12,5 +12,8 @@ namespace djinn
 		DCM(camera_entity_manager);
 	public:
 		id_t load(std::string const& fp) override;
+		sptr<camera_entity> get_primary();
+	private:
+		id_t m_primary;
 	};
 } // namespace djinn

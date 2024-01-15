@@ -6,6 +6,7 @@
 #include "scene/physics/bvh_physics_object.h"
 #include "scene/physics/capsule_physics_object.h"
 #include "scene/physics/sphere_physics_object.h"
+#include "debug/physics_debug_drawer.h"
 
 namespace djinn
 {
@@ -17,9 +18,16 @@ namespace djinn
 		m_solver = new btSequentialImpulseConstraintSolver();
 		m_world = new btDiscreteDynamicsWorld(m_dispatcher.get(), m_cache.get(), m_solver.get(), m_config.get());
 		m_world->setGravity(btVector3(0, -10, 0));
+#ifndef DJINN_DIST
+		m_drawer = new physics_debug_drawer();
+		m_world->setDebugDrawer(m_drawer.get());
+#endif
 	}
 	physics_object_manager::~physics_object_manager()
 	{
+#ifndef DJINN_DIST
+		m_drawer.free();
+#endif
 		m_config.free();
 		m_dispatcher.free();
 		m_cache.free();
@@ -65,5 +73,11 @@ namespace djinn
 		// m_world->stepSimulation(dt);
 		for (auto& pair : m_objects)
 			pair.second->copy_physics_transform();
+	}
+	void physics_object_manager::debug_draw(mat<space::WORLD, space::CLIP> const& vp)
+	{
+		m_drawer->set_camera(vp);
+		m_world->debugDrawWorld();
+		m_drawer->flushLines();
 	}
 } // namespace djinn
