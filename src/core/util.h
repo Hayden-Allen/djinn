@@ -45,6 +45,16 @@ namespace djinn::u
 			i.y(), j.y(), k.y(), t.y(),
 			i.z(), j.z(), k.z(), t.z());
 	}
+	template<space SPACE>
+	btVector3 vec2bullet(vec<SPACE> const& v)
+	{
+		return btVector3(v.x, v.y, v.z);
+	}
+	template<space SPACE>
+	vec<SPACE> bullet2vec(btVector3 const& v)
+	{
+		return vec<SPACE>(v.x(), v.y(), v.z());
+	}
 	// https://stackoverflow.com/a/19195373
 	template<typename T>
 	u64 hash_combine(u64 const in, T const& v)

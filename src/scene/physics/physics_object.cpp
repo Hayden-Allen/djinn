@@ -79,16 +79,46 @@ namespace djinn
 	{
 		m_rb->setAngularFactor(btVector3(x, y, z));
 	}
+	void physics_object::apply_impulse(vec<space::OBJECT> const& force)
+	{
+		vec<space::WORLD> const& w = get_world_transform() * force;
+		m_rb->applyCentralImpulse(u::vec2bullet(w));
+	}
+	void physics_object::set_damping(f32 const d)
+	{
+		m_rb->setDamping(d, m_rb->getAngularDamping());
+	}
+	void physics_object::set_angular_damping(f32 const d)
+	{
+		m_rb->setDamping(m_rb->getLinearDamping(), d);
+	}
+	void physics_object::set_max_speed(f32 const max)
+	{
+		m_max_speed = max;
+	}
+	vec<space::WORLD> physics_object::get_velocity() const
+	{
+		return u::bullet2vec<space::WORLD>(m_rb->getLinearVelocity());
+	}
 
 
 
 	physics_object::physics_object(id_t const id, sptr<btDiscreteDynamicsWorld> const& world) :
 		scene_object(id),
-		m_world(world)
-	{}
+		m_world(world),
+		m_max_speed(MAX_VALUE_T(f32))
+	{
+	}
 
 
 
+	void physics_object::clamp_velocity()
+	{
+		vec<space::WORLD> vel = u::bullet2vec<space::WORLD>(m_rb->getLinearVelocity());
+		if (vel.length() > m_max_speed)
+			vel.set_length(m_max_speed);
+		m_rb->setLinearVelocity(u::vec2bullet(vel));
+	}
 	void physics_object::copy_transform_to_physics()
 	{
 		tmat<space::OBJECT, space::WORLD> const& mat = get_world_transform();

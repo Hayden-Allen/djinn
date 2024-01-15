@@ -95,6 +95,12 @@ declare interface _Scene_Physics {
     setAngularFactor(id: PhysicsID, vel: number[]): void
     enableCollision(id: PhysicsID): void
     disableCollision(id: PhysicsID): void
+    applyImpulse(id: PhysicsID, localForce: number[]): void
+    setDamping(id: PhysicsID, linear: number): void
+    setAngularDamping(id: PhysicsID, angular: number): void
+    setMaxSpeed(id: PhysicsID, max: number): void
+    getVelocity(id: PhysicsID): number[]
+    getSpeed(id: PhysicsID): number
     destroy(id: PhysicsID): void
     destroyAll(ids: PhysicsID[]): void
 }

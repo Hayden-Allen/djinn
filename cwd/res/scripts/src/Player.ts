@@ -2,7 +2,7 @@ import "./lib/djinn.d"
 import Entity from "./lib/Entity"
 import Camera from "./lib/Camera"
 
-const { Asset, Scene, Input } = djinn
+const { Asset, Scene, Input, ImGui } = djinn
 
 export default class Player extends Entity {
     private camera?: Camera
@@ -92,13 +92,15 @@ export default class Player extends Entity {
             //     [0.2, 0.5, 0.2]
             // )
             this.idHitbox = Scene.Physics.createCapsuleY(
-                999,
+                1,
                 this.worldPos,
                 this.hitboxRadius,
                 this.hitboxHeight
             )
-            Scene.Physics.setFriction(this.idHitbox, 0)
-            Scene.Physics.setAngularFactor(this.idHitbox, [0, 1, 0])
+            Scene.Physics.setFriction(this.idHitbox, 5)
+            Scene.Physics.setDamping(this.idHitbox, 0.1)
+            Scene.Physics.setMaxSpeed(this.idHitbox, 5)
+            Scene.Physics.setAngularFactor(this.idHitbox, [0, 0, 0])
         }
         // scene graph
         {
@@ -174,10 +176,13 @@ export default class Player extends Entity {
         }
         // movement
         {
-            const dx = 5 * Input.leftX()
-            const dz = 5 * Input.leftY()
-            Scene.Physics.setVelocityLocalX(this.idHitbox, dx)
-            Scene.Physics.setVelocityLocalZ(this.idHitbox, dz)
+            // const dx = 5 * Input.leftX()
+            // const dz = 5 * Input.leftY()
+            // Scene.Physics.setVelocityLocalX(this.idHitbox, dx)
+            // Scene.Physics.setVelocityLocalZ(this.idHitbox, dz)
+            const dx = dt * 50 * Input.leftX()
+            const dz = dt * 50 * Input.leftY()
+            Scene.Physics.applyImpulse(this.idHitbox, [dx, 0, dz])
             let actionSet = false
             if (dx != 0 || dz != 0) {
                 Scene.MeshInstance.setAction(
@@ -205,11 +210,12 @@ export default class Player extends Entity {
         }
         // camera
         {
-            const newCamAngleX = this.camAngleX - dt * Input.rightY()
+            const newCamAngleX = this.camAngleX - dt * 90 * Input.rightY()
             if (newCamAngleX < 90 && newCamAngleX > -90)
                 this.camAngleX = newCamAngleX
             Scene.setRotX(this.camera!.getId(), this.camAngleX)
         }
+        Scene.Entity.requestImGui(this.id)
     }
     __draw() {
         this.worldPos = Scene.getPos(this.idHitbox)
@@ -218,5 +224,14 @@ export default class Player extends Entity {
         // update shaders AFTER CAMERA TRANSFORM IS DONE BEING MODIFIED
         Asset.Shader.setCameraUniforms(this.idMainShader, this.camera!.getId())
         Asset.Shader.setCameraUniforms(this.idWingShader, this.camera!.getId())
+    }
+    __imgui() {
+        const ivel = Scene.Physics.getVelocity(this.idHitbox).map((v) =>
+            Math.round(v)
+        )
+        ImGui.text("Vel: " + ivel)
+        ImGui.text(
+            "Speed: " + Math.round(Scene.Physics.getSpeed(this.idHitbox))
+        )
     }
 }

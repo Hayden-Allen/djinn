@@ -11,6 +11,8 @@
 
 - now
 	- physics
+		- raycast down, apply movement force perpendicular to foot contact
+		- hatsify physics_object, function order/cleanup
 		- jump when stop moving on bvh
 		- fall through bvh
 		- physics_object_manager::update order needs to respect scene graph?
@@ -20,6 +22,7 @@
 		- implement different lights
 		- vines z-fighting
 	- other
+		- factor scene_service physics
 		- scripts OOP stl
 		- more scene_service factoring
 

@@ -615,6 +615,64 @@ namespace djinn::js::scene_service
 		so->set_collision_enabled(false);
 		return JS_UNDEFINED;
 	}
+	JSValue apply_impulse(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::vector<f32> const& arr = js::extract_f32_array(ctx, argv[1]);
+
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		so->apply_impulse(vec<space::OBJECT>(arr[0], arr[1], arr[2]));
+		return JS_UNDEFINED;
+	}
+	JSValue set_damping(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		f32 const d = js::extract_f32(ctx, argv[1]);
+
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		so->set_damping(d);
+		return JS_UNDEFINED;
+	}
+	JSValue set_angular_damping(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		f32 const d = js::extract_f32(ctx, argv[1]);
+
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		so->set_angular_damping(d);
+		return JS_UNDEFINED;
+	}
+	JSValue set_max_speed(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		f32 const s = js::extract_f32(ctx, argv[1]);
+
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		so->set_max_speed(s);
+		return JS_UNDEFINED;
+	}
+	JSValue get_velocity(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		vec<space::WORLD> const& vel = so->get_velocity();
+		return js::create_f32_array(ctx, 3, vel.e);
+	}
+	JSValue get_speed(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		vec<space::WORLD> const& vel = so->get_velocity();
+		return js::create_f32(ctx, vel.length());
+	}
 	JSValue destroy_physics_object(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
@@ -1037,145 +1095,167 @@ namespace djinn
 	void scene_service::register_functions(JSContext* const ctx)
 	{
 		// WAYPOINT
-		super::register_function(ctx, "Waypoint", "create", 0, js::scene_service::create_waypoint);
-		super::register_function(ctx, "Waypoint", "destroy", 1, js::scene_service::destroy_waypoint);
-		super::register_function(ctx, "Waypoint", "destroyAll", 1, js::scene_service::destroy_all_waypoint);
+		{
+			super::register_function(ctx, "Waypoint", "create", 0, js::scene_service::create_waypoint);
+			super::register_function(ctx, "Waypoint", "destroy", 1, js::scene_service::destroy_waypoint);
+			super::register_function(ctx, "Waypoint", "destroyAll", 1, js::scene_service::destroy_all_waypoint);
+		}
 		// LIGHT
-		super::register_function(ctx, "Light", "create", 0, js::scene_service::create_light);
-		super::register_function(ctx, "Light", "setAmbient", 2, js::scene_service::set_light_color_ambient);
-		super::register_function(ctx, "Light", "setDiffuse", 2, js::scene_service::set_light_color_diffuse);
-		super::register_function(ctx, "Light", "setSpecular", 2, js::scene_service::set_light_color_specular);
-		super::register_function(ctx, "Light", "destroy", 1, js::scene_service::destroy_light);
-		super::register_function(ctx, "Light", "destroyAll", 1, js::scene_service::destroy_all_light);
+		{
+			super::register_function(ctx, "Light", "create", 0, js::scene_service::create_light);
+			super::register_function(ctx, "Light", "setAmbient", 2, js::scene_service::set_light_color_ambient);
+			super::register_function(ctx, "Light", "setDiffuse", 2, js::scene_service::set_light_color_diffuse);
+			super::register_function(ctx, "Light", "setSpecular", 2, js::scene_service::set_light_color_specular);
+			super::register_function(ctx, "Light", "destroy", 1, js::scene_service::destroy_light);
+			super::register_function(ctx, "Light", "destroyAll", 1, js::scene_service::destroy_all_light);
+		}
 		// XPORT/PHORM
-		super::register_function(ctx, "Xport", "load", 1, js::scene_service::load_xport);
-		super::register_function(ctx, "Phorm", "setShaders", 2, js::scene_service::set_phorm_shaders);
-		super::register_function(ctx, "Phorm", "setAlphaShaders", 2, js::scene_service::set_phorm_alpha_shaders);
-		super::register_function(ctx, "Phorm", "setVisible", 2, js::scene_service::set_phorm_visible);
-		super::register_function(ctx, "Phorm", "destroy", 1, js::scene_service::destroy_phorm);
-		super::register_function(ctx, "Phorm", "destroyAll", 1, js::scene_service::destroy_all_phorm);
+		{
+			super::register_function(ctx, "Xport", "load", 1, js::scene_service::load_xport);
+			super::register_function(ctx, "Phorm", "setShaders", 2, js::scene_service::set_phorm_shaders);
+			super::register_function(ctx, "Phorm", "setAlphaShaders", 2, js::scene_service::set_phorm_alpha_shaders);
+			super::register_function(ctx, "Phorm", "setVisible", 2, js::scene_service::set_phorm_visible);
+			super::register_function(ctx, "Phorm", "destroy", 1, js::scene_service::destroy_phorm);
+			super::register_function(ctx, "Phorm", "destroyAll", 1, js::scene_service::destroy_all_phorm);
+		}
 		// MESH INSTANCE
-		super::register_function(ctx, "MeshInstance", "create", 2, js::scene_service::create_mesh_instance);
-		super::register_function(ctx, "MeshInstance", "setUniforms", 2, js::scene_service::set_mesh_instance_uniforms);
-		super::register_function(ctx, "MeshInstance", "setVisible", 2, js::scene_service::set_mesh_instance_visible);
-		super::register_function(ctx, "MeshInstance", "setAction", 3, js::scene_service::set_mesh_instance_action);
-		super::register_function(ctx, "MeshInstance", "getBonePos", 2, js::scene_service::get_mesh_instance_bone_pos);
-		super::register_function(ctx, "MeshInstance", "getBoneBasisX", 2, js::scene_service::get_mesh_instance_bone_basis_x);
-		super::register_function(ctx, "MeshInstance", "getBoneBasisY", 2, js::scene_service::get_mesh_instance_bone_basis_y);
-		super::register_function(ctx, "MeshInstance", "getBoneBasisZ", 2, js::scene_service::get_mesh_instance_bone_basis_z);
-		super::register_function(ctx, "MeshInstance", "destroy", 1, js::scene_service::destroy_mesh_instance);
-		super::register_function(ctx, "MeshInstance", "destroyAll", 1, js::scene_service::destroy_all_mesh_instance);
+		{
+			super::register_function(ctx, "MeshInstance", "create", 2, js::scene_service::create_mesh_instance);
+			super::register_function(ctx, "MeshInstance", "setUniforms", 2, js::scene_service::set_mesh_instance_uniforms);
+			super::register_function(ctx, "MeshInstance", "setVisible", 2, js::scene_service::set_mesh_instance_visible);
+			super::register_function(ctx, "MeshInstance", "setAction", 3, js::scene_service::set_mesh_instance_action);
+			super::register_function(ctx, "MeshInstance", "getBonePos", 2, js::scene_service::get_mesh_instance_bone_pos);
+			super::register_function(ctx, "MeshInstance", "getBoneBasisX", 2, js::scene_service::get_mesh_instance_bone_basis_x);
+			super::register_function(ctx, "MeshInstance", "getBoneBasisY", 2, js::scene_service::get_mesh_instance_bone_basis_y);
+			super::register_function(ctx, "MeshInstance", "getBoneBasisZ", 2, js::scene_service::get_mesh_instance_bone_basis_z);
+			super::register_function(ctx, "MeshInstance", "destroy", 1, js::scene_service::destroy_mesh_instance);
+			super::register_function(ctx, "MeshInstance", "destroyAll", 1, js::scene_service::destroy_all_mesh_instance);
+		}
 		// ENTITY / CAMERA
-		super::register_function(ctx, "Entity", "load", 999, js::scene_service::load_entity);
-		super::register_function(ctx, "Entity", "destroy", 1, js::scene_service::destroy_entity);
-		super::register_function(ctx, "Entity", "destroyAll", 1, js::scene_service::destroy_all_entity);
-		super::register_function(ctx, "Camera", "load", 999, js::scene_service::load_camera);
-		super::register_function(ctx, "Camera", "configure", 5, js::scene_service::configure_camera);
-		super::register_function(ctx, "Entity", "requestImGui", 1, js::scene_service::request_imgui);
+		{
+			super::register_function(ctx, "Entity", "load", MAX_VALUE_T(s32), js::scene_service::load_entity);
+			super::register_function(ctx, "Entity", "destroy", 1, js::scene_service::destroy_entity);
+			super::register_function(ctx, "Entity", "destroyAll", 1, js::scene_service::destroy_all_entity);
+			super::register_function(ctx, "Camera", "load", MAX_VALUE_T(s32), js::scene_service::load_camera);
+			super::register_function(ctx, "Camera", "configure", 5, js::scene_service::configure_camera);
+			super::register_function(ctx, "Entity", "requestImGui", 1, js::scene_service::request_imgui);
+		}
 		// PHYSICS
-		super::register_function(ctx, "Physics", "createBox", 3, js::scene_service::create_physics_box);
-		super::register_function(ctx, "Physics", "createCylinder", 3, js::scene_service::create_physics_cylinder);
-		super::register_function(ctx, "Physics", "createSphere", 3, js::scene_service::create_physics_sphere);
-		super::register_function(ctx, "Physics", "createCapsuleX", 4, js::scene_service::create_physics_capsule_x);
-		super::register_function(ctx, "Physics", "createCapsuleY", 4, js::scene_service::create_physics_capsule_y);
-		super::register_function(ctx, "Physics", "createCapsuleZ", 4, js::scene_service::create_physics_capsule_z);
-		super::register_function(ctx, "Physics", "createBVH", 1, js::scene_service::create_physics_bvh);
-		super::register_function(ctx, "Physics", "setFriction", 2, js::scene_service::set_friction);
-		super::register_function(ctx, "Physics", "setVelocity", 2, js::scene_service::set_velocity);
-		super::register_function(ctx, "Physics", "setVelocityX", 2, js::scene_service::set_velocity_x);
-		super::register_function(ctx, "Physics", "setVelocityY", 2, js::scene_service::set_velocity_y);
-		super::register_function(ctx, "Physics", "setVelocityZ", 2, js::scene_service::set_velocity_z);
-		super::register_function(ctx, "Physics", "setVelocityLocal", 2, js::scene_service::set_velocity_local);
-		super::register_function(ctx, "Physics", "setVelocityLocalX", 2, js::scene_service::set_velocity_local_x);
-		super::register_function(ctx, "Physics", "setVelocityLocalY", 2, js::scene_service::set_velocity_local_y);
-		super::register_function(ctx, "Physics", "setVelocityLocalZ", 2, js::scene_service::set_velocity_local_z);
-		super::register_function(ctx, "Physics", "setAngularVelocity", 2, js::scene_service::set_angular_velocity);
-		super::register_function(ctx, "Physics", "setAngularFactor", 2, js::scene_service::set_angular_factor);
-		super::register_function(ctx, "Physics", "enableCollision", 1, js::scene_service::enable_collision);
-		super::register_function(ctx, "Physics", "disableCollision", 1, js::scene_service::disable_collision);
-		super::register_function(ctx, "Physics", "destroy", 1, js::scene_service::destroy_physics_object);
-		super::register_function(ctx, "Physics", "destroyAll", 1, js::scene_service::destroy_all_physics_object);
+		{
+			super::register_function(ctx, "Physics", "createBox", 3, js::scene_service::create_physics_box);
+			super::register_function(ctx, "Physics", "createCylinder", 3, js::scene_service::create_physics_cylinder);
+			super::register_function(ctx, "Physics", "createSphere", 3, js::scene_service::create_physics_sphere);
+			super::register_function(ctx, "Physics", "createCapsuleX", 4, js::scene_service::create_physics_capsule_x);
+			super::register_function(ctx, "Physics", "createCapsuleY", 4, js::scene_service::create_physics_capsule_y);
+			super::register_function(ctx, "Physics", "createCapsuleZ", 4, js::scene_service::create_physics_capsule_z);
+			super::register_function(ctx, "Physics", "createBVH", 1, js::scene_service::create_physics_bvh);
+			super::register_function(ctx, "Physics", "setFriction", 2, js::scene_service::set_friction);
+			super::register_function(ctx, "Physics", "setVelocity", 2, js::scene_service::set_velocity);
+			super::register_function(ctx, "Physics", "setVelocityX", 2, js::scene_service::set_velocity_x);
+			super::register_function(ctx, "Physics", "setVelocityY", 2, js::scene_service::set_velocity_y);
+			super::register_function(ctx, "Physics", "setVelocityZ", 2, js::scene_service::set_velocity_z);
+			super::register_function(ctx, "Physics", "setVelocityLocal", 2, js::scene_service::set_velocity_local);
+			super::register_function(ctx, "Physics", "setVelocityLocalX", 2, js::scene_service::set_velocity_local_x);
+			super::register_function(ctx, "Physics", "setVelocityLocalY", 2, js::scene_service::set_velocity_local_y);
+			super::register_function(ctx, "Physics", "setVelocityLocalZ", 2, js::scene_service::set_velocity_local_z);
+			super::register_function(ctx, "Physics", "setAngularVelocity", 2, js::scene_service::set_angular_velocity);
+			super::register_function(ctx, "Physics", "setAngularFactor", 2, js::scene_service::set_angular_factor);
+			super::register_function(ctx, "Physics", "enableCollision", 1, js::scene_service::enable_collision);
+			super::register_function(ctx, "Physics", "disableCollision", 1, js::scene_service::disable_collision);
+			super::register_function(ctx, "Physics", "applyImpulse", 2, js::scene_service::apply_impulse);
+			super::register_function(ctx, "Physics", "setDamping", 2, js::scene_service::set_damping);
+			super::register_function(ctx, "Physics", "setAngularDamping", 2, js::scene_service::set_angular_damping);
+			super::register_function(ctx, "Physics", "setMaxSpeed", 2, js::scene_service::set_max_speed);
+			super::register_function(ctx, "Physics", "getVelocity", 1, js::scene_service::get_velocity);
+			super::register_function(ctx, "Physics", "getSpeed", 1, js::scene_service::get_speed);
+			super::register_function(ctx, "Physics", "destroy", 1, js::scene_service::destroy_physics_object);
+			super::register_function(ctx, "Physics", "destroyAll", 1, js::scene_service::destroy_all_physics_object);
+		}
 		// SOUND EMITTER
-		super::register_function(ctx, "SoundEmitter", "create", 1, js::scene_service::create_sound_emitter);
-		super::register_function(ctx, "SoundEmitter", "play", 1, js::scene_service::play_sound_emitter);
-		super::register_function(ctx, "SoundEmitter", "stop", 1, js::scene_service::stop_sound_emitter);
-		super::register_function(ctx, "SoundEmitter", "destroy", 1, js::scene_service::destroy_sound_emitter);
-		super::register_function(ctx, "SoundEmitter", "destroyAll", 1, js::scene_service::destroy_all_sound_emitter);
+		{
+			super::register_function(ctx, "SoundEmitter", "create", 1, js::scene_service::create_sound_emitter);
+			super::register_function(ctx, "SoundEmitter", "play", 1, js::scene_service::play_sound_emitter);
+			super::register_function(ctx, "SoundEmitter", "stop", 1, js::scene_service::stop_sound_emitter);
+			super::register_function(ctx, "SoundEmitter", "destroy", 1, js::scene_service::destroy_sound_emitter);
+			super::register_function(ctx, "SoundEmitter", "destroyAll", 1, js::scene_service::destroy_all_sound_emitter);
+		}
 		// COMMON
-		super::register_function(ctx, "copyTransform", 2, js::scene_service::copy_transform);
-		super::register_function(ctx, "setParent", 2, js::scene_service::set_parent);
-		super::register_function(ctx, "getPos", 1, js::scene_service::get_pos);
-		super::register_function(ctx, "getPosX", 1, js::scene_service::get_pos_x);
-		super::register_function(ctx, "getPosY", 1, js::scene_service::get_pos_y);
-		super::register_function(ctx, "getPosZ", 1, js::scene_service::get_pos_z);
-		super::register_function(ctx, "getRot", 1, js::scene_service::get_rot);
-		super::register_function(ctx, "getRotX", 1, js::scene_service::get_rot_x);
-		super::register_function(ctx, "getRotY", 1, js::scene_service::get_rot_y);
-		super::register_function(ctx, "getRotZ", 1, js::scene_service::get_rot_z);
-		super::register_function(ctx, "getScale", 1, js::scene_service::get_scale);
-		super::register_function(ctx, "getScaleX", 1, js::scene_service::get_scale_x);
-		super::register_function(ctx, "getScaleY", 1, js::scene_service::get_scale_y);
-		super::register_function(ctx, "getScaleZ", 1, js::scene_service::get_scale_z);
-		super::register_function(ctx, "getPosWorld", 1, js::scene_service::get_pos_world);
-		super::register_function(ctx, "getPosXWorld", 1, js::scene_service::get_pos_x_world);
-		super::register_function(ctx, "getPosYWorld", 1, js::scene_service::get_pos_y_world);
-		super::register_function(ctx, "getPosZWorld", 1, js::scene_service::get_pos_z_world);
-		super::register_function(ctx, "getRotWorld", 1, js::scene_service::get_rot_world);
-		super::register_function(ctx, "getRotXWorld", 1, js::scene_service::get_rot_x_world);
-		super::register_function(ctx, "getRotYWorld", 1, js::scene_service::get_rot_y_world);
-		super::register_function(ctx, "getRotZWorld", 1, js::scene_service::get_rot_z_world);
-		super::register_function(ctx, "getScaleWorld", 1, js::scene_service::get_scale_world);
-		super::register_function(ctx, "getScaleXWorld", 1, js::scene_service::get_scale_x_world);
-		super::register_function(ctx, "getScaleYWorld", 1, js::scene_service::get_scale_y_world);
-		super::register_function(ctx, "getScaleZWorld", 1, js::scene_service::get_scale_z_world);
-		super::register_function(ctx, "setPos", 1, js::scene_service::set_pos);
-		super::register_function(ctx, "setPosX", 1, js::scene_service::set_pos_x);
-		super::register_function(ctx, "setPosY", 1, js::scene_service::set_pos_y);
-		super::register_function(ctx, "setPosZ", 1, js::scene_service::set_pos_z);
-		super::register_function(ctx, "setRot", 1, js::scene_service::set_rot);
-		super::register_function(ctx, "setRotX", 1, js::scene_service::set_rot_x);
-		super::register_function(ctx, "setRotY", 1, js::scene_service::set_rot_y);
-		super::register_function(ctx, "setRotZ", 1, js::scene_service::set_rot_z);
-		super::register_function(ctx, "setScale", 1, js::scene_service::set_scale);
-		super::register_function(ctx, "setScaleX", 1, js::scene_service::set_scale_x);
-		super::register_function(ctx, "setScaleY", 1, js::scene_service::set_scale_y);
-		super::register_function(ctx, "setScaleZ", 1, js::scene_service::set_scale_z);
-		super::register_function(ctx, "setPosWorld", 1, js::scene_service::set_pos_world);
-		super::register_function(ctx, "setPosXWorld", 1, js::scene_service::set_pos_x_world);
-		super::register_function(ctx, "setPosYWorld", 1, js::scene_service::set_pos_y_world);
-		super::register_function(ctx, "setPosZWorld", 1, js::scene_service::set_pos_z_world);
-		super::register_function(ctx, "setRotWorld", 1, js::scene_service::set_rot_world);
-		super::register_function(ctx, "setRotXWorld", 1, js::scene_service::set_rot_x_world);
-		super::register_function(ctx, "setRotYWorld", 1, js::scene_service::set_rot_y_world);
-		super::register_function(ctx, "setRotZWorld", 1, js::scene_service::set_rot_z_world);
-		super::register_function(ctx, "setScaleWorld", 1, js::scene_service::set_scale_world);
-		super::register_function(ctx, "setScaleXWorld", 1, js::scene_service::set_scale_x_world);
-		super::register_function(ctx, "setScaleYWorld", 1, js::scene_service::set_scale_y_world);
-		super::register_function(ctx, "setScaleZWorld", 1, js::scene_service::set_scale_z_world);
-		super::register_function(ctx, "addPos", 1, js::scene_service::add_pos);
-		super::register_function(ctx, "addPosX", 1, js::scene_service::add_pos_x);
-		super::register_function(ctx, "addPosY", 1, js::scene_service::add_pos_y);
-		super::register_function(ctx, "addPosZ", 1, js::scene_service::add_pos_z);
-		super::register_function(ctx, "addRot", 1, js::scene_service::add_rot);
-		super::register_function(ctx, "addRotX", 1, js::scene_service::add_rot_x);
-		super::register_function(ctx, "addRotY", 1, js::scene_service::add_rot_y);
-		super::register_function(ctx, "addRotZ", 1, js::scene_service::add_rot_z);
-		super::register_function(ctx, "addScale", 1, js::scene_service::add_scale);
-		super::register_function(ctx, "addScaleX", 1, js::scene_service::add_scale_x);
-		super::register_function(ctx, "addScaleY", 1, js::scene_service::add_scale_y);
-		super::register_function(ctx, "addScaleZ", 1, js::scene_service::add_scale_z);
-		super::register_function(ctx, "addPosWorld", 1, js::scene_service::add_pos_world);
-		super::register_function(ctx, "addPosXWorld", 1, js::scene_service::add_pos_x_world);
-		super::register_function(ctx, "addPosYWorld", 1, js::scene_service::add_pos_y_world);
-		super::register_function(ctx, "addPosZWorld", 1, js::scene_service::add_pos_z_world);
-		super::register_function(ctx, "addRotWorld", 1, js::scene_service::add_rot_world);
-		super::register_function(ctx, "addRotXWorld", 1, js::scene_service::add_rot_x_world);
-		super::register_function(ctx, "addRotYWorld", 1, js::scene_service::add_rot_y_world);
-		super::register_function(ctx, "addRotZWorld", 1, js::scene_service::add_rot_z_world);
-		super::register_function(ctx, "addScaleWorld", 1, js::scene_service::add_scale_world);
-		super::register_function(ctx, "addScaleXWorld", 1, js::scene_service::add_scale_x_world);
-		super::register_function(ctx, "addScaleYWorld", 1, js::scene_service::add_scale_y_world);
-		super::register_function(ctx, "addScaleZWorld", 1, js::scene_service::add_scale_z_world);
+		{
+			super::register_function(ctx, "copyTransform", 2, js::scene_service::copy_transform);
+			super::register_function(ctx, "setParent", 2, js::scene_service::set_parent);
+			super::register_function(ctx, "getPos", 1, js::scene_service::get_pos);
+			super::register_function(ctx, "getPosX", 1, js::scene_service::get_pos_x);
+			super::register_function(ctx, "getPosY", 1, js::scene_service::get_pos_y);
+			super::register_function(ctx, "getPosZ", 1, js::scene_service::get_pos_z);
+			super::register_function(ctx, "getRot", 1, js::scene_service::get_rot);
+			super::register_function(ctx, "getRotX", 1, js::scene_service::get_rot_x);
+			super::register_function(ctx, "getRotY", 1, js::scene_service::get_rot_y);
+			super::register_function(ctx, "getRotZ", 1, js::scene_service::get_rot_z);
+			super::register_function(ctx, "getScale", 1, js::scene_service::get_scale);
+			super::register_function(ctx, "getScaleX", 1, js::scene_service::get_scale_x);
+			super::register_function(ctx, "getScaleY", 1, js::scene_service::get_scale_y);
+			super::register_function(ctx, "getScaleZ", 1, js::scene_service::get_scale_z);
+			super::register_function(ctx, "getPosWorld", 1, js::scene_service::get_pos_world);
+			super::register_function(ctx, "getPosXWorld", 1, js::scene_service::get_pos_x_world);
+			super::register_function(ctx, "getPosYWorld", 1, js::scene_service::get_pos_y_world);
+			super::register_function(ctx, "getPosZWorld", 1, js::scene_service::get_pos_z_world);
+			super::register_function(ctx, "getRotWorld", 1, js::scene_service::get_rot_world);
+			super::register_function(ctx, "getRotXWorld", 1, js::scene_service::get_rot_x_world);
+			super::register_function(ctx, "getRotYWorld", 1, js::scene_service::get_rot_y_world);
+			super::register_function(ctx, "getRotZWorld", 1, js::scene_service::get_rot_z_world);
+			super::register_function(ctx, "getScaleWorld", 1, js::scene_service::get_scale_world);
+			super::register_function(ctx, "getScaleXWorld", 1, js::scene_service::get_scale_x_world);
+			super::register_function(ctx, "getScaleYWorld", 1, js::scene_service::get_scale_y_world);
+			super::register_function(ctx, "getScaleZWorld", 1, js::scene_service::get_scale_z_world);
+			super::register_function(ctx, "setPos", 1, js::scene_service::set_pos);
+			super::register_function(ctx, "setPosX", 1, js::scene_service::set_pos_x);
+			super::register_function(ctx, "setPosY", 1, js::scene_service::set_pos_y);
+			super::register_function(ctx, "setPosZ", 1, js::scene_service::set_pos_z);
+			super::register_function(ctx, "setRot", 1, js::scene_service::set_rot);
+			super::register_function(ctx, "setRotX", 1, js::scene_service::set_rot_x);
+			super::register_function(ctx, "setRotY", 1, js::scene_service::set_rot_y);
+			super::register_function(ctx, "setRotZ", 1, js::scene_service::set_rot_z);
+			super::register_function(ctx, "setScale", 1, js::scene_service::set_scale);
+			super::register_function(ctx, "setScaleX", 1, js::scene_service::set_scale_x);
+			super::register_function(ctx, "setScaleY", 1, js::scene_service::set_scale_y);
+			super::register_function(ctx, "setScaleZ", 1, js::scene_service::set_scale_z);
+			super::register_function(ctx, "setPosWorld", 1, js::scene_service::set_pos_world);
+			super::register_function(ctx, "setPosXWorld", 1, js::scene_service::set_pos_x_world);
+			super::register_function(ctx, "setPosYWorld", 1, js::scene_service::set_pos_y_world);
+			super::register_function(ctx, "setPosZWorld", 1, js::scene_service::set_pos_z_world);
+			super::register_function(ctx, "setRotWorld", 1, js::scene_service::set_rot_world);
+			super::register_function(ctx, "setRotXWorld", 1, js::scene_service::set_rot_x_world);
+			super::register_function(ctx, "setRotYWorld", 1, js::scene_service::set_rot_y_world);
+			super::register_function(ctx, "setRotZWorld", 1, js::scene_service::set_rot_z_world);
+			super::register_function(ctx, "setScaleWorld", 1, js::scene_service::set_scale_world);
+			super::register_function(ctx, "setScaleXWorld", 1, js::scene_service::set_scale_x_world);
+			super::register_function(ctx, "setScaleYWorld", 1, js::scene_service::set_scale_y_world);
+			super::register_function(ctx, "setScaleZWorld", 1, js::scene_service::set_scale_z_world);
+			super::register_function(ctx, "addPos", 1, js::scene_service::add_pos);
+			super::register_function(ctx, "addPosX", 1, js::scene_service::add_pos_x);
+			super::register_function(ctx, "addPosY", 1, js::scene_service::add_pos_y);
+			super::register_function(ctx, "addPosZ", 1, js::scene_service::add_pos_z);
+			super::register_function(ctx, "addRot", 1, js::scene_service::add_rot);
+			super::register_function(ctx, "addRotX", 1, js::scene_service::add_rot_x);
+			super::register_function(ctx, "addRotY", 1, js::scene_service::add_rot_y);
+			super::register_function(ctx, "addRotZ", 1, js::scene_service::add_rot_z);
+			super::register_function(ctx, "addScale", 1, js::scene_service::add_scale);
+			super::register_function(ctx, "addScaleX", 1, js::scene_service::add_scale_x);
+			super::register_function(ctx, "addScaleY", 1, js::scene_service::add_scale_y);
+			super::register_function(ctx, "addScaleZ", 1, js::scene_service::add_scale_z);
+			super::register_function(ctx, "addPosWorld", 1, js::scene_service::add_pos_world);
+			super::register_function(ctx, "addPosXWorld", 1, js::scene_service::add_pos_x_world);
+			super::register_function(ctx, "addPosYWorld", 1, js::scene_service::add_pos_y_world);
+			super::register_function(ctx, "addPosZWorld", 1, js::scene_service::add_pos_z_world);
+			super::register_function(ctx, "addRotWorld", 1, js::scene_service::add_rot_world);
+			super::register_function(ctx, "addRotXWorld", 1, js::scene_service::add_rot_x_world);
+			super::register_function(ctx, "addRotYWorld", 1, js::scene_service::add_rot_y_world);
+			super::register_function(ctx, "addRotZWorld", 1, js::scene_service::add_rot_z_world);
+			super::register_function(ctx, "addScaleWorld", 1, js::scene_service::add_scale_world);
+			super::register_function(ctx, "addScaleXWorld", 1, js::scene_service::add_scale_x_world);
+			super::register_function(ctx, "addScaleYWorld", 1, js::scene_service::add_scale_y_world);
+			super::register_function(ctx, "addScaleZWorld", 1, js::scene_service::add_scale_z_world);
+		}
 	}
 	entity_manager* scene_service::get_entity_manager()
 	{

@@ -166,7 +166,7 @@ export default class MainEntity extends Entity {
             // Scene.SoundEmitter.play(this.idSoundEmitter)
             this.needsPlayAudio = false
         }
-        Scene.Entity.requestImGui(this.id)
+        // Scene.Entity.requestImGui(this.id)
 
         // if (Input.getKey(Input.KEY_SPACE)) {
         //   Scene.Physics.setLinearVelocity(this.idPhysics, [0, 5, 0])

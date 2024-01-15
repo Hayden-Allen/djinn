@@ -69,7 +69,10 @@ namespace djinn
 	void physics_object_manager::update(f32 const dt)
 	{
 		for (auto& pair : m_objects)
+		{
+			pair.second->clamp_velocity();
 			pair.second->copy_transform_to_physics();
+		}
 		m_world->stepSimulation(dt, c::physics::num_substeps);
 		for (auto& pair : m_objects)
 			pair.second->copy_transform_from_physics();
