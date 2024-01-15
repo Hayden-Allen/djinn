@@ -1,6 +1,5 @@
 - questions
 	- reset ids on scene switch?
-	- enforce all pos/rot/scale changes be done in __main?
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
 	- Scene.destroySelf()
 	- disable bvh movement?
@@ -8,16 +7,12 @@
 	- move ma_engine into sound_source_manager/asset_service?
 	- get rid of render service?
 	- animation jumping on loop
+	- set_rot_parent?
 
 - now
-	- get/set/add*_parent (for rotating around player, for example)
-	- camera/light/physics set transform functions need to call update_mats()
-	- don't call camera_entity::update_mats in set_shader_camera_uniforms?
-
 	- physics
-		- angular velocity direction mismatch according to debug draw
 		- fall through bvh
-		- physics_object_manager::update order needs to respect scene graph
+		- physics_object_manager::update order needs to respect scene graph?
 	- graphics
 		- jittery debug hitbox
 		- bridge/roof sometimes not drawing/no hitbox
@@ -27,6 +22,7 @@
 		- pass arguments to __load()
 		- angles rad=>deg
 		- scripts OOP stl
+		- more scene_service factoring
 
 - later
 	- retained_buffer::load => buffer::load (buffer doesn't get save though)

@@ -165,6 +165,10 @@ export declare interface _Scene {
     // setScaleXWorld(id: SceneID, x: number): void
     // setScaleYWorld(id: SceneID, y: number): void
     // setScaleZWorld(id: SceneID, z: number): void
+    setRotParent(id: SceneID, xyz: number[]): void
+    setRotXParent(id: SceneID, x: number): void
+    setRotYParent(id: SceneID, y: number): void
+    setRotZParent(id: SceneID, z: number): void
     addPos(id: SceneID, xyz: number[]): void
     addPosX(id: SceneID, x: number): void
     addPosY(id: SceneID, y: number): void

@@ -13,10 +13,6 @@ namespace djinn
 
 
 
-	void camera_entity::update(f32 const dt, f32 const time)
-	{
-		entity::update(dt, time);
-	}
 	void camera_entity::update_mats()
 	{
 		m_view = get_world_transform().invert_cast_copy<space::WORLD, space::CAMERA>();
@@ -39,5 +35,9 @@ namespace djinn
 	mat<space::WORLD, space::CLIP> const& camera_entity::get_view_proj() const
 	{
 		return m_view_proj;
+	}
+	mat<space::WORLD, space::CLIP> const& camera_entity::get_view_proj_basis() const
+	{
+		return m_view_proj_basis;
 	}
 } // namespace djinn
