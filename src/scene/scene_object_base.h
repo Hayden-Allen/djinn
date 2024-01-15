@@ -102,7 +102,10 @@ namespace djinn
 	protected:
 		tmat<space::OBJECT, space::PARENT> m_transform;
 		scene_object_base* m_parent;
+		f32 m_rot[3] = { 0.f };
 	protected:
 		scene_object_base(id_t const id);
+	protected:
+		void update_rot();
 	};
 } // namespace djinn

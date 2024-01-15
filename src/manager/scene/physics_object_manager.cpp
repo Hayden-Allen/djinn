@@ -68,12 +68,12 @@ namespace djinn
 	}
 	void physics_object_manager::update(f32 const dt)
 	{
-		/*for (auto& pair : m_objects)
-			pair.second->update_transform();*/
+		for (auto& pair : m_objects)
+			pair.second->copy_transform_to_physics();
 		m_world->stepSimulation(dt, c::physics::num_substeps);
 		// m_world->stepSimulation(dt);
 		for (auto& pair : m_objects)
-			pair.second->copy_physics_transform();
+			pair.second->copy_transform_from_physics();
 	}
 	void physics_object_manager::debug_draw(mat<space::WORLD, space::CLIP> const& vp)
 	{

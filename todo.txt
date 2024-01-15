@@ -10,30 +10,30 @@
 	- animation jumping on loop
 
 - now
-	- setPos physics_object?
+	- scene_object_base => scene_object
 	- camera/light/physics set transform functions need to call update_mats()
-	- addRot/addLocalRot weirdness
-	- collapse scene_object into scene_object_base?
-	- pass arguments to __load()
+	- don't call camera_entity::update_mats in set_shader_camera_uniforms?
 
 	- physics
 		- angular velocity direction mismatch according to debug draw
 		- fall through bvh
+		- physics_object_manager::update order needs to respect scene graph
 	- graphics
+		- jittery debug hitbox
 		- bridge/roof sometimes not drawing/no hitbox
 		- implement different lights
 		- vines z-fighting
 	- other
+		- scene_service factoring
+		- pass arguments to __load()
 		- angles rad=>deg
 		- scripts OOP stl
-		- scene_service factoring
 
 - later
 	- retained_buffer::load => buffer::load (buffer doesn't get save though)
 	- powertranzphormr mgl::input_file => haul::input_file
 	- load/save take haul::input_file* const
 
-	- scene graph
 	- mesh_watcher_base/static_mesh_watcher/animated_mesh_watcher
 	- mesh_instance_batch testing
 		- create instances with different shaders

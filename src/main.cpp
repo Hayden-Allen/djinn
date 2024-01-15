@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
 
 		DJINN_TIME(scene_service::update(dt, c->time.now), update_avg, NUM_FRAMES);
 		DJINN_TIME(sound_service::update(), sound_avg, NUM_FRAMES);
-		DJINN_TIME(scene_service::draw();, draw_avg, NUM_FRAMES);
+		DJINN_TIME(scene_service::draw(), draw_avg, NUM_FRAMES);
 		DJINN_TIME(asset_service::draw_meshes(), gl_avg, NUM_FRAMES);
 
 #ifndef DJINN_DIST

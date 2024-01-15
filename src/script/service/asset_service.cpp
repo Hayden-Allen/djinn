@@ -149,9 +149,10 @@ namespace djinn::js::asset_service
 		ASSERT(argc == 2);
 		id_t const shader_id = js::extract_id(ctx, argv[0]);
 		id_t const camera_id = js::extract_id(ctx, argv[1]);
-		sptr<camera_entity> const cam = ::djinn::scene_service::get_camera_entity_manager()->get(camera_id);
+		sptr<camera_entity> cam = ::djinn::scene_service::get_camera_entity_manager()->get(camera_id);
 		sptr<shaders> shaders = ::djinn::asset_service::get_shader_manager()->get(shader_id);
 
+		cam->update_mats();
 		shaders->uniform_mat4(c::uniform::view_mat, cam->get_view().e);
 		shaders->uniform_mat4(c::uniform::proj_mat, cam->get_proj().e);
 		shaders->uniform_mat4(c::uniform::vp_mat, cam->get_view_proj().e);

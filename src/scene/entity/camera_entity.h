@@ -15,6 +15,7 @@ namespace djinn
 		DCM(camera_entity);
 	public:
 		void update(f32 const dt, f32 const time) override;
+		void update_mats();
 		void configure(f32 const fov_y, f32 const aspect, f32 const near, f32 const far);
 		pmat<space::CAMERA, space::CLIP> const& get_proj() const;
 		tmat<space::WORLD, space::CAMERA> const& get_view() const;
@@ -24,7 +25,5 @@ namespace djinn
 		tmat<space::WORLD, space::CAMERA> m_view;
 		mat<space::WORLD, space::CLIP> m_view_proj;
 		mat<space::WORLD, space::CLIP> m_view_proj_basis;
-	private:
-		void update_mats();
 	};
 } // namespace djinn

@@ -42,9 +42,12 @@ export default class Player extends Entity {
 
     bind(cam: Camera) {
         this.camera = cam
-        Scene.setParent(this.camera!.getId(), this.idMainInstance)
-        // Scene.copyTransform(this.idHitbox, this.camera!.getId())
-        // Scene.addPosLocalZ(this.camera!.getId(), 5)
+        if (this.camera) {
+            Scene.setParent(this.camera!.getId(), this.idMainInstance)
+            Scene.setPosZ(this.camera!.getId(), -2)
+            Scene.setRotY(this.camera!.getId(), Math.PI)
+            Scene.setPosY(this.camera!.getId(), 1)
+        }
     }
     __load() {
         // character
@@ -102,10 +105,24 @@ export default class Player extends Entity {
             Scene.Physics.setAngularFactor(this.idHitbox, [0, 1, 0])
         }
 
-        Scene.setParent(this.idMainInstance, this.idHitbox)
-        Scene.setParent(this.idWingInstance, this.idMainInstance)
-        if (this.camera)
-            Scene.setParent(this.camera!.getId(), this.idMainInstance)
+        // scene graph
+        {
+            Scene.setParent(this.idMainInstance, this.idHitbox)
+            Scene.setRotY(this.idMainInstance, Math.PI)
+            Scene.setPosY(
+                this.idMainInstance,
+                -this.hitboxHeight / 2 - this.hitboxRadius
+            )
+
+            Scene.setParent(this.idWingInstance, this.idMainInstance)
+
+            if (this.camera) {
+                Scene.setParent(this.camera!.getId(), this.idMainInstance)
+                Scene.setPosZ(this.camera!.getId(), -2)
+                Scene.setRotY(this.camera!.getId(), Math.PI)
+                Scene.setPosY(this.camera!.getId(), 1)
+            }
+        }
     }
     __unload() {
         Asset.Texture.destroyAll([
@@ -175,7 +192,7 @@ export default class Player extends Entity {
                 actionSet = true
             }
             if (Input.getKey(Input.KEY_SPACE)) {
-                Scene.Physics.setVelocityY(this.idHitbox, 20)
+                Scene.Physics.setVelocityY(this.idHitbox, 5)
                 Scene.MeshInstance.setAction(this.idMainInstance, "bind")
                 actionSet = true
                 this.isJumping = true
@@ -196,21 +213,12 @@ export default class Player extends Entity {
             const newCamAngleX = this.camAngleX - dt * Input.rightY()
             if (newCamAngleX < Math.PI / 2 && newCamAngleX > -Math.PI / 2)
                 this.camAngleX = newCamAngleX
+            Scene.setRotX(this.camera!.getId(), this.camAngleX)
         }
     }
     __draw() {
         this.worldPos = Scene.getPos(this.idHitbox)
         this.worldPos[1] += 1
-
-        Scene.setRotY(this.idMainInstance, Math.PI)
-        Scene.setPosY(
-            this.idMainInstance,
-            -this.hitboxHeight / 2 - this.hitboxRadius
-        )
-        Scene.setPosY(this.camera!.getId(), 1)
-        Scene.setPosZ(this.camera!.getId(), -2)
-        Scene.setRotY(this.camera!.getId(), Math.PI)
-        Scene.setRotX(this.camera!.getId(), this.camAngleX)
 
         // update shaders AFTER CAMERA TRANSFORM IS DONE BEING MODIFIED
         Asset.Shader.setCameraUniforms(this.idMainShader, this.camera!.getId())

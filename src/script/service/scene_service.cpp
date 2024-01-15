@@ -1518,19 +1518,20 @@ namespace djinn
 	}
 	void scene_service::update(f32 const dt, f32 const time)
 	{
+		// call __main()
 		s_instance->m_entity_manager.for_each([&](sptr<entity> e, id_t const id)
 			{
 				e->update(dt, time);
 			});
-		s_instance->m_camera_entity_manager.for_each([&](sptr<camera_entity> e, id_t const id)
+		s_instance->m_camera_entity_manager.for_each([&](sptr<camera_entity> cam, id_t const id)
 			{
-				e->update(dt, time);
+				cam->update(dt, time);
 			});
 		s_instance->m_physics_object_manager.update(dt);
-		s_instance->m_light_manager.update();
 	}
 	void scene_service::draw()
 	{
+		// call __draw()
 		s_instance->m_entity_manager.for_each([](sptr<entity> e, id_t const id)
 			{
 				e->draw();
@@ -1539,6 +1540,13 @@ namespace djinn
 			{
 				e->draw();
 			});
+		// now that all script functions for this frame have run (__main() and __draw()), compute final light and camera transforms
+		s_instance->m_light_manager.update();
+		s_instance->m_camera_entity_manager.for_each([&](sptr<camera_entity> cam, id_t const id)
+			{
+				cam->update_mats();
+			});
+		// finally, render everything
 		s_instance->m_phorm_manager.for_each([](sptr<phorm> p, id_t const id)
 			{
 				p->draw(render_service::get_context());

@@ -32,6 +32,7 @@ namespace djinn
 	protected:
 		physics_object(id_t const id, sptr<btDiscreteDynamicsWorld> const& world);
 	protected:
-		void copy_physics_transform();
+		void copy_transform_to_physics();
+		void copy_transform_from_physics();
 	};
 } // namespace djinn

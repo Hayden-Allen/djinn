@@ -89,7 +89,13 @@ namespace djinn
 
 
 
-	void physics_object::copy_physics_transform()
+	void physics_object::copy_transform_to_physics()
+	{
+		tmat<space::OBJECT, space::WORLD> const& mat = get_world_transform();
+		btTransform const& raw = u::tmat2bullet(mat);
+		m_rb->getMotionState()->setWorldTransform(raw);
+	}
+	void physics_object::copy_transform_from_physics()
 	{
 		btTransform raw;
 		m_rb->getMotionState()->getWorldTransform(raw);
