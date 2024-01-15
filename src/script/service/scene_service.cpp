@@ -15,24 +15,35 @@ namespace djinn::js::scene_service
 	static entity* get_entity(id_t const id)
 	{
 		if (::djinn::scene_service::get_entity_manager()->has(id))
-		{
 			return ::djinn::scene_service::get_entity_manager()->get(id).get();
-		}
 		return ::djinn::scene_service::get_camera_entity_manager()->get(id).get();
-	}
-	template<typename FN>
-	JSValue get_value(JSContext* const ctx, s32 const argc, JSValueConst* const argv, FN const& fn, u64 const index)
-	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		return js::create_f32(ctx, (::djinn::scene_service::get_scene_object(id).get()->*fn)()[index]);
 	}
 	template<typename FN>
 	JSValue get_values(JSContext* const ctx, s32 const argc, JSValueConst* const argv, FN const& fn)
 	{
 		ASSERT(argc == 1);
 		id_t const id = js::extract_id(ctx, argv[0]);
-		return js::create_f32_array(ctx, 3, (::djinn::scene_service::get_scene_object(id).get()->*fn)());
+		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
+		return js::create_f32_array(ctx, 3, (so.get()->*fn)().e);
+	}
+	template<typename FN>
+	JSValue get_value(JSContext* const ctx, s32 const argc, JSValueConst* const argv, FN const& fn, u32 const index)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
+		return js::create_f32(ctx, (so.get()->*fn)()[index]);
+	}
+	template<typename ARG, typename FN>
+	JSValue set_values(JSContext* const ctx, s32 const argc, JSValueConst* const argv, FN const& fn)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::vector<f32> const& arr = js::extract_f32_array(ctx, argv[1]);
+		ASSERT(arr.size() == 3);
+		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
+		(so.get()->*fn)(ARG(arr[0], arr[1], arr[2]));
+		return JS_UNDEFINED;
 	}
 	template<typename FN>
 	JSValue set_value(JSContext* const ctx, s32 const argc, JSValueConst* const argv, FN const& fn)
@@ -40,26 +51,8 @@ namespace djinn::js::scene_service
 		ASSERT(argc == 2);
 		id_t const id = js::extract_id(ctx, argv[0]);
 		f32 const f = js::extract_f32(ctx, argv[1]);
-		(::djinn::scene_service::get_scene_object(id).get()->*fn)(f);
-		return JS_UNDEFINED;
-	}
-	template<typename FN>
-	JSValue set_values(JSContext* const ctx, s32 const argc, JSValueConst* const argv, FN const& fn)
-	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::vector<f32> const& arr = js::extract_f32_array(ctx, argv[1]);
-		ASSERT(arr.size() == 3);
-		(::djinn::scene_service::get_scene_object(id).get()->*fn)(arr[0], arr[1], arr[2]);
-		return JS_UNDEFINED;
-	}
-	template<typename FN>
-	JSValue add_value(JSContext* const ctx, s32 const argc, JSValueConst* const argv, FN const& fn, f32 const x, f32 const y, f32 const z)
-	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		(::djinn::scene_service::get_scene_object(id).get()->*fn)(x * f, y * f, z * f);
+		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
+		(so.get()->*fn)(f);
 		return JS_UNDEFINED;
 	}
 
@@ -215,7 +208,6 @@ namespace djinn::js::scene_service
 			::djinn::scene_service::get_phorm_manager()->destroy(id);
 		return JS_UNDEFINED;
 	}
-
 
 	//
 	//	ENTITY / CAMERA
@@ -704,32 +696,19 @@ namespace djinn::js::scene_service
 	}
 	JSValue get_pos(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		point<space::PARENT> const& pos = so->get_pos();
-		return js::create_f32_array(ctx, 3, pos.e);
+		return get_values(ctx, argc, argv, &scene_object::get_pos);
 	}
 	JSValue get_pos_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		return js::create_f32(ctx, so->get_pos().x);
+		return get_value(ctx, argc, argv, &scene_object::get_pos, 0);
 	}
 	JSValue get_pos_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		return js::create_f32(ctx, so->get_pos().y);
+		return get_value(ctx, argc, argv, &scene_object::get_pos, 1);
 	}
 	JSValue get_pos_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		return js::create_f32(ctx, so->get_pos().z);
+		return get_value(ctx, argc, argv, &scene_object::get_pos, 2);
 	}
 	JSValue get_rot(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -740,80 +719,47 @@ namespace djinn::js::scene_service
 	}
 	JSValue get_rot_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		return js::create_f32(ctx, so->get_rot()[0]);
+		return get_value(ctx, argc, argv, &scene_object::get_rot, 0);
 	}
 	JSValue get_rot_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		return js::create_f32(ctx, so->get_rot()[1]);
+		return get_value(ctx, argc, argv, &scene_object::get_rot, 1);
 	}
 	JSValue get_rot_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		return js::create_f32(ctx, so->get_rot()[2]);
+		return get_value(ctx, argc, argv, &scene_object::get_rot, 2);
 	}
 	JSValue get_scale(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		return js::create_f32_array(ctx, 3, so->get_scale().e);
+		return get_values(ctx, argc, argv, &scene_object::get_scale);
 	}
 	JSValue get_scale_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		return js::create_f32(ctx, so->get_scale().x);
+		return get_value(ctx, argc, argv, &scene_object::get_scale, 0);
 	}
 	JSValue get_scale_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		return js::create_f32(ctx, so->get_scale().y);
+		return get_value(ctx, argc, argv, &scene_object::get_scale, 1);
 	}
 	JSValue get_scale_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		return js::create_f32(ctx, so->get_scale().z);
+		return get_value(ctx, argc, argv, &scene_object::get_scale, 2);
 	}
 	JSValue get_pos_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		return js::create_f32_array(ctx, 3, so->get_pos_world().e);
+		return get_values(ctx, argc, argv, &scene_object::get_pos_world);
 	}
 	JSValue get_pos_x_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		return js::create_f32(ctx, so->get_pos_world().x);
+		return get_value(ctx, argc, argv, &scene_object::get_pos_world, 0);
 	}
 	JSValue get_pos_y_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		return js::create_f32(ctx, so->get_pos_world().y);
+		return get_value(ctx, argc, argv, &scene_object::get_pos_world, 1);
 	}
 	JSValue get_pos_z_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		return js::create_f32(ctx, so->get_pos_world().z);
+		return get_value(ctx, argc, argv, &scene_object::get_pos_world, 2);
 	}
 	JSValue get_rot_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -824,89 +770,47 @@ namespace djinn::js::scene_service
 	}
 	JSValue get_rot_x_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		return js::create_f32(ctx, so->get_rot_world()[0]);
+		return get_value(ctx, argc, argv, &scene_object::get_rot_world, 0);
 	}
 	JSValue get_rot_y_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		return js::create_f32(ctx, so->get_rot_world()[1]);
+		return get_value(ctx, argc, argv, &scene_object::get_rot_world, 1);
 	}
 	JSValue get_rot_z_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		return js::create_f32(ctx, so->get_rot_world()[2]);
+		return get_value(ctx, argc, argv, &scene_object::get_rot_world, 2);
 	}
 	JSValue get_scale_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		return js::create_f32_array(ctx, 3, so->get_scale_world().e);
+		return get_values(ctx, argc, argv, &scene_object::get_scale_world);
 	}
 	JSValue get_scale_x_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		return js::create_f32(ctx, so->get_scale_world().x);
+		return get_value(ctx, argc, argv, &scene_object::get_scale_world, 0);
 	}
 	JSValue get_scale_y_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		return js::create_f32(ctx, so->get_scale_world().y);
+		return get_value(ctx, argc, argv, &scene_object::get_scale_world, 1);
 	}
 	JSValue get_scale_z_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		return js::create_f32(ctx, so->get_scale_world().z);
+		return get_value(ctx, argc, argv, &scene_object::get_scale_world, 2);
 	}
 	JSValue set_pos(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::vector<f32> const& pos = js::extract_f32_array(ctx, argv[1]);
-		ASSERT(pos.size() == 3);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_pos(point<space::PARENT>(pos[0], pos[1], pos[2]));
-		return JS_UNDEFINED;
+		return set_values<point<space::PARENT>>(ctx, argc, argv, &scene_object::set_pos);
 	}
 	JSValue set_pos_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_pos_x(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::set_pos_x);
 	}
 	JSValue set_pos_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_pos_y(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::set_pos_y);
 	}
 	JSValue set_pos_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_pos_z(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::set_pos_z);
 	}
 	JSValue set_rot(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -920,104 +824,47 @@ namespace djinn::js::scene_service
 	}
 	JSValue set_rot_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_rot_x(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::set_rot_x);
 	}
 	JSValue set_rot_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_rot_y(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::set_rot_y);
 	}
 	JSValue set_rot_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_rot_z(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::set_rot_z);
 	}
 	JSValue set_scale(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::vector<f32> const& scale = js::extract_f32_array(ctx, argv[1]);
-		ASSERT(scale.size() == 3);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_scale(vec<space::PARENT>(scale[0], scale[1], scale[2]));
-		return JS_UNDEFINED;
+		return set_values<vec<space::PARENT>>(ctx, argc, argv, &scene_object::set_scale);
 	}
 	JSValue set_scale_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_scale_x(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::set_scale_x);
 	}
 	JSValue set_scale_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_scale_y(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::set_scale_y);
 	}
 	JSValue set_scale_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_scale_z(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::set_scale_z);
 	}
 	JSValue set_pos_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::vector<f32> const& pos = js::extract_f32_array(ctx, argv[1]);
-		ASSERT(pos.size() == 3);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_pos_world(point<space::WORLD>(pos[0], pos[1], pos[2]));
-		return JS_UNDEFINED;
+		return set_values<point<space::WORLD>>(ctx, argc, argv, &scene_object::set_pos_world);
 	}
 	JSValue set_pos_x_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_pos_x_world(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::set_pos_x_world);
 	}
 	JSValue set_pos_y_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_pos_y_world(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::set_pos_y_world);
 	}
 	JSValue set_pos_z_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_pos_z_world(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::set_pos_z_world);
 	}
 	JSValue set_rot_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -1031,104 +878,47 @@ namespace djinn::js::scene_service
 	}
 	JSValue set_rot_x_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_rot_x_world(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::set_rot_x_world);
 	}
 	JSValue set_rot_y_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_rot_y_world(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::set_rot_y_world);
 	}
 	JSValue set_rot_z_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_rot_z_world(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::set_rot_z_world);
 	}
 	JSValue set_scale_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::vector<f32> const& scale = js::extract_f32_array(ctx, argv[1]);
-		ASSERT(scale.size() == 3);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_scale_world(vec<space::WORLD>(scale[0], scale[1], scale[2]));
-		return JS_UNDEFINED;
+		return set_values<vec<space::WORLD>>(ctx, argc, argv, &scene_object::set_scale_world);
 	}
 	JSValue set_scale_x_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_scale_x_world(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::set_scale_x_world);
 	}
 	JSValue set_scale_y_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_scale_y_world(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::set_scale_y_world);
 	}
 	JSValue set_scale_z_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->set_scale_z_world(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::set_scale_z_world);
 	}
 	JSValue add_pos(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::vector<f32> const& pos = js::extract_f32_array(ctx, argv[1]);
-		ASSERT(pos.size() == 3);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_pos(vec<space::PARENT>(pos[0], pos[1], pos[2]));
-		return JS_UNDEFINED;
+		return set_values<vec<space::PARENT>>(ctx, argc, argv, &scene_object::add_pos);
 	}
 	JSValue add_pos_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_pos_x(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::add_pos_x);
 	}
 	JSValue add_pos_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_pos_y(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::add_pos_y);
 	}
 	JSValue add_pos_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_pos_z(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::add_pos_z);
 	}
 	JSValue add_rot(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -1142,104 +932,47 @@ namespace djinn::js::scene_service
 	}
 	JSValue add_rot_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_rot_x(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::add_rot_x);
 	}
 	JSValue add_rot_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_rot_y(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::add_rot_y);
 	}
 	JSValue add_rot_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_rot_z(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::add_rot_z);
 	}
 	JSValue add_scale(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::vector<f32> const& pos = js::extract_f32_array(ctx, argv[1]);
-		ASSERT(pos.size() == 3);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_scale(vec<space::PARENT>(pos[0], pos[1], pos[2]));
-		return JS_UNDEFINED;
+		return set_values<vec<space::PARENT>>(ctx, argc, argv, &scene_object::add_scale);
 	}
 	JSValue add_scale_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_scale_x(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::add_scale_x);
 	}
 	JSValue add_scale_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_scale_y(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::add_scale_y);
 	}
 	JSValue add_scale_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_scale_z(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::add_scale_z);
 	}
 	JSValue add_pos_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::vector<f32> const& pos = js::extract_f32_array(ctx, argv[1]);
-		ASSERT(pos.size() == 3);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_pos_world(vec<space::WORLD>(pos[0], pos[1], pos[2]));
-		return JS_UNDEFINED;
+		return set_values<vec<space::WORLD>>(ctx, argc, argv, &scene_object::add_pos_world);
 	}
 	JSValue add_pos_x_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_pos_x_world(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::add_pos_x_world);
 	}
 	JSValue add_pos_y_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_pos_y_world(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::add_pos_y_world);
 	}
 	JSValue add_pos_z_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_pos_z_world(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::add_pos_z_world);
 	}
 	JSValue add_rot_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -1253,67 +986,31 @@ namespace djinn::js::scene_service
 	}
 	JSValue add_rot_x_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_rot_x_world(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::add_rot_x_world);
 	}
 	JSValue add_rot_y_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_rot_y_world(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::add_rot_y_world);
 	}
 	JSValue add_rot_z_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_rot_z_world(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::add_rot_z_world);
 	}
 	JSValue add_scale_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::vector<f32> const& pos = js::extract_f32_array(ctx, argv[1]);
-		ASSERT(pos.size() == 3);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_scale_world(vec<space::WORLD>(pos[0], pos[1], pos[2]));
-		return JS_UNDEFINED;
+		return set_values<vec<space::WORLD>>(ctx, argc, argv, &scene_object::add_scale_world);
 	}
 	JSValue add_scale_x_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_scale_x_world(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::add_scale_x_world);
 	}
 	JSValue add_scale_y_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_scale_y_world(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::add_scale_y_world);
 	}
 	JSValue add_scale_z_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const f = js::extract_f32(ctx, argv[1]);
-		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
-		so->add_scale_z_world(f);
-		return JS_UNDEFINED;
+		return set_value(ctx, argc, argv, &scene_object::add_scale_z_world);
 	}
 } // namespace djinn::js::scene_service
 

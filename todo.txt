@@ -10,8 +10,6 @@
 	- animation jumping on loop
 
 - now
-	- scene_service factoring
-
 	- get/set/add*_parent (for rotating around player, for example)
 	- camera/light/physics set transform functions need to call update_mats()
 	- don't call camera_entity::update_mats in set_shader_camera_uniforms?
