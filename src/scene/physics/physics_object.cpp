@@ -83,7 +83,7 @@ namespace djinn
 
 
 	physics_object::physics_object(id_t const id, sptr<btDiscreteDynamicsWorld> const& world) :
-		scene_object_base(id),
+		scene_object(id),
 		m_world(world)
 	{}
 

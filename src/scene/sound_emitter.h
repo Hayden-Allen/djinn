@@ -1,12 +1,12 @@
 #pragma once
 #include "pch.h"
-#include "scene_object_base.h"
+#include "scene_object.h"
 
 namespace djinn
 {
 	class sound_source;
 
-	class sound_emitter final : public scene_object_base
+	class sound_emitter final : public scene_object
 	{
 	private:
 		struct sound_emitter_backup

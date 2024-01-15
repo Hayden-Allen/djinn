@@ -1,11 +1,11 @@
 #pragma once
 #include "pch.h"
-#include "scene/scene_object_base.h"
+#include "scene/scene_object.h"
 #include "core/util.h"
 
 namespace djinn
 {
-	class physics_object : public scene_object_base
+	class physics_object : public scene_object
 	{
 		friend class physics_object_manager;
 	public:

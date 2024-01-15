@@ -1,10 +1,10 @@
 #pragma once
 #include "pch.h"
-#include "scene_object_base.h"
+#include "scene_object.h"
 
 namespace djinn
 {
-	class visibility_scene_object : public scene_object_base
+	class visibility_scene_object : public scene_object
 	{
 	public:
 		DCM(visibility_scene_object);

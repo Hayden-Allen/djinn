@@ -13,7 +13,7 @@
 namespace djinn
 {
 	entity::entity(id_t const id, std::string const& fp, JSRuntime* const runtime) :
-		scene_object_base(id),
+		scene_object(id),
 		m_ctx(JS_NewContext(runtime))
 	{
 		js::global::init_globals(m_ctx);
