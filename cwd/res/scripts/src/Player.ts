@@ -42,6 +42,7 @@ export default class Player extends Entity {
 
     bind(cam: Camera) {
         this.camera = cam
+        Scene.setParent(this.camera!.getId(), this.idMainInstance)
         // Scene.copyTransform(this.idHitbox, this.camera!.getId())
         // Scene.addPosLocalZ(this.camera!.getId(), 5)
     }
@@ -100,6 +101,11 @@ export default class Player extends Entity {
             Scene.Physics.setFriction(this.idHitbox, 0)
             Scene.Physics.setAngularFactor(this.idHitbox, [0, 1, 0])
         }
+
+        Scene.setParent(this.idMainInstance, this.idHitbox)
+        Scene.setParent(this.idWingInstance, this.idMainInstance)
+        if (this.camera)
+            Scene.setParent(this.camera!.getId(), this.idMainInstance)
     }
     __unload() {
         Asset.Texture.destroyAll([
@@ -182,47 +188,29 @@ export default class Player extends Entity {
                     "idle_Armature"
                 )
             }
-            const ry = 2 * Input.rightX()
+            const ry = -2 * Input.rightX()
             Scene.Physics.setAngularVelocity(this.idHitbox, [0, ry, 0])
         }
         // camera
-        this.camAngleX -= dt * Input.rightY()
+        {
+            const newCamAngleX = this.camAngleX - dt * Input.rightY()
+            if (newCamAngleX < Math.PI / 2 && newCamAngleX > -Math.PI / 2)
+                this.camAngleX = newCamAngleX
+        }
     }
     __draw() {
         this.worldPos = Scene.getPos(this.idHitbox)
         this.worldPos[1] += 1
-        // console.log(this.worldPos)
 
-        Scene.copyTransform(this.idHitbox, this.camera!.getId())
-        Scene.addPosY(this.camera!.getId(), 1 * this.meshScale)
-
-        // Scene.addPosLocalZ(this.camera!.getId(), 2 * this.meshScale)
-        Scene.addPosLocalZ(this.camera!.getId(), 2)
-
-        // Scene.addPosZ(this.camera!.getId(), -2 * this.meshScale)
-        // Scene.addRotY(this.camera!.getId(), Math.PI)
-
-        // Scene.addPosZ(this.camera!.getId(), 2 * this.meshScale)
-
-        Scene.addRotX(this.camera!.getId(), this.camAngleX)
-        // TODO janky
-        Scene.copyTransform(this.camera!.getId(), this.camera!.getId())
-
-        Scene.copyTransform(this.idHitbox, this.idMainInstance)
-        Scene.addPosY(
+        Scene.setRotY(this.idMainInstance, Math.PI)
+        Scene.setPosY(
             this.idMainInstance,
             -this.hitboxHeight / 2 - this.hitboxRadius
         )
-        // Scene.setScale(this.idMainInstance, [
-        //     this.meshScale,
-        //     this.meshScale,
-        //     this.meshScale,
-        // ])
-        Scene.addRotY(this.idMainInstance, Math.PI)
-        if (this.isJumping) {
-            // Scene.addRotX(this.idMainInstance, Math.PI / 2)
-        }
-        Scene.copyTransform(this.idMainInstance, this.idWingInstance)
+        Scene.setPosY(this.camera!.getId(), 1)
+        Scene.setPosZ(this.camera!.getId(), -2)
+        Scene.setRotY(this.camera!.getId(), Math.PI)
+        Scene.setRotX(this.camera!.getId(), this.camAngleX)
 
         // update shaders AFTER CAMERA TRANSFORM IS DONE BEING MODIFIED
         Asset.Shader.setCameraUniforms(this.idMainShader, this.camera!.getId())

@@ -155,7 +155,7 @@ namespace djinn::js::asset_service
 		shaders->uniform_mat4(c::uniform::view_mat, cam->get_view().e);
 		shaders->uniform_mat4(c::uniform::proj_mat, cam->get_proj().e);
 		shaders->uniform_mat4(c::uniform::vp_mat, cam->get_view_proj().e);
-		f32 const* const pos = cam->get_pos();
+		point<space::PARENT> const& pos = cam->get_pos();
 		shaders->uniform_3f(c::uniform::cam_pos, pos[0], pos[1], pos[2]);
 		// remove translation from view matrix
 		mat<space::WORLD, space::CLIP> const& vpr = cam->get_proj() * cam->get_view().basis_copy();

@@ -13,7 +13,7 @@
 namespace djinn
 {
 	entity::entity(id_t const id, std::string const& fp, JSRuntime* const runtime) :
-		scene_object(id),
+		scene_object_base(id),
 		m_ctx(JS_NewContext(runtime))
 	{
 		js::global::init_globals(m_ctx);
@@ -44,7 +44,7 @@ namespace djinn
 	{
 		m_request_imgui = false;
 		call_main(dt, time);
-		update_transform();
+		// update_transform();
 	}
 	void entity::draw()
 	{

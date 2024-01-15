@@ -11,9 +11,10 @@
 
 - now
 	- setPos physics_object?
-	- camera set transform functions need to call update_mats()
+	- camera/light/physics set transform functions need to call update_mats()
 	- addRot/addLocalRot weirdness
 	- collapse scene_object into scene_object_base?
+	- pass arguments to __load()
 
 	- physics
 		- angular velocity direction mismatch according to debug draw

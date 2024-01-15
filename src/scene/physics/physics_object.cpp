@@ -14,29 +14,6 @@ namespace djinn
 
 
 
-	void physics_object::update_transform()
-	{
-		tmat<space::OBJECT, space::PARENT> const& trans = tmat_util::translation<space::OBJECT, space::PARENT>(m_pos[0], m_pos[1], m_pos[2]);
-		tmat<space::OBJECT, space::OBJECT> const& rot = tmat_util::rotation_yxz<space::OBJECT>(m_rot[0], m_rot[1], m_rot[2]);
-		tmat<space::OBJECT, space::OBJECT> const& scale = tmat_util::scale<space::OBJECT>(m_scale[0], m_scale[1], m_scale[2]);
-		m_transform = trans * rot * scale;
-		// TODO mat * accumulate_parent_mats().invert_copy()
-		// m_rb->getMotionState()->setWorldTransform(u::tmat2bullet(mat));
-	}
-	tmat<space::OBJECT, space::PARENT> physics_object::get_transform() const
-	{
-		// tmat<space::OBJECT, space::WORLD> const& obj2world = get_world_transform();
-		//// TODO return obj2world * accumulate_parent_mats().invert_copy();
-		// return obj2world.cast_copy<space::OBJECT, space::PARENT>();
-		return m_transform;
-	}
-	tmat<space::OBJECT, space::WORLD> physics_object::get_world_transform() const
-	{
-		/*btTransform mat;
-		m_rb->getMotionState()->getWorldTransform(mat);
-		return u::bullet2tmat<space::OBJECT, space::WORLD>(mat);*/
-		return m_transform.cast_copy<space::OBJECT, space::WORLD>();
-	}
 	void physics_object::set_friction(f32 const f)
 	{
 		m_rb->setFriction(f);
@@ -66,24 +43,24 @@ namespace djinn
 	void physics_object::set_velocity_local(f32 const x, f32 const y, f32 const z)
 	{
 		btVector3 const v(x, y, z);
-		btVector3 const world = m_rb->getWorldTransform().getBasis().transpose() * v;
+		btVector3 const world = m_rb->getWorldTransform().getBasis() * v;
 		m_rb->setLinearVelocity(world);
 	}
 	void physics_object::set_velocity_local_x(f32 const x)
 	{
-		btVector3 local = m_rb->getWorldTransform().getBasis() * m_rb->getLinearVelocity();
+		btVector3 local = m_rb->getWorldTransform().getBasis().transpose() * m_rb->getLinearVelocity();
 		local.setX(x);
 		set_velocity_local(local.x(), local.y(), local.z());
 	}
 	void physics_object::set_velocity_local_y(f32 const y)
 	{
-		btVector3 local = m_rb->getWorldTransform().getBasis() * m_rb->getLinearVelocity();
+		btVector3 local = m_rb->getWorldTransform().getBasis().transpose() * m_rb->getLinearVelocity();
 		local.setY(y);
 		set_velocity_local(local.x(), local.y(), local.z());
 	}
 	void physics_object::set_velocity_local_z(f32 const z)
 	{
-		btVector3 local = m_rb->getWorldTransform().getBasis() * m_rb->getLinearVelocity();
+		btVector3 local = m_rb->getWorldTransform().getBasis().transpose() * m_rb->getLinearVelocity();
 		local.setZ(z);
 		set_velocity_local(local.x(), local.y(), local.z());
 	}
@@ -116,14 +93,7 @@ namespace djinn
 	{
 		btTransform raw;
 		m_rb->getMotionState()->getWorldTransform(raw);
-		// TODO multiply by accumulate_parent_mats.invert_copy();
-		tmat<space::OBJECT, space::PARENT> const& mat = u::bullet2tmat<space::OBJECT, space::PARENT>(raw);
-		extract_transform(mat);
-		update_transform();
-	}
-	void physics_object::extract_physics_transform(btTransform const& world)
-	{
-		extract_transform(u::bullet2tmat<space::OBJECT, space::PARENT>(world));
-		update_transform();
+		tmat<space::OBJECT, space::WORLD> const& mat = u::bullet2tmat<space::OBJECT, space::WORLD>(raw);
+		m_transform = get_parent_transform().invert_copy() * mat;
 	}
 } // namespace djinn

@@ -22,7 +22,7 @@ namespace djinn
 
 
 	visibility_scene_object::visibility_scene_object(id_t const id) :
-		scene_object(id),
+		scene_object_base(id),
 		m_visible(true)
 	{}
 } // namespace djinn

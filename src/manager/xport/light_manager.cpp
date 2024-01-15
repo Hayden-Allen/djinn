@@ -56,7 +56,7 @@ namespace djinn
 
 		for (u64 i = 0; i < m_lights.size(); i++)
 		{
-			m_lights[i]->update_transform();
+			// m_lights[i]->update_transform();
 			m_raw[i] = m_lights[i]->get_raw();
 		}
 

@@ -8,10 +8,7 @@ namespace djinn
 	{
 		m_shape = shape;
 
-		m_pos[0] = origin.x();
-		m_pos[1] = origin.y();
-		m_pos[2] = origin.z();
-		update_transform();
+		set_pos_world(point<space::WORLD>(origin.x(), origin.y(), origin.z()));
 
 		btTransform mat;
 		mat.setIdentity();

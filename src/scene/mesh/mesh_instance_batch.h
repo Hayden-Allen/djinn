@@ -25,7 +25,7 @@ namespace djinn
 			// TODO dirty flag/do this when transform function called
 			for (u64 i = 0; i < m_instances.size(); i++)
 			{
-				m_instances[i]->update_transform();
+				// m_instances[i]->update_transform();
 				update_transform(i, m_instances[i]->get_graphics_transform());
 			}
 

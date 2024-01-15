@@ -6,7 +6,7 @@
 namespace djinn
 {
 	sound_emitter::sound_emitter(id_t const id, sptr<sound_source> source) :
-		scene_object(id),
+		scene_object_base(id),
 		m_source(source)
 	{
 		before_reload();

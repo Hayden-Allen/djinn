@@ -30,7 +30,7 @@ namespace djinn
 		ASSERT(m_shaders || m_alpha_shaders);
 		if (m_visible)
 		{
-			update_transform();
+			// update_transform();
 			if (m_shaders)
 				shader_setup(m_shaders);
 			if (m_alpha_shaders)

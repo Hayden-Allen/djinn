@@ -12,9 +12,6 @@ namespace djinn
 		DCM(physics_object);
 		virtual ~physics_object();
 	public:
-		void update_transform() override;
-		tmat<space::OBJECT, space::PARENT> get_transform() const override;
-		tmat<space::OBJECT, space::WORLD> get_world_transform() const override;
 		void set_friction(f32 const f);
 		void set_velocity(f32 const x, f32 const y, f32 const z);
 		void set_velocity_x(f32 const x);
@@ -32,11 +29,9 @@ namespace djinn
 		optr<btRigidBody> m_rb;
 		optr<btMotionState> m_motion;
 		optr<btCollisionShape> m_shape;
-		tmat<space::OBJECT, space::PARENT> m_transform;
 	protected:
 		physics_object(id_t const id, sptr<btDiscreteDynamicsWorld> const& world);
 	protected:
 		void copy_physics_transform();
-		void extract_physics_transform(btTransform const& world);
 	};
 } // namespace djinn

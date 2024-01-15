@@ -115,53 +115,78 @@ export declare interface _Scene {
     Waypoint: _Scene_Waypoint
     Xport: _Scene_Xport
 
+    copyTransform(idFrom: SceneID, idTo: SceneID): void
+    setParent(idChild: SceneID, idParent: SceneID): void
     getPos(id: SceneID): number[]
     getPosX(id: SceneID): number
     getPosY(id: SceneID): number
     getPosZ(id: SceneID): number
-    setPos(id: SceneID, xyz: number[]): void
-    setPosX(id: SceneID, x: number): void
-    setPosY(id: SceneID, y: number): void
-    setPosZ(id: SceneID, z: number): void
-    addPos(id: SceneID, xyz: number[]): void
-    addPosX(id: SceneID, x: number): void
-    addPosY(id: SceneID, y: number): void
-    addPosZ(id: SceneID, z: number): void
-    addPosLocal(id: SceneID, xyz: number[]): void
-    addPosLocalX(id: SceneID, x: number): void
-    addPosLocalY(id: SceneID, y: number): void
-    addPosLocalZ(id: SceneID, z: number): void
     getRot(id: SceneID): number[]
     getRotX(id: SceneID): number
     getRotY(id: SceneID): number
     getRotZ(id: SceneID): number
-    setRot(id: SceneID, xyz: number[]): void
-    setRotX(id: SceneID, x: number): void
-    setRotY(id: SceneID, y: number): void
-    setRotZ(id: SceneID, z: number): void
-    addRot(id: SceneID, xyz: number[]): void
-    addRotX(id: SceneID, x: number): void
-    addRotY(id: SceneID, y: number): void
-    addRotZ(id: SceneID, z: number): void
-    addRotLocal(id: SceneID, xyz: number[]): void
-    addRotLocalX(id: SceneID, x: number): void
-    addRotLocalY(id: SceneID, y: number): void
-    addRotLocalZ(id: SceneID, z: number): void
     getScale(id: SceneID): number[]
     getScaleX(id: SceneID): number
     getScaleY(id: SceneID): number
     getScaleZ(id: SceneID): number
+    getPosWorld(id: SceneID): number[]
+    getPosXWorld(id: SceneID): number
+    getPosYWorld(id: SceneID): number
+    getPosZWorld(id: SceneID): number
+    getRotWorld(id: SceneID): number[]
+    getRotXWorld(id: SceneID): number
+    getRotYWorld(id: SceneID): number
+    getRotZWorld(id: SceneID): number
+    getScaleWorld(id: SceneID): number[]
+    getScaleXWorld(id: SceneID): number
+    getScaleYWorld(id: SceneID): number
+    getScaleZWorld(id: SceneID): number
+    setPos(id: SceneID, xyz: number[]): void
+    setPosX(id: SceneID, x: number): void
+    setPosY(id: SceneID, y: number): void
+    setPosZ(id: SceneID, z: number): void
+    setRot(id: SceneID, xyz: number[]): void
+    setRotX(id: SceneID, x: number): void
+    setRotY(id: SceneID, y: number): void
+    setRotZ(id: SceneID, z: number): void
     setScale(id: SceneID, xyz: number[]): void
     setScaleX(id: SceneID, x: number): void
     setScaleY(id: SceneID, y: number): void
     setScaleZ(id: SceneID, z: number): void
+    // setPosWorld(id: SceneID, xyz: number[]): void
+    // setPosXWorld(id: SceneID, x: number): void
+    // setPosYWorld(id: SceneID, y: number): void
+    // setPosZWorld(id: SceneID, z: number): void
+    // setRotWorld(id: SceneID, xyz: number[]): void
+    // setRotXWorld(id: SceneID, x: number): void
+    // setRotYWorld(id: SceneID, y: number): void
+    // setRotZWorld(id: SceneID, z: number): void
+    // setScaleWorld(id: SceneID, xyz: number[]): void
+    // setScaleXWorld(id: SceneID, x: number): void
+    // setScaleYWorld(id: SceneID, y: number): void
+    // setScaleZWorld(id: SceneID, z: number): void
+    addPos(id: SceneID, xyz: number[]): void
+    addPosX(id: SceneID, x: number): void
+    addPosY(id: SceneID, y: number): void
+    addPosZ(id: SceneID, z: number): void
+    addRot(id: SceneID, xyz: number[]): void
+    addRotX(id: SceneID, x: number): void
+    addRotY(id: SceneID, y: number): void
+    addRotZ(id: SceneID, z: number): void
     addScale(id: SceneID, xyz: number[]): void
     addScaleX(id: SceneID, x: number): void
     addScaleY(id: SceneID, y: number): void
     addScaleZ(id: SceneID, z: number): void
-    addScaleLocal(id: SceneID, xyz: number[]): void
-    addScaleLocalX(id: SceneID, x: number): void
-    addScaleLocalY(id: SceneID, y: number): void
-    addScaleLocalZ(id: SceneID, z: number): void
-    copyTransform(idFrom: SceneID, idTo: SceneID): void
+    addPosWorld(id: SceneID, xyz: number[]): void
+    addPosXWorld(id: SceneID, x: number): void
+    addPosYWorld(id: SceneID, y: number): void
+    addPosZWorld(id: SceneID, z: number): void
+    addRotWorld(id: SceneID, xyz: number[]): void
+    addRotXWorld(id: SceneID, x: number): void
+    addRotYWorld(id: SceneID, y: number): void
+    addRotZWorld(id: SceneID, z: number): void
+    addScaleWorld(id: SceneID, xyz: number[]): void
+    addScaleXWorld(id: SceneID, x: number): void
+    addScaleYWorld(id: SceneID, y: number): void
+    addScaleZWorld(id: SceneID, z: number): void
 }

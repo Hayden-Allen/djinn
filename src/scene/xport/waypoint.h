@@ -1,11 +1,11 @@
 #pragma once
 #include "pch.h"
-#include "scene/scene_object.h"
+#include "scene/scene_object_base.h"
 #include "xport.h"
 
 namespace djinn
 {
-	class waypoint : public scene_object, public xport
+	class waypoint : public scene_object_base, public xport
 	{
 	public:
 		waypoint(id_t const id);
