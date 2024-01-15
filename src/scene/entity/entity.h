@@ -27,11 +27,11 @@ namespace djinn
 		std::unordered_map<std::string, JSValue> m_function_cache;
 		bool m_script_loaded = false, m_request_imgui = false;
 	protected:
-		void inject_script(std::string const& fp, std::string const& src);
+		void inject_script(std::string const& fp, std::string const& src, s32 const argc, JSValueConst* const argv);
 		void call_reserved(std::string const& name, s32 const argc, JSValue* const argv);
 		void call_load();
 		void call_unload();
-		void call_init();
+		void call_init(s32 const argc, JSValueConst* const argv);
 		void call_destroy();
 		void call_main(f32 const dt, f32 const time);
 		void check_exception(JSValue const val, std::string const& msg) const;

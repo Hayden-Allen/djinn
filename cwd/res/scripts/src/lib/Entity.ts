@@ -5,7 +5,7 @@ export default class Entity {
     getId() {
         return this.id
     }
-    __init() {}
+    __init(...args: any[]) {}
     __destroy() {}
     __load() {}
     __unload() {}

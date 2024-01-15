@@ -44,13 +44,13 @@ declare interface _Scene_MeshInstance {
     destroyAll(ids: MeshInstanceID[]): void
 }
 declare interface _Scene_Entity {
-    load(fp: string): object
+    load(fp: string, ...args: any[]): object
     requestImGui(id: EntityID): void
     destroy(id: EntityID): void
     destroyAll(ids: EntityID[]): void
 }
 declare interface _Scene_Camera {
-    load(fp: string): object
+    load(fp: string, ...args: any[]): object
     configure(
         id: CameraID,
         fovy: number,

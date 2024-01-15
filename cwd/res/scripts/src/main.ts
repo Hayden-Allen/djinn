@@ -111,8 +111,7 @@ export default class MainEntity extends Entity {
             )
         }
 
-        this.player = Scene.Entity.load("Player.js") as Player
-        this.player.bind(this.camera!)
+        this.player = Scene.Entity.load("Player.js", this.camera!) as Player
     }
     __destroy() {
         Scene.MeshInstance.destroy(this.idStaticInstance)

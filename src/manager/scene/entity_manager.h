@@ -11,6 +11,6 @@ namespace djinn
 		entity_manager(JSRuntime* const runtime);
 		DCM(entity_manager);
 	public:
-		id_t load(std::string const& fp) override;
+		id_t load(std::string const& fp, s32 const argc, JSValueConst* const argv) override;
 	};
 } // namespace djinn

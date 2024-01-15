@@ -44,7 +44,6 @@ namespace djinn
 	{
 		m_request_imgui = false;
 		call_main(dt, time);
-		// update_transform();
 	}
 	void entity::draw()
 	{
@@ -77,7 +76,7 @@ namespace djinn
 
 
 
-	void entity::inject_script(std::string const& fp, std::string const& src)
+	void entity::inject_script(std::string const& fp, std::string const& src, s32 const argc, JSValueConst* const argv)
 	{
 		if (m_script_loaded)
 		{
@@ -97,7 +96,7 @@ namespace djinn
 		{
 			m_this = JS_CallConstructor(m_ctx, m_default, 0, nullptr);
 			JS_SetPropertyStr(m_ctx, m_this, "id", js::create_id(m_ctx, m_id));
-			call_init();
+			call_init(argc, argv);
 		}
 
 		call_load();
@@ -131,9 +130,9 @@ namespace djinn
 	{
 		call_reserved("__unload", 0, nullptr);
 	}
-	void entity::call_init()
+	void entity::call_init(s32 const argc, JSValueConst* const argv)
 	{
-		call_reserved("__init", 0, nullptr);
+		call_reserved("__init", argc, argv);
 	}
 	void entity::call_destroy()
 	{

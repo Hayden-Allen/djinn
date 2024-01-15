@@ -11,9 +11,9 @@ namespace djinn
 
 
 
-	id_t entity_manager::load(std::string const& fp)
+	id_t entity_manager::load(std::string const& fp, s32 const argc, JSValueConst* const argv)
 	{
 		std::string const& afp = to_absolute(fp);
-		return load_base(new entity(s_next_id, afp, m_runtime), afp);
+		return load_base(new entity(s_next_id, afp, m_runtime), afp, argc, argv);
 	}
 } // namespace djinn

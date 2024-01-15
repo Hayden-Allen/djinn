@@ -11,7 +11,7 @@ namespace djinn
 		camera_entity_manager(JSRuntime* const runtime);
 		DCM(camera_entity_manager);
 	public:
-		id_t load(std::string const& fp) override;
+		id_t load(std::string const& fp, s32 const argc, JSValueConst* const argv) override;
 		sptr<camera_entity> get_primary();
 	private:
 		id_t m_primary;

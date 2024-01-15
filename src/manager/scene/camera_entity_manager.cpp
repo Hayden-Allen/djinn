@@ -12,10 +12,10 @@ namespace djinn
 
 
 
-	id_t camera_entity_manager::load(std::string const& fp)
+	id_t camera_entity_manager::load(std::string const& fp, s32 const argc, JSValueConst* const argv)
 	{
 		std::string const& afp = to_absolute(fp);
-		id_t const id = load_base(new camera_entity(s_next_id, afp, m_runtime), afp);
+		id_t const id = load_base(new camera_entity(s_next_id, afp, m_runtime), afp, argc, argv);
 		if (m_primary == 0)
 			m_primary = id;
 		return id;

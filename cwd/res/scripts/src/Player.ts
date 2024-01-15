@@ -40,13 +40,9 @@ export default class Player extends Entity {
     // private worldPos: number[] = [-36, 103, -39] // top of tower
     private worldPos: number[] = [-29, 30, 39] // ground
 
-    bind(cam: Camera) {
-        this.camera = cam
-        if (this.camera) {
-            Scene.setParent(this.camera!.getId(), this.idMainInstance)
-            Scene.setPosZ(this.camera!.getId(), -2)
-            Scene.setRotY(this.camera!.getId(), Math.PI)
-            Scene.setPosY(this.camera!.getId(), 1)
+    __init(cam: Camera) {
+        if (cam) {
+            this.camera = cam
         }
     }
     __load() {

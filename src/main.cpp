@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
 	sound_source_watcher sound_watcher(asset_service::get_sound_source_manager());
 #	endif
 #endif
-	scene_service::get_entity_manager()->load("main.js");
+	scene_service::get_entity_manager()->load("main.js", 0, nullptr);
 
 #if DJINN_PROFILE
 	u32 const NUM_FRAMES = 1000;

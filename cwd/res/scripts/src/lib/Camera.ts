@@ -7,7 +7,7 @@ export default class Camera {
     getId() {
         return this.id
     }
-    __init() {}
+    __init(...args: any[]) {}
     __destroy() {}
     __draw() {}
     __ui() {}

@@ -214,9 +214,9 @@ namespace djinn::js::scene_service
 	//
 	JSValue load_entity(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
+		ASSERT(argc >= 1);
 		std::string const& fp = js::extract_string(ctx, argv[0]);
-		id_t const id = ::djinn::scene_service::get_entity_manager()->load(fp);
+		id_t const id = ::djinn::scene_service::get_entity_manager()->load(fp, argc - 1, &argv[1]);
 		sptr<entity> e = ::djinn::scene_service::get_entity_manager()->get(id);
 		return JS_DupValue(ctx, e->get_js_value());
 	}
@@ -247,7 +247,7 @@ namespace djinn::js::scene_service
 	{
 		ASSERT(argc == 1);
 		std::string const& fp = js::extract_string(ctx, argv[0]);
-		id_t const id = ::djinn::scene_service::get_camera_entity_manager()->load(fp);
+		id_t const id = ::djinn::scene_service::get_camera_entity_manager()->load(fp, argc - 1, &argv[1]);
 		sptr<camera_entity> e = ::djinn::scene_service::get_camera_entity_manager()->get(id);
 		return JS_DupValue(ctx, e->get_js_value());
 	}
@@ -1066,10 +1066,10 @@ namespace djinn
 		super::register_function(ctx, "MeshInstance", "destroy", 1, js::scene_service::destroy_mesh_instance);
 		super::register_function(ctx, "MeshInstance", "destroyAll", 1, js::scene_service::destroy_all_mesh_instance);
 		// ENTITY / CAMERA
-		super::register_function(ctx, "Entity", "load", 1, js::scene_service::load_entity);
+		super::register_function(ctx, "Entity", "load", 999, js::scene_service::load_entity);
 		super::register_function(ctx, "Entity", "destroy", 1, js::scene_service::destroy_entity);
 		super::register_function(ctx, "Entity", "destroyAll", 1, js::scene_service::destroy_all_entity);
-		super::register_function(ctx, "Camera", "load", 1, js::scene_service::load_camera);
+		super::register_function(ctx, "Camera", "load", 999, js::scene_service::load_camera);
 		super::register_function(ctx, "Camera", "configure", 5, js::scene_service::configure_camera);
 		super::register_function(ctx, "Entity", "requestImGui", 1, js::scene_service::request_imgui);
 		// PHYSICS
