@@ -1,7 +1,6 @@
 declare interface _Render {
-    // bindTexture(id: number, slot: number): void
-    // bindCubemap(id: number, slot: number): void
     getAspectRatio(): number
+    setDebugDrawEnabled(enabled: boolean): void
 
     GL_NEAREST: number
     GL_LINEAR: number

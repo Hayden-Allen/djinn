@@ -96,6 +96,14 @@ int main(int argc, char* argv[])
 		DJINN_TIME(scene_service::draw();, draw_avg, NUM_FRAMES);
 		DJINN_TIME(asset_service::draw_meshes(), gl_avg, NUM_FRAMES);
 
+#ifndef DJINN_DIST
+		if (render_service::is_debug_draw_enabled())
+		{
+			sptr<camera_entity> primary = scene_service::get_camera_entity_manager()->get_primary();
+			scene_service::get_physics_object_manager()->debug_draw(primary->get_view_proj());
+		}
+#endif
+
 		DJINN_TIME(
 			nanovg_service::begin_frame(c->get_width(), c->get_height());
 			scene_service::draw_ui();
@@ -108,9 +116,6 @@ int main(int argc, char* argv[])
 			scene_service::draw_imgui();
 			imgui_service::end_frame();,
 			imgui_avg, NUM_FRAMES);
-
-		sptr<camera_entity> primary = scene_service::get_camera_entity_manager()->get_primary();
-		scene_service::get_physics_object_manager()->debug_draw(primary->get_view_proj());
 #endif
 
 		c->end_frame();

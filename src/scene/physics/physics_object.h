@@ -5,12 +5,9 @@
 
 namespace djinn
 {
-	class physics_object_motion_state;
-
 	class physics_object : public scene_object_base
 	{
 		friend class physics_object_manager;
-		friend class physics_object_motion_state;
 	public:
 		DCM(physics_object);
 		virtual ~physics_object();
@@ -41,25 +38,5 @@ namespace djinn
 	protected:
 		void copy_physics_transform();
 		void extract_physics_transform(btTransform const& world);
-	};
-
-	class physics_object_motion_state : public btMotionState
-	{
-	public:
-		physics_object_motion_state(physics_object* const obj) :
-			m_obj(obj)
-		{}
-		DCM(physics_object_motion_state);
-	public:
-		void getWorldTransform(btTransform& worldTrans) const override
-		{
-			worldTrans = u::tmat2bullet(m_obj->get_world_transform());
-		}
-		void setWorldTransform(btTransform const& worldTrans) override
-		{
-			m_obj->extract_physics_transform(worldTrans);
-		}
-	private:
-		physics_object* const m_obj;
 	};
 } // namespace djinn

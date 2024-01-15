@@ -8,15 +8,15 @@ namespace djinn
 	{
 		m_shape = shape;
 
-		/*btTransform mat;
-		mat.setIdentity();
-		mat.setOrigin(origin);*/
 		m_pos[0] = origin.x();
 		m_pos[1] = origin.y();
 		m_pos[2] = origin.z();
 		update_transform();
-		// m_motion = new btDefaultMotionState(mat);
-		m_motion = new physics_object_motion_state(this);
+
+		btTransform mat;
+		mat.setIdentity();
+		mat.setOrigin(origin);
+		m_motion = new btDefaultMotionState(mat);
 
 		btVector3 inertia(0, 0, 0);
 		if (mass != 0.f)

@@ -180,6 +180,12 @@ export default class MainEntity extends Entity {
         // else Scene.Physics.enableCollision(this.idPhysics)
 
         // Scene.setPos(this.xport.idLights[0], [Math.cos(time), -1, Math.sin(time)])
+        if (Input.getKey(Input.KEY_ENTER)) {
+            Render.setDebugDrawEnabled(true)
+        }
+        if (Input.getKey(Input.KEY_BACKSPACE)) {
+            Render.setDebugDrawEnabled(false)
+        }
     }
     __draw() {
         this.xport!.skybox!.draw(this.camera!.getId())

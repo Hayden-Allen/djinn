@@ -10,18 +10,19 @@
 	- animation jumping on loop
 
 - now
+	- setPos physics_object?
+	- camera set transform functions need to call update_mats()
+	- addRot/addLocalRot weirdness
+	- collapse scene_object into scene_object_base?
+
 	- physics
-		- custom btMotionState?
-		- setPos physics_object?
+		- angular velocity direction mismatch according to debug draw
 		- fall through bvh
 	- graphics
-		- bridge/roof sometimes not drawing
+		- bridge/roof sometimes not drawing/no hitbox
 		- implement different lights
 		- vines z-fighting
 	- other
-		- rotate in place | addRot/addLocalRot weirdness
-		- camera set transform functions need to call update_mats()
-		- collapse scene_object into scene_object_base?
 		- angles rad=>deg
 		- scripts OOP stl
 		- scene_service factoring

@@ -12,7 +12,8 @@ export default class Xport {
     skybox?: Skybox
 
     constructor(fp: string) {
-        const { textures, skybox, phorms, lights, waypoints } = Scene.Xport.load(fp)
+        const { textures, skybox, phorms, lights, waypoints } =
+            Scene.Xport.load(fp)
         this.idTextures = textures
         this.idPhorms = phorms
         this.idLights = lights

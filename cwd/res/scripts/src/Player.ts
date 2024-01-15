@@ -34,6 +34,8 @@ export default class Player extends Entity {
     private isJumping: boolean = false
     private camAngleX: number = 0
     private meshScale: number = 0.1
+    private hitboxHeight: number = 1
+    private hitboxRadius: number = 0.2
 
     // private worldPos: number[] = [-36, 103, -39] // top of tower
     private worldPos: number[] = [-29, 30, 39] // ground
@@ -84,10 +86,16 @@ export default class Player extends Entity {
         }
         // hitbox
         {
-            this.idHitbox = Scene.Physics.createCylinder(
+            // this.idHitbox = Scene.Physics.createCylinder(
+            //     1,
+            //     this.worldPos,
+            //     [0.2, 0.5, 0.2]
+            // )
+            this.idHitbox = Scene.Physics.createCapsuleY(
                 1,
                 this.worldPos,
-                [0.2, 0.5, 0.2]
+                this.hitboxRadius,
+                this.hitboxHeight
             )
             Scene.Physics.setFriction(this.idHitbox, 0)
             Scene.Physics.setAngularFactor(this.idHitbox, [0, 1, 0])
@@ -188,7 +196,8 @@ export default class Player extends Entity {
         Scene.copyTransform(this.idHitbox, this.camera!.getId())
         Scene.addPosY(this.camera!.getId(), 1 * this.meshScale)
 
-        Scene.addPosLocalZ(this.camera!.getId(), 2 * this.meshScale)
+        // Scene.addPosLocalZ(this.camera!.getId(), 2 * this.meshScale)
+        Scene.addPosLocalZ(this.camera!.getId(), 2)
 
         // Scene.addPosZ(this.camera!.getId(), -2 * this.meshScale)
         // Scene.addRotY(this.camera!.getId(), Math.PI)
@@ -200,11 +209,15 @@ export default class Player extends Entity {
         Scene.copyTransform(this.camera!.getId(), this.camera!.getId())
 
         Scene.copyTransform(this.idHitbox, this.idMainInstance)
-        Scene.setScale(this.idMainInstance, [
-            this.meshScale,
-            this.meshScale,
-            this.meshScale,
-        ])
+        Scene.addPosY(
+            this.idMainInstance,
+            -this.hitboxHeight / 2 - this.hitboxRadius
+        )
+        // Scene.setScale(this.idMainInstance, [
+        //     this.meshScale,
+        //     this.meshScale,
+        //     this.meshScale,
+        // ])
         Scene.addRotY(this.idMainInstance, Math.PI)
         if (this.isJumping) {
             // Scene.addRotX(this.idMainInstance, Math.PI / 2)

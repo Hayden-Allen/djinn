@@ -7,6 +7,7 @@
 #include "scene/physics/capsule_physics_object.h"
 #include "scene/physics/sphere_physics_object.h"
 #include "debug/physics_debug_drawer.h"
+#include "core/constants.h"
 
 namespace djinn
 {
@@ -69,7 +70,7 @@ namespace djinn
 	{
 		for (auto& pair : m_objects)
 			pair.second->update_transform();
-		m_world->stepSimulation(dt, 8);
+		m_world->stepSimulation(dt, c::physics::num_substeps);
 		// m_world->stepSimulation(dt);
 		for (auto& pair : m_objects)
 			pair.second->copy_physics_transform();

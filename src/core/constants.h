@@ -99,4 +99,8 @@ namespace djinn::c
 			"d_instance_block[10]",
 		};
 	} // namespace uniform
+	namespace physics
+	{
+		static constexpr u64 num_substeps = 8;
+	}
 } // namespace djinn::c
