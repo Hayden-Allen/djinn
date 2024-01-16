@@ -77,10 +77,34 @@ namespace djinn
 		for (auto& pair : m_objects)
 			pair.second->copy_transform_from_physics();
 	}
+	std::vector<raycast_result> physics_object_manager::cast_ray(point<space::WORLD> const& from, direction<space::WORLD> const& dir, f32 const length)
+	{
+		point<space::WORLD> const& to = from + dir * length;
+		btVector3 const& bfrom = u::point2bullet(from);
+		btVector3 const& bto = u::point2bullet(to);
+
+		btCollisionWorld::AllHitsRayResultCallback allResults(bfrom, bto);
+		allResults.m_flags |= btTriangleRaycastCallback::kF_KeepUnflippedNormal;
+		allResults.m_flags |= btTriangleRaycastCallback::kF_UseSubSimplexConvexCastRaytest;
+		m_world->rayTest(bfrom, bto, allResults);
+
+		std::vector<raycast_result> ret;
+		ret.reserve(allResults.m_hitFractions.size());
+		for (s32 i = 0; i < allResults.m_hitFractions.size(); i++)
+		{
+			point<space::WORLD> const& point = u::bullet2point<space::WORLD>(allResults.m_hitPointWorld[i]);
+			direction<space::WORLD> const& norm = u::bullet2direction<space::WORLD>(allResults.m_hitNormalWorld[i]);
+			ret.emplace_back(point, norm, allResults.m_hitFractions[i]);
+		}
+		std::sort(ret.begin(), ret.end());
+		return ret;
+	}
+#ifndef DJINN_DIST
 	void physics_object_manager::debug_draw(mat<space::WORLD, space::CLIP> const& vp)
 	{
 		m_drawer->set_camera(vp);
 		m_world->debugDrawWorld();
 		m_drawer->flushLines();
 	}
+#endif
 } // namespace djinn

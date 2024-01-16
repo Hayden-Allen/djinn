@@ -673,6 +673,52 @@ namespace djinn::js::scene_service
 		vec<space::WORLD> const& vel = so->get_velocity();
 		return js::create_f32(ctx, vel.length());
 	}
+	JSValue cast_ray(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2 || argc == 3);
+		std::vector<f32> const& pos = js::extract_f32_array(ctx, argv[0]);
+		std::vector<f32> const& dir = js::extract_f32_array(ctx, argv[1]);
+		f32 length = c::physics::default_raycast_length;
+		if (argc == 3)
+		{
+			length = js::extract_f32(ctx, argv[2]);
+			ASSERT(length > 0.f);
+		}
+
+		point<space::WORLD> const wpos(pos[0], pos[1], pos[2]);
+		direction<space::WORLD> const wdir(dir[0], dir[1], dir[2]);
+		std::vector<raycast_result> const& results = ::djinn::scene_service::get_physics_object_manager()->cast_ray(wpos, wdir, length);
+		JSValue ret = JS_NewArray(ctx);
+		for (u64 i = 0; i < results.size(); i++)
+		{
+			JSValue entry = JS_NewArray(ctx);
+			JSValue point = js::create_f32_array(ctx, 3, results[i].point.e);
+			JSValue normal = js::create_f32_array(ctx, 3, results[i].normal.e);
+			JS_SetPropertyInt64(ctx, entry, 0, point);
+			JS_SetPropertyInt64(ctx, entry, 1, normal);
+			JS_SetPropertyInt64(ctx, ret, (s64)i, entry);
+		}
+		return ret;
+	}
+	JSValue get_normal_tangent(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 3);
+		std::vector<f32> const& norm = js::extract_f32_array(ctx, argv[0]);
+		std::vector<f32> const& dir = js::extract_f32_array(ctx, argv[1]);
+		id_t const id = js::extract_id(ctx, argv[2]);
+
+		sptr<physics_object> po = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		direction<space::OBJECT> const odir(dir[0], dir[1], dir[2]);
+		tmat<space::OBJECT, space::WORLD> const& mat = po->get_world_transform();
+		direction<space::WORLD> const wdir = mat * odir;
+
+		direction<space::WORLD> const wnorm(norm[0], norm[1], norm[2]);
+		direction<space::WORLD> const wside = wnorm.cross_copy(wdir);
+		direction<space::WORLD> const wtan = wside.cross_copy(wnorm);
+
+		direction<space::OBJECT> const otan = mat.invert_copy() * wtan;
+		return js::create_f32_array(ctx, 3, otan.e);
+	}
 	JSValue destroy_physics_object(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
@@ -1168,6 +1214,8 @@ namespace djinn
 			super::register_function(ctx, "Physics", "setMaxSpeed", 2, js::scene_service::set_max_speed);
 			super::register_function(ctx, "Physics", "getVelocity", 1, js::scene_service::get_velocity);
 			super::register_function(ctx, "Physics", "getSpeed", 1, js::scene_service::get_speed);
+			super::register_function(ctx, "Physics", "castRay", 3, js::scene_service::cast_ray);
+			super::register_function(ctx, "Physics", "getNormalTangent", 3, js::scene_service::get_normal_tangent);
 			super::register_function(ctx, "Physics", "destroy", 1, js::scene_service::destroy_physics_object);
 			super::register_function(ctx, "Physics", "destroyAll", 1, js::scene_service::destroy_all_physics_object);
 		}

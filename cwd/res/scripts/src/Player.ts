@@ -39,6 +39,7 @@ export default class Player extends Entity {
 
     // private worldPos: number[] = [-36, 103, -39] // top of tower
     private worldPos: number[] = [-29, 30, 39] // ground
+    private raycastResults: number[][][] = []
 
     __init(cam: Camera) {
         if (cam) {
@@ -97,8 +98,11 @@ export default class Player extends Entity {
                 this.hitboxRadius,
                 this.hitboxHeight
             )
+            // Scene.Physics.setFriction(this.idHitbox, 5)
+            // Scene.Physics.setDamping(this.idHitbox, 0.1)
+            // Scene.Physics.setMaxSpeed(this.idHitbox, 5)
             Scene.Physics.setFriction(this.idHitbox, 5)
-            Scene.Physics.setDamping(this.idHitbox, 0.1)
+            // Scene.Physics.setDamping(this.idHitbox, 0.1)
             Scene.Physics.setMaxSpeed(this.idHitbox, 5)
             Scene.Physics.setAngularFactor(this.idHitbox, [0, 0, 0])
         }
@@ -180,19 +184,42 @@ export default class Player extends Entity {
             // const dz = 5 * Input.leftY()
             // Scene.Physics.setVelocityLocalX(this.idHitbox, dx)
             // Scene.Physics.setVelocityLocalZ(this.idHitbox, dz)
+            // console.log(results.length, results[0])
+
             const dx = dt * 50 * Input.leftX()
             const dz = dt * 50 * Input.leftY()
-            Scene.Physics.applyImpulse(this.idHitbox, [dx, 0, dz])
             let actionSet = false
             if (dx != 0 || dz != 0) {
+                this.raycastResults = Scene.Physics.castRay(
+                    Scene.getPosWorld(this.idHitbox),
+                    [0, -1, 0]
+                )
+                if (this.raycastResults.length) {
+                    const tangent = Scene.Physics.getNormalTangent(
+                        this.raycastResults[0][1],
+                        [dx, 0, dz],
+                        this.idHitbox
+                    )
+                    tangent[0] *= dt * 50
+                    tangent[1] *= dt * 50
+                    tangent[2] *= dt * 50
+                    // Scene.Physics.applyImpulse(this.idHitbox, [dx, 0, dz])
+                    Scene.Physics.setFriction(this.idHitbox, 0)
+                    Scene.Physics.applyImpulse(this.idHitbox, tangent)
+                }
+
                 Scene.MeshInstance.setAction(
                     this.idMainInstance,
                     "run_Armature"
                 )
                 actionSet = true
+            } else {
+                Scene.Physics.setFriction(this.idHitbox, 5)
             }
+
             if (Input.getKey(Input.KEY_SPACE)) {
-                Scene.Physics.setVelocityY(this.idHitbox, 5)
+                // Scene.Physics.setVelocityY(this.idHitbox, 5)
+                Scene.Physics.applyImpulse(this.idHitbox, [0, dt * 50, 0])
                 Scene.MeshInstance.setAction(this.idMainInstance, "bind")
                 actionSet = true
                 this.isJumping = true
@@ -232,6 +259,9 @@ export default class Player extends Entity {
         ImGui.text("Vel: " + ivel)
         ImGui.text(
             "Speed: " + Math.round(Scene.Physics.getSpeed(this.idHitbox))
+        )
+        ImGui.text(
+            `${this.raycastResults.length} | ${this.raycastResults[0][1]}`
         )
     }
 }

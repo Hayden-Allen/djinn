@@ -17,6 +17,14 @@ namespace djinn::u
 
 
 	template<typename T>
+	T sign(T const t)
+	{
+		constexpr T zero(0);
+		if (t == zero)
+			return zero;
+		return (t > zero ? T(1) : T(-1));
+	}
+	template<typename T>
 	T deg2rad(T const t)
 	{
 		return t * ::hats::c::PI / 180;
@@ -54,6 +62,26 @@ namespace djinn::u
 	vec<SPACE> bullet2vec(btVector3 const& v)
 	{
 		return vec<SPACE>(v.x(), v.y(), v.z());
+	}
+	template<space SPACE>
+	btVector3 point2bullet(point<SPACE> const& v)
+	{
+		return btVector3(v.x, v.y, v.z);
+	}
+	template<space SPACE>
+	point<SPACE> bullet2point(btVector3 const& v)
+	{
+		return point<SPACE>(v.x(), v.y(), v.z());
+	}
+	template<space SPACE>
+	btVector3 direction2bullet(direction<SPACE> const& v)
+	{
+		return btVector3(v.x, v.y, v.z);
+	}
+	template<space SPACE>
+	direction<SPACE> bullet2direction(btVector3 const& v)
+	{
+		return direction<SPACE>(v.x(), v.y(), v.z());
 	}
 	// https://stackoverflow.com/a/19195373
 	template<typename T>

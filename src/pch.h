@@ -59,6 +59,7 @@ using namespace mgl;
 #define M3D_NUMBONE 4
 #include "model3d/m3d.h"
 
+#include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 #include "btBulletDynamicsCommon.h"
 
 

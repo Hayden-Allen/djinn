@@ -101,6 +101,16 @@ declare interface _Scene_Physics {
     setMaxSpeed(id: PhysicsID, max: number): void
     getVelocity(id: PhysicsID): number[]
     getSpeed(id: PhysicsID): number
+    castRay(
+        fromWorld: number[],
+        dirWorld: number[],
+        length?: number
+    ): number[][][]
+    getNormalTangent(
+        normWorld: number[],
+        dirWorld: number[],
+        idHitbox: PhysicsID
+    ): number[]
     destroy(id: PhysicsID): void
     destroyAll(ids: PhysicsID[]): void
 }

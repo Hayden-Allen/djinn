@@ -102,5 +102,6 @@ namespace djinn::c
 	namespace physics
 	{
 		static constexpr u64 num_substeps = 8;
-	}
+		static constexpr f32 default_raycast_length = 1000;
+	} // namespace physics
 } // namespace djinn::c
