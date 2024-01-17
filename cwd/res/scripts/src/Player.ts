@@ -227,6 +227,28 @@ export default class Player extends Entity {
                         ]
                         Scene.Physics.applyImpulse(this.idHitbox, this.moveDir)
                     }
+                    // const prev = Scene.getPosWorld(this.idHitbox)
+                    // prev[1] -= this.hitboxHeight / 2 - this.hitboxRadius
+                    // const xnext = prev[0] + dx
+                    // const znext = prev[2] + dz
+                    // const top = [xnext, 100, znext]
+                    // const possible = Scene.Physics.castRay(top, [0, -1, 0])
+                    // console.log(possible.length)
+                    // let mini = 0
+                    // for (var i = 1; i < possible.length; i++) {
+                    //     if (
+                    //         Math.abs(possible[i][0][1] - prev[1]) <
+                    //         Math.abs(possible[mini][0][1] - prev[1])
+                    //     )
+                    //         mini = i
+                    // }
+                    // const ynext = possible[mini][0][1]
+                    // const diff = [
+                    //     xnext - prev[0],
+                    //     ynext - prev[1],
+                    //     znext - prev[2],
+                    // ]
+                    // Scene.Physics.setVelocity(this.idHitbox, diff)
                 }
 
                 Scene.MeshInstance.setAction(
@@ -236,6 +258,8 @@ export default class Player extends Entity {
                 actionSet = true
             } else {
                 Scene.Physics.setFriction(this.idHitbox, 5)
+                // Scene.Physics.setVelocityX(this.idHitbox, 0)
+                // Scene.Physics.setVelocityZ(this.idHitbox, 0)
             }
 
             if (Input.getKey(Input.KEY_SPACE)) {
