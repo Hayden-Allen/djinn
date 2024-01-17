@@ -147,7 +147,7 @@ namespace djinn::js::global
 		for (int i = 0; i < argc; ++i)
 		{
 			char const* s = JS_ToCString(ctx, argv[i]);
-			std::cout << s << (i < argc - 1 ? " " : "");
+			std::cout << std::setprecision(6) << s << (i < argc - 1 ? " " : "");
 			JS_FreeCString(ctx, s);
 		}
 		std::cout << "\n";
