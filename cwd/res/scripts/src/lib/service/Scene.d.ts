@@ -83,14 +83,18 @@ declare interface _Scene_Physics {
     ): PhysicsID
     createBVH(idPhorm: PhormID): PhysicsID
     setFriction(id: PhysicsID, f: number): void
+    getVelocity(id: PhysicsID): number[]
+    getSpeed(id: PhysicsID): number
     setVelocity(id: PhysicsID, vel: number[]): void
     setVelocityX(id: PhysicsID, vel: number): void
     setVelocityY(id: PhysicsID, vel: number): void
     setVelocityZ(id: PhysicsID, vel: number): void
-    setVelocityLocal(id: PhysicsID, vel: number[]): void
-    setVelocityLocalX(id: PhysicsID, vel: number): void
-    setVelocityLocalY(id: PhysicsID, vel: number): void
-    setVelocityLocalZ(id: PhysicsID, vel: number): void
+    getVelocityWorld(id: PhysicsID): number[]
+    getSpeedWorld(id: PhysicsID): number
+    setVelocityWorld(id: PhysicsID, vel: number[]): void
+    setVelocityXWorld(id: PhysicsID, vel: number): void
+    setVelocityYWorld(id: PhysicsID, vel: number): void
+    setVelocityZWorld(id: PhysicsID, vel: number): void
     setAngularVelocity(id: PhysicsID, vel: number[]): void
     setAngularFactor(id: PhysicsID, vel: number[]): void
     enableCollision(id: PhysicsID): void
@@ -98,9 +102,9 @@ declare interface _Scene_Physics {
     applyImpulse(id: PhysicsID, localForce: number[]): void
     setDamping(id: PhysicsID, linear: number): void
     setAngularDamping(id: PhysicsID, angular: number): void
-    setMaxSpeed(id: PhysicsID, max: number): void
-    getVelocity(id: PhysicsID): number[]
-    getSpeed(id: PhysicsID): number
+    setMaxSpeedX(id: PhysicsID, max: number): void
+    setMaxSpeedY(id: PhysicsID, max: number): void
+    setMaxSpeedZ(id: PhysicsID, max: number): void
     castRay(
         fromWorld: number[],
         dirWorld: number[],

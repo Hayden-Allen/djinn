@@ -75,7 +75,10 @@ namespace djinn
 		}
 		m_world->stepSimulation(dt, c::physics::num_substeps);
 		for (auto& pair : m_objects)
+		{
 			pair.second->copy_transform_from_physics();
+			pair.second->check_collisions();
+		}
 	}
 	std::vector<raycast_result> physics_object_manager::cast_ray(point<space::WORLD> const& from, direction<space::WORLD> const& dir, f32 const length)
 	{

@@ -499,6 +499,24 @@ namespace djinn::js::scene_service
 		so->set_friction(f);
 		return JS_UNDEFINED;
 	}
+	JSValue get_velocity(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		vec<space::OBJECT> const& vel = so->get_velocity();
+		return js::create_f32_array(ctx, 3, vel.e);
+	}
+	JSValue get_speed(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		vec<space::OBJECT> const& vel = so->get_velocity();
+		return js::create_f32(ctx, vel.length());
+	}
 	JSValue set_velocity(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2);
@@ -539,44 +557,62 @@ namespace djinn::js::scene_service
 		so->set_velocity_z(v);
 		return JS_UNDEFINED;
 	}
-	JSValue set_velocity_local(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	JSValue get_velocity_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		vec<space::WORLD> const& vel = so->get_velocity_world();
+		return js::create_f32_array(ctx, 3, vel.e);
+	}
+	JSValue get_speed_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+
+		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
+		vec<space::WORLD> const& vel = so->get_velocity_world();
+		return js::create_f32(ctx, vel.length());
+	}
+	JSValue set_velocity_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2);
 		id_t const id = js::extract_id(ctx, argv[0]);
 		std::vector<f32> const& arr = js::extract_f32_array(ctx, argv[1]);
 
 		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
-		so->set_velocity_local(arr[0], arr[1], arr[2]);
+		so->set_velocity_world(arr[0], arr[1], arr[2]);
 		return JS_UNDEFINED;
 	}
-	JSValue set_velocity_local_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	JSValue set_velocity_x_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2);
 		id_t const id = js::extract_id(ctx, argv[0]);
 		f32 const v = js::extract_f32(ctx, argv[1]);
 
 		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
-		so->set_velocity_local_x(v);
+		so->set_velocity_x_world(v);
 		return JS_UNDEFINED;
 	}
-	JSValue set_velocity_local_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	JSValue set_velocity_y_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2);
 		id_t const id = js::extract_id(ctx, argv[0]);
 		f32 const v = js::extract_f32(ctx, argv[1]);
 
 		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
-		so->set_velocity_local_y(v);
+		so->set_velocity_y_world(v);
 		return JS_UNDEFINED;
 	}
-	JSValue set_velocity_local_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	JSValue set_velocity_z_world(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2);
 		id_t const id = js::extract_id(ctx, argv[0]);
 		f32 const v = js::extract_f32(ctx, argv[1]);
 
 		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
-		so->set_velocity_local_z(v);
+		so->set_velocity_z_world(v);
 		return JS_UNDEFINED;
 	}
 	JSValue set_angular_velocity(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -645,33 +681,35 @@ namespace djinn::js::scene_service
 		so->set_angular_damping(d);
 		return JS_UNDEFINED;
 	}
-	JSValue set_max_speed(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	JSValue set_max_speed_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2);
 		id_t const id = js::extract_id(ctx, argv[0]);
 		f32 const s = js::extract_f32(ctx, argv[1]);
 
 		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
-		so->set_max_speed(s);
+		so->set_max_speed(0, s);
 		return JS_UNDEFINED;
 	}
-	JSValue get_velocity(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	JSValue set_max_speed_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
+		ASSERT(argc == 2);
 		id_t const id = js::extract_id(ctx, argv[0]);
+		f32 const s = js::extract_f32(ctx, argv[1]);
 
 		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
-		vec<space::WORLD> const& vel = so->get_velocity();
-		return js::create_f32_array(ctx, 3, vel.e);
+		so->set_max_speed(1, s);
+		return JS_UNDEFINED;
 	}
-	JSValue get_speed(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	JSValue set_max_speed_z(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
+		ASSERT(argc == 2);
 		id_t const id = js::extract_id(ctx, argv[0]);
+		f32 const s = js::extract_f32(ctx, argv[1]);
 
 		sptr<physics_object> so = ::djinn::scene_service::get_physics_object_manager()->get(id);
-		vec<space::WORLD> const& vel = so->get_velocity();
-		return js::create_f32(ctx, vel.length());
+		so->set_max_speed(2, s);
+		return JS_UNDEFINED;
 	}
 	JSValue cast_ray(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -1196,14 +1234,18 @@ namespace djinn
 			super::register_function(ctx, "Physics", "createCapsuleZ", 4, js::scene_service::create_physics_capsule_z);
 			super::register_function(ctx, "Physics", "createBVH", 1, js::scene_service::create_physics_bvh);
 			super::register_function(ctx, "Physics", "setFriction", 2, js::scene_service::set_friction);
+			super::register_function(ctx, "Physics", "getVelocity", 1, js::scene_service::get_velocity);
+			super::register_function(ctx, "Physics", "getSpeed", 1, js::scene_service::get_speed);
 			super::register_function(ctx, "Physics", "setVelocity", 2, js::scene_service::set_velocity);
 			super::register_function(ctx, "Physics", "setVelocityX", 2, js::scene_service::set_velocity_x);
 			super::register_function(ctx, "Physics", "setVelocityY", 2, js::scene_service::set_velocity_y);
 			super::register_function(ctx, "Physics", "setVelocityZ", 2, js::scene_service::set_velocity_z);
-			super::register_function(ctx, "Physics", "setVelocityLocal", 2, js::scene_service::set_velocity_local);
-			super::register_function(ctx, "Physics", "setVelocityLocalX", 2, js::scene_service::set_velocity_local_x);
-			super::register_function(ctx, "Physics", "setVelocityLocalY", 2, js::scene_service::set_velocity_local_y);
-			super::register_function(ctx, "Physics", "setVelocityLocalZ", 2, js::scene_service::set_velocity_local_z);
+			super::register_function(ctx, "Physics", "getVelocityWorld", 1, js::scene_service::get_velocity_world);
+			super::register_function(ctx, "Physics", "getSpeedWorld", 1, js::scene_service::get_speed_world);
+			super::register_function(ctx, "Physics", "setVelocityWorld", 2, js::scene_service::set_velocity_world);
+			super::register_function(ctx, "Physics", "setVelocityXWorld", 2, js::scene_service::set_velocity_x_world);
+			super::register_function(ctx, "Physics", "setVelocityYWorld", 2, js::scene_service::set_velocity_y_world);
+			super::register_function(ctx, "Physics", "setVelocityZWorld", 2, js::scene_service::set_velocity_z_world);
 			super::register_function(ctx, "Physics", "setAngularVelocity", 2, js::scene_service::set_angular_velocity);
 			super::register_function(ctx, "Physics", "setAngularFactor", 2, js::scene_service::set_angular_factor);
 			super::register_function(ctx, "Physics", "enableCollision", 1, js::scene_service::enable_collision);
@@ -1211,9 +1253,9 @@ namespace djinn
 			super::register_function(ctx, "Physics", "applyImpulse", 2, js::scene_service::apply_impulse);
 			super::register_function(ctx, "Physics", "setDamping", 2, js::scene_service::set_damping);
 			super::register_function(ctx, "Physics", "setAngularDamping", 2, js::scene_service::set_angular_damping);
-			super::register_function(ctx, "Physics", "setMaxSpeed", 2, js::scene_service::set_max_speed);
-			super::register_function(ctx, "Physics", "getVelocity", 1, js::scene_service::get_velocity);
-			super::register_function(ctx, "Physics", "getSpeed", 1, js::scene_service::get_speed);
+			super::register_function(ctx, "Physics", "setMaxSpeedX", 2, js::scene_service::set_max_speed_x);
+			super::register_function(ctx, "Physics", "setMaxSpeedY", 2, js::scene_service::set_max_speed_y);
+			super::register_function(ctx, "Physics", "setMaxSpeedZ", 2, js::scene_service::set_max_speed_z);
 			super::register_function(ctx, "Physics", "castRay", 3, js::scene_service::cast_ray);
 			super::register_function(ctx, "Physics", "getNormalTangent", 3, js::scene_service::get_normal_tangent);
 			super::register_function(ctx, "Physics", "destroy", 1, js::scene_service::destroy_physics_object);

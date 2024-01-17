@@ -18,51 +18,60 @@ namespace djinn
 	{
 		m_rb->setFriction(f);
 	}
-	void physics_object::set_velocity(f32 const x, f32 const y, f32 const z)
+	vec<space::WORLD> physics_object::get_velocity_world() const
+	{
+		return u::bullet2vec<space::WORLD>(m_rb->getLinearVelocity());
+	}
+	void physics_object::set_velocity_world(f32 const x, f32 const y, f32 const z)
 	{
 		m_rb->setLinearVelocity(btVector3(x, y, z));
 	}
-	void physics_object::set_velocity_x(f32 const x)
+	void physics_object::set_velocity_x_world(f32 const x)
 	{
 		btVector3 v = m_rb->getLinearVelocity();
 		v.setX(x);
 		m_rb->setLinearVelocity(v);
 	}
-	void physics_object::set_velocity_y(f32 const y)
+	void physics_object::set_velocity_y_world(f32 const y)
 	{
 		btVector3 v = m_rb->getLinearVelocity();
 		v.setY(y);
 		m_rb->setLinearVelocity(v);
 	}
-	void physics_object::set_velocity_z(f32 const z)
+	void physics_object::set_velocity_z_world(f32 const z)
 	{
 		btVector3 v = m_rb->getLinearVelocity();
 		v.setZ(z);
 		m_rb->setLinearVelocity(v);
 	}
-	void physics_object::set_velocity_local(f32 const x, f32 const y, f32 const z)
+	vec<space::OBJECT> physics_object::get_velocity() const
+	{
+		vec<space::WORLD> const w = u::bullet2vec<space::WORLD>(m_rb->getLinearVelocity());
+		return get_world_transform().invert_copy() * w;
+	}
+	void physics_object::set_velocity(f32 const x, f32 const y, f32 const z)
 	{
 		btVector3 const v(x, y, z);
 		btVector3 const world = m_rb->getWorldTransform().getBasis() * v;
 		m_rb->setLinearVelocity(world);
 	}
-	void physics_object::set_velocity_local_x(f32 const x)
+	void physics_object::set_velocity_x(f32 const x)
 	{
 		btVector3 local = m_rb->getWorldTransform().getBasis().transpose() * m_rb->getLinearVelocity();
 		local.setX(x);
-		set_velocity_local(local.x(), local.y(), local.z());
+		set_velocity(local.x(), local.y(), local.z());
 	}
-	void physics_object::set_velocity_local_y(f32 const y)
+	void physics_object::set_velocity_y(f32 const y)
 	{
 		btVector3 local = m_rb->getWorldTransform().getBasis().transpose() * m_rb->getLinearVelocity();
 		local.setY(y);
-		set_velocity_local(local.x(), local.y(), local.z());
+		set_velocity(local.x(), local.y(), local.z());
 	}
-	void physics_object::set_velocity_local_z(f32 const z)
+	void physics_object::set_velocity_z(f32 const z)
 	{
 		btVector3 local = m_rb->getWorldTransform().getBasis().transpose() * m_rb->getLinearVelocity();
 		local.setZ(z);
-		set_velocity_local(local.x(), local.y(), local.z());
+		set_velocity(local.x(), local.y(), local.z());
 	}
 	void physics_object::set_angular_velocity(f32 const x, f32 const y, f32 const z)
 	{
@@ -92,13 +101,10 @@ namespace djinn
 	{
 		m_rb->setDamping(m_rb->getLinearDamping(), d);
 	}
-	void physics_object::set_max_speed(f32 const max)
+	void physics_object::set_max_speed(u32 const index, f32 const max)
 	{
-		m_max_speed = max;
-	}
-	vec<space::WORLD> physics_object::get_velocity() const
-	{
-		return u::bullet2vec<space::WORLD>(m_rb->getLinearVelocity());
+		ASSERT(index < 3);
+		m_max_speed[index] = max;
 	}
 
 
@@ -106,23 +112,31 @@ namespace djinn
 	physics_object::physics_object(id_t const id, sptr<btDiscreteDynamicsWorld> const& world) :
 		scene_object(id),
 		m_world(world),
-		m_max_speed(MAX_VALUE_T(f32))
+		m_entity(nullptr)
 	{
+		for (u32 i = 0; i < 3; i++)
+			m_max_speed[i] = MAX_VALUE_T(f32);
 	}
 
 
 
 	void physics_object::clamp_velocity()
 	{
-		vec<space::WORLD> vel = u::bullet2vec<space::WORLD>(m_rb->getLinearVelocity());
+		/*vec<space::WORLD> vel = u::bullet2vec<space::WORLD>(m_rb->getLinearVelocity());
 		if (vel.length() > m_max_speed)
 			vel.set_length(m_max_speed);
-		m_rb->setLinearVelocity(u::vec2bullet(vel));
+		m_rb->setLinearVelocity(u::vec2bullet(vel));*/
+		btVector3 vel = m_rb->getLinearVelocity();
+		vel[0] = u::clamp(vel[0], -m_max_speed[0], m_max_speed[0]);
+		vel[1] = u::clamp(vel[1], -m_max_speed[1], m_max_speed[1]);
+		vel[2] = u::clamp(vel[2], -m_max_speed[2], m_max_speed[2]);
+		m_rb->setLinearVelocity(vel);
 	}
 	void physics_object::copy_transform_to_physics()
 	{
 		tmat<space::OBJECT, space::WORLD> const& mat = get_world_transform();
 		btTransform const& raw = u::tmat2bullet(mat);
+		// m_rb->setWorldTransform(raw);
 		m_rb->getMotionState()->setWorldTransform(raw);
 	}
 	void physics_object::copy_transform_from_physics()
@@ -131,5 +145,10 @@ namespace djinn
 		m_rb->getMotionState()->getWorldTransform(raw);
 		tmat<space::OBJECT, space::WORLD> const& mat = u::bullet2tmat<space::OBJECT, space::WORLD>(raw);
 		m_transform = get_parent_transform().invert_copy() * mat;
+	}
+	void physics_object::check_collisions()
+	{
+		/*btCollisionWorld::ContactResultCallback cb;
+		m_world->contactTest(m_rb.get(), cb);*/
 	}
 } // namespace djinn

@@ -206,17 +206,17 @@ export default class MainEntity extends Entity {
         Scene.copyTransform(this.idPhysics, this.idStaticInstance)
     }
     __ui() {
-        Nanovg.fillStyle(1, 1, 1)
-        Nanovg.fillRect(0, 0, 300, 300)
-        Nanovg.fillStyle(this.color.r, this.color.g, this.color.b)
-        Nanovg.fillRect(0, 0, 50, 50)
-        Nanovg.strokeStyle(1 - this.color.r, 1 - this.color.g, 1 - this.color.b)
-        Nanovg.strokeRect(50, 50, 50, 50)
-        Nanovg.strokeLine(50, 50, 100, 100)
-        Nanovg.strokeCircle(150, 150, 50)
-        Nanovg.fillCircle(200, 150, 50)
-        Nanovg.setFont("sans", 24)
-        Nanovg.drawText(100, 250, "TEST")
+        // Nanovg.fillStyle(1, 1, 1)
+        // Nanovg.fillRect(0, 0, 300, 300)
+        // Nanovg.fillStyle(this.color.r, this.color.g, this.color.b)
+        // Nanovg.fillRect(0, 0, 50, 50)
+        // Nanovg.strokeStyle(1 - this.color.r, 1 - this.color.g, 1 - this.color.b)
+        // Nanovg.strokeRect(50, 50, 50, 50)
+        // Nanovg.strokeLine(50, 50, 100, 100)
+        // Nanovg.strokeCircle(150, 150, 50)
+        // Nanovg.fillCircle(200, 150, 50)
+        // Nanovg.setFont("sans", 24)
+        // Nanovg.drawText(100, 250, "TEST")
     }
     __imgui() {
         ImGui.text("I am a text box")

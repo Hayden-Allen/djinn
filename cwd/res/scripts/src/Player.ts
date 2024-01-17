@@ -40,6 +40,7 @@ export default class Player extends Entity {
     // private worldPos: number[] = [-36, 103, -39] // top of tower
     private worldPos: number[] = [-29, 30, 39] // ground
     private raycastResults: number[][][] = []
+    private time: number = 0
 
     __init(cam: Camera) {
         if (cam) {
@@ -103,7 +104,8 @@ export default class Player extends Entity {
             // Scene.Physics.setMaxSpeed(this.idHitbox, 5)
             Scene.Physics.setFriction(this.idHitbox, 5)
             // Scene.Physics.setDamping(this.idHitbox, 0.1)
-            Scene.Physics.setMaxSpeed(this.idHitbox, 5)
+            Scene.Physics.setMaxSpeedX(this.idHitbox, 5)
+            Scene.Physics.setMaxSpeedZ(this.idHitbox, 5)
             Scene.Physics.setAngularFactor(this.idHitbox, [0, 0, 0])
         }
         // scene graph
@@ -139,6 +141,7 @@ export default class Player extends Entity {
         Scene.Physics.destroy(this.idHitbox)
     }
     __main(dt: number, time: number) {
+        this.time = time
         // wing mesh update
         {
             let frontWingVerts: number[] = []
@@ -203,9 +206,9 @@ export default class Player extends Entity {
                     tangent[0] *= dt * 50
                     tangent[1] *= dt * 50
                     tangent[2] *= dt * 50
-                    // Scene.Physics.applyImpulse(this.idHitbox, [dx, 0, dz])
+                    Scene.Physics.applyImpulse(this.idHitbox, [dx, 0, dz])
                     Scene.Physics.setFriction(this.idHitbox, 0)
-                    Scene.Physics.applyImpulse(this.idHitbox, tangent)
+                    // Scene.Physics.applyImpulse(this.idHitbox, tangent)
                 }
 
                 Scene.MeshInstance.setAction(
@@ -219,7 +222,7 @@ export default class Player extends Entity {
 
             if (Input.getKey(Input.KEY_SPACE)) {
                 // Scene.Physics.setVelocityY(this.idHitbox, 5)
-                Scene.Physics.applyImpulse(this.idHitbox, [0, dt * 50, 0])
+                // Scene.Physics.applyImpulse(this.idHitbox, [0, dt * 50, 0])
                 Scene.MeshInstance.setAction(this.idMainInstance, "bind")
                 actionSet = true
                 this.isJumping = true
@@ -245,6 +248,20 @@ export default class Player extends Entity {
         Scene.Entity.requestImGui(this.id)
     }
     __draw() {
+        if (this.raycastResults.length) {
+            const height = this.hitboxRadius * 2 + this.hitboxHeight / 2
+            const groundY = this.raycastResults[0][0][1]
+            // console.log(Scene.getPosYWorld(this.idHitbox), groundY, height)
+            if (
+                Scene.Physics.getVelocityWorld(this.idHitbox)[1] > 0 &&
+                Scene.getPosYWorld(this.idHitbox) > groundY + height
+            ) {
+                Scene.Physics.setVelocityYWorld(this.idHitbox, 0)
+                console.log(this.time)
+            }
+            Scene.setPosY(this.idHitbox, groundY + 0.1)
+        }
+
         this.worldPos = Scene.getPos(this.idHitbox)
         this.worldPos[1] += 1
 
@@ -253,15 +270,16 @@ export default class Player extends Entity {
         Asset.Shader.setCameraUniforms(this.idWingShader, this.camera!.getId())
     }
     __imgui() {
-        const ivel = Scene.Physics.getVelocity(this.idHitbox).map((v) =>
+        const ivel = Scene.Physics.getVelocityWorld(this.idHitbox).map((v) =>
             Math.round(v)
         )
         ImGui.text("Vel: " + ivel)
         ImGui.text(
             "Speed: " + Math.round(Scene.Physics.getSpeed(this.idHitbox))
         )
-        ImGui.text(
-            `${this.raycastResults.length} | ${this.raycastResults[0][1]}`
-        )
+        ImGui.text(`${this.raycastResults.length}`)
+        for (const result of this.raycastResults) {
+            ImGui.text(`${result[0]} | ${result[1]}`)
+        }
     }
 }

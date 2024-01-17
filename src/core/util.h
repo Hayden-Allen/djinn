@@ -16,6 +16,11 @@ namespace djinn::u
 
 
 
+	template<typename A, typename B, typename C>
+	A clamp(A const x, B const min, C const max)
+	{
+		return (A)std::min((A)max, std::max(x, (A)min));
+	}
 	template<typename T>
 	T sign(T const t)
 	{

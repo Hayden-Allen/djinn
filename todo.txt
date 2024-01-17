@@ -10,22 +10,26 @@
 	- set_rot_parent?
 
 - now
-	- physics
-		- Util.getNormalTangent?
-		- hatsify physics_object, function order/cleanup
-		- fall through bvh
-		- physics_object_manager::update order needs to respect scene graph?
-	- graphics
-		- do lighting in object space to avoid artifacts
-		- jittery debug hitbox
-		- bridge/roof sometimes not drawing/no hitbox
-		- implement different lights
-		- vines z-fighting
-	- other
-		- js::extract_point/vec/direction
-		- factor scene_service physics
-		- scripts OOP stl
-		- more scene_service factoring
+- physics
+	- collision callbacks (only walk when on ground)
+		- Scene.Physics.bindToEntity(PhysicsID, EntityID)
+		- the physics_object gets a pointer to the entity
+		- in physics_object_manager::update, after m_world->stepSimulation, each object with an entity pointer is tested via m_world->contactTest
+		- addSingleResult forwards everything to __collide()
+
+	- Util.getNormalTangent?
+	- hatsify physics_object, function order/cleanup
+	- fall through bvh
+	- physics_object_manager::update order needs to respect scene graph?
+- graphics
+	- jittery debug hitbox
+	- bridge/roof sometimes not drawing/no hitbox
+	- implement different lights
+	- vines z-fighting
+	- do everything in camera space to avoid artifacts
+- other
+	- scripts OOP stl
+	- more scene_service factoring
 
 - later
 	- retained_buffer::load => buffer::load (buffer doesn't get save though)
@@ -42,7 +46,7 @@
 - even later
 	- framebuffer_u8/f32?
 	- deferred renderer
-	- scene graph/multiple cameras
+	- multiple cameras
 	- visibility mask (Scene.MeshInstance.setVisible) camera mask?
 	- move to mgl::layer system
 	- distribution asset pipeline
