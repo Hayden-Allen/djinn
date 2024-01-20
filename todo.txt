@@ -7,7 +7,6 @@
 	- move ma_engine into sound_source_manager/asset_service?
 	- get rid of render service?
 	- animation jumping on loop
-	- set_rot_parent?
 
 - now
 - physics
@@ -30,6 +29,7 @@
 	- vines z-fighting
 	- do everything in camera space to avoid artifacts
 - other
+	- scene graph cycles
 	- scripts OOP stl
 	- more scene_service factoring
 
