@@ -14,6 +14,7 @@ export default class Player extends Entity {
     private idWingShader: ShaderID
     private idWingFrontTexture: TextureID
     private idWingBackTexture: TextureID
+    private idCameraWaypoint: WaypointID
     private wingBoneNames: string[] = [
         "mixamorig:LeftArm",
         "mixamorig:LeftForeArm",
@@ -33,6 +34,7 @@ export default class Player extends Entity {
     private idHitbox: PhysicsID
     private isJumping: boolean = false
     private camAngleX: number = 0
+    private camAngleY: number = 0
     private meshScale: number = 0.1
     private hitboxHeight: number = 1
     private hitboxRadius: number = 0.2
@@ -118,10 +120,13 @@ export default class Player extends Entity {
             Scene.setParent(this.idWingInstance, this.idMainInstance)
 
             if (this.camera) {
-                Scene.setParent(this.camera!.getId(), this.idMainInstance)
-                Scene.setPosZ(this.camera!.getId(), -2)
-                Scene.setRotY(this.camera!.getId(), 180)
-                Scene.setPosY(this.camera!.getId(), 1)
+                const idCam = this.camera!.getId()
+                this.idCameraWaypoint = Scene.Waypoint.create()
+                Scene.setParent(this.idCameraWaypoint, this.idMainInstance)
+                Scene.setParent(idCam, this.idCameraWaypoint)
+                Scene.setPosZ(idCam, -2)
+                Scene.setRotY(idCam, 180)
+                Scene.setPosY(idCam, 1)
             }
         }
     }
@@ -130,6 +135,7 @@ export default class Player extends Entity {
             this.idWingFrontTexture,
             this.idWingBackTexture,
         ])
+        Scene.Waypoint.destroy(this.idCameraWaypoint)
         Scene.MeshInstance.destroy(this.idMainInstance)
         Asset.Mesh.destroy(this.idMainMesh)
         Asset.Shader.destroy(this.idMainShader)
@@ -211,7 +217,7 @@ export default class Player extends Entity {
                 )
             }
             const ry = -2 * Input.rightX()
-            Scene.Physics.setAngularVelocity(this.idHitbox, [0, ry, 0])
+            // Scene.Physics.setAngularVelocity(this.idHitbox, [0, ry, 0])
         }
         // camera
         {
@@ -219,6 +225,9 @@ export default class Player extends Entity {
             if (newCamAngleX < 90 && newCamAngleX > -90)
                 this.camAngleX = newCamAngleX
             Scene.setRotX(this.camera!.getId(), this.camAngleX)
+
+            this.camAngleY += this.camAngleX - dt * 90 * Input.rightX()
+            Scene.setRotY(this.idCameraWaypoint, this.camAngleY)
         }
         Scene.Entity.requestImGui(this.id)
     }

@@ -172,11 +172,11 @@ namespace djinn
 		vec<space::WORLD> vel_total(0, 0, 0);
 		for (u32 i = 0; i < 8 && vel_remaining.length2() > 0; i++)
 		{
-			btKinematicClosestNotMeConvexResultCallback cb(m_rb.get(), u::vec2bullet(up), 0);
+			btKinematicClosestNotMeConvexResultCallback cb(m_rb.get(), u::vec2bullet(up), .5);
 			btTransform from = u::tmat2bullet(mat);
-			from.setOrigin(from.getOrigin() + u::vec2bullet(vel_total * dt));
+			from.setOrigin(from.getOrigin() + u::vec2bullet(vel_total * 1.f / 60));
 			btTransform to = from;
-			to.setOrigin(from.getOrigin() + u::vec2bullet(vel_remaining * dt));
+			to.setOrigin(from.getOrigin() + u::vec2bullet(vel_remaining * 1.f / 60));
 			m_world->convexSweepTest(shape, from, to, cb);
 			if (!cb.hasHit())
 			{
@@ -190,7 +190,7 @@ namespace djinn
 			vec<space::WORLD> const normal = u::bullet2vec<space::WORLD>(cb.m_hitNormalWorld);
 			vel_remaining = vel_after - vel_after.dot(normal) * normal;
 		}
-		vel_total.print();
+
 		m_rb->setLinearVelocity(u::vec2bullet(vel_total));
 	}
 
@@ -223,7 +223,7 @@ namespace djinn
 	{
 		tmat<space::OBJECT, space::WORLD> const& mat = get_world_transform();
 		btTransform const& raw = u::tmat2bullet(mat);
-		m_rb->setWorldTransform(raw);
+		// m_rb->setWorldTransform(raw);
 		m_rb->getMotionState()->setWorldTransform(raw);
 	}
 	void physics_object::copy_transform_from_physics()
