@@ -42,7 +42,8 @@ namespace djinn::u
 	template<space FROM, space TO>
 	btTransform tmat2bullet(tmat<FROM, TO> const& tmat)
 	{
-		btMatrix3x3 rot(tmat.i[0], tmat.i[1], tmat.i[2], tmat.j[0], tmat.j[1], tmat.j[2], tmat.k[0], tmat.k[1], tmat.k[2]);
+		// btMatrix3x3 rot(tmat.i[0], tmat.i[1], tmat.i[2], tmat.j[0], tmat.j[1], tmat.j[2], tmat.k[0], tmat.k[1], tmat.k[2]);
+		btMatrix3x3 rot(tmat.i[0], tmat.j[0], tmat.k[0], tmat.i[1], tmat.j[1], tmat.k[1], tmat.i[2], tmat.j[2], tmat.k[2]);
 		btVector3 trans(tmat.t[0], tmat.t[1], tmat.t[2]);
 		return btTransform(rot, trans);
 	}

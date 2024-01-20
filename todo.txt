@@ -11,7 +11,6 @@
 - now
 - physics
 	- collidenslide
-		- move relative to camera waypoint roty
 		- doesn't work with gravity
 	- collision callbacks (only walk when on ground)
 		- Scene.Physics.bind(PhysicsID, (EntityID | PhormID))
@@ -21,6 +20,7 @@
 	- hatsify physics_object, function order/cleanup
 	- physics_object_manager::update order needs to respect scene graph?
 - graphics
+	- jittery rotation
 	- jittery debug hitbox
 	- bridge/roof sometimes not drawing/no hitbox
 	- implement different lights

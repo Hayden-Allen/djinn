@@ -162,7 +162,7 @@ namespace djinn
 	void physics_object::collide_and_slide(vec<space::OBJECT> const& vel, f32 const dt)
 	{
 		// ASSERT(m_rb->getFlags() & btCollisionObject::CF_KINEMATIC_OBJECT);
-		tmat<space::OBJECT, space::WORLD> const& mat = get_world_transform();
+		tmat<space::OBJECT, space::WORLD> mat = get_world_transform();
 		vec<space::WORLD> const& up = mat.get_j();
 		btCollisionShape const* const raw_shape = m_rb->getCollisionShape();
 		ASSERT(raw_shape->isConvex());
@@ -223,7 +223,7 @@ namespace djinn
 	{
 		tmat<space::OBJECT, space::WORLD> const& mat = get_world_transform();
 		btTransform const& raw = u::tmat2bullet(mat);
-		// m_rb->setWorldTransform(raw);
+		m_rb->setWorldTransform(raw);
 		m_rb->getMotionState()->setWorldTransform(raw);
 	}
 	void physics_object::copy_transform_from_physics()
@@ -232,6 +232,7 @@ namespace djinn
 		m_rb->getMotionState()->getWorldTransform(raw);
 		tmat<space::OBJECT, space::WORLD> const& mat = u::bullet2tmat<space::OBJECT, space::WORLD>(raw);
 		m_transform = get_parent_transform().invert_copy() * mat;
+		u::extract_rot(m_transform, &m_rot[0], &m_rot[1], &m_rot[2]);
 	}
 	void physics_object::check_collisions()
 	{

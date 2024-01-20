@@ -111,7 +111,7 @@ export default class Player extends Entity {
         // scene graph
         {
             Scene.setParent(this.idMainInstance, this.idHitbox)
-            // Scene.setRotY(this.idMainInstance, 180)
+            Scene.setRotY(this.idMainInstance, 180)
             Scene.setPosY(
                 this.idMainInstance,
                 -this.hitboxHeight / 2 - this.hitboxRadius
@@ -121,10 +121,8 @@ export default class Player extends Entity {
 
             if (this.camera) {
                 const idCam = this.camera!.getId()
-                Scene.setParent(idCam, this.idMainInstance)
-                Scene.setPosZ(idCam, -2)
-                Scene.setRotY(idCam, 180)
-                Scene.setPosY(idCam, 1)
+                Scene.setParent(idCam, this.idHitbox)
+                Scene.setPosZ(idCam, 2)
             }
         }
     }
@@ -183,8 +181,8 @@ export default class Player extends Entity {
         }
         // camera
         {
-            this.camAngleY -= dt * 90 * Input.rightX()
-            Scene.setRotY(this.idMainInstance, this.camAngleY)
+            this.camAngleY -= (1 / 60) * 10 * Input.rightX()
+            Scene.setRotY(this.idHitbox, this.camAngleY)
 
             const newCamAngleX = this.camAngleX - dt * 90 * Input.rightY()
             if (newCamAngleX < 90 && newCamAngleX > -90)
