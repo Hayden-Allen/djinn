@@ -27,7 +27,6 @@
 	- vines z-fighting
 	- do shader math in camera space to avoid artifacts
 - other
-	- set_parent crash hot reload
 	- scripts OOP stl
 	- more scene_service factoring
 	- casting sptr<T> to sptr<U>, where T derives from U AND at least one other type, doesn't work properly (correct byte offset to second base class not applied, not sure why)

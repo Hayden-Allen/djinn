@@ -41,6 +41,10 @@ export default class Player extends Entity {
     // private worldPos: number[] = [-36, 103, -39] // top of tower
     private worldPos: number[] = [-29, 30, 39] // ground
     private moveDir: number[] = [0, 0, 0]
+    private velY: number = 0
+    private velYMin: number = -35
+    private velYMax: number = 25
+    private gravity: number = 75
 
     __init(cam: Camera) {
         if (cam) {
@@ -102,7 +106,7 @@ export default class Player extends Entity {
 
             Scene.Physics.setFriction(this.idHitbox, 0)
             Scene.Physics.setMaxSpeedX(this.idHitbox, 5)
-            Scene.Physics.setMaxSpeedY(this.idHitbox, 5)
+            // Scene.Physics.setMaxSpeedY(this.idHitbox, 5)
             Scene.Physics.setMaxSpeedZ(this.idHitbox, 5)
             Scene.Physics.setAngularFactor(this.idHitbox, [0, 0, 0])
             Scene.Physics.setGravity(this.idHitbox, [0, 0, 0])
@@ -181,7 +185,9 @@ export default class Player extends Entity {
         }
         // camera
         {
-            this.camAngleY -= (1 / 60) * 10 * Input.rightX()
+            this.camAngleY -= dt * 90 * Input.rightX()
+            if (this.camAngleY < 0) this.camAngleY += 360
+            if (this.camAngleY > 360) this.camAngleY -= 360
             Scene.setRotY(this.idHitbox, this.camAngleY)
 
             const newCamAngleX = this.camAngleX - dt * 90 * Input.rightY()
@@ -192,16 +198,17 @@ export default class Player extends Entity {
         // movement
         {
             const x = 50 * Input.leftX()
-            const y = 50 * Input.getKeyDiff(Input.KEY_SPACE, Input.KEY_SHIFT)
             const z = 50 * Input.leftY()
-            // const dir = Util.vecConvertSpace(
-            //     this.idHitbox,
-            //     this.idMainInstance,
-            //     [x, y, z]
-            // )
-            const dir = [x, y, z]
+            const newVelY =
+                this.velY +
+                this.velYMax *
+                    Input.getKeyDiff(Input.KEY_SPACE, Input.KEY_SHIFT) -
+                this.gravity * dt
+            this.velY = Math.min(this.velYMax, Math.max(this.velYMin, newVelY))
+            const dir = [x, this.velY, z]
             this.moveDir = dir
             Scene.Physics.collideNSlide(this.idHitbox, dir, dt)
+            // Scene.Physics.setVelocity(this.idHitbox, dir)
 
             let actionSet = false
             if (dir[0] != 0 || dir[2] != 0) {
@@ -212,8 +219,6 @@ export default class Player extends Entity {
                 actionSet = true
             }
             if (Input.getKey(Input.KEY_SPACE)) {
-                // Scene.Physics.setVelocityY(this.idHitbox, 5)
-                // Scene.Physics.applyImpulse(this.idHitbox, [0, dt * 50, 0])
                 Scene.MeshInstance.setAction(this.idMainInstance, "bind")
                 actionSet = true
                 this.isJumping = true
@@ -248,5 +253,11 @@ export default class Player extends Entity {
         )
         ImGui.text("Cam Theta: " + Math.round(this.camAngleY))
         ImGui.text("Move: " + this.moveDir)
+        ImGui.separator()
+
+        ImGui.text("VelY: " + this.velY)
+        this.velYMin = ImGui.sliderFloat("VelYMin: ", this.velYMin, -50, 0)
+        this.velYMax = ImGui.sliderFloat("VelYMax: ", this.velYMax, 0, 50)
+        this.gravity = ImGui.sliderFloat("Gravity: ", this.gravity, 0, 150)
     }
 }

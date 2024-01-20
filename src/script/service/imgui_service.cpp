@@ -24,6 +24,24 @@ namespace djinn
 			ImGui::ColorPicker4(label.c_str(), colors.data());
 			return js::create_f32_array(ctx, 4, colors.data());
 		}
+		JSValue slider_float(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+		{
+			ASSERT(argc == 4);
+			std::string const& msg = js::extract_string(ctx, argv[0]);
+			f32 f = js::extract_f32(ctx, argv[1]);
+			f32 const min = js::extract_f32(ctx, argv[2]);
+			f32 const max = js::extract_f32(ctx, argv[3]);
+			ImGui::Text("%s", msg.c_str());
+			ImGui::SameLine();
+			ImGui::SliderFloat((std::string("##") + msg).c_str(), &f, min, max);
+			return js::create_f32(ctx, f);
+		}
+		JSValue separator(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+		{
+			ASSERT(argc == 0);
+			ImGui::Separator();
+			return JS_UNDEFINED;
+		}
 	} // namespace js::imgui_service
 
 
@@ -43,6 +61,8 @@ namespace djinn
 	{
 		super::register_function(ctx, "text", 1, js::imgui_service::text);
 		super::register_function(ctx, "colorPicker4", 2, js::imgui_service::color_picker4);
+		super::register_function(ctx, "sliderFloat", 4, js::imgui_service::slider_float);
+		super::register_function(ctx, "separator", 0, js::imgui_service::separator);
 	}
 	void imgui_service::begin_frame()
 	{

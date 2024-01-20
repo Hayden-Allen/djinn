@@ -5,7 +5,7 @@
 
 namespace djinn
 {
-	class entity;
+	class tagged;
 
 	class physics_object : public scene_object
 	{
@@ -40,7 +40,6 @@ namespace djinn
 		optr<btRigidBody> m_rb;
 		optr<btMotionState> m_motion;
 		optr<btCollisionShape> m_shape;
-		entity* m_entity;
 		f32 m_max_speed[3] = { 0 };
 	protected:
 		physics_object(id_t const id, sptr<btDiscreteDynamicsWorld> const& world);

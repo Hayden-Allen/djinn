@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "physics_object.h"
 #include "core/util.h"
+#include "scene/tagged.h"
 
 namespace djinn
 {
@@ -118,6 +119,7 @@ namespace djinn
 			m_rb->setFlags(m_rb->getFlags() & ~btCollisionObject::CF_KINEMATIC_OBJECT);
 	}
 
+
 	class btKinematicClosestNotMeConvexResultCallback : public btCollisionWorld::ClosestConvexResultCallback
 	{
 	public:
@@ -198,8 +200,7 @@ namespace djinn
 
 	physics_object::physics_object(id_t const id, sptr<btDiscreteDynamicsWorld> const& world) :
 		scene_object(id),
-		m_world(world),
-		m_entity(nullptr)
+		m_world(world)
 	{
 		for (u32 i = 0; i < 3; i++)
 			m_max_speed[i] = MAX_VALUE_T(f32);
