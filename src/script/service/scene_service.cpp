@@ -730,7 +730,7 @@ namespace djinn::js::scene_service
 		for (u64 i = 0; i < results.size(); i++)
 		{
 			JSValue entry = JS_NewArray(ctx);
-			JSValue point = js::create_f32_array(ctx, 3, results[i].point.e);
+			JSValue point = js::create_f32_array(ctx, 3, results[i].pos.e);
 			JSValue normal = js::create_f32_array(ctx, 3, results[i].normal.e);
 			JS_SetPropertyInt64(ctx, entry, 0, point);
 			JS_SetPropertyInt64(ctx, entry, 1, normal);

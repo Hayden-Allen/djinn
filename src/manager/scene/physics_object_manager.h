@@ -10,9 +10,11 @@ namespace djinn
 
 	struct raycast_result
 	{
-		point<space::WORLD> point;
+		point<space::WORLD> pos;
 		direction<space::WORLD> normal;
 		f32 frac;
+
+		raycast_result(point<space::WORLD> const& p, direction<space::WORLD> const& n, f32 const f) : pos(p), normal(n), frac(f) {}
 
 		bool operator<(raycast_result const& o) const
 		{
