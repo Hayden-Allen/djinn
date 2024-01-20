@@ -3,6 +3,7 @@
 #include "script/js.h"
 #include "core/util.h"
 #include "core/constants.h"
+#include "scene_service.h"
 
 namespace djinn::js::util_service
 {
@@ -29,6 +30,18 @@ namespace djinn::js::util_service
 		}
 		return ret;
 	}
+	JSValue vec_convert_space(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 3);
+		id_t const id_from = js::extract_id(ctx, argv[0]);
+		id_t const id_to = js::extract_id(ctx, argv[1]);
+		vec<space::OBJECT> const& from_vec = js::extract_vec<space::OBJECT>(ctx, argv[2]);
+		sptr<scene_object> from = scene_service::get_scene_object(id_from);
+		sptr<scene_object> to = scene_service::get_scene_object(id_to);
+		vec<space::WORLD> const world_vec = from->get_world_transform() * from_vec;
+		vec<space::OBJECT> const to_vec = to->get_world_transform().invert_copy() * world_vec;
+		return js::create_f32_array(ctx, 3, to_vec.e);
+	}
 } // namespace djinn::js::util_service
 
 namespace djinn
@@ -42,6 +55,7 @@ namespace djinn
 	{
 		super::register_function(ctx, "makeTexturePath", 1, js::util_service::make_texture_path);
 		super::register_function(ctx, "listFiles", 1, js::util_service::list_files);
+		super::register_function(ctx, "vecConvertSpace", 3, js::util_service::vec_convert_space);
 	}
 
 

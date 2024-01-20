@@ -11,28 +11,26 @@
 - now
 - physics
 	- collidenslide
+		- move relative to camera waypoint roty
 		- doesn't work with gravity
 	- collision callbacks (only walk when on ground)
-		- entity and phorm derive from tagged_scene_object
 		- Scene.Physics.bind(PhysicsID, (EntityID | PhormID))
 		- the physics_object gets a pointer to the entity
 		- in physics_object_manager::update, after m_world->stepSimulation, each object with an entity pointer is tested via m_world->contactTest
 		- addSingleResult forwards everything to __collide()
 	- hatsify physics_object, function order/cleanup
-	- fall through bvh
 	- physics_object_manager::update order needs to respect scene graph?
 - graphics
-	- buggy local + parent rotation
 	- jittery debug hitbox
 	- bridge/roof sometimes not drawing/no hitbox
 	- implement different lights
 	- vines z-fighting
-	- do everything in camera space to avoid artifacts
+	- do shader math in camera space to avoid artifacts
 - other
-	- scene graph cycles
+	- set_parent crash hot reload
 	- scripts OOP stl
 	- more scene_service factoring
-	- casting sptr<T> to sptr<U>, where T derives from U AND at least one other type, doesn't work properly (correct offset to base class not applied, not sure why)
+	- casting sptr<T> to sptr<U>, where T derives from U AND at least one other type, doesn't work properly (correct byte offset to second base class not applied, not sure why)
 
 - later
 	- retained_buffer::load => buffer::load (buffer doesn't get save though)

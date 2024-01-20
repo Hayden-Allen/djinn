@@ -10,6 +10,13 @@ namespace djinn::js::input_service
 		s32 const key = js::extract_s32(ctx, argv[0]);
 		return js::create_u32(ctx, ::djinn::input_service::get_context()->get_key(key));
 	}
+	JSValue get_key_diff(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		s32 const key1 = js::extract_s32(ctx, argv[0]);
+		s32 const key2 = js::extract_s32(ctx, argv[1]);
+		return js::create_f32(ctx, (f32)::djinn::input_service::get_context()->get_key(key1) - (f32)::djinn::input_service::get_context()->get_key(key2));
+	}
 	JSValue left_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 0);
@@ -44,6 +51,7 @@ namespace djinn
 	void input_service::register_functions(JSContext* const ctx)
 	{
 		super::register_function(ctx, "getKey", 1, js::input_service::get_key);
+		super::register_function(ctx, "getKeyDiff", 2, js::input_service::get_key_diff);
 		super::register_function(ctx, "leftX", 0, js::input_service::left_x);
 		super::register_function(ctx, "leftY", 0, js::input_service::left_y);
 		super::register_function(ctx, "rightX", 0, js::input_service::right_x);

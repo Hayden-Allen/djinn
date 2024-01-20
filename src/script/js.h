@@ -46,6 +46,13 @@ namespace djinn::js
 			JS_FreeValue(ctx, element);
 		}
 	}
+	template<space SPACE>
+	vec<SPACE> extract_vec(JSContext* const ctx, JSValue const& val)
+	{
+		std::vector<f32> const& arr = extract_f32_array(ctx, val);
+		ASSERT(arr.size() == 3);
+		return vec<SPACE>(arr[0], arr[1], arr[2]);
+	}
 
 
 

@@ -2,7 +2,7 @@ import "./lib/djinn.d"
 import Entity from "./lib/Entity"
 import Camera from "./lib/Camera"
 
-const { Asset, Scene, Input, ImGui } = djinn
+const { Asset, Scene, Input, ImGui, Util } = djinn
 
 export default class Player extends Entity {
     private camera?: Camera
@@ -14,7 +14,6 @@ export default class Player extends Entity {
     private idWingShader: ShaderID
     private idWingFrontTexture: TextureID
     private idWingBackTexture: TextureID
-    private idCameraWaypoint: WaypointID
     private wingBoneNames: string[] = [
         "mixamorig:LeftArm",
         "mixamorig:LeftForeArm",
@@ -34,13 +33,14 @@ export default class Player extends Entity {
     private idHitbox: PhysicsID
     private isJumping: boolean = false
     private camAngleX: number = 0
-    private camAngleY: number = 0
+    private camAngleY: number = 180
     private meshScale: number = 0.1
     private hitboxHeight: number = 1
     private hitboxRadius: number = 0.2
 
     // private worldPos: number[] = [-36, 103, -39] // top of tower
     private worldPos: number[] = [-29, 30, 39] // ground
+    private moveDir: number[] = [0, 0, 0]
 
     __init(cam: Camera) {
         if (cam) {
@@ -111,7 +111,7 @@ export default class Player extends Entity {
         // scene graph
         {
             Scene.setParent(this.idMainInstance, this.idHitbox)
-            Scene.setRotY(this.idMainInstance, 180)
+            // Scene.setRotY(this.idMainInstance, 180)
             Scene.setPosY(
                 this.idMainInstance,
                 -this.hitboxHeight / 2 - this.hitboxRadius
@@ -121,9 +121,7 @@ export default class Player extends Entity {
 
             if (this.camera) {
                 const idCam = this.camera!.getId()
-                this.idCameraWaypoint = Scene.Waypoint.create()
-                Scene.setParent(this.idCameraWaypoint, this.idMainInstance)
-                Scene.setParent(idCam, this.idCameraWaypoint)
+                Scene.setParent(idCam, this.idMainInstance)
                 Scene.setPosZ(idCam, -2)
                 Scene.setRotY(idCam, 180)
                 Scene.setPosY(idCam, 1)
@@ -135,7 +133,6 @@ export default class Player extends Entity {
             this.idWingFrontTexture,
             this.idWingBackTexture,
         ])
-        Scene.Waypoint.destroy(this.idCameraWaypoint)
         Scene.MeshInstance.destroy(this.idMainInstance)
         Asset.Mesh.destroy(this.idMainMesh)
         Asset.Shader.destroy(this.idMainShader)
@@ -184,17 +181,32 @@ export default class Player extends Entity {
                 frontWingVerts.concat(backWingVerts)
             )
         }
+        // camera
+        {
+            this.camAngleY -= dt * 90 * Input.rightX()
+            Scene.setRotY(this.idMainInstance, this.camAngleY)
+
+            const newCamAngleX = this.camAngleX - dt * 90 * Input.rightY()
+            if (newCamAngleX < 90 && newCamAngleX > -90)
+                this.camAngleX = newCamAngleX
+            Scene.setRotX(this.camera!.getId(), this.camAngleX)
+        }
         // movement
         {
-            const dx = 50 * Input.leftX()
-            const dy =
-                50 *
-                (Input.getKey(Input.KEY_SPACE) - Input.getKey(Input.KEY_SHIFT))
-            const dz = 50 * Input.leftY()
-            Scene.Physics.collideNSlide(this.idHitbox, [dx, dy, dz], dt)
+            const x = 50 * Input.leftX()
+            const y = 50 * Input.getKeyDiff(Input.KEY_SPACE, Input.KEY_SHIFT)
+            const z = 50 * Input.leftY()
+            // const dir = Util.vecConvertSpace(
+            //     this.idHitbox,
+            //     this.idMainInstance,
+            //     [x, y, z]
+            // )
+            const dir = [x, y, z]
+            this.moveDir = dir
+            Scene.Physics.collideNSlide(this.idHitbox, dir, dt)
 
             let actionSet = false
-            if (dx != 0 || dz != 0) {
+            if (dir[0] != 0 || dir[2] != 0) {
                 Scene.MeshInstance.setAction(
                     this.idMainInstance,
                     "run_Armature"
@@ -216,18 +228,6 @@ export default class Player extends Entity {
                     "idle_Armature"
                 )
             }
-            const ry = -2 * Input.rightX()
-            // Scene.Physics.setAngularVelocity(this.idHitbox, [0, ry, 0])
-        }
-        // camera
-        {
-            const newCamAngleX = this.camAngleX - dt * 90 * Input.rightY()
-            if (newCamAngleX < 90 && newCamAngleX > -90)
-                this.camAngleX = newCamAngleX
-            Scene.setRotX(this.camera!.getId(), this.camAngleX)
-
-            this.camAngleY += this.camAngleX - dt * 90 * Input.rightX()
-            Scene.setRotY(this.idCameraWaypoint, this.camAngleY)
         }
         Scene.Entity.requestImGui(this.id)
     }
@@ -248,5 +248,7 @@ export default class Player extends Entity {
         ImGui.text(
             "Speed: " + Math.round(Scene.Physics.getSpeed(this.idHitbox))
         )
+        ImGui.text("Cam Theta: " + Math.round(this.camAngleY))
+        ImGui.text("Move: " + this.moveDir)
     }
 }

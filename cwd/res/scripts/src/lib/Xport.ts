@@ -25,15 +25,6 @@ export default class Xport {
             vertexShader: "sky.vert",
             fragmentShader: "sky.frag",
         })
-        for (const id of this.idPhorms) {
-            console.log(Scene.Tagged.getTags(id))
-        }
-        for (const id of this.idLights) {
-            console.log(Scene.Tagged.getTags(id))
-        }
-        for (const id of this.idWaypoints) {
-            console.log(Scene.Tagged.getTags(id))
-        }
     }
     destroy() {
         Asset.Texture.destroyAll(this.idTextures)

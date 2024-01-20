@@ -1,5 +1,6 @@
 declare interface _Input {
     getKey(key: number): number
+    getKeyDiff(key1: number, key2: number): number
     leftX(): number
     leftY(): number
     rightX(): number

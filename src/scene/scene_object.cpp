@@ -9,9 +9,17 @@ namespace djinn
 
 
 
-	void scene_object::set_parent(sptr<scene_object> parent)
+	void scene_object::set_parent(scene_object* const parent)
 	{
-		m_parent = parent.get();
+		if (m_parent)
+		{
+			m_parent->m_children.erase(this);
+		}
+		m_parent = parent;
+		if (parent)
+		{
+			parent->m_children.insert(this);
+		}
 	}
 	tmat<space::OBJECT, space::PARENT> scene_object::get_transform() const
 	{

@@ -10,7 +10,7 @@ namespace djinn
 		DCM(scene_object);
 		virtual ~scene_object();
 	public:
-		void set_parent(sptr<scene_object> parent);
+		void set_parent(scene_object* const parent);
 		tmat<space::OBJECT, space::PARENT> get_transform() const;
 		tmat<space::PARENT, space::WORLD> get_parent_transform() const;
 		tmat<space::OBJECT, space::WORLD> get_world_transform() const;
@@ -78,6 +78,7 @@ namespace djinn
 	protected:
 		tmat<space::OBJECT, space::PARENT> m_transform;
 		scene_object* m_parent;
+		std::unordered_set<scene_object*> m_children;
 		f32 m_rot[3] = { 0.f }; // radians
 	protected:
 		scene_object(id_t const id);

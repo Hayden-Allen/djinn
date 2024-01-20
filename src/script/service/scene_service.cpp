@@ -893,8 +893,15 @@ namespace djinn::js::scene_service
 		id_t const src_id = js::extract_id(ctx, argv[0]);
 		id_t const dst_id = js::extract_id(ctx, argv[1]);
 		sptr<scene_object> src = ::djinn::scene_service::get_scene_object(src_id);
-		sptr<scene_object> dst = ::djinn::scene_service::get_scene_object(dst_id);
-		src->set_parent(dst);
+		if (dst_id != 0)
+		{
+			sptr<scene_object> dst = ::djinn::scene_service::get_scene_object(dst_id);
+			src->set_parent(dst.get());
+		}
+		else
+		{
+			src->set_parent(nullptr);
+		}
 		return JS_UNDEFINED;
 	}
 	JSValue get_pos(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
