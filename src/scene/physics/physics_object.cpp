@@ -106,6 +106,93 @@ namespace djinn
 		ASSERT(index < 3);
 		m_max_speed[index] = max;
 	}
+	void physics_object::set_gravity(vec<space::WORLD> const& force)
+	{
+		m_rb->setGravity(u::vec2bullet(force));
+	}
+	void physics_object::set_kinematic(bool const is_kinematic)
+	{
+		if (is_kinematic)
+			m_rb->setFlags(m_rb->getFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+		else
+			m_rb->setFlags(m_rb->getFlags() & ~btCollisionObject::CF_KINEMATIC_OBJECT);
+	}
+
+	class btKinematicClosestNotMeConvexResultCallback : public btCollisionWorld::ClosestConvexResultCallback
+	{
+	public:
+		btKinematicClosestNotMeConvexResultCallback(btCollisionObject* me, btVector3 const& up, btScalar minSlopeDot) :
+			btCollisionWorld::ClosestConvexResultCallback(btVector3(0.0, 0.0, 0.0), btVector3(0.0, 0.0, 0.0)), m_me(me), m_up(up), m_minSlopeDot(minSlopeDot)
+		{
+		}
+
+		virtual btScalar addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace)
+		{
+			if (convexResult.m_hitCollisionObject == m_me)
+				return btScalar(1.0);
+
+			if (!convexResult.m_hitCollisionObject->hasContactResponse())
+				return btScalar(1.0);
+
+			btVector3 hitNormalWorld;
+			if (normalInWorldSpace)
+			{
+				hitNormalWorld = convexResult.m_hitNormalLocal;
+			}
+			else
+			{
+				/// need to transform normal into worldspace
+				hitNormalWorld = convexResult.m_hitCollisionObject->getWorldTransform().getBasis() * convexResult.m_hitNormalLocal;
+			}
+
+			btScalar dotUp = m_up.dot(hitNormalWorld);
+			if (dotUp < m_minSlopeDot)
+			{
+				return btScalar(1.0);
+			}
+
+			return ClosestConvexResultCallback::addSingleResult(convexResult, normalInWorldSpace);
+		}
+	protected:
+		btCollisionObject* m_me;
+		const btVector3 m_up;
+		btScalar m_minSlopeDot;
+	};
+
+	void physics_object::collide_and_slide(vec<space::OBJECT> const& vel, f32 const dt)
+	{
+		// ASSERT(m_rb->getFlags() & btCollisionObject::CF_KINEMATIC_OBJECT);
+		tmat<space::OBJECT, space::WORLD> const& mat = get_world_transform();
+		vec<space::WORLD> const& up = mat.get_j();
+		btCollisionShape const* const raw_shape = m_rb->getCollisionShape();
+		ASSERT(raw_shape->isConvex());
+		btConvexShape const* const shape = (btConvexShape const*)raw_shape;
+
+		vec<space::WORLD> vel_remaining = mat * vel;
+		vec<space::WORLD> vel_total(0, 0, 0);
+		for (u32 i = 0; i < 8 && vel_remaining.length2() > 0; i++)
+		{
+			btKinematicClosestNotMeConvexResultCallback cb(m_rb.get(), u::vec2bullet(up), 0);
+			btTransform from = u::tmat2bullet(mat);
+			from.setOrigin(from.getOrigin() + u::vec2bullet(vel_total * dt));
+			btTransform to = from;
+			to.setOrigin(from.getOrigin() + u::vec2bullet(vel_remaining * dt));
+			m_world->convexSweepTest(shape, from, to, cb);
+			if (!cb.hasHit())
+			{
+				vel_total += vel_remaining;
+				break;
+			}
+			vec<space::WORLD> const vel_before = vel_remaining * std::max(c::EPSILON, cb.m_closestHitFraction);
+			vel_total += vel_before;
+
+			vec<space::WORLD> const vel_after = vel_remaining - vel_before;
+			vec<space::WORLD> const normal = u::bullet2vec<space::WORLD>(cb.m_hitNormalWorld);
+			vel_remaining = vel_after - vel_after.dot(normal) * normal;
+		}
+		vel_total.print();
+		m_rb->setLinearVelocity(u::vec2bullet(vel_total));
+	}
 
 
 
@@ -136,7 +223,7 @@ namespace djinn
 	{
 		tmat<space::OBJECT, space::WORLD> const& mat = get_world_transform();
 		btTransform const& raw = u::tmat2bullet(mat);
-		// m_rb->setWorldTransform(raw);
+		m_rb->setWorldTransform(raw);
 		m_rb->getMotionState()->setWorldTransform(raw);
 	}
 	void physics_object::copy_transform_from_physics()

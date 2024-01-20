@@ -757,6 +757,33 @@ namespace djinn::js::scene_service
 		direction<space::OBJECT> const otan = mat.invert_copy() * wtan;
 		return js::create_f32_array(ctx, 3, otan.e);
 	}
+	JSValue set_gravity(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::vector<f32> const& force = js::extract_f32_array(ctx, argv[1]);
+		ASSERT(force.size() == 3);
+		::djinn::scene_service::get_physics_object_manager()->get(id)->set_gravity(vec<space::WORLD>(force[0], force[1], force[2]));
+		return JS_UNDEFINED;
+	}
+	JSValue set_kinematic(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		bool const is_kinematic = js::extract_bool(ctx, argv[1]);
+		::djinn::scene_service::get_physics_object_manager()->get(id)->set_kinematic(is_kinematic);
+		return JS_UNDEFINED;
+	}
+	JSValue collide_and_slide(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 3);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::vector<f32> const& v = js::extract_f32_array(ctx, argv[1]);
+		f32 const dt = js::extract_f32(ctx, argv[2]);
+		ASSERT(v.size() == 3);
+		::djinn::scene_service::get_physics_object_manager()->get(id)->collide_and_slide(vec<space::OBJECT>(v[0], v[1], v[2]), dt);
+		return JS_UNDEFINED;
+	}
 	JSValue destroy_physics_object(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
@@ -1241,7 +1268,7 @@ namespace djinn
 			super::register_function(ctx, "Physics", "setVelocityY", 2, js::scene_service::set_velocity_y);
 			super::register_function(ctx, "Physics", "setVelocityZ", 2, js::scene_service::set_velocity_z);
 			super::register_function(ctx, "Physics", "getVelocityWorld", 1, js::scene_service::get_velocity_world);
-			super::register_function(ctx, "Physics", "getSpeedWorld", 1, js::scene_service::get_speed_world);
+			super::register_function(ctx, "Physics", "getSpeedWorld", 1, js::scene_service::get_speed);
 			super::register_function(ctx, "Physics", "setVelocityWorld", 2, js::scene_service::set_velocity_world);
 			super::register_function(ctx, "Physics", "setVelocityXWorld", 2, js::scene_service::set_velocity_x_world);
 			super::register_function(ctx, "Physics", "setVelocityYWorld", 2, js::scene_service::set_velocity_y_world);
@@ -1258,6 +1285,9 @@ namespace djinn
 			super::register_function(ctx, "Physics", "setMaxSpeedZ", 2, js::scene_service::set_max_speed_z);
 			super::register_function(ctx, "Physics", "castRay", 3, js::scene_service::cast_ray);
 			super::register_function(ctx, "Physics", "getNormalTangent", 3, js::scene_service::get_normal_tangent);
+			super::register_function(ctx, "Physics", "setGravity", 2, js::scene_service::set_gravity);
+			super::register_function(ctx, "Physics", "setKinematic", 2, js::scene_service::set_kinematic);
+			super::register_function(ctx, "Physics", "collideNSlide", 3, js::scene_service::collide_and_slide);
 			super::register_function(ctx, "Physics", "destroy", 1, js::scene_service::destroy_physics_object);
 			super::register_function(ctx, "Physics", "destroyAll", 1, js::scene_service::destroy_all_physics_object);
 		}

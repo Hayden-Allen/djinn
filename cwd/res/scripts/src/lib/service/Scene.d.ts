@@ -115,6 +115,9 @@ declare interface _Scene_Physics {
         dirWorld: number[],
         idHitbox: PhysicsID
     ): number[]
+    setGravity(id: PhysicsID, force: number[]): void
+    setKinematic(id: PhysicsID, isKinematic: boolean): void
+    collideNSlide(id: PhysicsID, velLocal: number[], dt: number): void
     destroy(id: PhysicsID): void
     destroyAll(ids: PhysicsID[]): void
 }
@@ -173,10 +176,10 @@ export declare interface _Scene {
     setScaleX(id: SceneID, x: number): void
     setScaleY(id: SceneID, y: number): void
     setScaleZ(id: SceneID, z: number): void
-    // setPosWorld(id: SceneID, xyz: number[]): void
-    // setPosXWorld(id: SceneID, x: number): void
-    // setPosYWorld(id: SceneID, y: number): void
-    // setPosZWorld(id: SceneID, z: number): void
+    setPosWorld(id: SceneID, xyz: number[]): void
+    setPosXWorld(id: SceneID, x: number): void
+    setPosYWorld(id: SceneID, y: number): void
+    setPosZWorld(id: SceneID, z: number): void
     // setRotWorld(id: SceneID, xyz: number[]): void
     // setRotXWorld(id: SceneID, x: number): void
     // setRotYWorld(id: SceneID, y: number): void
