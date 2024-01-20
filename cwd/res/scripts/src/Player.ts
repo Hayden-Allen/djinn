@@ -104,13 +104,8 @@ export default class Player extends Entity {
                 this.hitboxHeight
             )
 
-            Scene.Physics.setFriction(this.idHitbox, 0)
-            Scene.Physics.setMaxSpeedX(this.idHitbox, 5)
-            // Scene.Physics.setMaxSpeedY(this.idHitbox, 5)
-            Scene.Physics.setMaxSpeedZ(this.idHitbox, 5)
-            Scene.Physics.setAngularFactor(this.idHitbox, [0, 0, 0])
             Scene.Physics.setGravity(this.idHitbox, [0, 0, 0])
-            // Scene.Physics.setKinematic(this.idHitbox, true)
+            Scene.Physics.setAngularFactor(this.idHitbox, [0, 0, 0])
         }
         // scene graph
         {
@@ -185,7 +180,7 @@ export default class Player extends Entity {
         }
         // camera
         {
-            this.camAngleY -= dt * 90 * Input.rightX()
+            this.camAngleY -= dt * 180 * Input.rightX()
             if (this.camAngleY < 0) this.camAngleY += 360
             if (this.camAngleY > 360) this.camAngleY -= 360
             Scene.setRotY(this.idHitbox, this.camAngleY)
@@ -197,8 +192,8 @@ export default class Player extends Entity {
         }
         // movement
         {
-            const x = 50 * Input.leftX()
-            const z = 50 * Input.leftY()
+            const x = 15 * Input.leftX()
+            const z = 15 * Input.leftY()
             const newVelY =
                 this.velY +
                 this.velYMax *
@@ -206,9 +201,9 @@ export default class Player extends Entity {
                 this.gravity * dt
             this.velY = Math.min(this.velYMax, Math.max(this.velYMin, newVelY))
             const dir = [x, this.velY, z]
-            this.moveDir = dir
             Scene.Physics.collideNSlide(this.idHitbox, dir, dt)
             // Scene.Physics.setVelocity(this.idHitbox, dir)
+            this.moveDir = dir
 
             let actionSet = false
             if (dir[0] != 0 || dir[2] != 0) {
@@ -252,7 +247,16 @@ export default class Player extends Entity {
             "Speed: " + Math.round(Scene.Physics.getSpeed(this.idHitbox))
         )
         ImGui.text("Cam Theta: " + Math.round(this.camAngleY))
-        ImGui.text("Move: " + this.moveDir)
+        let moveWorld = Scene.Physics.getVelocityWorld(this.idHitbox)
+        const length = Math.sqrt(
+            moveWorld[0] ** 2 + moveWorld[1] ** 2 + moveWorld[2] ** 2
+        )
+        moveWorld = [
+            moveWorld[0] / length,
+            moveWorld[1] / length,
+            moveWorld[2] / length,
+        ]
+        ImGui.text("Move World: " + moveWorld)
         ImGui.separator()
 
         ImGui.text("VelY: " + this.velY)

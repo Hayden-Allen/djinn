@@ -10,8 +10,6 @@
 
 - now
 - physics
-	- collidenslide
-		- doesn't work with gravity
 	- collision callbacks (only walk when on ground)
 		- Scene.Physics.bind(PhysicsID, (EntityID | PhormID))
 		- the physics_object gets a pointer to the entity
