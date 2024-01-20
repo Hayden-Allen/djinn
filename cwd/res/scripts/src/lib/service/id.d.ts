@@ -14,7 +14,6 @@ declare type _PhysicsID = number & { __tag: "Physics" }
 declare type _LightID = number & { __tag: "Light" }
 declare type _WaypointID = number & { __tag: "Waypoint" }
 declare type _SoundEmitterID = number & { __tag: "SoundEmitter" }
-declare type _SceneID = MeshInstanceID | EntityID | CameraID | PhormID | PhysicsID | LightID | WaypointID | SoundEmitterID
 
 declare type MeshID = _MeshID | undefined
 declare type ShaderID = _ShaderID | undefined
@@ -30,4 +29,20 @@ declare type PhysicsID = _PhysicsID | undefined
 declare type LightID = _LightID | undefined
 declare type WaypointID = _WaypointID | undefined
 declare type SoundEmitterID = _SoundEmitterID | undefined
-declare type SceneID = _SceneID | undefined
+declare type TaggedID =
+    | EntityID
+    | CameraID
+    | PhormID
+    | LightID
+    | WaypointID
+    | undefined
+declare type SceneID =
+    | MeshInstanceID
+    | EntityID
+    | CameraID
+    | PhormID
+    | PhysicsID
+    | LightID
+    | WaypointID
+    | SoundEmitterID
+    | undefined

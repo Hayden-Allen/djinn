@@ -57,6 +57,40 @@ namespace djinn::js::scene_service
 	}
 
 	//
+	// TAGGED
+	//
+	JSValue add_tag(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::string const& tag = js::extract_string(ctx, argv[1]);
+		::djinn::scene_service::get_tagged(id)->add_tag(tag);
+		return JS_UNDEFINED;
+	}
+	JSValue has_tag(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::string const& tag = js::extract_string(ctx, argv[1]);
+		return js::create_bool(ctx, ::djinn::scene_service::get_tagged(id)->has_tag(tag));
+	}
+	JSValue get_tags(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::unordered_set<std::string> const& tags = ::djinn::scene_service::get_tagged(id)->get_tags();
+		return js::create_string_array(ctx, tags.begin(), tags.end());
+	}
+	JSValue remove_tag(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		std::string const& tag = js::extract_string(ctx, argv[1]);
+		::djinn::scene_service::get_tagged(id)->remove_tag(tag);
+		return JS_UNDEFINED;
+	}
+
+	//
 	//	WAYPOINT
 	//
 	JSValue create_waypoint(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -1205,6 +1239,13 @@ namespace djinn
 	}
 	void scene_service::register_functions(JSContext* const ctx)
 	{
+		// TAGGED
+		{
+			super::register_function(ctx, "Tagged", "addTag", 2, js::scene_service::add_tag);
+			super::register_function(ctx, "Tagged", "hasTag", 2, js::scene_service::has_tag);
+			super::register_function(ctx, "Tagged", "getTags", 1, js::scene_service::get_tags);
+			super::register_function(ctx, "Tagged", "removeTag", 2, js::scene_service::remove_tag);
+		}
 		// WAYPOINT
 		{
 			super::register_function(ctx, "Waypoint", "create", 0, js::scene_service::create_waypoint);
@@ -1486,6 +1527,18 @@ namespace djinn
 		else if (get_waypoint_manager()->has(id))
 			return get_waypoint_manager()->get(id);
 		return get_mesh_instance_manager()->get(id);
+	}
+	tagged* scene_service::get_tagged(id_t const id)
+	{
+		if (get_entity_manager()->has(id))
+			return get_entity_manager()->get(id).get();
+		else if (get_camera_entity_manager()->has(id))
+			return get_camera_entity_manager()->get(id).get();
+		else if (get_phorm_manager()->has(id))
+			return get_phorm_manager()->get(id).get();
+		else if (get_light_manager()->has(id))
+			return get_light_manager()->get(id).get();
+		return get_waypoint_manager()->get(id).get();
 	}
 
 

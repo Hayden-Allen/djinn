@@ -54,36 +54,6 @@ namespace djinn::js
 	{
 		return extract_u32(ctx, val);
 	}
-	JSValue create_id(JSContext* const ctx, u32 const id)
-	{
-		return JS_NewUint32(ctx, id);
-	}
-	JSValue create_bool(JSContext* const ctx, bool const b)
-	{
-		return JS_NewBool(ctx, (s32)b);
-	}
-	JSValue create_u32(JSContext* const ctx, u32 const u)
-	{
-		return JS_NewUint32(ctx, u);
-	}
-	JSValue create_f32(JSContext* const ctx, f32 const f)
-	{
-		return JS_NewFloat64(ctx, f);
-	}
-	JSValue create_f32_array(JSContext* const ctx, s64 const count, f32 const* const f)
-	{
-		JSValue arr = JS_NewArray(ctx);
-		for (s64 i = 0; i < count; i++)
-			JS_SetPropertyInt64(ctx, arr, i, create_f32(ctx, f[i]));
-		return arr;
-	}
-	JSValue create_id_array(JSContext* const ctx, s64 const count, id_t const* const ids)
-	{
-		JSValue arr = JS_NewArray(ctx);
-		for (s64 i = 0; i < count; i++)
-			JS_SetPropertyInt64(ctx, arr, i, create_id(ctx, ids[i]));
-		return arr;
-	}
 	s32 extract_s32(JSContext* const ctx, JSValue const& val)
 	{
 		return helper::extract<s32, s32>(ctx, val, JS_ToInt32);
@@ -124,6 +94,40 @@ namespace djinn::js
 		}
 		js_free(ctx, prop_enum);
 		return result;
+	}
+	JSValue create_id(JSContext* const ctx, u32 const id)
+	{
+		return JS_NewUint32(ctx, id);
+	}
+	JSValue create_bool(JSContext* const ctx, bool const b)
+	{
+		return JS_NewBool(ctx, (s32)b);
+	}
+	JSValue create_u32(JSContext* const ctx, u32 const u)
+	{
+		return JS_NewUint32(ctx, u);
+	}
+	JSValue create_f32(JSContext* const ctx, f32 const f)
+	{
+		return JS_NewFloat64(ctx, f);
+	}
+	JSValue create_string(JSContext* const ctx, std::string const& s)
+	{
+		return JS_NewString(ctx, s.c_str());
+	}
+	JSValue create_f32_array(JSContext* const ctx, s64 const count, f32 const* const f)
+	{
+		JSValue arr = JS_NewArray(ctx);
+		for (s64 i = 0; i < count; i++)
+			JS_SetPropertyInt64(ctx, arr, i, create_f32(ctx, f[i]));
+		return arr;
+	}
+	JSValue create_id_array(JSContext* const ctx, s64 const count, id_t const* const ids)
+	{
+		JSValue arr = JS_NewArray(ctx);
+		for (s64 i = 0; i < count; i++)
+			JS_SetPropertyInt64(ctx, arr, i, create_id(ctx, ids[i]));
+		return arr;
 	}
 } // namespace djinn::js
 

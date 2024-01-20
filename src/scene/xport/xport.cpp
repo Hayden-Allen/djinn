@@ -7,10 +7,6 @@ namespace djinn
 	{
 		return m_name;
 	}
-	bool xport::has_tag(std::string const& tag) const
-	{
-		return m_tags.contains(tag);
-	}
 
 
 

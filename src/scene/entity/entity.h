@@ -1,13 +1,14 @@
 #pragma once
 #include "pch.h"
 #include "scene/scene_object.h"
+#include "scene/tagged.h"
 
 namespace djinn
 {
 	template<typename T>
 	class entity_manager_base;
 
-	class entity : public scene_object
+	class entity : public scene_object, public tagged
 	{
 		friend class entity_manager_base<entity>;
 	public:

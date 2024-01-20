@@ -36,6 +36,7 @@ namespace djinn
 		static void draw_ui();
 		static void draw_imgui();
 		static sptr<scene_object> get_scene_object(id_t const id);
+		static tagged* get_tagged(id_t const id);
 	private:
 		JSRuntime* const m_runtime;
 		entity_manager m_entity_manager;

@@ -127,6 +127,12 @@ declare interface _Scene_SoundEmitter {
     stop(id: SoundEmitterID): void
     destroy(id: SoundEmitterID): void
 }
+declare interface _Scene_Tagged {
+    addTag(id: TaggedID, tag: string): void
+    hasTag(id: TaggedID, tag: string): boolean
+    getTags(id: TaggedID): string[]
+    removeTag(id: TaggedID, tag: string): void
+}
 export declare interface _Scene {
     Camera: _Scene_Camera
     Entity: _Scene_Entity
@@ -135,6 +141,7 @@ export declare interface _Scene {
     Phorm: _Scene_Phorm
     Physics: _Scene_Physics
     SoundEmitter: _Scene_SoundEmitter
+    Tagged: _Scene_Tagged
     Waypoint: _Scene_Waypoint
     Xport: _Scene_Xport
 

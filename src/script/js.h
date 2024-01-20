@@ -20,8 +20,21 @@ namespace djinn::js
 	extern JSValue create_bool(JSContext* const ctx, bool const b);
 	extern JSValue create_u32(JSContext* const ctx, u32 const u);
 	extern JSValue create_f32(JSContext* const ctx, f32 const f);
+	extern JSValue create_string(JSContext* const ctx, std::string const& s);
 	extern JSValue create_f32_array(JSContext* const ctx, s64 const count, f32 const* const f);
 	extern JSValue create_id_array(JSContext* const ctx, s64 const count, id_t const* const ids);
+	template<typename IT>
+	extern JSValue create_string_array(JSContext* const ctx, IT const& begin, IT const& end)
+	{
+		JSValue arr = JS_NewArray(ctx);
+		s64 i = 0;
+		for (IT it = begin; it != end; it++)
+		{
+			JS_SetPropertyInt64(ctx, arr, i, create_string(ctx, *it));
+			i++;
+		}
+		return arr;
+	}
 	template<typename FN>
 	void array_for(JSContext* const ctx, JSValue const& arr, FN const& fn)
 	{
