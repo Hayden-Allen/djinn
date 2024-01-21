@@ -33,7 +33,7 @@ export default class Player extends Entity {
     private idHitbox: PhysicsID
     private isJumping: boolean = false
     private camAngleX: number = 0
-    private camAngleY: number = 180
+    private camAngleY: number = 0
     private meshScale: number = 0.1
     private hitboxHeight: number = 1
     private hitboxRadius: number = 0.2
@@ -45,6 +45,7 @@ export default class Player extends Entity {
     private velYMin: number = -35
     private velYMax: number = 25
     private gravity: number = 75
+    private canJump: boolean = false
 
     __init(cam: Camera) {
         if (cam) {
@@ -193,13 +194,15 @@ export default class Player extends Entity {
         }
         // movement
         {
-            const x = 15 * Input.leftX()
-            const z = 15 * Input.leftY()
-            const newVelY =
-                this.velY +
-                this.velYMax *
-                    Input.getKeyDiff(Input.KEY_SPACE, Input.KEY_SHIFT) -
-                this.gravity * dt
+            const x = 25 * Input.leftX()
+            const z = 25 * Input.leftY()
+            let newVelY = this.velY - this.gravity * dt
+            if (this.canJump) {
+                if (Input.getKey(Input.KEY_SPACE)) {
+                    this.canJump = false
+                    newVelY += this.velYMax
+                }
+            }
             this.velY = Math.min(this.velYMax, Math.max(this.velYMin, newVelY))
             const dir = [x, this.velY, z]
             Scene.Physics.collideNSlide(this.idHitbox, dir, dt)
@@ -232,9 +235,11 @@ export default class Player extends Entity {
     }
     __collide_phorm(id: PhormID, normalWorld: number[]) {
         if (normalWorld[1] >= 0.9) {
+            this.canJump = true
+            this.velY = 0
             const name = Scene.Xport.getName(id)
             const tagz = Scene.Tagged.getTags(id)
-            console.log(`Collide with: '${name}' [${tagz}]`)
+            // console.log(`Collide with: '${name}' [${tagz}]`)
         }
     }
     __draw() {

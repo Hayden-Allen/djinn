@@ -10,11 +10,6 @@
 
 - now
 - physics
-	- collision callbacks (only walk when on ground)
-		- Scene.Physics.bind(PhysicsID, (EntityID | PhormID))
-		- the physics_object gets a pointer to the entity
-		- in physics_object_manager::update, after m_world->stepSimulation, each object with an entity pointer is tested via m_world->contactTest
-		- addSingleResult forwards everything to __collide()
 	- hatsify physics_object, function order/cleanup
 	- physics_object_manager::update order needs to respect scene graph?
 - graphics
