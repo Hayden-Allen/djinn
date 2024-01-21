@@ -93,11 +93,6 @@ export default class Player extends Entity {
         }
         // hitbox
         {
-            // this.idHitbox = Scene.Physics.createCylinder(
-            //     1,
-            //     this.worldPos,
-            //     [0.2, 0.5, 0.2]
-            // )
             this.idHitbox = Scene.Physics.createCapsuleY(
                 1,
                 this.worldPos,

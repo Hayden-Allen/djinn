@@ -42,6 +42,9 @@ export default class MainEntity extends Entity {
 
     __init() {
         this.camera = Scene.Camera.load("lib/Camera.js") as Camera
+        const ar = Render.getAspectRatio()
+        Scene.Camera.configure(this.camera.getId(), 108 / ar, ar, 0.1, 1000)
+
         this.idShader = Asset.Shader.load("custom.vert", "custom.frag")
         this.idTexture = Asset.Texture.load("test.bmp", {
             minFilter: Render.GL_NEAREST,

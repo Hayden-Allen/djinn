@@ -10,11 +10,11 @@
 
 - now
 - physics
+	- detection volumes
 	- hatsify physics_object, function order/cleanup
 	- physics_object_manager::update order needs to respect scene graph?
 - graphics
 	- jittery rotation
-	- jittery debug hitbox
 	- bridge/roof sometimes not drawing/no hitbox
 	- implement different lights
 	- do shader math in camera space to avoid artifacts

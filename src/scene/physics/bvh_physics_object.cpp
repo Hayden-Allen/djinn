@@ -9,6 +9,8 @@ namespace djinn
 	{
 		m_iva = new btTriangleIndexVertexArray();
 
+		// create separate btIndexedMesh for each material used by this phorm
+		// (they all end up as one BVH shape anyway)
 		auto const& ros = phorm->get_render_objects();
 		for (auto const& pair : ros)
 		{

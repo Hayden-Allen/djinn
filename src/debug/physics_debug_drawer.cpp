@@ -43,7 +43,6 @@ namespace djinn
 	}
 	void physics_debug_drawer::flushLines()
 	{
-		// m_ro.update((f32*)m_lines.data(), m_valid * s_floats_per_line);
 		m_vao.get_vertices().update(m_lines.data(), m_valid, 0);
 		glDepthFunc(GL_LEQUAL);
 		render_service::get_context()->draw_lines_arrays(m_vao, m_shaders, 3.f);

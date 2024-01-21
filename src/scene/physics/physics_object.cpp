@@ -6,6 +6,57 @@
 
 namespace djinn
 {
+	btScalar sweep_test_callback::addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace)
+	{
+		if (convexResult.m_hitCollisionObject == m_me)
+			return btScalar(1.0);
+
+		if (!convexResult.m_hitCollisionObject->hasContactResponse())
+			return btScalar(1.0);
+
+		btVector3 hitNormalWorld;
+		if (normalInWorldSpace)
+		{
+			hitNormalWorld = convexResult.m_hitNormalLocal;
+		}
+		else
+		{
+			/// need to transform normal into worldspace
+			hitNormalWorld = convexResult.m_hitCollisionObject->getWorldTransform().getBasis() * convexResult.m_hitNormalLocal;
+		}
+
+		btScalar dotUp = m_up.dot(hitNormalWorld);
+		if (dotUp < m_minSlopeDot)
+		{
+			return btScalar(1.0);
+		}
+
+		return ClosestConvexResultCallback::addSingleResult(convexResult, normalInWorldSpace);
+	}
+	btScalar contact_test_callback::addSingleResult(btManifoldPoint& cp, btCollisionObjectWrapper const* colObj0Wrap, int partId0, int index0, btCollisionObjectWrapper const* colObj1Wrap, int partId1, int index1)
+	{
+		direction<space::WORLD> const& normal = u::bullet2direction<space::WORLD>(cp.m_normalWorldOnB);
+		physics_object* const obj0 = (physics_object*)colObj0Wrap->getCollisionObject()->getUserPointer();
+		physics_object* const obj1 = (physics_object*)colObj1Wrap->getCollisionObject()->getUserPointer();
+		// only call __collide if I am an entity and the other object is bound to something
+		if (obj0 && obj0 == me && obj0->m_bound_is_entity && obj1 && obj1->m_bound.e)
+		{
+			if (obj1->m_bound_is_entity)
+				obj0->m_bound.e->call_collide(obj1->m_bound.e, normal);
+			else
+				obj0->m_bound.e->call_collide(obj1->m_bound.p, normal);
+		}
+		else if (obj1 && obj1 == me && obj1->m_bound_is_entity && obj0 && obj0->m_bound.e)
+		{
+			if (obj0->m_bound_is_entity)
+				obj1->m_bound.e->call_collide(obj0->m_bound.e, normal);
+			else
+				obj1->m_bound.e->call_collide(obj0->m_bound.p, normal);
+		}
+		return 0.f;
+	}
+
+
 	physics_object::~physics_object()
 	{
 		m_world->removeRigidBody(m_rb.get());
@@ -129,49 +180,6 @@ namespace djinn
 		else
 			m_rb->setFlags(m_rb->getFlags() & ~btCollisionObject::CF_KINEMATIC_OBJECT);
 	}
-
-
-	class btKinematicClosestNotMeConvexResultCallback : public btCollisionWorld::ClosestConvexResultCallback
-	{
-	public:
-		btKinematicClosestNotMeConvexResultCallback(btCollisionObject* me, btVector3 const& up, btScalar minSlopeDot) :
-			btCollisionWorld::ClosestConvexResultCallback(btVector3(0.0, 0.0, 0.0), btVector3(0.0, 0.0, 0.0)), m_me(me), m_up(up), m_minSlopeDot(minSlopeDot)
-		{
-		}
-
-		virtual btScalar addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace)
-		{
-			if (convexResult.m_hitCollisionObject == m_me)
-				return btScalar(1.0);
-
-			if (!convexResult.m_hitCollisionObject->hasContactResponse())
-				return btScalar(1.0);
-
-			btVector3 hitNormalWorld;
-			if (normalInWorldSpace)
-			{
-				hitNormalWorld = convexResult.m_hitNormalLocal;
-			}
-			else
-			{
-				/// need to transform normal into worldspace
-				hitNormalWorld = convexResult.m_hitCollisionObject->getWorldTransform().getBasis() * convexResult.m_hitNormalLocal;
-			}
-
-			btScalar dotUp = m_up.dot(hitNormalWorld);
-			if (dotUp < m_minSlopeDot)
-			{
-				return btScalar(1.0);
-			}
-
-			return ClosestConvexResultCallback::addSingleResult(convexResult, normalInWorldSpace);
-		}
-	protected:
-		btCollisionObject* m_me;
-		const btVector3 m_up;
-		btScalar m_minSlopeDot;
-	};
-
 	void physics_object::collide_and_slide(vec<space::OBJECT> const& vel, f32 const dt)
 	{
 		// ASSERT(m_rb->getFlags() & btCollisionObject::CF_KINEMATIC_OBJECT);
@@ -185,12 +193,12 @@ namespace djinn
 		vec<space::WORLD> vel_total(0, 0, 0);
 		for (u32 i = 0; i < 8 && vel_remaining.length2() > 0; i++)
 		{
-			btKinematicClosestNotMeConvexResultCallback cb(m_rb.get(), u::vec2bullet(up), .5);
+			sweep_test_callback cb(m_rb.get(), u::vec2bullet(up), .5);
 			btTransform from = u::tmat2bullet(mat);
-			from.setOrigin(from.getOrigin() + u::vec2bullet(vel_total * 1.f / 60));
+			from.setOrigin(from.getOrigin() + u::vec2bullet(vel_total * dt));
 			btTransform to = from;
-			to.setOrigin(from.getOrigin() + u::vec2bullet(vel_remaining * 1.f / 60));
-			m_world->convexSweepTest(shape, from, to, cb);
+			to.setOrigin(from.getOrigin() + u::vec2bullet(vel_remaining * dt));
+			m_world->convexSweepTest(shape, from, to, cb, .1f);
 			if (!cb.hasHit())
 			{
 				vel_total += vel_remaining;
@@ -248,46 +256,18 @@ namespace djinn
 	{
 		btTransform raw;
 		m_rb->getMotionState()->getWorldTransform(raw);
+		m_rb->setWorldTransform(raw);
 		tmat<space::OBJECT, space::WORLD> const& mat = u::bullet2tmat<space::OBJECT, space::WORLD>(raw);
 		m_transform = get_parent_transform().invert_copy() * mat;
 		u::extract_rot(m_transform, &m_rot[0], &m_rot[1], &m_rot[2]);
 	}
 
-	struct MyContactResultCallback final : public btCollisionWorld::ContactResultCallback
-	{
-		physics_object const* me;
-		MyContactResultCallback(physics_object const* const self) :
-			me(self)
-		{
-			ASSERT(me);
-		}
-		btScalar addSingleResult(btManifoldPoint& cp, btCollisionObjectWrapper const* colObj0Wrap, int partId0, int index0, btCollisionObjectWrapper const* colObj1Wrap, int partId1, int index1) override
-		{
-			direction<space::WORLD> const& normal = u::bullet2direction<space::WORLD>(cp.m_normalWorldOnB);
-			physics_object* const obj0 = (physics_object*)colObj0Wrap->getCollisionObject()->getUserPointer();
-			physics_object* const obj1 = (physics_object*)colObj1Wrap->getCollisionObject()->getUserPointer();
-			// only call __collide if I am an entity and the other object is bound to something
-			if (obj0 && obj0 == me && obj0->m_bound_is_entity && obj1 && obj1->m_bound.e)
-			{
-				if (obj1->m_bound_is_entity)
-					obj0->m_bound.e->call_collide(obj1->m_bound.e, normal);
-				else
-					obj0->m_bound.e->call_collide(obj1->m_bound.p, normal);
-			}
-			else if (obj1 && obj1 == me && obj1->m_bound_is_entity && obj0 && obj0->m_bound.e)
-			{
-				if (obj0->m_bound_is_entity)
-					obj1->m_bound.e->call_collide(obj0->m_bound.e, normal);
-				else
-					obj1->m_bound.e->call_collide(obj0->m_bound.p, normal);
-			}
-			return 0.f;
-		}
-	};
+
 
 	void physics_object::check_collisions()
 	{
-		MyContactResultCallback cb(this);
+		contact_test_callback cb(this);
 		m_world->contactTest(m_rb.get(), cb);
 	}
+
 } // namespace djinn

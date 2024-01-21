@@ -7,11 +7,38 @@ namespace djinn
 {
 	class phorm;
 	class entity;
+	class physics_object;
+	class sweep_test_callback final : public btCollisionWorld::ClosestConvexResultCallback
+	{
+	public:
+		sweep_test_callback(btCollisionObject* me, btVector3 const& up, btScalar minSlopeDot) :
+			btCollisionWorld::ClosestConvexResultCallback(btVector3(0.0, 0.0, 0.0), btVector3(0.0, 0.0, 0.0)), m_me(me), m_up(up), m_minSlopeDot(minSlopeDot)
+		{}
+		DCM(sweep_test_callback);
+	public:
+		btScalar addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace) override;
+	protected:
+		btCollisionObject* m_me;
+		const btVector3 m_up;
+		btScalar m_minSlopeDot;
+	};
+	class contact_test_callback final : public btCollisionWorld::ContactResultCallback
+	{
+	public:
+		contact_test_callback(physics_object const* const self) :
+			me(self)
+		{}
+		DCM(contact_test_callback);
+	public:
+		btScalar addSingleResult(btManifoldPoint& cp, btCollisionObjectWrapper const* colObj0Wrap, int partId0, int index0, btCollisionObjectWrapper const* colObj1Wrap, int partId1, int index1) override;
+	private:
+		physics_object const* me;
+	};
 
 	class physics_object : public scene_object
 	{
 		friend class physics_object_manager;
-		friend struct MyContactResultCallback;
+		friend class contact_test_callback;
 	public:
 		DCM(physics_object);
 		virtual ~physics_object();
