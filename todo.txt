@@ -17,7 +17,6 @@
 	- jittery debug hitbox
 	- bridge/roof sometimes not drawing/no hitbox
 	- implement different lights
-	- vines z-fighting
 	- do shader math in camera space to avoid artifacts
 - other
 	- scripts OOP stl

@@ -15,7 +15,7 @@ export default class Camera {
     __unload() {}
     __load() {
         const ar = Render.getAspectRatio()
-        Scene.Camera.configure(this.id, 108 / ar, ar, 0.01, 1000)
+        Scene.Camera.configure(this.id, 108 / ar, ar, 0.1, 1000)
         // Scene.setPosY(this.id, 15)
     }
     __main(dt: number, time: number) {

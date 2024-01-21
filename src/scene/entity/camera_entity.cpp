@@ -5,7 +5,7 @@ namespace djinn
 {
 	camera_entity::camera_entity(id_t const id, std::string const& fp, JSRuntime* const runtime) :
 		entity(id, fp, runtime),
-		m_proj(pmat_util::projection(45, 1, .01, 1000)),
+		m_proj(pmat_util::projection(108 * 9.f / 16.f, 16.f / 9.f, .1, 1000)),
 		m_view(m_transform.invert_cast_copy<space::WORLD, space::CAMERA>()),
 		m_view_proj(m_proj * m_view),
 		m_view_proj_basis(m_proj * m_view.basis_copy())
