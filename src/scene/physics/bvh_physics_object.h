@@ -28,8 +28,6 @@ namespace djinn
 		~bvh_physics_object();
 	private:
 		optr<btTriangleIndexVertexArray> m_iva;
-		std::vector<std::vector<power_vertex>> m_vbo;
-		std::vector<std::vector<u32>> m_ibo;
 	};
 } // namespace djinn
 

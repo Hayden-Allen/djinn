@@ -10,6 +10,7 @@
 
 - now
 - physics
+	- slowly falling after landing?
 	- detection volumes
 	- hatsify physics_object, function order/cleanup
 	- physics_object_manager::update order needs to respect scene graph?
