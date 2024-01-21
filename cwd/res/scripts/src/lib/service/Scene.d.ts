@@ -23,6 +23,7 @@ declare interface _Scene_Light {
 }
 declare interface _Scene_Xport {
     load(fp: string): _Xport
+    getName(id: XportID): string
 }
 declare interface _Scene_Phorm {
     setShaders(idPhorm: PhormID, idShader: ShaderID): void
@@ -60,6 +61,7 @@ declare interface _Scene_Camera {
     ): void
 }
 declare interface _Scene_Physics {
+    bind(idPhys: PhysicsID, idBound: EntityID | PhormID): void
     createBox(mass: number, origin: number[], dims: number[]): PhysicsID
     createCylinder(mass: number, origin: number[], dims: number[]): PhysicsID
     createSphere(mass: number, origin: number[], radius: number): PhysicsID

@@ -7,6 +7,7 @@ namespace djinn
 {
 	template<typename T>
 	class entity_manager_base;
+	class phorm;
 
 	class entity : public scene_object, public tagged
 	{
@@ -16,10 +17,13 @@ namespace djinn
 		DCM(entity);
 		virtual ~entity();
 	public:
+		bool is_entity() const override final;
 		virtual void update(f32 const dt, f32 const time);
-		void draw();
-		void draw_ui();
-		void draw_imgui();
+		void call_draw();
+		void call_ui();
+		void call_imgui();
+		void call_collide(entity* const other, direction<space::WORLD> const& normal);
+		void call_collide(phorm* const phorm, direction<space::WORLD> const& normal);
 		void request_imgui();
 		JSValue get_js_value();
 	protected:

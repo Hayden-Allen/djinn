@@ -10,6 +10,8 @@ export default class Entity {
     __load() {}
     __unload() {}
     __main(dt: number, time: number) {}
+    __collide_entity(other: Entity, normalWorld: number[]) {}
+    __collide_phorm(id: PhormID, normalWorld: number[]) {}
     __draw() {}
     __ui() {}
     __imgui() {}

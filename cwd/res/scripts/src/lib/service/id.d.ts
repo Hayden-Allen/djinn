@@ -29,6 +29,7 @@ declare type PhysicsID = _PhysicsID | undefined
 declare type LightID = _LightID | undefined
 declare type WaypointID = _WaypointID | undefined
 declare type SoundEmitterID = _SoundEmitterID | undefined
+declare type XportID = PhormID | LightID | WaypointID | undefined
 declare type TaggedID =
     | EntityID
     | CameraID

@@ -103,6 +103,7 @@ export default class Player extends Entity {
                 this.hitboxRadius,
                 this.hitboxHeight
             )
+            Scene.Physics.bind(this.idHitbox, this.id)
 
             Scene.Physics.setGravity(this.idHitbox, [0, 0, 0])
             Scene.Physics.setAngularFactor(this.idHitbox, [0, 0, 0])
@@ -228,6 +229,13 @@ export default class Player extends Entity {
             }
         }
         Scene.Entity.requestImGui(this.id)
+    }
+    __collide_phorm(id: PhormID, normalWorld: number[]) {
+        if (normalWorld[1] >= 0.9) {
+            const name = Scene.Xport.getName(id)
+            const tagz = Scene.Tagged.getTags(id)
+            console.log(`Collide with: '${name}' [${tagz}]`)
+        }
     }
     __draw() {
         this.worldPos = Scene.getPos(this.idHitbox)

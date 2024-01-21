@@ -8,6 +8,10 @@ namespace djinn
 
 
 
+	bool tagged::is_entity() const
+	{
+		return false;
+	}
 	void tagged::add_tag(std::string const& tag)
 	{
 		m_tags.insert(tag);

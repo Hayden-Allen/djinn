@@ -9,6 +9,7 @@
 #include "script/service/imgui_service.h"
 #include "script/service/sound_service.h"
 #include "script/js.h"
+#include "scene/xport/phorm.h"
 
 namespace djinn
 {
@@ -40,20 +41,24 @@ namespace djinn
 
 
 
+	bool entity::is_entity() const
+	{
+		return true;
+	}
 	void entity::update(f32 const dt, f32 const time)
 	{
 		m_request_imgui = false;
 		call_main(dt, time);
 	}
-	void entity::draw()
+	void entity::call_draw()
 	{
 		call_reserved("__draw", 0, nullptr);
 	}
-	void entity::draw_ui()
+	void entity::call_ui()
 	{
 		call_reserved("__ui", 0, nullptr);
 	}
-	void entity::draw_imgui()
+	void entity::call_imgui()
 	{
 		if (!m_request_imgui)
 			return;
@@ -64,6 +69,26 @@ namespace djinn
 			call_reserved("__imgui", 0, nullptr);
 		}
 		ImGui::End();
+	}
+	void entity::call_collide(entity* const other, direction<space::WORLD> const& normal)
+	{
+		JSValue args[2] = {
+			JS_DupValue(m_ctx, other->get_js_value()),
+			js::create_f32_array(m_ctx, 3, normal.e)
+		};
+		call_reserved("__collide_entity", 2, args);
+		for (u32 i = 0; i < 2; i++)
+			JS_FreeValue(m_ctx, args[i]);
+	}
+	void entity::call_collide(phorm* const phorm, direction<space::WORLD> const& normal)
+	{
+		JSValue args[2] = {
+			js::create_id(m_ctx, phorm->get_id()),
+			js::create_f32_array(m_ctx, 3, normal.e)
+		};
+		call_reserved("__collide_phorm", 2, args);
+		for (u32 i = 0; i < 2; i++)
+			JS_FreeValue(m_ctx, args[i]);
 	}
 	void entity::request_imgui()
 	{
@@ -118,7 +143,7 @@ namespace djinn
 
 		JSValue const call_ret = JS_Call(m_ctx, fn, m_this, argc, argv);
 #ifndef DJINN_DIST
-		check_exception(call_ret, "entity::call_reserved: " + name);
+		check_exception(call_ret, "entity::" + name);
 #endif
 		JS_FreeValue(m_ctx, call_ret);
 	}
@@ -154,7 +179,7 @@ namespace djinn
 		{
 			JSValue const ex_val = JS_GetException(m_ctx);
 			char const* const ex = JS_ToCString(m_ctx, ex_val);
-			printf("Exception occurred: %s: %s\n", ex, msg.c_str());
+			printf("%s in (%s)\n", ex, msg.c_str());
 			JS_FreeCString(m_ctx, ex);
 			JS_FreeValue(m_ctx, ex_val);
 		}

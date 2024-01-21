@@ -9,6 +9,7 @@ namespace djinn
 		DCM(tagged);
 		virtual ~tagged();
 	public:
+		virtual bool is_entity() const;
 		void add_tag(std::string const& tag);
 		bool has_tag(std::string const& tag) const;
 		std::unordered_set<std::string> const& get_tags() const;

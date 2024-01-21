@@ -5,14 +5,19 @@
 
 namespace djinn
 {
-	class tagged;
+	class phorm;
+	class entity;
 
 	class physics_object : public scene_object
 	{
 		friend class physics_object_manager;
+		friend struct MyContactResultCallback;
 	public:
 		DCM(physics_object);
 		virtual ~physics_object();
+	public:
+		void bind(phorm* const p);
+		void bind(entity* const e);
 	public:
 		void set_friction(f32 const f);
 		vec<space::WORLD> get_velocity_world() const;
@@ -40,10 +45,17 @@ namespace djinn
 		optr<btRigidBody> m_rb;
 		optr<btMotionState> m_motion;
 		optr<btCollisionShape> m_shape;
+		union
+		{
+			phorm* p;
+			entity* e;
+		} m_bound;
 		f32 m_max_speed[3] = { 0 };
+		bool m_bound_is_entity;
 	protected:
 		physics_object(id_t const id, sptr<btDiscreteDynamicsWorld> const& world);
 	protected:
+		void bind_to_bullet();
 		void clamp_velocity();
 		void copy_transform_to_physics();
 		void copy_transform_from_physics();

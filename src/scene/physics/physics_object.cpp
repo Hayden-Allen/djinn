@@ -2,6 +2,7 @@
 #include "physics_object.h"
 #include "core/util.h"
 #include "scene/tagged.h"
+#include "scene/entity/entity.h"
 
 namespace djinn
 {
@@ -15,6 +16,16 @@ namespace djinn
 
 
 
+	void physics_object::bind(phorm* const p)
+	{
+		m_bound.p = p;
+		m_bound_is_entity = false;
+	}
+	void physics_object::bind(entity* const e)
+	{
+		m_bound.e = e;
+		m_bound_is_entity = true;
+	}
 	void physics_object::set_friction(f32 const f)
 	{
 		m_rb->setFriction(f);
@@ -200,7 +211,9 @@ namespace djinn
 
 	physics_object::physics_object(id_t const id, sptr<btDiscreteDynamicsWorld> const& world) :
 		scene_object(id),
-		m_world(world)
+		m_world(world),
+		m_bound({ nullptr }),
+		m_bound_is_entity(false)
 	{
 		for (u32 i = 0; i < 3; i++)
 			m_max_speed[i] = MAX_VALUE_T(f32);
@@ -208,6 +221,10 @@ namespace djinn
 
 
 
+	void physics_object::bind_to_bullet()
+	{
+		m_rb->setUserPointer((void*)this);
+	}
 	void physics_object::clamp_velocity()
 	{
 		/*vec<space::WORLD> vel = u::bullet2vec<space::WORLD>(m_rb->getLinearVelocity());
@@ -235,9 +252,42 @@ namespace djinn
 		m_transform = get_parent_transform().invert_copy() * mat;
 		u::extract_rot(m_transform, &m_rot[0], &m_rot[1], &m_rot[2]);
 	}
+
+	struct MyContactResultCallback final : public btCollisionWorld::ContactResultCallback
+	{
+		physics_object const* me;
+		MyContactResultCallback(physics_object const* const self) :
+			me(self)
+		{
+			ASSERT(me);
+		}
+		btScalar addSingleResult(btManifoldPoint& cp, btCollisionObjectWrapper const* colObj0Wrap, int partId0, int index0, btCollisionObjectWrapper const* colObj1Wrap, int partId1, int index1) override
+		{
+			direction<space::WORLD> const& normal = u::bullet2direction<space::WORLD>(cp.m_normalWorldOnB);
+			physics_object* const obj0 = (physics_object*)colObj0Wrap->getCollisionObject()->getUserPointer();
+			physics_object* const obj1 = (physics_object*)colObj1Wrap->getCollisionObject()->getUserPointer();
+			// only call __collide if I am an entity and the other object is bound to something
+			if (obj0 && obj0 == me && obj0->m_bound_is_entity && obj1 && obj1->m_bound.e)
+			{
+				if (obj1->m_bound_is_entity)
+					obj0->m_bound.e->call_collide(obj1->m_bound.e, normal);
+				else
+					obj0->m_bound.e->call_collide(obj1->m_bound.p, normal);
+			}
+			else if (obj1 && obj1 == me && obj1->m_bound_is_entity && obj0 && obj0->m_bound.e)
+			{
+				if (obj0->m_bound_is_entity)
+					obj1->m_bound.e->call_collide(obj0->m_bound.e, normal);
+				else
+					obj1->m_bound.e->call_collide(obj0->m_bound.p, normal);
+			}
+			return 0.f;
+		}
+	};
+
 	void physics_object::check_collisions()
 	{
-		/*btCollisionWorld::ContactResultCallback cb;
-		m_world->contactTest(m_rb.get(), cb);*/
+		MyContactResultCallback cb(this);
+		m_world->contactTest(m_rb.get(), cb);
 	}
 } // namespace djinn

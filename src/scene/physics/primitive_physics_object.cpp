@@ -23,5 +23,7 @@ namespace djinn
 		m_rb = new btRigidBody(info);
 		m_rb->setActivationState(DISABLE_DEACTIVATION);
 		m_world->addRigidBody(m_rb.get());
+
+		bind_to_bullet();
 	}
 } // namespace djinn

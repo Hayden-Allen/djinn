@@ -172,31 +172,8 @@ namespace djinn::js::scene_service
 	}
 
 	//
-	//	XPORT/PHORM
+	//	PHORM
 	//
-	JSValue load_xport(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
-	{
-		ASSERT(argc == 1);
-		std::string const& fp = js::extract_string(ctx, argv[0]);
-		std::string const& afp = u::to_absolute(c::base_dir::xport, fp);
-		mgl::input_file in(afp);
-
-		auto const& [tex_ids, tex] = ::djinn::asset_service::get_texture_manager()->load_xport(&in);
-		id_t const skybox_id = ::djinn::asset_service::get_cubemap_manager()->load_xport(&in);
-		// materials are not accesible to the scripts, just used internally for xports
-		std::unordered_map<u32, sptr<material>> const& materials = ::djinn::asset_service::get_material_manager()->load_xport(&in, tex);
-		std::vector<id_t> const& phorms = ::djinn::scene_service::get_phorm_manager()->load_xport(&in, materials);
-		std::vector<id_t> const& lights = ::djinn::scene_service::get_light_manager()->load_xport(&in);
-		std::vector<id_t> const& waypoints = ::djinn::scene_service::get_waypoint_manager()->load_xport(&in);
-
-		JSValue map = JS_NewObject(ctx);
-		JS_SetPropertyStr(ctx, map, "textures", js::create_id_array(ctx, (s64)tex_ids.size(), tex_ids.data()));
-		JS_SetPropertyStr(ctx, map, "skybox", js::create_id(ctx, skybox_id));
-		JS_SetPropertyStr(ctx, map, "phorms", js::create_id_array(ctx, (s64)phorms.size(), phorms.data()));
-		JS_SetPropertyStr(ctx, map, "lights", js::create_id_array(ctx, (s64)lights.size(), lights.data()));
-		JS_SetPropertyStr(ctx, map, "waypoints", js::create_id_array(ctx, (s64)waypoints.size(), waypoints.data()));
-		return map;
-	}
 	JSValue set_phorm_shaders(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2);
@@ -241,6 +218,40 @@ namespace djinn::js::scene_service
 		for (id_t const id : ids)
 			::djinn::scene_service::get_phorm_manager()->destroy(id);
 		return JS_UNDEFINED;
+	}
+
+	//
+	// XPORT
+	//
+	JSValue load_xport(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		std::string const& fp = js::extract_string(ctx, argv[0]);
+		std::string const& afp = u::to_absolute(c::base_dir::xport, fp);
+		mgl::input_file in(afp);
+
+		auto const& [tex_ids, tex] = ::djinn::asset_service::get_texture_manager()->load_xport(&in);
+		id_t const skybox_id = ::djinn::asset_service::get_cubemap_manager()->load_xport(&in);
+		// materials are not accesible to the scripts, just used internally for xports
+		std::unordered_map<u32, sptr<material>> const& materials = ::djinn::asset_service::get_material_manager()->load_xport(&in, tex);
+		std::vector<id_t> const& phorms = ::djinn::scene_service::get_phorm_manager()->load_xport(&in, materials);
+		std::vector<id_t> const& lights = ::djinn::scene_service::get_light_manager()->load_xport(&in);
+		std::vector<id_t> const& waypoints = ::djinn::scene_service::get_waypoint_manager()->load_xport(&in);
+
+		JSValue map = JS_NewObject(ctx);
+		JS_SetPropertyStr(ctx, map, "textures", js::create_id_array(ctx, (s64)tex_ids.size(), tex_ids.data()));
+		JS_SetPropertyStr(ctx, map, "skybox", js::create_id(ctx, skybox_id));
+		JS_SetPropertyStr(ctx, map, "phorms", js::create_id_array(ctx, (s64)phorms.size(), phorms.data()));
+		JS_SetPropertyStr(ctx, map, "lights", js::create_id_array(ctx, (s64)lights.size(), lights.data()));
+		JS_SetPropertyStr(ctx, map, "waypoints", js::create_id_array(ctx, (s64)waypoints.size(), waypoints.data()));
+		return map;
+	}
+	JSValue get_xport_name(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		xport const* const x = ::djinn::scene_service::get_xport(id);
+		return js::create_string(ctx, x->get_name());
 	}
 
 	//
@@ -429,6 +440,22 @@ namespace djinn::js::scene_service
 	//
 	//	PHYSICS
 	//
+	JSValue bind_physics_object(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id_phys = js::extract_id(ctx, argv[0]);
+		id_t const id_bound = js::extract_id(ctx, argv[1]);
+		sptr<physics_object> phys = ::djinn::scene_service::get_physics_object_manager()->get(id_phys);
+		if (::djinn::scene_service::get_entity_manager()->has(id_bound))
+		{
+			phys->bind(::djinn::scene_service::get_entity_manager()->get(id_bound).get());
+		}
+		else
+		{
+			phys->bind(::djinn::scene_service::get_phorm_manager()->get(id_bound).get());
+		}
+		return JS_UNDEFINED;
+	}
 	JSValue create_physics_box(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 3);
@@ -1268,14 +1295,18 @@ namespace djinn
 			super::register_function(ctx, "Light", "destroy", 1, js::scene_service::destroy_light);
 			super::register_function(ctx, "Light", "destroyAll", 1, js::scene_service::destroy_all_light);
 		}
-		// XPORT/PHORM
+		// PHORM
 		{
-			super::register_function(ctx, "Xport", "load", 1, js::scene_service::load_xport);
 			super::register_function(ctx, "Phorm", "setShaders", 2, js::scene_service::set_phorm_shaders);
 			super::register_function(ctx, "Phorm", "setAlphaShaders", 2, js::scene_service::set_phorm_alpha_shaders);
 			super::register_function(ctx, "Phorm", "setVisible", 2, js::scene_service::set_phorm_visible);
 			super::register_function(ctx, "Phorm", "destroy", 1, js::scene_service::destroy_phorm);
 			super::register_function(ctx, "Phorm", "destroyAll", 1, js::scene_service::destroy_all_phorm);
+		}
+		// XPORT
+		{
+			super::register_function(ctx, "Xport", "load", 1, js::scene_service::load_xport);
+			super::register_function(ctx, "Xport", "getName", 1, js::scene_service::get_xport_name);
 		}
 		// MESH INSTANCE
 		{
@@ -1301,6 +1332,7 @@ namespace djinn
 		}
 		// PHYSICS
 		{
+			super::register_function(ctx, "Physics", "bind", 2, js::scene_service::bind_physics_object);
 			super::register_function(ctx, "Physics", "createBox", 3, js::scene_service::create_physics_box);
 			super::register_function(ctx, "Physics", "createCylinder", 3, js::scene_service::create_physics_cylinder);
 			super::register_function(ctx, "Physics", "createSphere", 3, js::scene_service::create_physics_sphere);
@@ -1479,11 +1511,11 @@ namespace djinn
 		// call __draw()
 		s_instance->m_entity_manager.for_each([](sptr<entity> e, id_t const id)
 			{
-				e->draw();
+				e->call_draw();
 			});
 		s_instance->m_camera_entity_manager.for_each([](sptr<camera_entity> e, id_t const id)
 			{
-				e->draw();
+				e->call_draw();
 			});
 		// now that all script functions for this frame have run (__main() and __draw()), compute final light and camera transforms
 		s_instance->m_light_manager.update();
@@ -1501,22 +1533,22 @@ namespace djinn
 	{
 		s_instance->m_entity_manager.for_each([](sptr<entity> e, id_t const id)
 			{
-				e->draw_ui();
+				e->call_ui();
 			});
 		s_instance->m_camera_entity_manager.for_each([](sptr<camera_entity> e, id_t const id)
 			{
-				e->draw_ui();
+				e->call_ui();
 			});
 	}
 	void scene_service::draw_imgui()
 	{
 		s_instance->m_entity_manager.for_each([](sptr<entity> e, id_t const id)
 			{
-				e->draw_imgui();
+				e->call_imgui();
 			});
 		s_instance->m_camera_entity_manager.for_each([](sptr<camera_entity> e, id_t const id)
 			{
-				e->draw_imgui();
+				e->call_imgui();
 			});
 	}
 	sptr<scene_object> scene_service::get_scene_object(id_t const id)
@@ -1542,6 +1574,14 @@ namespace djinn
 		else if (get_camera_entity_manager()->has(id))
 			return get_camera_entity_manager()->get(id).get();
 		else if (get_phorm_manager()->has(id))
+			return get_phorm_manager()->get(id).get();
+		else if (get_light_manager()->has(id))
+			return get_light_manager()->get(id).get();
+		return get_waypoint_manager()->get(id).get();
+	}
+	xport* scene_service::get_xport(id_t const id)
+	{
+		if (get_phorm_manager()->has(id))
 			return get_phorm_manager()->get(id).get();
 		else if (get_light_manager()->has(id))
 			return get_light_manager()->get(id).get();

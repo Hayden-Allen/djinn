@@ -18,8 +18,10 @@ export default class Xport {
         this.idPhorms = phorms
         this.idLights = lights
         this.idWaypoints = waypoints
-        for (const id of this.idPhorms) {
-            this.idHitboxes.push(Scene.Physics.createBVH(id))
+        for (const idPhorm of this.idPhorms) {
+            const idHitbox = Scene.Physics.createBVH(idPhorm)
+            this.idHitboxes.push(idHitbox)
+            Scene.Physics.bind(idHitbox, idPhorm)
         }
         this.skybox = new Skybox(skybox, {
             vertexShader: "sky.vert",
