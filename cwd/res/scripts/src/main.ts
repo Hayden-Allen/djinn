@@ -158,7 +158,7 @@ export default class MainEntity extends Entity {
         }
 
         if (this.needsPlayAudio) {
-            Scene.SoundEmitter.start(this.idSoundEmitter)
+            // Scene.SoundEmitter.start(this.idSoundEmitter)
             this.needsPlayAudio = false
         }
 

@@ -38,8 +38,8 @@ export default class Player extends Entity {
     private hitboxHeight: number = 1
     private hitboxRadius: number = 0.2
 
-    // private worldPos: number[] = [-36, 103, -39] // top of tower
-    private worldPos: number[] = [-29, 30, 39] // ground
+    private worldPos: number[] = [-36, 103, -39] // top of tower
+    // private worldPos: number[] = [-29, 30, 39] // ground
     private moveDir: number[] = [0, 0, 0]
     private velY: number = 0
     private velYMin: number = -35

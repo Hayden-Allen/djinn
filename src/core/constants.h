@@ -101,7 +101,10 @@ namespace djinn::c
 	} // namespace uniform
 	namespace physics
 	{
-		static constexpr u64 num_substeps = 8;
+		static constexpr u64 min_game_fps = 30;
+		static constexpr u64 substep_fps = 240;
+		static constexpr f32 substep_time = 1.f / substep_fps;
+		static constexpr u64 num_substeps = (substep_fps / min_game_fps);
 		static constexpr f32 default_raycast_length = 1000;
 	} // namespace physics
 } // namespace djinn::c
