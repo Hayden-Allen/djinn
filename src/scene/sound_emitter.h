@@ -11,7 +11,8 @@ namespace djinn
 	private:
 		struct sound_emitter_backup
 		{
-			f32 volume = 0.0f;
+			f32 volume = 0.0f, rolloff = 1.f, min_dist = 0.f, max_dist = MAX_VALUE_T(f32);
+			ma_attenuation_model attenuation = ma_attenuation_model_inverse;
 			bool spatialization_enabled = false;
 			bool looping = false;
 			bool started = false;
@@ -30,6 +31,10 @@ namespace djinn
 		void set_volume(f32 const volume);
 		void set_spatialization_enabled(bool const enabled);
 		void set_looping(bool const looping);
+		void set_rolloff(f32 const rolloff);
+		void set_min_distance(f32 const min);
+		void set_max_distance(f32 const max);
+		void set_attenuation_model(ma_attenuation_model const model);
 		void update_from_scene_object();
 	private:
 		sptr<sound_source> m_source;

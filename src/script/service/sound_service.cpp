@@ -8,68 +8,18 @@
 
 namespace djinn::js::sound_service
 {
-	JSValue create_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	JSValue set_listener_world_pos(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
-		id_t const sound_source_id = js::extract_id(ctx, argv[0]);
-		sptr<sound_source> source = ::djinn::asset_service::get_sound_source_manager()->get(sound_source_id);
-		id_t const instance_id = ::djinn::sound_service::get_sound_emitter_manager()->create(source);
-		return js::create_id(ctx, instance_id);
+		point<space::WORLD> const& pos = js::extract_point<space::WORLD>(ctx, argv[0]);
+		::djinn::sound_service::get()->set_listener_world_pos(pos);
+		return JS_UNDEFINED;
 	}
-	JSValue destroy_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	JSValue set_listener_world_dir(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		::djinn::sound_service::get_sound_emitter_manager()->destroy(id);
-		return JS_UNDEFINED;
-	}
-	JSValue start_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
-	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		::djinn::sound_service::get_sound_emitter_manager()->get(id)->start();
-		return JS_UNDEFINED;
-	}
-	JSValue stop_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
-	{
-		ASSERT(argc == 1);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		::djinn::sound_service::get_sound_emitter_manager()->get(id)->stop();
-		return JS_UNDEFINED;
-	}
-	JSValue set_emitter_pos(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv) {
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::vector<f32> const pos = js::extract_f32_array(ctx, argv[1]);
-		::djinn::sound_service::get_sound_emitter_manager()->get(id)->set_pos(pos[0], pos[1], pos[2]);
-		return JS_UNDEFINED;
-	}
-	JSValue set_emitter_volume(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv) {
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		f32 const volume = js::extract_f32(ctx, argv[1]);
-		::djinn::sound_service::get_sound_emitter_manager()->get(id)->set_volume(volume);
-		return JS_UNDEFINED;
-	}
-	JSValue set_emitter_spatialization_enabled(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv) {
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		bool const enabled = js::extract_bool(ctx, argv[1]);
-		::djinn::sound_service::get_sound_emitter_manager()->get(id)->set_spatialization_enabled(enabled);
-		return JS_UNDEFINED;
-	}
-	JSValue set_emitter_looping(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv) {
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		bool const looping = js::extract_bool(ctx, argv[1]);
-		::djinn::sound_service::get_sound_emitter_manager()->get(id)->set_looping(looping);
-		return JS_UNDEFINED;
-	}
-	JSValue set_listener_world_pos(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv) {
-		ASSERT(argc == 2);
-		id_t const id = js::extract_id(ctx, argv[0]);
-		std::vector<f32> const pos = js::extract_f32_array(ctx, argv[1]);
-		::djinn::sound_service::get()->set_listener_world_pos(pos[0], pos[1], pos[2]);
+		direction<space::WORLD> const& dir = js::extract_direction<space::WORLD>(ctx, argv[0]);
+		::djinn::sound_service::get()->set_listener_world_dir(dir);
 		return JS_UNDEFINED;
 	}
 } // namespace djinn::js::sound_service
@@ -94,6 +44,7 @@ namespace djinn
 		ASSERT(!s_instance);
 		s_instance = new sound_service();
 		asset_service::get_sound_source_manager()->configure();
+		ma_engine_listener_set_world_up(sound_service::get_engine(), 0, 0, 1, 0);
 	}
 	void sound_service::shutdown()
 	{
@@ -102,27 +53,22 @@ namespace djinn
 	}
 	void sound_service::register_functions(JSContext* const ctx)
 	{
-		super::register_function(ctx, "Emitter", "create", 1, js::sound_service::create_emitter);
-		super::register_function(ctx, "Emitter", "destroy", 1, js::sound_service::destroy_emitter);
-		super::register_function(ctx, "Emitter", "start", 1, js::sound_service::start_emitter);
-		super::register_function(ctx, "Emitter", "stop", 1, js::sound_service::stop_emitter);
-		super::register_function(ctx, "Emitter", "setPos", 2, js::sound_service::set_emitter_pos);
-		super::register_function(ctx, "Emitter", "setVolume", 2, js::sound_service::set_emitter_volume);
-		super::register_function(ctx, "Emitter", "setSpatializationEnabled", 2, js::sound_service::set_emitter_spatialization_enabled);
-		super::register_function(ctx, "Emitter", "setLooping", 2, js::sound_service::set_emitter_looping);
-		super::register_function(ctx, "setListenerWorldPos", 2, js::sound_service::set_listener_world_pos);
+		super::register_function(ctx, "setListenerWorldPos", 1, js::sound_service::set_listener_world_pos);
+		super::register_function(ctx, "setListenerWorldDir", 1, js::sound_service::set_listener_world_dir);
+
+		super::register_property_u32(ctx, "ATTENUATION_INVERSE", ma_attenuation_model_inverse);
+		super::register_property_u32(ctx, "ATTENUATION_LINEAR", ma_attenuation_model_linear);
+		super::register_property_u32(ctx, "ATTENUATION_EXPONENTIAL", ma_attenuation_model_exponential);
 	}
-	void sound_service::update()
-	{
-		s_instance->m_sound_emitter_manager.for_each([](sptr<sound_emitter> emitter, id_t const id)
-			{
-				emitter->update_from_scene_object();
-			});
-	}
-	void sound_service::set_listener_world_pos(f32 const x, f32 const y, f32 const z)
+	void sound_service::set_listener_world_pos(point<space::WORLD> const& pos)
 	{
 		ASSERT(s_instance && s_instance->m_engine_ready);
-		ma_engine_listener_set_position(sound_service::get_engine(), 0, x, y, z);
+		ma_engine_listener_set_position(sound_service::get_engine(), 0, pos.x, pos.y, pos.z);
+	}
+	void sound_service::set_listener_world_dir(direction<space::WORLD> const& dir)
+	{
+		ASSERT(s_instance && s_instance->m_engine_ready);
+		ma_engine_listener_set_direction(sound_service::get_engine(), 0, dir.x, dir.y, dir.z);
 	}
 
 
@@ -131,11 +77,6 @@ namespace djinn
 	{
 		ASSERT(s_instance);
 		return s_instance->m_engine_ready ? &s_instance->m_engine : nullptr;
-	}
-	sound_emitter_manager* sound_service::get_sound_emitter_manager()
-	{
-		ASSERT(s_instance);
-		return &s_instance->m_sound_emitter_manager;
 	}
 
 

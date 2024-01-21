@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 
 #if DJINN_PROFILE
 	u32 const NUM_FRAMES = 1000;
-	f32 input_avg = 0, update_avg = 0, sound_avg = 0, draw_avg = 0, gl_avg = 0, ui_avg = 0, imgui_avg = 0;
+	f32 input_avg = 0, update_avg = 0, draw_avg = 0, gl_avg = 0, ui_avg = 0, imgui_avg = 0;
 	for (u32 i = 0; i < NUM_FRAMES; i++)
 #else
 	while (c->is_running())
@@ -92,7 +92,6 @@ int main(int argc, char* argv[])
 		DJINN_TIME(input_service::update(), input_avg, NUM_FRAMES);
 
 		DJINN_TIME(scene_service::update(dt, c->time.now), update_avg, NUM_FRAMES);
-		DJINN_TIME(sound_service::update(), sound_avg, NUM_FRAMES);
 		DJINN_TIME(scene_service::draw(), draw_avg, NUM_FRAMES);
 		DJINN_TIME(asset_service::draw_meshes(), gl_avg, NUM_FRAMES);
 
@@ -123,7 +122,6 @@ int main(int argc, char* argv[])
 #if DJINN_PROFILE
 	f32 avg_total = 1000 / c->avg_fps;
 	printf("__main: %f (%.2f%%)\n", update_avg, update_avg / avg_total * 100);
-	printf("SOUND: %f (%.2f%%)\n", sound_avg, sound_avg / avg_total * 100);
 	printf("__draw: %f (%.2f%%)\n", draw_avg, draw_avg / avg_total * 100);
 	printf("GL: %f (%.2f%%)\n", draw_avg, draw_avg / avg_total * 100);
 	printf("__ui: %f (%.2f%%)\n", ui_avg, ui_avg / avg_total * 100);

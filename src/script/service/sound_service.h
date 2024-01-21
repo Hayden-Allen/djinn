@@ -14,9 +14,9 @@ namespace djinn
 		static void init();
 		static void shutdown();
 		static void register_functions(JSContext* const ctx);
-		static void update();
 	public:
-		static void set_listener_world_pos(f32 const x, f32 const y, f32 const z);
+		static void set_listener_world_pos(point<space::WORLD> const& pos);
+		static void set_listener_world_dir(direction<space::WORLD> const& dir);
 	public:
 		static ma_engine* get_engine();
 	private:

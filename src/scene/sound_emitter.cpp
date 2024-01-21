@@ -76,6 +76,26 @@ namespace djinn
 		ASSERT(m_sound_ready);
 		ma_sound_set_looping(&m_sound, looping);
 	}
+	void sound_emitter::set_rolloff(f32 const rolloff)
+	{
+		ASSERT(m_sound_ready);
+		ma_sound_set_rolloff(&m_sound, rolloff);
+	}
+	void sound_emitter::set_min_distance(f32 const min)
+	{
+		ASSERT(m_sound_ready);
+		ma_sound_set_min_distance(&m_sound, min);
+	}
+	void sound_emitter::set_max_distance(f32 const max)
+	{
+		ASSERT(m_sound_ready);
+		ma_sound_set_max_distance(&m_sound, max);
+	}
+	void sound_emitter::set_attenuation_model(ma_attenuation_model const model)
+	{
+		ASSERT(m_sound_ready);
+		ma_sound_set_attenuation_model(&m_sound, model);
+	}
 	void sound_emitter::update_from_scene_object()
 	{
 		ASSERT(m_sound_ready);
@@ -89,6 +109,10 @@ namespace djinn
 	{
 		ASSERT(m_sound_ready);
 		m_backup.volume = ma_sound_get_volume(&m_sound);
+		m_backup.rolloff = ma_sound_get_rolloff(&m_sound);
+		m_backup.min_dist = ma_sound_get_min_distance(&m_sound);
+		m_backup.max_dist = ma_sound_get_max_distance(&m_sound);
+		m_backup.attenuation = ma_sound_get_attenuation_model(&m_sound);
 		m_backup.spatialization_enabled = ma_sound_is_spatialization_enabled(&m_sound);
 		m_backup.looping = ma_sound_is_looping(&m_sound);
 		m_backup.started = ma_sound_is_playing(&m_sound);
@@ -98,6 +122,10 @@ namespace djinn
 	{
 		ASSERT(m_backup.valid);
 		set_volume(m_backup.volume);
+		set_rolloff(m_backup.rolloff);
+		set_min_distance(m_backup.min_dist);
+		set_max_distance(m_backup.max_dist);
+		set_attenuation_model(m_backup.attenuation);
 		set_spatialization_enabled(m_backup.spatialization_enabled);
 		set_looping(m_backup.looping);
 		if (m_backup.started)

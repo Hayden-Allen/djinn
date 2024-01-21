@@ -7,7 +7,7 @@ import GroundEntity from "./GroundEntity"
 import Xport from "./lib/Xport"
 import Player from "./Player"
 
-const { Asset, Render, Nanovg, Scene, ImGui, Input } = djinn
+const { Asset, Render, Nanovg, Scene, ImGui, Input, Sound } = djinn
 
 export default class MainEntity extends Entity {
     private camera?: Camera
@@ -51,13 +51,13 @@ export default class MainEntity extends Entity {
             u_texture: 0,
         })
         this.idMesh = Asset.Mesh.create(4, [2, 2], 6, [this.idTexture])
-        // Asset.Mesh.update(
-        //   this.idMesh,
-        //   [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1],
-        //   [0, 1, 2, 0, 2, 3]
-        // )
         this.idSoundSource = Asset.Sound.load("white_out.mp3")
         this.idSoundEmitter = Scene.SoundEmitter.create(this.idSoundSource)
+        Scene.setPos(this.idSoundEmitter, [-36, 103, -39])
+        Scene.SoundEmitter.setSpatializationEnabled(this.idSoundEmitter, true)
+        // Scene.SoundEmitter.setVolume(this.idSoundEmitter, 10)
+        Scene.SoundEmitter.setLooping(this.idSoundEmitter, true)
+        Scene.SoundEmitter.setRolloff(this.idSoundEmitter, 2)
         this.needsPlayAudio = true
 
         this.idStaticMesh = Asset.Mesh.loadStatic("cube.m3d")
@@ -82,17 +82,9 @@ export default class MainEntity extends Entity {
             Scene.setPosX(this.idAnimatedInstances[i], -5 + i)
             Scene.setPosZ(this.idAnimatedInstances[i], -3)
         }
+        Scene.setPos(this.idAnimatedInstances[0], [-36, 103, -39])
 
-        // this.idPhysics = Scene.Physics.createSphere(Math.sqrt(3) / 2, [0, 20, 0], 1)
         this.idPhysics = Scene.Physics.createBox(1, [0, 50, 0], [1, 1, 1])
-        // this.idPhysics = Scene.Physics.createCapsuleY(
-        //   Math.sqrt(3) / 2,
-        //   1,
-        //   [0, 200, 0],
-        //   1
-        // )
-        // Scene.Physics.setFriction(this.idPhysics, 0)
-        // Scene.Physics.setAngularVelocity(this.idPhysics, [0, 1, 0])
 
         this.ground = Scene.Entity.load("GroundEntity.js") as GroundEntity
         this.ground?.bind(this.camera)
@@ -163,22 +155,10 @@ export default class MainEntity extends Entity {
         }
 
         if (this.needsPlayAudio) {
-            // Scene.SoundEmitter.play(this.idSoundEmitter)
+            Scene.SoundEmitter.start(this.idSoundEmitter)
             this.needsPlayAudio = false
         }
-        // Scene.Entity.requestImGui(this.id)
 
-        // if (Input.getKey(Input.KEY_SPACE)) {
-        //   Scene.Physics.setLinearVelocity(this.idPhysics, [0, 5, 0])
-        //   Scene.MeshInstance.setVisible(this.idStaticInstance, false)
-        // } else {
-        //   Scene.MeshInstance.setVisible(this.idStaticInstance, true)
-        // }
-        // if (Input.getKey(Input.KEY_SHIFT))
-        //   Scene.Physics.disableCollision(this.idPhysics)
-        // else Scene.Physics.enableCollision(this.idPhysics)
-
-        // Scene.setPos(this.xport.idLights[0], [Math.cos(time), -1, Math.sin(time)])
         if (Input.getKey(Input.KEY_ENTER)) {
             Render.setDebugDrawEnabled(true)
         }

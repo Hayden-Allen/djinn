@@ -864,28 +864,85 @@ namespace djinn::js::scene_service
 	//
 	//	SOUND EMITTER
 	//
-	JSValue create_sound_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	JSValue create_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
-		id_t const source_id = js::extract_id(ctx, argv[0]);
-		sptr<sound_source> source = ::djinn::asset_service::get_sound_source_manager()->get(source_id);
-		return js::create_id(ctx, ::djinn::scene_service::get_sound_emitter_manager()->create(source));
+		id_t const sound_source_id = js::extract_id(ctx, argv[0]);
+		sptr<sound_source> source = ::djinn::asset_service::get_sound_source_manager()->get(sound_source_id);
+		id_t const instance_id = ::djinn::scene_service::get_sound_emitter_manager()->create(source);
+		return js::create_id(ctx, instance_id);
 	}
-	JSValue play_sound_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	JSValue start_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
 		id_t const id = js::extract_id(ctx, argv[0]);
-		::djinn::scene_service::get_sound_emitter_manager()->get(id)->play();
+		::djinn::scene_service::get_sound_emitter_manager()->get(id)->start();
 		return JS_UNDEFINED;
 	}
-	JSValue stop_sound_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	JSValue stop_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
 		id_t const id = js::extract_id(ctx, argv[0]);
 		::djinn::scene_service::get_sound_emitter_manager()->get(id)->stop();
 		return JS_UNDEFINED;
 	}
-	JSValue destroy_sound_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	JSValue set_emitter_volume(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		f32 const volume = js::extract_f32(ctx, argv[1]);
+		::djinn::scene_service::get_sound_emitter_manager()->get(id)->set_volume(volume);
+		return JS_UNDEFINED;
+	}
+	JSValue set_emitter_spatialization_enabled(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		bool const enabled = js::extract_bool(ctx, argv[1]);
+		::djinn::scene_service::get_sound_emitter_manager()->get(id)->set_spatialization_enabled(enabled);
+		return JS_UNDEFINED;
+	}
+	JSValue set_emitter_looping(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		bool const looping = js::extract_bool(ctx, argv[1]);
+		::djinn::scene_service::get_sound_emitter_manager()->get(id)->set_looping(looping);
+		return JS_UNDEFINED;
+	}
+	JSValue set_emitter_rolloff(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		f32 const f = js::extract_f32(ctx, argv[1]);
+		::djinn::scene_service::get_sound_emitter_manager()->get(id)->set_rolloff(f);
+		return JS_UNDEFINED;
+	}
+	JSValue set_emitter_min_dist(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		f32 const f = js::extract_f32(ctx, argv[1]);
+		::djinn::scene_service::get_sound_emitter_manager()->get(id)->set_min_distance(f);
+		return JS_UNDEFINED;
+	}
+	JSValue set_emitter_max_dist(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		f32 const f = js::extract_f32(ctx, argv[1]);
+		::djinn::scene_service::get_sound_emitter_manager()->get(id)->set_max_distance(f);
+		return JS_UNDEFINED;
+	}
+	JSValue set_emitter_attenuation(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		u32 const attenuation = js::extract_u32(ctx, argv[1]);
+		::djinn::scene_service::get_sound_emitter_manager()->get(id)->set_attenuation_model((ma_attenuation_model)attenuation);
+		return JS_UNDEFINED;
+	}
+	JSValue destroy_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
 		id_t const id = js::extract_id(ctx, argv[0]);
@@ -1373,10 +1430,17 @@ namespace djinn
 		}
 		// SOUND EMITTER
 		{
-			super::register_function(ctx, "SoundEmitter", "create", 1, js::scene_service::create_sound_emitter);
-			super::register_function(ctx, "SoundEmitter", "play", 1, js::scene_service::play_sound_emitter);
-			super::register_function(ctx, "SoundEmitter", "stop", 1, js::scene_service::stop_sound_emitter);
-			super::register_function(ctx, "SoundEmitter", "destroy", 1, js::scene_service::destroy_sound_emitter);
+			super::register_function(ctx, "SoundEmitter", "create", 1, js::scene_service::create_emitter);
+			super::register_function(ctx, "SoundEmitter", "start", 1, js::scene_service::start_emitter);
+			super::register_function(ctx, "SoundEmitter", "stop", 1, js::scene_service::stop_emitter);
+			super::register_function(ctx, "SoundEmitter", "setVolume", 2, js::scene_service::set_emitter_volume);
+			super::register_function(ctx, "SoundEmitter", "setSpatializationEnabled", 2, js::scene_service::set_emitter_spatialization_enabled);
+			super::register_function(ctx, "SoundEmitter", "setLooping", 2, js::scene_service::set_emitter_looping);
+			super::register_function(ctx, "SoundEmitter", "setRolloff", 2, js::scene_service::set_emitter_rolloff);
+			super::register_function(ctx, "SoundEmitter", "setMinDistance", 2, js::scene_service::set_emitter_min_dist);
+			super::register_function(ctx, "SoundEmitter", "setMaxDistance", 2, js::scene_service::set_emitter_max_dist);
+			super::register_function(ctx, "SoundEmitter", "setAttenutation", 2, js::scene_service::set_emitter_attenuation);
+			super::register_function(ctx, "SoundEmitter", "destroy", 1, js::scene_service::destroy_emitter);
 			super::register_function(ctx, "SoundEmitter", "destroyAll", 1, js::scene_service::destroy_all_sound_emitter);
 		}
 		// COMMON
@@ -1505,6 +1569,11 @@ namespace djinn
 				cam->update(dt, time);
 			});
 		s_instance->m_physics_object_manager.update(dt);
+
+		s_instance->m_emitter_manager.for_each([](sptr<sound_emitter> emitter, id_t const id)
+			{
+				emitter->update_from_scene_object();
+			});
 	}
 	void scene_service::draw()
 	{
@@ -1565,6 +1634,8 @@ namespace djinn
 			return get_light_manager()->get(id);
 		else if (get_waypoint_manager()->has(id))
 			return get_waypoint_manager()->get(id);
+		else if (get_sound_emitter_manager()->has(id))
+			return get_sound_emitter_manager()->get(id);
 		return get_mesh_instance_manager()->get(id);
 	}
 	tagged* scene_service::get_tagged(id_t const id)

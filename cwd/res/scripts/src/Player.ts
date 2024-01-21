@@ -2,7 +2,7 @@ import "./lib/djinn.d"
 import Entity from "./lib/Entity"
 import Camera from "./lib/Camera"
 
-const { Asset, Scene, Input, ImGui, Util } = djinn
+const { Asset, Scene, Input, ImGui, Sound } = djinn
 
 export default class Player extends Entity {
     private camera?: Camera
@@ -197,12 +197,12 @@ export default class Player extends Entity {
             const x = 25 * Input.leftX()
             const z = 25 * Input.leftY()
             let newVelY = this.velY - this.gravity * dt
-            if (this.canJump) {
-                if (Input.getKey(Input.KEY_SPACE)) {
-                    this.canJump = false
-                    newVelY += this.velYMax
-                }
+            // if (this.canJump) {
+            if (Input.getKey(Input.KEY_SPACE)) {
+                this.canJump = false
+                newVelY += this.velYMax
             }
+            // }
             this.velY = Math.min(this.velYMax, Math.max(this.velYMin, newVelY))
             const dir = [x, this.velY, z]
             Scene.Physics.collideNSlide(this.idHitbox, dir, dt)
@@ -244,7 +244,15 @@ export default class Player extends Entity {
     }
     __draw() {
         this.worldPos = Scene.getPos(this.idHitbox)
+        Sound.setListenerWorldPos(this.worldPos)
         this.worldPos[1] += 1
+
+        const dir = [
+            -Math.sin((this.camAngleY * Math.PI) / 180),
+            0,
+            -Math.cos((this.camAngleY * Math.PI) / 180),
+        ]
+        Sound.setListenerWorldDir(dir)
 
         // update shaders AFTER CAMERA TRANSFORM IS DONE BEING MODIFIED
         Asset.Shader.setCameraUniforms(this.idMainShader, this.camera!.getId())

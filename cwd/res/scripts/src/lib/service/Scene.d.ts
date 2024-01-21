@@ -125,9 +125,17 @@ declare interface _Scene_Physics {
 }
 declare interface _Scene_SoundEmitter {
     create(idSource: SoundID): SoundEmitterID
-    play(id: SoundEmitterID): void
+    start(id: SoundEmitterID): void
     stop(id: SoundEmitterID): void
+    setVolume(id: SoundEmitterID, volume: number): void
+    setSpatializationEnabled(id: SoundEmitterID, enabled: boolean): void
+    setLooping(id: SoundEmitterID, loop: boolean): void
+    setRolloff(id: SoundEmitterID, rolloff: number): void
+    setMinDistance(id: SoundEmitterID, min: number): void
+    setMaxDistance(id: SoundEmitterID, max: number): void
+    setAttenutation(id: SoundEmitterID, attenutation: number): void
     destroy(id: SoundEmitterID): void
+    destroyAll(ids: SoundEmitterID[]): void
 }
 declare interface _Scene_Tagged {
     addTag(id: TaggedID, tag: string): void

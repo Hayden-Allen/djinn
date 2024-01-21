@@ -53,6 +53,20 @@ namespace djinn::js
 		ASSERT(arr.size() == 3);
 		return vec<SPACE>(arr[0], arr[1], arr[2]);
 	}
+	template<space SPACE>
+	point<SPACE> extract_point(JSContext* const ctx, JSValue const& val)
+	{
+		std::vector<f32> const& arr = extract_f32_array(ctx, val);
+		ASSERT(arr.size() == 3);
+		return point<SPACE>(arr[0], arr[1], arr[2]);
+	}
+	template<space SPACE>
+	direction<SPACE> extract_direction(JSContext* const ctx, JSValue const& val)
+	{
+		std::vector<f32> const& arr = extract_f32_array(ctx, val);
+		ASSERT(arr.size() == 3);
+		return direction<SPACE>(arr[0], arr[1], arr[2]);
+	}
 
 
 
