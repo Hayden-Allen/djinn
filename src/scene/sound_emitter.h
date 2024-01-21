@@ -11,7 +11,10 @@ namespace djinn
 	private:
 		struct sound_emitter_backup
 		{
-			bool playing = false;
+			f32 volume = 0.0f;
+			bool spatialization_enabled = false;
+			bool looping = false;
+			bool started = false;
 			bool valid = false;
 		};
 	public:
@@ -22,8 +25,12 @@ namespace djinn
 		void before_reload();
 		void after_reload();
 	public:
-		void play();
+		void start();
 		void stop();
+		void set_volume(f32 const volume);
+		void set_spatialization_enabled(bool const enabled);
+		void set_looping(bool const looping);
+		void update_from_scene_object();
 	private:
 		sptr<sound_source> m_source;
 		ma_sound m_sound;
