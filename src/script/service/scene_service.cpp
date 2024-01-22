@@ -853,6 +853,15 @@ namespace djinn::js::scene_service
 		::djinn::scene_service::get_physics_object_manager()->get(id)->collide_and_slide(vec<space::OBJECT>(v[0], v[1], v[2]), dt);
 		return JS_UNDEFINED;
 	}
+	JSValue aabb_intersects(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id0 = js::extract_id(ctx, argv[0]);
+		id_t const id1 = js::extract_id(ctx, argv[1]);
+		sptr<physics_object> obj0 = ::djinn::scene_service::get_physics_object_manager()->get(id0);
+		sptr<physics_object> obj1 = ::djinn::scene_service::get_physics_object_manager()->get(id1);
+		return js::create_bool(ctx, obj0->aabb_intersects(obj1.get()));
+	}
 	JSValue destroy_physics_object(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
@@ -1338,12 +1347,12 @@ namespace djinn
 	}
 	void scene_service::register_functions(JSContext* const ctx)
 	{
-		// TAGGED
+		// TAG
 		{
-			super::register_function(ctx, "Tagged", "addTag", 2, js::scene_service::add_tag);
-			super::register_function(ctx, "Tagged", "hasTag", 2, js::scene_service::has_tag);
-			super::register_function(ctx, "Tagged", "getTags", 1, js::scene_service::get_tags);
-			super::register_function(ctx, "Tagged", "removeTag", 2, js::scene_service::remove_tag);
+			super::register_function(ctx, "Tag", "add", 2, js::scene_service::add_tag);
+			super::register_function(ctx, "Tag", "has", 2, js::scene_service::has_tag);
+			super::register_function(ctx, "Tag", "get", 1, js::scene_service::get_tags);
+			super::register_function(ctx, "Tag", "remove", 2, js::scene_service::remove_tag);
 		}
 		// WAYPOINT
 		{
@@ -1434,6 +1443,7 @@ namespace djinn
 			super::register_function(ctx, "Physics", "setKinematic", 2, js::scene_service::set_kinematic);
 			super::register_function(ctx, "Physics", "setGhost", 2, js::scene_service::set_ghost);
 			super::register_function(ctx, "Physics", "collideNSlide", 3, js::scene_service::collide_and_slide);
+			super::register_function(ctx, "Physics", "aabbIntersects", 2, js::scene_service::aabb_intersects);
 			super::register_function(ctx, "Physics", "destroy", 1, js::scene_service::destroy_physics_object);
 			super::register_function(ctx, "Physics", "destroyAll", 1, js::scene_service::destroy_all_physics_object);
 		}

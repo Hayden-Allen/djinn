@@ -22,6 +22,11 @@ export default class Xport {
             const idHitbox = Scene.Physics.createBVH(idPhorm)
             this.idHitboxes.push(idHitbox)
             Scene.Physics.bind(idHitbox, idPhorm)
+            if (Scene.Tag.has(idPhorm, "trigger")) {
+                console.log(idHitbox)
+                Scene.Physics.setGhost(idHitbox, true)
+                Scene.Phorm.setVisible(idPhorm, false)
+            }
         }
         this.skybox = new Skybox(skybox, {
             vertexShader: "sky.vert",

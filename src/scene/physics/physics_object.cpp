@@ -4,6 +4,7 @@
 #include "scene/tagged.h"
 #include "scene/entity/entity.h"
 #include "core/constants.h"
+#include "BulletCollision/CollisionDispatch/btGhostObject.h"
 
 namespace djinn
 {
@@ -11,7 +12,6 @@ namespace djinn
 	{
 		if (convexResult.m_hitCollisionObject == m_me)
 			return btScalar(1.0);
-
 		if (!convexResult.m_hitCollisionObject->hasContactResponse())
 			return btScalar(1.0);
 
@@ -78,10 +78,53 @@ namespace djinn
 		m_bound.e = e;
 		m_bound_is_entity = true;
 	}
-	void physics_object::set_friction(f32 const f)
+	void physics_object::collide_and_slide(vec<space::OBJECT> const& vel, f32 const dt)
 	{
-		m_rb->setFriction(f);
+		// ASSERT(m_rb->getFlags() & btCollisionObject::CF_KINEMATIC_OBJECT);
+		tmat<space::OBJECT, space::WORLD> const& mat = get_world_transform();
+		vec<space::WORLD> const& up = mat.get_j();
+		btCollisionShape const* const raw_shape = m_rb->getCollisionShape();
+		ASSERT(raw_shape->isConvex());
+		btConvexShape const* const shape = (btConvexShape const*)raw_shape;
+
+		vec<space::WORLD> vel_remaining = mat * vel;
+		vec<space::WORLD> vel_total(0, 0, 0);
+		for (u32 i = 0; i < 8 && vel_remaining.length2() > 0; i++)
+		{
+			sweep_test_callback cb(m_rb.get(), u::vec2bullet(up), .5);
+			btTransform from = u::tmat2bullet(mat);
+			from.setOrigin(from.getOrigin() + u::vec2bullet(vel_total * dt));
+			btTransform to = from;
+			to.setOrigin(from.getOrigin() + u::vec2bullet(vel_remaining * dt));
+			m_world->convexSweepTest(shape, from, to, cb, .1f);
+			if (!cb.hasHit())
+			{
+				vel_total += vel_remaining;
+				break;
+			}
+			vec<space::WORLD> const vel_before = vel_remaining * cb.m_closestHitFraction;
+			vel_total += vel_before;
+
+			vec<space::WORLD> const vel_after = vel_remaining - vel_before;
+			direction<space::WORLD> const normal = u::bullet2direction<space::WORLD>(cb.m_hitNormalWorld);
+			vel_remaining = vel_after - vel_after.dot(normal) * normal;
+		}
+
+		m_rb->setLinearVelocity(u::vec2bullet(vel_total));
 	}
+	bool physics_object::aabb_intersects(physics_object const* const other) const
+	{
+		btVector3 min0, max0, min1, max1;
+		m_rb->getAabb(min0, max0);
+		other->m_rb->getAabb(min1, max1);
+		return (min0.x() > min1.x() && min0.x() < max1.x() && min0.y() > min1.y() && min0.y() < max1.y() && min0.z() > min1.z() && min0.z() < max1.z()) ||
+			   (max0.x() > min1.x() && max0.x() < max1.x() && max0.y() > min1.y() && max0.y() < max1.y() && max0.z() > min1.z() && max0.z() < max1.z()) ||
+			   (min1.x() > min0.x() && min1.x() < max0.x() && min1.y() > min0.y() && min1.y() < max0.y() && min1.z() > min0.z() && min1.z() < max0.z()) ||
+			   (max1.x() > min0.x() && max1.x() < max0.x() && max1.y() > min0.y() && max1.y() < max0.y() && max1.z() > min0.z() && max1.z() < max0.z());
+	}
+
+
+
 	vec<space::WORLD> physics_object::get_velocity_world() const
 	{
 		return u::bullet2vec<space::WORLD>(m_rb->getLinearVelocity());
@@ -141,6 +184,13 @@ namespace djinn
 	{
 		m_rb->setAngularVelocity(btVector3(x, y, z));
 	}
+
+
+
+	void physics_object::set_friction(f32 const f)
+	{
+		m_rb->setFriction(f);
+	}
 	void physics_object::set_collision_enabled(bool const enabled)
 	{
 		if (enabled)
@@ -184,43 +234,9 @@ namespace djinn
 	void physics_object::set_ghost(bool const is_ghost)
 	{
 		if (is_ghost)
-			m_rb->setCollisionFlags(m_rb->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE | btCollisionObject::CF_STATIC_OBJECT);
+			m_rb->setCollisionFlags(m_rb->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
 		else
-			m_rb->setCollisionFlags(m_rb->getCollisionFlags() & ~btCollisionObject::CF_NO_CONTACT_RESPONSE & ~btCollisionObject::CF_STATIC_OBJECT);
-	}
-	void physics_object::collide_and_slide(vec<space::OBJECT> const& vel, f32 const dt)
-	{
-		// ASSERT(m_rb->getFlags() & btCollisionObject::CF_KINEMATIC_OBJECT);
-		tmat<space::OBJECT, space::WORLD> const& mat = get_world_transform();
-		vec<space::WORLD> const& up = mat.get_j();
-		btCollisionShape const* const raw_shape = m_rb->getCollisionShape();
-		ASSERT(raw_shape->isConvex());
-		btConvexShape const* const shape = (btConvexShape const*)raw_shape;
-
-		vec<space::WORLD> vel_remaining = mat * vel;
-		vec<space::WORLD> vel_total(0, 0, 0);
-		for (u32 i = 0; i < 8 && vel_remaining.length2() > 0; i++)
-		{
-			sweep_test_callback cb(m_rb.get(), u::vec2bullet(up), .5);
-			btTransform from = u::tmat2bullet(mat);
-			from.setOrigin(from.getOrigin() + u::vec2bullet(vel_total * dt));
-			btTransform to = from;
-			to.setOrigin(from.getOrigin() + u::vec2bullet(vel_remaining * dt));
-			m_world->convexSweepTest(shape, from, to, cb);
-			if (!cb.hasHit())
-			{
-				vel_total += vel_remaining;
-				break;
-			}
-			vec<space::WORLD> const vel_before = vel_remaining * std::max(::c::EPSILON, cb.m_closestHitFraction);
-			vel_total += vel_before;
-
-			vec<space::WORLD> const vel_after = vel_remaining - vel_before;
-			vec<space::WORLD> const normal = u::bullet2vec<space::WORLD>(cb.m_hitNormalWorld);
-			vel_remaining = vel_after - vel_after.dot(normal) * normal;
-		}
-
-		m_rb->setLinearVelocity(u::vec2bullet(vel_total));
+			m_rb->setCollisionFlags(m_rb->getCollisionFlags() & ~btCollisionObject::CF_NO_CONTACT_RESPONSE);
 	}
 
 
@@ -257,6 +273,7 @@ namespace djinn
 	{
 		tmat<space::OBJECT, space::WORLD> const& mat = get_world_transform();
 		btTransform const& raw = u::tmat2bullet(mat);
+		m_rb->setWorldTransform(raw);
 		m_rb->getMotionState()->setWorldTransform(raw);
 	}
 	void physics_object::copy_transform_from_physics()

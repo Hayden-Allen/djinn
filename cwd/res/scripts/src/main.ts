@@ -32,7 +32,6 @@ export default class MainEntity extends Entity {
     private nextAnimated: number = 0
 
     private idPhysics: PhysicsID
-    private idTrigger: PhysicsID
     private ground?: GroundEntity
 
     private idPhormShader: ShaderID
@@ -88,10 +87,6 @@ export default class MainEntity extends Entity {
         }
         Scene.setPos(this.idAnimatedInstances[0], [-36, 103, -39])
 
-        this.idTrigger = Scene.Physics.createSphere(0, [-36, 103, -39], 1)
-        Scene.Physics.setGhost(this.idTrigger, true)
-        Scene.Physics.bind(this.idTrigger, this.id)
-
         this.idPhysics = Scene.Physics.createBox(1, [0, 50, 0], [1, 1, 1])
 
         this.ground = Scene.Entity.load("GroundEntity.js") as GroundEntity
@@ -102,7 +97,7 @@ export default class MainEntity extends Entity {
             "phorm.vert",
             "phorm_alpha.frag"
         )
-        this.xport = new Xport("hill.xport")
+        this.xport = new Xport("hill2.xport")
         for (var i = 0; i < this.xport.idPhorms.length; i++) {
             Scene.Phorm.setShaders(this.xport.idPhorms[i], this.idPhormShader)
             Scene.Phorm.setAlphaShaders(
@@ -128,7 +123,6 @@ export default class MainEntity extends Entity {
         Asset.Shader.destroy(this.idShader)
         Asset.Texture.destroy(this.idTexture)
 
-        Scene.Physics.destroy(this.idTrigger)
         Scene.Physics.destroy(this.idPhysics)
 
         this.xport!.destroy()

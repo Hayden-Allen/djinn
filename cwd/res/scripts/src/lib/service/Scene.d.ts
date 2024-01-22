@@ -121,6 +121,7 @@ declare interface _Scene_Physics {
     setKinematic(id: PhysicsID, isKinematic: boolean): void
     setGhost(id: PhysicsID, isGhost: boolean): void
     collideNSlide(id: PhysicsID, velLocal: number[], dt: number): void
+    aabbIntersects(id0: PhysicsID, id1: PhysicsID): boolean
     destroy(id: PhysicsID): void
     destroyAll(ids: PhysicsID[]): void
 }
@@ -138,11 +139,11 @@ declare interface _Scene_SoundEmitter {
     destroy(id: SoundEmitterID): void
     destroyAll(ids: SoundEmitterID[]): void
 }
-declare interface _Scene_Tagged {
-    addTag(id: TaggedID, tag: string): void
-    hasTag(id: TaggedID, tag: string): boolean
-    getTags(id: TaggedID): string[]
-    removeTag(id: TaggedID, tag: string): void
+declare interface _Scene_Tag {
+    add(id: TaggedID, tag: string): void
+    has(id: TaggedID, tag: string): boolean
+    get(id: TaggedID): string[]
+    remove(id: TaggedID, tag: string): void
 }
 export declare interface _Scene {
     Camera: _Scene_Camera
@@ -152,7 +153,7 @@ export declare interface _Scene {
     Phorm: _Scene_Phorm
     Physics: _Scene_Physics
     SoundEmitter: _Scene_SoundEmitter
-    Tagged: _Scene_Tagged
+    Tag: _Scene_Tag
     Waypoint: _Scene_Waypoint
     Xport: _Scene_Xport
 

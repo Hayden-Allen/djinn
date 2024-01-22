@@ -10,8 +10,7 @@
 
 - now
 - physics
-	- slowly falling after landing?
-	- detection volumes
+	- slowly falling after landing? (related to this.velY = 0)
 	- hatsify physics_object, function order/cleanup
 	- physics_object_manager::update order needs to respect scene graph?
 - graphics
