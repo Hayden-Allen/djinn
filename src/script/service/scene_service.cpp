@@ -835,6 +835,14 @@ namespace djinn::js::scene_service
 		::djinn::scene_service::get_physics_object_manager()->get(id)->set_kinematic(is_kinematic);
 		return JS_UNDEFINED;
 	}
+	JSValue set_ghost(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		bool const is_ghost = js::extract_bool(ctx, argv[1]);
+		::djinn::scene_service::get_physics_object_manager()->get(id)->set_ghost(is_ghost);
+		return JS_UNDEFINED;
+	}
 	JSValue collide_and_slide(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 3);
@@ -1424,6 +1432,7 @@ namespace djinn
 			super::register_function(ctx, "Physics", "getNormalTangent", 3, js::scene_service::get_normal_tangent);
 			super::register_function(ctx, "Physics", "setGravity", 2, js::scene_service::set_gravity);
 			super::register_function(ctx, "Physics", "setKinematic", 2, js::scene_service::set_kinematic);
+			super::register_function(ctx, "Physics", "setGhost", 2, js::scene_service::set_ghost);
 			super::register_function(ctx, "Physics", "collideNSlide", 3, js::scene_service::collide_and_slide);
 			super::register_function(ctx, "Physics", "destroy", 1, js::scene_service::destroy_physics_object);
 			super::register_function(ctx, "Physics", "destroyAll", 1, js::scene_service::destroy_all_physics_object);

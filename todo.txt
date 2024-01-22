@@ -15,7 +15,6 @@
 	- hatsify physics_object, function order/cleanup
 	- physics_object_manager::update order needs to respect scene graph?
 - graphics
-	- anti aliasing
 	- jittery vertical movement/rotation
 	- bridge/roof sometimes not drawing/no hitbox
 	- implement different lights

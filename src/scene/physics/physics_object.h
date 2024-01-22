@@ -66,6 +66,7 @@ namespace djinn
 		void set_max_speed(u32 const index, f32 const max);
 		void set_gravity(vec<space::WORLD> const& force);
 		void set_kinematic(bool const is_kinematic);
+		void set_ghost(bool const is_ghost);
 		void collide_and_slide(vec<space::OBJECT> const& vel, f32 const dt);
 	protected:
 		sptr<btDiscreteDynamicsWorld> m_world;

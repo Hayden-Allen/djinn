@@ -177,9 +177,16 @@ namespace djinn
 	void physics_object::set_kinematic(bool const is_kinematic)
 	{
 		if (is_kinematic)
-			m_rb->setFlags(m_rb->getFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+			m_rb->setCollisionFlags(m_rb->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
 		else
-			m_rb->setFlags(m_rb->getFlags() & ~btCollisionObject::CF_KINEMATIC_OBJECT);
+			m_rb->setCollisionFlags(m_rb->getCollisionFlags() & ~btCollisionObject::CF_KINEMATIC_OBJECT);
+	}
+	void physics_object::set_ghost(bool const is_ghost)
+	{
+		if (is_ghost)
+			m_rb->setCollisionFlags(m_rb->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE | btCollisionObject::CF_STATIC_OBJECT);
+		else
+			m_rb->setCollisionFlags(m_rb->getCollisionFlags() & ~btCollisionObject::CF_NO_CONTACT_RESPONSE & ~btCollisionObject::CF_STATIC_OBJECT);
 	}
 	void physics_object::collide_and_slide(vec<space::OBJECT> const& vel, f32 const dt)
 	{
@@ -261,13 +268,9 @@ namespace djinn
 		m_transform = get_parent_transform().invert_copy() * mat;
 		u::extract_rot(m_transform, &m_rot[0], &m_rot[1], &m_rot[2]);
 	}
-
-
-
 	void physics_object::check_collisions()
 	{
 		contact_test_callback cb(this);
 		m_world->contactTest(m_rb.get(), cb);
 	}
-
 } // namespace djinn

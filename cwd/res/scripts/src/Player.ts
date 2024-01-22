@@ -228,6 +228,9 @@ export default class Player extends Entity {
         }
         Scene.Entity.requestImGui(this.id)
     }
+    __collide_entity(entity: Entity, normalWorld: number[]) {
+        console.log("TRIGGER")
+    }
     __collide_phorm(id: PhormID, normalWorld: number[]) {
         if (normalWorld[1] >= 0.9) {
             this.canJump = true

@@ -119,6 +119,7 @@ declare interface _Scene_Physics {
     ): number[]
     setGravity(id: PhysicsID, force: number[]): void
     setKinematic(id: PhysicsID, isKinematic: boolean): void
+    setGhost(id: PhysicsID, isGhost: boolean): void
     collideNSlide(id: PhysicsID, velLocal: number[], dt: number): void
     destroy(id: PhysicsID): void
     destroyAll(ids: PhysicsID[]): void
