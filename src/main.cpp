@@ -37,7 +37,7 @@ using namespace djinn;
 int main(int argc, char* argv[])
 {
 #ifdef _WIN32
-	optr<mgl::context> c(new mgl::context(1920, 1080, "mingl", { .vsync = false, .clear = { .b = 1 }, .version = { 4, 3 } }));
+	optr<mgl::context> c(new mgl::context(1920, 1080, "mingl", { .vsync = false, .clear = { .b = 1 }, .version = { 4, 3 }, .msaa_samples = 8 }));
 #else
 	optr<mgl::context> c(new mgl::context(1920, 1080, "mingl", { .vsync = false, .clear = { .b = 1 }, .version = { 4, 1 } }));
 #endif

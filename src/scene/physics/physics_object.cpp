@@ -3,6 +3,7 @@
 #include "core/util.h"
 #include "scene/tagged.h"
 #include "scene/entity/entity.h"
+#include "core/constants.h"
 
 namespace djinn
 {
@@ -183,10 +184,7 @@ namespace djinn
 	void physics_object::collide_and_slide(vec<space::OBJECT> const& vel, f32 const dt)
 	{
 		// ASSERT(m_rb->getFlags() & btCollisionObject::CF_KINEMATIC_OBJECT);
-		// tmat<space::OBJECT, space::WORLD> const& mat = get_world_transform();
-		btTransform raw;
-		m_rb->getMotionState()->getWorldTransform(raw);
-		tmat<space::OBJECT, space::WORLD> const& mat = u::bullet2tmat<space::OBJECT, space::WORLD>(raw);
+		tmat<space::OBJECT, space::WORLD> const& mat = get_world_transform();
 		vec<space::WORLD> const& up = mat.get_j();
 		btCollisionShape const* const raw_shape = m_rb->getCollisionShape();
 		ASSERT(raw_shape->isConvex());
@@ -207,7 +205,7 @@ namespace djinn
 				vel_total += vel_remaining;
 				break;
 			}
-			vec<space::WORLD> const vel_before = vel_remaining * std::max(c::EPSILON, cb.m_closestHitFraction);
+			vec<space::WORLD> const vel_before = vel_remaining * std::max(::c::EPSILON, cb.m_closestHitFraction);
 			vel_total += vel_before;
 
 			vec<space::WORLD> const vel_after = vel_remaining - vel_before;
@@ -252,7 +250,6 @@ namespace djinn
 	{
 		tmat<space::OBJECT, space::WORLD> const& mat = get_world_transform();
 		btTransform const& raw = u::tmat2bullet(mat);
-		m_rb->setWorldTransform(raw);
 		m_rb->getMotionState()->setWorldTransform(raw);
 	}
 	void physics_object::copy_transform_from_physics()
