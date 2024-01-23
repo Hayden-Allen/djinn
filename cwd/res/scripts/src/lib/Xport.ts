@@ -16,6 +16,7 @@ export default class Xport {
             Scene.Xport.load(fp)
         this.idTextures = textures
         this.idPhorms = phorms
+        console.log(this.idPhorms)
         this.idLights = lights
         this.idWaypoints = waypoints
         for (const idPhorm of this.idPhorms) {
@@ -23,7 +24,6 @@ export default class Xport {
             this.idHitboxes.push(idHitbox)
             Scene.Physics.bind(idHitbox, idPhorm)
             if (Scene.Tag.has(idPhorm, "trigger")) {
-                console.log(idHitbox)
                 Scene.Physics.setGhost(idHitbox, true)
                 Scene.Phorm.setVisible(idPhorm, false)
             }

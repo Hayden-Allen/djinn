@@ -17,8 +17,7 @@ namespace djinn
 		{
 			u32 const material_idx = in->uint();
 			ASSERT(mats.contains(material_idx));
-			static_retained_render_object ro(*in);
-			m_ros.insert({ mats.at(material_idx), std::move(ro) });
+			m_ros.insert({ mats.at(material_idx).get(), std::move(static_retained_render_object(*in)) });
 		}
 	}
 
@@ -64,7 +63,7 @@ namespace djinn
 	{
 		m_alpha_shaders = alpha_shaders;
 	}
-	std::unordered_map<sptr<material>, static_retained_render_object> const& phorm::get_render_objects() const
+	std::unordered_map<material const*, static_retained_render_object> const& phorm::get_render_objects() const
 	{
 		return m_ros;
 	}

@@ -47,11 +47,11 @@ namespace djinn
 	}
 	void sound_source::register_emitter(wptr<sound_emitter> emitter)
 	{
-		m_emitters.insert(emitter);
+		m_emitters.insert(emitter.get());
 	}
 	void sound_source::unregister_emitter(wptr<sound_emitter> emitter)
 	{
-		m_emitters.erase(emitter);
+		m_emitters.erase(emitter.get());
 	}
 	ma_resource_manager_data_source* sound_source::get_data_source()
 	{
