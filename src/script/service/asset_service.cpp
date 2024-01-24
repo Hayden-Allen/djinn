@@ -157,7 +157,7 @@ namespace djinn::js::asset_service
 		shaders->uniform_mat4(c::uniform::proj_mat, cam->get_proj().e);
 		shaders->uniform_mat4(c::uniform::vp_mat, cam->get_view_proj().e);
 		shaders->uniform_mat4(c::uniform::vpr_mat, cam->get_view_proj_basis().e);
-		point<space::PARENT> const& pos = cam->get_pos();
+		point<space::WORLD> const& pos = cam->get_world_transform().get_t();
 		shaders->uniform_3f(c::uniform::cam_pos, pos[0], pos[1], pos[2]);
 
 		return JS_UNDEFINED;
@@ -399,15 +399,15 @@ namespace djinn
 	}
 	void asset_service::draw_meshes()
 	{
+		s_instance->m_animated_mesh_manager.for_each([](sptr<mesh> mesh, id_t const id)
+			{
+				mesh->draw(render_service::get_context());
+			});
 		s_instance->m_custom_mesh_manager.for_each([](sptr<mesh> mesh, id_t const id)
 			{
 				mesh->draw(render_service::get_context());
 			});
 		s_instance->m_static_mesh_manager.for_each([](sptr<mesh> mesh, id_t const id)
-			{
-				mesh->draw(render_service::get_context());
-			});
-		s_instance->m_animated_mesh_manager.for_each([](sptr<mesh> mesh, id_t const id)
 			{
 				mesh->draw(render_service::get_context());
 			});

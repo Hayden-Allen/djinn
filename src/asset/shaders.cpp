@@ -224,21 +224,76 @@ namespace djinn
 			if (line.starts_with(c::shader::macro::light_sum))
 			{
 				auto const& args = extract_args(line);
-				ASSERT(args.size() == 2);
+				ASSERT(args.size() == 3);
 				char const* const N = args[0].c_str();
 				char const* const V = args[1].c_str();
-				char const* const amb = c::shader::light_ambient.c_str();
-				char const* const diff = c::shader::light_diffuse.c_str();
-				char const* const spec = c::shader::light_specular.c_str();
-				pushf(&lines, "vec3 %s=vec3(0),%s=vec3(0),%s=vec3(0);", amb, diff, spec);
+				char const* const frag_pos_world = args[2].c_str();
+				char const* const d_amb = c::shader::light_ambient.c_str();
+				char const* const d_diff = c::shader::light_diffuse.c_str();
+				char const* const d_spec = c::shader::light_specular.c_str();
+				char const* const cur_light = "d_lights.d_l[i]";
+				pushf(&lines, "vec3 %s=vec3(0),%s=vec3(0),%s=vec3(0);", d_amb, d_diff, d_spec);
 				pushf(&lines, "for(int i=0;i<int(d_lights.d_num);i++){");
-				pushf(&lines, "vec3 L=normalize(d_lights.d_l[i].o2w[3].xyz);");
+				/*pushf(&lines, "vec3 L=normalize(d_lights.d_l[i].o2w[3].xyz);");
 				pushf(&lines, "vec3 R=reflect(L,%s);", N);
 				pushf(&lines, "float NdL=max(0,dot(%s,-L));", N);
 				pushf(&lines, "float RdV=max(0,dot(R,%s));", V);
 				pushf(&lines, "%s+=d_lights.d_l[i].ca.rgb*d_lights.d_l[i].ca.a;", amb);
 				pushf(&lines, "%s+=NdL*d_lights.d_l[i].cd.rgb*d_lights.d_l[i].cd.a;", diff);
-				pushf(&lines, "%s+=pow(RdV,32)*d_lights.d_l[i].cs.rgb*d_lights.d_l[i].cs.a;", spec);
+				pushf(&lines, "%s+=pow(RdV,32)*d_lights.d_l[i].cs.rgb*d_lights.d_l[i].cs.a;", spec);*/
+				// common
+				pushf(&lines, "float cur_type = %s.o2w[3].w;", cur_light);
+				pushf(&lines, "vec3 light_pos_world = %s.o2w[3].xyz;", cur_light);
+				pushf(&lines, "vec3 L = vec3(0);");
+				pushf(&lines, "float amb_atten = 1, diff_atten = 1, spec_atten = 1;");
+				// directional
+				pushf(&lines, "if (cur_type == 0){L = normalize(light_pos_world);}");
+				// point
+				pushf(&lines, "else if (cur_type == 1){");
+				pushf(&lines, "vec3 diff = light_pos_world - %s;", frag_pos_world);
+				pushf(&lines, "float diff_length2 = dot(diff, diff);");
+				pushf(&lines, "float rmax2 = %s.rmax * %s.rmax;", cur_light, cur_light);
+				pushf(&lines, "if (diff_length2 >= rmax2) continue;");
+				pushf(&lines, "float diff_length = length(diff);");
+				pushf(&lines, "amb_atten = diff_atten = spec_atten = (diff_length2 / rmax2) * (2 * diff_length / %s.rmax - 3) + 1;", cur_light);
+				pushf(&lines, "L = normalize(diff);");
+				pushf(&lines, "amb_atten *= float(dot(%s, L) > 0);}", N);
+				// area
+				pushf(&lines, "else if (cur_type == 2){");
+				pushf(&lines, "vec3 diff = light_pos_world - %s;", frag_pos_world);
+				pushf(&lines, "float diff_length2 = dot(diff, diff);");
+				pushf(&lines, "float rmax2 = %s.rmax * %s.rmax;", cur_light, cur_light);
+				pushf(&lines, "if (diff_length2 >= rmax2) continue;");
+				pushf(&lines, "float diff_length = length(diff);");
+				pushf(&lines, "amb_atten = (diff_length2 / rmax2) * (2 * diff_length / %s.rmax - 3) + 1;", cur_light);
+				pushf(&lines, "diff_atten = spec_atten = 0;}");
+				// spot
+				pushf(&lines, "else if (cur_type == 3){");
+				pushf(&lines, "vec3 diff = light_pos_world - %s;", frag_pos_world);
+				pushf(&lines, "float diff_length2 = dot(diff, diff);");
+				pushf(&lines, "float rmax2 = %s.rmax * %s.rmax;", cur_light);
+				pushf(&lines, "if (diff_length2 >= rmax2) continue;");
+				pushf(&lines, "float diff_length = length(diff);");
+				pushf(&lines, "vec3 frag_pos_light = (%s.w2o * vec4(%s, 1)).xyz;", cur_light, frag_pos_world);
+				pushf(&lines, "if (frag_pos_light.z >= 0) continue;");
+				pushf(&lines, "float cos_theta = -frag_pos_light.z / length(frag_pos_light);");
+				pushf(&lines, "amb_atten = diff_atten = spec_atten = (diff_length2 / rmax2) * (2 * diff_length / %s.rmax - 3) + 1;", cur_light);
+				pushf(&lines, "L = normalize(light_pos_world - %s);", frag_pos_world);
+				pushf(&lines, "amb_atten *= float(dot(%s, L) > 0);", N);
+				pushf(&lines, "amb_atten *= float(cos_theta >= %s.cos_tmin);", cur_light);
+				pushf(&lines, "float angular_atten = clamp(abs(cos_theta - %s.cos_tmin) / (%s.cos_tmax - %s.cos_tmin) + 1, 0, 1);", cur_light, cur_light, cur_light);
+				pushf(&lines, "diff_atten *= angular_atten;");
+				pushf(&lines, "spec_atten *= angular_atten;}");
+				// common
+				pushf(&lines, "vec3 R = normalize(reflect(L, %s));", N);
+				pushf(&lines, "float RdV = max(0, dot(%s, R));", V);
+				pushf(&lines, "float NdL = max(0, dot(%s, L));", N);
+				pushf(&lines, "vec4 amb = amb_atten * %s.ca;", cur_light);
+				pushf(&lines, "vec4 diff = diff_atten * NdL * %s.cd;", cur_light);
+				pushf(&lines, "vec4 spec = spec_atten * pow(RdV, %s.sp) * %s.cs;", cur_light, cur_light);
+				pushf(&lines, "%s += amb.rgb * amb.a;", d_amb);
+				pushf(&lines, "%s += diff.rgb * diff.a;", d_diff);
+				pushf(&lines, "%s += spec.rgb * spec.a;", d_spec);
 				pushf(&lines, "}");
 			}
 			else
@@ -257,7 +312,7 @@ namespace djinn
 		std::stringstream sstr;
 		for (std::string const& line : lines)
 			sstr << line << "\n";
-		// printf("%s\n%s\n", fp.c_str(), sstr.str().c_str());
+		printf("%s\n%s\n", fp.c_str(), sstr.str().c_str());
 		return sstr.str();
 	}
 } // namespace djinn

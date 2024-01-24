@@ -3,15 +3,15 @@ TYPE(phorm);
 
 uniform mat4 d_vp, d_model;
 uniform mat3 d_normal;
-out vec3 v_pos, v_norm;
+out vec3 v_pos_world, v_norm_world;
 out vec4 v_rgba, v_weights, v_uv[4];
 
 void main()
 {
     vec4 pos = vec4(d_pos, 1);
     gl_Position = d_vp * d_model * pos;
-    v_pos = vec3(d_model * pos);
-    v_norm = d_normal * d_norm;
+    v_pos_world = vec3(d_model * pos);
+    v_norm_world = d_normal * d_norm;
     v_rgba = d_rgba;
     v_weights = d_weights;
     v_uv[0] = d_uv0;

@@ -15,6 +15,7 @@ namespace djinn
 		id_t create();
 		void destroy(id_t const id) override;
 		void update();
+		void bind() const;
 	private:
 		static constexpr u64 s_light_offset = 16, s_floats_per_light = sizeof(mgl::light) / sizeof(f32); // sizeof(vec4)
 	private:

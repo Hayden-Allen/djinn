@@ -10,7 +10,7 @@ namespace djinn
 		DCM(visibility_scene_object);
 		virtual ~visibility_scene_object();
 	public:
-		tmat<space::OBJECT, space::WORLD> get_graphics_transform() const override final;
+		tmat<space::OBJECT, space::WORLD> get_graphics_transform() const override;
 		void set_visible(bool const visible);
 	protected:
 		bool m_visible;

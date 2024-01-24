@@ -236,7 +236,7 @@ namespace djinn::js::scene_service
 		std::unordered_map<u32, sptr<material>> const& materials = ::djinn::asset_service::get_material_manager()->load_xport(&in, tex);
 		std::vector<id_t> const& phorms = ::djinn::scene_service::get_phorm_manager()->load_xport(&in, materials);
 		printf("PHORMZ:\n");
-		for(id_t const id : phorms)
+		for (id_t const id : phorms)
 			printf("\t%u\n", id);
 		std::vector<id_t> const& lights = ::djinn::scene_service::get_light_manager()->load_xport(&in);
 		std::vector<id_t> const& waypoints = ::djinn::scene_service::get_waypoint_manager()->load_xport(&in);
@@ -1610,6 +1610,7 @@ namespace djinn
 			});
 		// now that all script functions for this frame have run (__main() and __draw()), compute final light and camera transforms
 		s_instance->m_light_manager.update();
+		s_instance->m_light_manager.bind();
 		s_instance->m_camera_entity_manager.for_each([&](sptr<camera_entity> cam, id_t const id)
 			{
 				cam->update_mats();

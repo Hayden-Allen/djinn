@@ -1,7 +1,7 @@
 #version 410 core
 TYPE(ANIMATED);
 uniform mat4 d_vp, d_view;
-out vec3 v_norm;
+out vec3 v_pos_world, v_norm_world;
 out vec4 v_weights;
 
 void main()
@@ -13,12 +13,14 @@ void main()
         d_instance.d_bones[d_index.w] * d_weight.w
     );
 	mat4 transform = d_instance.d_model * bones;
-    gl_Position = d_vp * transform * vec4(d_pos, 1);
+    vec4 pos = vec4(d_pos, 1);
+    gl_Position = d_vp * transform * pos;
+    v_pos_world = vec3(transform * pos);
     
     // WARNING: may cause serious issues!!!!!!!!!!!!!!!!!
     // make sure to check this if anything looks weird
     // if you forgot to check this, well, um, i guess this isn't a sufficient way to document this potential problem
     mat3 normal = mat3(transform);
-    v_norm = normal * d_norm;
+    v_norm_world = normal * d_norm;
     v_weights = vec4(d_index);
 }

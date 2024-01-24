@@ -35,7 +35,7 @@ namespace djinn
 		u64 const idx = m_id2idx.at(id);
 		m_id2idx.erase(id);
 		ASSERT(idx < m_lights.size());
-		if (m_lights.size() > 1)
+		if (idx < m_lights.size() - 1)
 		{
 			sptr<light> const& replacement = m_lights.back();
 			m_lights.pop_back();
@@ -64,6 +64,9 @@ namespace djinn
 		f32 const* const float_data = (f32*)m_raw.data();
 		u32 const num_floats = (u32)m_lights.size() * s_floats_per_light;
 		m_ubo.update(float_data, num_floats, s_light_offset);
+	}
+	void light_manager::bind() const
+	{
 		m_ubo.bind(c::uniform::light_ubo_index);
 	}
 
