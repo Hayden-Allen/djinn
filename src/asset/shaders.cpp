@@ -30,13 +30,16 @@ namespace djinn
 		std::string const& frag_src = preprocess_frag(frag_afp);
 		super::init(vert_src, frag_src, true);
 
-		uniform_block_binding(c::uniform::light_block_name, c::uniform::light_ubo_index);
+		uniform_block_binding(c::uniform::light_block_type, c::uniform::light_ubo_index);
+		for (u32 i = 0; i < c::shader::num_batch_ubos; i++)
+			uniform_block_binding(c::uniform::instance_block_name[i], i);
 	}
 	bool shaders::uniform_block_binding(std::string const& name, s32 const slot) const
 	{
+		// if (m_id == 19) __debugbreak();
 		if (!super::uniform_block_binding(name, slot))
 		{
-			// printf("[WARNING] shaders(%s, %s):\n\tuniform_block_binding: Uniform block '%s' does not exist\n", m_vert_afp.c_str(), m_frag_afp.c_str(), name.c_str());
+			printf("[WARNING] shaders(%s, %s):\n\tuniform_block_binding: Uniform block '%s' does not exist\n", m_vert_afp.c_str(), m_frag_afp.c_str(), name.c_str());
 			return false;
 		}
 		return true;

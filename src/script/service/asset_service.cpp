@@ -399,15 +399,15 @@ namespace djinn
 	}
 	void asset_service::draw_meshes()
 	{
-		s_instance->m_animated_mesh_manager.for_each([](sptr<mesh> mesh, id_t const id)
-			{
-				mesh->draw(render_service::get_context());
-			});
 		s_instance->m_custom_mesh_manager.for_each([](sptr<mesh> mesh, id_t const id)
 			{
 				mesh->draw(render_service::get_context());
 			});
 		s_instance->m_static_mesh_manager.for_each([](sptr<mesh> mesh, id_t const id)
+			{
+				mesh->draw(render_service::get_context());
+			});
+		s_instance->m_animated_mesh_manager.for_each([](sptr<mesh> mesh, id_t const id)
 			{
 				mesh->draw(render_service::get_context());
 			});

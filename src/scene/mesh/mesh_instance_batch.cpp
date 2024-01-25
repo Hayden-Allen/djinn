@@ -18,9 +18,6 @@ namespace djinn
 		m_floats_per_instance = total_floats;
 		m_instances_per_ubo = c::shader::ubo_size_bytes / (m_floats_per_instance * sizeof(f32));
 		add_block();
-
-		for (u32 i = 0; i < c::shader::num_batch_ubos; i++)
-			m_shaders->uniform_block_binding(c::uniform::instance_block_name[i], i);
 	}
 	mesh_instance_batch::mesh_instance_batch(mesh_instance_batch&& other) noexcept :
 		m_mesh(other.m_mesh),

@@ -28,7 +28,6 @@ namespace djinn
 				// m_instances[i]->update_transform();
 				update_transform(i, m_instances[i]->get_graphics_transform());
 			}
-
 			for (u32 i = 0; i < (u32)m_ubos.size(); i++)
 			{
 				m_ubos[i].bind(i);

@@ -9,5 +9,5 @@ void main()
     vec3 N = normalize(v_norm_world);
     vec3 V = normalize(v_pos_world - d_cam_pos);
     LIGHT_SUM(N, V, v_pos_world);
-    o_color = vec4(d_diffuse, 1);
+    o_color = vec4(min(d_ambient + d_diffuse + d_specular, vec3(1)), 1);
 }
