@@ -1,12 +1,12 @@
 #pragma once
 
 #ifndef _WIN32
-#	ifndef NDEBUG
-#		define _DEBUG
-#	endif
-#	define __debugbreak			   __builtin_debugtrap
-#	define sprintf_s(buf, ...)		   snprintf((buf), sizeof(buf), __VA_ARGS__)
-#	define vsprintf_s(buf, fmt, args) vsnprintf((buf), sizeof(buf), fmt, args);
+#ifndef NDEBUG
+#define _DEBUG
+#endif
+#define __debugbreak __builtin_debugtrap
+#define sprintf_s snprintf
+#define vsprintf_s vsnprintf
 #endif
 
 #include <stdio.h>

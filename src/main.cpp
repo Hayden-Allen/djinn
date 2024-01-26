@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
 		c->begin_frame();
 		c->clear();
 		char buf[128] = { 0 };
-		sprintf_s(buf, "djinn - %dfps", (s32)c->avg_fps);
+		sprintf_s(buf, 128, "djinn - %dfps", (s32)c->avg_fps);
 		c->set_title(buf);
 		f32 const dt = c->time.delta;
 

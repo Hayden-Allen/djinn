@@ -63,7 +63,7 @@ namespace djinn
 		if (!m_request_imgui)
 			return;
 		char buf[128] = { 0 };
-		sprintf_s(buf, "Entity_%u", m_id);
+		sprintf_s(buf, 128, "Entity_%u", m_id);
 		if (ImGui::Begin(buf))
 		{
 			call_reserved("__imgui", 0, nullptr);

@@ -60,12 +60,12 @@ namespace djinn
 		char buf[32] = { 0 };
 		for (char i = '0'; i <= '9'; i++)
 		{
-			sprintf_s(buf, "KEY_%c", i);
+			sprintf_s(buf, 32, "KEY_%c", i);
 			super::register_property_u32(ctx, buf, (u32)i);
 		}
 		for (char i = 'A'; i <= 'Z'; i++)
 		{
-			sprintf_s(buf, "KEY_%c", i);
+			sprintf_s(buf, 32, "KEY_%c", i);
 			super::register_property_u32(ctx, buf, (u32)i);
 		}
 		super::register_property_u32(ctx, "KEY_RIGHT", GLFW_KEY_RIGHT);
