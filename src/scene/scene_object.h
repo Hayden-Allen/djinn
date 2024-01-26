@@ -11,6 +11,7 @@ namespace djinn
 		virtual ~scene_object();
 	public:
 		void set_parent(scene_object* const parent);
+		scene_object const* get_parent() const;
 		tmat<space::PARENT, space::WORLD> get_parent_transform() const;
 		tmat<space::OBJECT, space::PARENT> get_transform() const;
 		tmat<space::OBJECT, space::WORLD> get_world_transform() const;

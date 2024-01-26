@@ -36,7 +36,6 @@ namespace djinn
 	}
 	bool shaders::uniform_block_binding(std::string const& name, s32 const slot) const
 	{
-		// if (m_id == 19) __debugbreak();
 		if (!super::uniform_block_binding(name, slot))
 		{
 			printf("[WARNING] shaders(%s, %s):\n\tuniform_block_binding: Uniform block '%s' does not exist\n", m_vert_afp.c_str(), m_frag_afp.c_str(), name.c_str());

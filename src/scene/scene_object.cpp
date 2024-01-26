@@ -13,6 +13,10 @@ namespace djinn
 	{
 		m_parent = parent;
 	}
+	scene_object const* scene_object::get_parent() const
+	{
+		return m_parent;
+	}
 	tmat<space::OBJECT, space::PARENT> scene_object::get_transform() const
 	{
 		return m_transform;

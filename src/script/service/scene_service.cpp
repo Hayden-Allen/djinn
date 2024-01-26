@@ -1000,6 +1000,17 @@ namespace djinn::js::scene_service
 		if (dst_id != 0)
 		{
 			sptr<scene_object> dst = ::djinn::scene_service::get_scene_object(dst_id);
+
+			if (::djinn::scene_service::get_physics_object_manager()->has(src_id))
+			{
+				scene_object const* parent = dst.get();
+				while (parent)
+				{
+					ASSERT(!::djinn::scene_service::get_physics_object_manager()->has(parent->get_id()));
+					parent = parent->get_parent();
+				}
+			}
+
 			src->set_parent(dst.get());
 		}
 		else
