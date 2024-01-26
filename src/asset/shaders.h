@@ -56,7 +56,7 @@ namespace djinn
 			va_list args;
 			va_start(args, fmt);
 			char buf[512] = { 0 };
-			vsprintf_s(buf, fmt, args);
+			vsprintf_s(buf, 512, fmt, args);
 			lines->push_back(buf);
 			va_end(args);
 		}

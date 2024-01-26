@@ -174,21 +174,21 @@ namespace djinn
 			// instance struct definition (CUSTOM and STATIC)
 			if (m_type == shader_type::CUSTOM || m_type == shader_type::STATIC)
 			{
-				sprintf_s(buf, "struct %s { mat4 %s; mat3 %s; ", c::shader::instance_struct.c_str(), c::shader::instance_model_mat.c_str(), c::shader::instance_normal_mat.c_str());
+				sprintf_s(buf, 512, "struct %s { mat4 %s; mat3 %s; ", c::shader::instance_struct.c_str(), c::shader::instance_model_mat.c_str(), c::shader::instance_normal_mat.c_str());
 			}
 			else if (m_type == shader_type::ANIMATED)
 			{
-				sprintf_s(buf, "struct %s { mat4 %s; mat4 %s[%u]; ", c::shader::instance_struct.c_str(), c::shader::instance_model_mat.c_str(), c::shader::instance_bones.c_str(), c::shader::num_bones);
+				sprintf_s(buf, 512, "struct %s { mat4 %s; mat4 %s[%u]; ", c::shader::instance_struct.c_str(), c::shader::instance_model_mat.c_str(), c::shader::instance_bones.c_str(), c::shader::num_bones);
 			}
 			std::string struct_def = buf;
 			for (auto const& pair : fields)
 			{
 				// array size of 1 is invalid in GLSL, so treat it as single variable instead
 				if (pair.second.arr_count > 1)
-					sprintf_s(buf, "%s %s[%d]; ", pair.first.c_str(),
+					sprintf_s(buf, 512, "%s %s[%d]; ", pair.first.c_str(),
 						pair.second.name.c_str(), pair.second.arr_count);
 				else
-					sprintf_s(buf, "%s %s; ", pair.first.c_str(), pair.second.name.c_str());
+					sprintf_s(buf, 512, "%s %s; ", pair.first.c_str(), pair.second.name.c_str());
 				struct_def += buf;
 			}
 			struct_def += "};";
@@ -274,7 +274,7 @@ namespace djinn
 				pushf(&lines, "else if (cur_type == 3){");
 				pushf(&lines, "vec3 diff = light_pos_world - %s;", frag_pos_world);
 				pushf(&lines, "float diff_length2 = dot(diff, diff);");
-				pushf(&lines, "float rmax2 = %s.rmax * %s.rmax;", cur_light);
+				pushf(&lines, "float rmax2 = %s.rmax * %s.rmax;", cur_light, cur_light);
 				pushf(&lines, "if (diff_length2 >= rmax2) continue;");
 				pushf(&lines, "float diff_length = length(diff);");
 				pushf(&lines, "vec3 frag_pos_light = (%s.w2o * vec4(%s, 1)).xyz;", cur_light, frag_pos_world);
