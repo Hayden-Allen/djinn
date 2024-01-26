@@ -5,12 +5,12 @@
 	- disable bvh movement?
 	- HOT_RELOAD/NOT_RELOAD macro?
 	- move ma_engine into sound_source_manager/asset_service?
-	- get rid of render service?
 	- animation jumping on loop
 
 - now
-	- lights not working on animated meshes (and maybe custom ones too, implement shader)
+	- switch/door static physics object
 - physics
+	- clamp dt
 	- slowly falling after landing? (related to this.velY = 0)
 	- hatsify physics_object, function order/cleanup
 	- physics_object_manager::update order needs to respect scene graph?
