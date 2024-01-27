@@ -962,6 +962,16 @@ namespace djinn::js::scene_service
 		::djinn::scene_service::get_sound_emitter_manager()->get(id)->set_attenuation_model((ma_attenuation_model)attenuation);
 		return JS_UNDEFINED;
 	}
+	JSValue set_emitter_fade(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 4);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		f32 const from = js::extract_f32(ctx, argv[1]);
+		f32 const to = js::extract_f32(ctx, argv[2]);
+		u32 const ms = js::extract_u32(ctx, argv[3]);
+		::djinn::scene_service::get_sound_emitter_manager()->get(id)->set_fade(from, to, ms);
+		return JS_UNDEFINED;
+	}
 	JSValue destroy_emitter(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
@@ -1473,6 +1483,7 @@ namespace djinn
 			super::register_function(ctx, "SoundEmitter", "setMinDistance", 2, js::scene_service::set_emitter_min_dist);
 			super::register_function(ctx, "SoundEmitter", "setMaxDistance", 2, js::scene_service::set_emitter_max_dist);
 			super::register_function(ctx, "SoundEmitter", "setAttenutation", 2, js::scene_service::set_emitter_attenuation);
+			super::register_function(ctx, "SoundEmitter", "setFade", 3, js::scene_service::set_emitter_fade);
 			super::register_function(ctx, "SoundEmitter", "destroy", 1, js::scene_service::destroy_emitter);
 			super::register_function(ctx, "SoundEmitter", "destroyAll", 1, js::scene_service::destroy_all_sound_emitter);
 		}

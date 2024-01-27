@@ -136,6 +136,12 @@ declare interface _Scene_SoundEmitter {
     setMinDistance(id: SoundEmitterID, min: number): void
     setMaxDistance(id: SoundEmitterID, max: number): void
     setAttenutation(id: SoundEmitterID, attenutation: number): void
+    setFade(
+        id: SoundEmitterID,
+        from: number,
+        to: number,
+        milliseconds: number
+    ): void
     destroy(id: SoundEmitterID): void
     destroyAll(ids: SoundEmitterID[]): void
 }

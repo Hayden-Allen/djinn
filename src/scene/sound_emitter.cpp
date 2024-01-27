@@ -21,6 +21,12 @@ namespace djinn
 
 
 
+	void sound_emitter::update_from_scene_object()
+	{
+		ASSERT(m_sound_ready);
+		tmat<space::OBJECT, space::WORLD> const mat = get_world_transform();
+		ma_sound_set_position(&m_sound, mat.t[0], mat.t[1], mat.t[2]);
+	}
 	void sound_emitter::before_reload()
 	{
 		if (m_sound_ready)
@@ -48,9 +54,6 @@ namespace djinn
 			set_looping(false);
 		}
 	}
-
-
-
 	void sound_emitter::start()
 	{
 		ASSERT(m_sound_ready);
@@ -96,11 +99,11 @@ namespace djinn
 		ASSERT(m_sound_ready);
 		ma_sound_set_attenuation_model(&m_sound, model);
 	}
-	void sound_emitter::update_from_scene_object()
+	void sound_emitter::set_fade(f32 const from, f32 const to, u32 const ms)
 	{
-		ASSERT(m_sound_ready);
-		tmat<space::OBJECT, space::WORLD> const mat = get_world_transform();
-		ma_sound_set_position(&m_sound, mat.t[0], mat.t[1], mat.t[2]);
+		ASSERT(from == -1 || from >= 0 && from <= 1);
+		ASSERT(to == -1 || to >= 0 && to <= 1);
+		ma_sound_set_fade_in_milliseconds(&m_sound, from, to, (u64)ms);
 	}
 
 

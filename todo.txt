@@ -8,9 +8,7 @@
 	- animation jumping on loop
 
 - now
-	- events
 	- switch/door static physics object
-	- soundemitter fade
 	- rewrite main.ts
 - physics
 	- clamp dt

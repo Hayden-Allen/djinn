@@ -163,7 +163,7 @@ export default class MainEntity extends Entity {
         }
 
         if (this.needsPlayAudio) {
-            // Scene.SoundEmitter.start(this.idSoundEmitter)
+            Scene.SoundEmitter.start(this.idSoundEmitter)
             this.needsPlayAudio = false
         }
 
@@ -175,6 +175,10 @@ export default class MainEntity extends Entity {
         }
         if (Input.getKey(Input.KEY_0))
             Event.unsubscribe("player_can_jump", this.handle_player_can_jump)
+        if (Input.getKey(Input.KEY_1))
+            Scene.SoundEmitter.setFade(this.idSoundEmitter, -1, 0, 1000)
+        else if (Input.getKey(Input.KEY_2))
+            Scene.SoundEmitter.setFade(this.idSoundEmitter, -1, 1, 1000)
     }
     __draw() {
         this.xport!.skybox!.draw(this.camera!.getId())
