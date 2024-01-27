@@ -138,13 +138,13 @@ namespace djinn::js::global
 	void init_globals(JSContext* const ctx)
 	{
 		JSValue const global = JS_GetGlobalObject(ctx);
-		JSValue const log = JS_NewCFunction(ctx, console_log, "print2", 1);
-		JS_SetPropertyStr(ctx, global, "print2", log);
+		JSValue const log = JS_NewCFunction(ctx, console_log, "printf", 1);
+		JS_SetPropertyStr(ctx, global, "printf", log);
 		JS_FreeValue(ctx, global);
 	}
 	JSValue console_log(JSContext* const ctx, JSValueConst this_val, int const argc, JSValueConst* const argv)
 	{
-		std::cout << "console.log: ";
+		std::cout << "printf: ";
 		for (int i = 0; i < argc; ++i)
 		{
 			char const* s = JS_ToCString(ctx, argv[i]);

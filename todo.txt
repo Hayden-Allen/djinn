@@ -8,8 +8,11 @@
 	- animation jumping on loop
 
 - now
+- powertranzphormr
 	- switch/door static physics object
-	- rewrite main.ts
+	- weird sgnode transform
+	- copy tags when clone to static
+	- id not being removed on destroy
 - physics
 	- clamp dt
 	- slowly falling after landing? (related to this.velY = 0)
@@ -20,6 +23,8 @@
 	- jittery vertical movement/rotation (vsync fixes it)
 	- do shader math in camera space to avoid artifacts
 - other
+	- ctx multiple listeners same event
+	- rewrite main.ts
 	- scripts OOP stl
 	- more scene_service factoring
 	- casting sptr<T> to sptr<U>, where T derives from U AND at least one other type, doesn't work properly (correct byte offset to second base class not applied, not sure why)

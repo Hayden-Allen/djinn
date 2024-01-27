@@ -41,7 +41,14 @@ export default class MainEntity extends Entity {
     private player?: Player
 
     handle_player_can_jump(event: string, payload: any) {
-        print2(event, payload)
+        // printf(event, payload)
+    }
+    handle_player_hit_switch(event: string, payload: any, user: any) {
+        const switchName = payload as string
+        const switchNum = switchName.substring(6)
+        const doorName = "door" + switchNum
+        const idDoor = user.xport.getPhormByName(doorName)
+        Scene.addPosYWorld(idDoor, -0.005)
     }
     __init() {
         Event.subscribe("player_can_jump", this.handle_player_can_jump)
@@ -110,6 +117,9 @@ export default class MainEntity extends Entity {
                 this.idPhormAlphaShader
             )
         }
+        Event.subscribe("player_hit_switch", this.handle_player_hit_switch, {
+            xport: this.xport,
+        })
 
         this.player = Scene.Entity.load("Player.js", this.camera!) as Player
     }
@@ -163,7 +173,7 @@ export default class MainEntity extends Entity {
         }
 
         if (this.needsPlayAudio) {
-            Scene.SoundEmitter.start(this.idSoundEmitter)
+            // Scene.SoundEmitter.start(this.idSoundEmitter)
             this.needsPlayAudio = false
         }
 

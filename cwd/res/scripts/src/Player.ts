@@ -232,16 +232,18 @@ export default class Player extends Entity {
         const isTrigger = Scene.Tag.has(id, "trigger")
         if (normalWorld[1] >= 0.9 && !isTrigger) {
             if (!this.canJump) {
-                print2("LAND")
                 Event.dispatch("player_can_jump", "hello, world")
             }
             this.canJump = true
             this.velY = 0
+            if (Scene.Tag.has(id, "switch")) {
+                Event.dispatch("player_hit_switch", Scene.Xport.getName(id))
+            }
         }
         if (isTrigger) {
             const name = Scene.Xport.getName(id)
             const tagz = Scene.Tag.get(id)
-            print2(`Collide with: '${name}' [${tagz}]`)
+            // printf(`Collide with: '${name}' [${tagz}]`)
         }
     }
     __draw() {

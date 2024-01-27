@@ -14,10 +14,11 @@ namespace djinn::js::event_service
 	}
 	JSValue subscribe(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
+		ASSERT(argc == 2 || argc == 3);
 		std::string const& event = js::extract_string(ctx, argv[0]);
 		JSValue const& fn = argv[1];
-		::djinn::event_service::subscribe(event, ctx, fn);
+		JSValue const& user = argc == 3 ? argv[2] : JS_UNDEFINED;
+		::djinn::event_service::subscribe(event, ctx, fn, user);
 		return JS_UNDEFINED;
 	}
 	JSValue unsubscribe(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -42,7 +43,7 @@ namespace djinn
 	void event_service::register_functions(JSContext* const ctx)
 	{
 		super::register_function(ctx, "dispatch", 2, js::event_service::dispatch);
-		super::register_function(ctx, "subscribe", 2, js::event_service::subscribe);
+		super::register_function(ctx, "subscribe", 3, js::event_service::subscribe);
 		super::register_function(ctx, "unsubscribe", 2, js::event_service::unsubscribe);
 	}
 	void event_service::dispatch(std::string const& event, JSValue payload)
@@ -50,29 +51,28 @@ namespace djinn
 		auto const& it = s_instance->m_listeners.find(event);
 		if (it == s_instance->m_listeners.end())
 			return;
-		for (listener const& l : it->second)
+		for (listener const* const l : it->second)
 		{
-			JSValue args[2] = { js::create_string(l.ctx, event), payload };
-			JS_Call(l.ctx, l.fn, JS_UNDEFINED, 2, args);
+			JSValue args[3] = { js::create_string(l->ctx, event), payload, l->user };
+			JS_Call(l->ctx, l->fn, JS_UNDEFINED, 3, args);
 		}
 	}
-	void event_service::subscribe(std::string const& event, JSContext* const ctx, JSValue const& fn)
+	void event_service::subscribe(std::string const& event, JSContext* const ctx, JSValue const& fn, JSValue const& user)
 	{
-		listener l = { ctx, fn };
+		listener* const l = new listener(ctx, fn, user);
 		s_instance->m_listeners[event].insert(l);
 		s_instance->m_ctx2listeners[ctx].insert({ event, l });
 	}
 	void event_service::unsubscribe(std::string const& event, JSContext* const ctx, JSValue const& fn)
 	{
-		ASSERT(s_instance->m_listeners.contains(event));
-		listener l = { ctx, fn };
-		ASSERT(s_instance->m_listeners[event].contains(l));
-		s_instance->m_listeners[event].erase(l);
-		if (s_instance->m_listeners[event].empty())
+		listener* const l = s_instance->m_ctx2listeners.at(ctx).at(event);
+		s_instance->m_listeners.at(event).erase(l);
+		if (s_instance->m_listeners.at(event).empty())
 			s_instance->m_listeners.erase(event);
-		s_instance->m_ctx2listeners[ctx].erase(event);
-		if (s_instance->m_ctx2listeners[ctx].empty())
+		s_instance->m_ctx2listeners.at(ctx).erase(event);
+		if (s_instance->m_ctx2listeners.at(ctx).empty())
 			s_instance->m_ctx2listeners.erase(ctx);
+		delete l;
 	}
 	void event_service::unsubscribe_all(JSContext* const ctx)
 	{
@@ -84,6 +84,7 @@ namespace djinn
 			s_instance->m_listeners[pair.first].erase(pair.second);
 			if (s_instance->m_listeners[pair.first].empty())
 				s_instance->m_listeners.erase(pair.first);
+			delete pair.second;
 		}
 		s_instance->m_ctx2listeners.erase(ctx);
 	}

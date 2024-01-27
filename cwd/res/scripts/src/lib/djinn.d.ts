@@ -22,5 +22,5 @@ declare interface _Djinn {
 
 declare global {
     const djinn: _Djinn
-    const print2: Function
+    const printf: Function
 }

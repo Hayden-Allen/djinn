@@ -14,10 +14,15 @@ namespace djinn
 		struct listener
 		{
 			JSContext* ctx;
-			JSValue fn;
-			bool operator==(listener const& other) const
+			JSValue fn, user;
+			listener(JSContext* const _ctx, JSValue const& _fn, JSValue const& _user) :
+				ctx(_ctx),
+				fn(_fn),
+				user(JS_DupValue(ctx, _user)) // may go out of scope in the script, clone so it's valid regardless
+			{}
+			~listener()
 			{
-				return ctx == other.ctx && JS_VALUE_GET_PTR(fn) == JS_VALUE_GET_PTR(other.fn);
+				JS_FreeValue(ctx, user);
 			}
 		};
 	public:
@@ -26,22 +31,13 @@ namespace djinn
 		static void init();
 		static void register_functions(JSContext* const ctx);
 		static void dispatch(std::string const& event, JSValue payload);
-		static void subscribe(std::string const& event, JSContext* const ctx, JSValue const& fn);
+		static void subscribe(std::string const& event, JSContext* const ctx, JSValue const& fn, JSValue const& user);
 		static void unsubscribe(std::string const& event, JSContext* const ctx, JSValue const& fn);
 		static void unsubscribe_all(JSContext* const ctx);
 	private:
-		std::unordered_map<std::string, std::unordered_set<listener>> m_listeners;
-		std::unordered_map<JSContext*, std::unordered_map<std::string, listener>> m_ctx2listeners;
+		std::unordered_map<std::string, std::unordered_set<listener*>> m_listeners;
+		std::unordered_map<JSContext*, std::unordered_map<std::string, listener*>> m_ctx2listeners;
 	private:
 		event_service();
 	};
 } // namespace djinn
-
-template<>
-struct std::hash<::djinn::event_service::listener>
-{
-	u64 operator()(::djinn::event_service::listener const& l) const
-	{
-		return ::djinn::u::hash_combine(std::hash<JSContext*>()(l.ctx), std::hash<void*>()(JS_VALUE_GET_PTR(l.fn)));
-	}
-};
