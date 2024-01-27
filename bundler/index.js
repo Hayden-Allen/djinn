@@ -1,4 +1,3 @@
-import readline from "node:readline";
 import process from "node:process";
 import path from "node:path";
 import chokidar from "chokidar";
@@ -106,11 +105,7 @@ function main() {
                     );
                   }
                 });
-                if (emitResult.emitSkipped) {
-                  throw new Error(
-                    `[Error] ${args.path}: TypeScript compilation failed - see above errors`
-                  );
-                } else {
+                if (!emitResult.emitSkipped) {
                   return {
                     contents: fileContents,
                     loader: "ts",
@@ -162,17 +157,4 @@ function main() {
   });
 }
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-rl.question(
-  `Build directory "${buildDir}" will be deleted before continuing - ok?\n(Y/n) `,
-  (answer) => {
-    if (answer.toLowerCase() === "y") {
-      main();
-    } else {
-      process.exit(-1);
-    }
-  }
-);
+main();
