@@ -4,14 +4,15 @@
 
 namespace djinn
 {
-	class texture_manager final : public ref_counted_file_manager<texture>
+	class texture_manager final : public ref_counted_file_manager<retained_texture2d_rgba_u8_array>
 	{
 	public:
 		texture_manager();
 		DCM(texture_manager);
 	public:
+		void update_all(f32 const milliseconds);
 		id_t create(u32 const width, u32 const height, texture_options const& options);
-		std::pair<std::vector<id_t>, std::vector<sptr<texture>>> load_xport(mgl::input_file* const in);
+		std::pair<std::vector<id_t>, std::vector<sptr<retained_texture2d_rgba_u8_array>>> load_xport(mgl::input_file* const in);
 		id_t load(std::string const& fp) override;
 		id_t load(std::string const& fp, texture_options const& options);
 		void destroy(id_t const id) override;

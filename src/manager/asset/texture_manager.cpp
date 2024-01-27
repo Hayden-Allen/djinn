@@ -10,24 +10,33 @@ namespace djinn
 
 
 
+	void texture_manager::update_all(f32 const milliseconds)
+	{
+		for (auto& pair : m_objects)
+		{
+			pair.second->update((u64)milliseconds);
+		}
+	}
 	id_t texture_manager::create(u32 const width, u32 const height, texture_options const& options)
 	{
-		texture2d_rgba_u8* const tex = new texture2d_rgba_u8(width, height, options);
+		/*retained_texture2d_rgba_u8_array* const tex = new retained_texture2d_rgba_u8_array(width, height, options);
 		id_t const id = insert(tex);
 		m_id2options.insert({ id, options });
-		return id;
+		return id;*/
+		ASSERT(false);
+		return 0;
 	}
-	std::pair<std::vector<id_t>, std::vector<sptr<texture>>> texture_manager::load_xport(mgl::input_file* const in)
+	std::pair<std::vector<id_t>, std::vector<sptr<retained_texture2d_rgba_u8_array>>> texture_manager::load_xport(mgl::input_file* const in)
 	{
 		u64 const count = in->ulong();
 		printf("t: %zu\n", count);
 		std::vector<id_t> ids;
-		std::vector<sptr<texture>> tex;
+		std::vector<sptr<retained_texture2d_rgba_u8_array>> tex;
 		ids.reserve(count);
 		tex.reserve(count);
 		for (u64 i = 0; i < count; i++)
 		{
-			retained_texture2d_rgba_u8* const t = new retained_texture2d_rgba_u8(in);
+			retained_texture2d_rgba_u8_array* const t = new retained_texture2d_rgba_u8_array(in);
 			id_t const id = insert(t);
 			ids.emplace_back(id);
 			tex.emplace_back(get(id));
@@ -50,7 +59,7 @@ namespace djinn
 			return existing_id;
 		}
 		// no such texture exists, create it
-		texture2d_rgba_u8* const tex = u::load_texture2d_rgba_u8(afp, options);
+		retained_texture2d_rgba_u8_array* const tex = u::load_retained_texture2d_rgba_u8_array(afp, options);
 		id_t const id = insert(tex);
 		m_id2afp.insert(id, afp);
 		m_id2options.insert({ id, options });
@@ -93,8 +102,9 @@ namespace djinn
 	}
 	void texture_manager::update(id_t const id, std::vector<u8> const& subpixels, texture_options const& options)
 	{
-		auto tex = get<texture2d_rgba_u8>(id);
-		tex->init(GL_RGBA, tex->get_width(), tex->get_height(), subpixels.data(), options);
+		/*auto tex = get(id);
+		tex->init(GL_RGBA, tex->get_width(), tex->get_height(), subpixels.data(), options);*/
+		ASSERT(false);
 	}
 	void texture_manager::update(id_t const id, std::vector<u8> const& subpixels)
 	{

@@ -92,6 +92,7 @@ int main(int argc, char* argv[])
 		f32 const dt = c->time.delta;
 
 		DJINN_TIME(input_service::update(), input_avg, NUM_FRAMES);
+		asset_service::update();
 
 		DJINN_TIME(scene_service::update(dt, c->time.now), update_avg, NUM_FRAMES);
 		DJINN_TIME(scene_service::draw(), draw_avg, NUM_FRAMES);

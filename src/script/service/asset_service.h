@@ -29,6 +29,7 @@ namespace djinn
 		static material_manager* get_material_manager();
 		static sptr<mesh> get_mesh(id_t const id);
 		static void draw_meshes();
+		static void update();
 	private:
 		shader_manager m_shader_manager;
 		texture_manager m_texture_manager;

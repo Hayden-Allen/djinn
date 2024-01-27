@@ -11,6 +11,6 @@ namespace djinn
 		custom_mesh_manager();
 		DCM(custom_mesh_manager);
 	public:
-		id_t create(u32 const vertex_count, std::vector<u32> const& layout, u32 const index_count, std::vector<wptr<texture>> const& textures);
+		id_t create(u32 const vertex_count, std::vector<u32> const& layout, u32 const index_count, std::vector<custom_mesh_texture> const& textures);
 	};
 } // namespace djinn

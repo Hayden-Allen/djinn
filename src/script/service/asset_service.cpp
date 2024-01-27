@@ -29,12 +29,7 @@ namespace djinn::js::asset_service
 		}
 		return options;
 	}
-	static sptr<texture> get_texture(id_t const id)
-	{
-		if (::djinn::asset_service::get_texture_manager()->has(id))
-			return ::djinn::asset_service::get_texture_manager()->get(id);
-		return ::djinn::asset_service::get_cubemap_manager()->get(id);
-	}
+
 
 
 	JSValue create_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -45,10 +40,23 @@ namespace djinn::js::asset_service
 		u32 const index_count = js::extract_u32(ctx, argv[2]);
 		std::vector<id_t> const& texture_ids = js::extract_id_array(ctx, argv[3]);
 
-		std::vector<wptr<texture>> textures;
+		std::vector<custom_mesh_texture> textures;
 		textures.reserve(texture_ids.size());
 		for (id_t const id : texture_ids)
-			textures.emplace_back(get_texture(id));
+		{
+			custom_mesh_texture tex = { nullptr, false };
+			if (::djinn::asset_service::get_texture_manager()->has(id))
+			{
+				tex.arr = ::djinn::asset_service::get_texture_manager()->get(id).get();
+				tex.is_raw = false;
+			}
+			else
+			{
+				tex.raw = ::djinn::asset_service::get_cubemap_manager()->get(id).get();
+				tex.is_raw = true;
+			}
+			textures.emplace_back(tex);
+		}
 
 		JSValue ret = js::create_id(ctx, ::djinn::asset_service::get_custom_mesh_manager()->create(vertex_count, vertex_layout, index_count, textures));
 		return ret;
@@ -411,6 +419,10 @@ namespace djinn
 			{
 				mesh->draw(render_service::get_context());
 			});
+	}
+	void asset_service::update()
+	{
+		s_instance->m_texture_manager.update_all(render_service::get_context()->time.now * 1000);
 	}
 
 

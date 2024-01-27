@@ -8,7 +8,7 @@ namespace djinn
 
 
 
-	std::unordered_map<u32, sptr<material>> material_manager::load_xport(mgl::input_file* const in, std::vector<sptr<texture>> const& tex)
+	std::unordered_map<u32, sptr<material>> material_manager::load_xport(mgl::input_file* const in, std::vector<sptr<retained_texture2d_rgba_u8_array>> const& tex)
 	{
 		u64 const count = in->ulong();
 		printf("m: %zu\n", count);

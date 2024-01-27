@@ -4,7 +4,7 @@
 
 namespace djinn
 {
-	material::material(mgl::input_file* const in, std::vector<sptr<texture>> const& tex)
+	material::material(mgl::input_file* const in, std::vector<sptr<retained_texture2d_rgba_u8_array>> const& tex)
 	{
 		m_use_alpha = in->ubyte();
 		m_use_lighting = in->ubyte();

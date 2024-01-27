@@ -122,9 +122,11 @@ export default class MainEntity extends Entity {
                 this.idPhormAlphaShader
             )
         }
-        Event.subscribe("player_hit_switch", this.handle_player_hit_switch, {
-            xport: this.xport,
-        })
+        Event.subscribe(
+            "player_hit_switch",
+            this.handle_player_hit_switch,
+            this
+        )
 
         this.player = Scene.Entity.load("Player.js", this.camera!) as Player
     }

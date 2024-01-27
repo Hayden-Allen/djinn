@@ -39,6 +39,43 @@ namespace djinn::u
 		stbi_image_free(tex_data);
 		return tex;
 	}
+	retained_texture2d_rgba_u8_array* load_retained_texture2d_rgba_u8_array(std::string const& fp, texture_options const& options)
+	{
+		stbi_set_flip_vertically_on_load(true);
+		std::ifstream test(fp);
+		if (!test.is_open())
+		{
+			ASSERT(false);
+			return nullptr;
+		}
+		test.close();
+
+		mgl::retained_texture_array<mgl::retained_texture2d_rgba_u8>* ret = nullptr;
+		if (fp.ends_with(".gif"))
+		{
+			std::ifstream ifs(fp, std::ios::binary | std::ios::ate);
+			const u64 size = ifs.tellg();
+			ifs.seekg(0, std::ios::beg);
+			std::vector<char> raw(size);
+			ifs.read((char*)raw.data(), size);
+
+			s32* delays = nullptr;
+			s32 x, y, z, comp;
+			stbi_uc* const tex_data = stbi_load_gif_from_memory((stbi_uc*)raw.data(), (s32)raw.size(), &delays, &x, &y, &z, &comp, 4);
+			ret = new mgl::retained_texture_array<mgl::retained_texture2d_rgba_u8>(GL_RGBA, x, y, tex_data, z, delays);
+			stbi_image_free(tex_data);
+			free(delays);
+		}
+		else
+		{
+			int w = -1, h = -1, c = -1;
+			stbi_uc* const tex_data = stbi_load(fp.c_str(), &w, &h, &c, 4);
+			assert(c >= 3);
+			ret = new mgl::retained_texture_array<mgl::retained_texture2d_rgba_u8>(GL_RGBA, w, h, tex_data);
+			stbi_image_free(tex_data);
+		}
+		return ret;
+	}
 	void sleep(u32 const ms)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(ms));
