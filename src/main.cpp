@@ -8,6 +8,7 @@
 #include "script/service/input_service.h"
 #include "script/service/imgui_service.h"
 #include "script/service/sound_service.h"
+#include "script/service/event_service.h"
 #include "core/constants.h"
 #include "script/js.h"
 #ifndef DJINN_DIST
@@ -49,6 +50,7 @@ int main(int argc, char* argv[])
 	input_service::init(c);
 	imgui_service::init(c);
 	sound_service::init();
+	event_service::init();
 
 #ifndef DJINN_DIST
 #	ifdef _WIN32
@@ -131,6 +133,7 @@ int main(int argc, char* argv[])
 
 	scene_service::free_all();
 
+	event_service::shutdown();
 	sound_service::shutdown();
 	render_service::shutdown();
 	nanovg_service::shutdown();

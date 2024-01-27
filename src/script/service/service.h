@@ -42,6 +42,7 @@ namespace djinn
 	protected:
 		static void register_function(JSContext* const ctx, std::string const& obj_name, std::string const& fn_name, s32 const num_args, JSCFunction* const fn)
 		{
+			ASSERT(s_instance);
 			JSValue const global_obj = JS_GetGlobalObject(ctx);
 			JSValue djinn_obj = JS_GetPropertyStr(ctx, global_obj, "djinn");
 			if (JS_IsUndefined(djinn_obj))

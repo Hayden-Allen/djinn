@@ -7,7 +7,7 @@ import GroundEntity from "./GroundEntity"
 import Xport from "./lib/Xport"
 import Player from "./Player"
 
-const { Asset, Render, Nanovg, Scene, ImGui, Input, Sound } = djinn
+const { Asset, Event, Render, Nanovg, Scene, ImGui, Input, Sound } = djinn
 
 export default class MainEntity extends Entity {
     private camera?: Camera
@@ -40,7 +40,12 @@ export default class MainEntity extends Entity {
 
     private player?: Player
 
+    handle_player_can_jump(event: string, payload: any) {
+        print2(event, payload)
+    }
     __init() {
+        Event.subscribe("player_can_jump", this.handle_player_can_jump)
+
         this.camera = Scene.Camera.load("lib/Camera.js") as Camera
         const ar = Render.getAspectRatio()
         Scene.Camera.configure(this.camera.getId(), 108 / ar, ar, 0.1, 1000)
@@ -168,6 +173,8 @@ export default class MainEntity extends Entity {
         if (Input.getKey(Input.KEY_BACKSPACE)) {
             Render.setDebugDrawEnabled(false)
         }
+        if (Input.getKey(Input.KEY_0))
+            Event.unsubscribe("player_can_jump", this.handle_player_can_jump)
     }
     __draw() {
         this.xport!.skybox!.draw(this.camera!.getId())

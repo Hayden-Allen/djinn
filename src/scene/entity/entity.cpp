@@ -8,6 +8,7 @@
 #include "script/service/input_service.h"
 #include "script/service/imgui_service.h"
 #include "script/service/sound_service.h"
+#include "script/service/event_service.h"
 #include "script/js.h"
 #include "scene/xport/phorm.h"
 
@@ -26,6 +27,7 @@ namespace djinn
 		input_service::register_functions(m_ctx);
 		imgui_service::register_functions(m_ctx);
 		sound_service::register_functions(m_ctx);
+		event_service::register_functions(m_ctx);
 	}
 	entity::~entity()
 	{
@@ -36,6 +38,7 @@ namespace djinn
 			JS_FreeValue(m_ctx, m_this);
 			clear_cache();
 		}
+		event_service::unsubscribe_all(m_ctx);
 		JS_FreeContext(m_ctx);
 	}
 

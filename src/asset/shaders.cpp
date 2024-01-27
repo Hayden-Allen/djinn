@@ -38,7 +38,7 @@ namespace djinn
 	{
 		if (!super::uniform_block_binding(name, slot))
 		{
-			printf("[WARNING] shaders(%s, %s):\n\tuniform_block_binding: Uniform block '%s' does not exist\n", m_vert_afp.c_str(), m_frag_afp.c_str(), name.c_str());
+			// printf("[WARNING] shaders(%s, %s):\n\tuniform_block_binding: Uniform block '%s' does not exist\n", m_vert_afp.c_str(), m_frag_afp.c_str(), name.c_str());
 			return false;
 		}
 		return true;
@@ -314,7 +314,7 @@ namespace djinn
 		std::stringstream sstr;
 		for (std::string const& line : lines)
 			sstr << line << "\n";
-		printf("%s\n%s\n", fp.c_str(), sstr.str().c_str());
+		// printf("%s\n%s\n", fp.c_str(), sstr.str().c_str());
 		return sstr.str();
 	}
 } // namespace djinn

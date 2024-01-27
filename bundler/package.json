@@ -2,7 +2,7 @@
   "type": "module",
   "dependencies": {
     "chokidar": "^3.5.3",
-    "esbuild": "^0.19.9",
+    "esbuild": "^0.19.12",
     "typescript": "^5.3.3"
   }
 }

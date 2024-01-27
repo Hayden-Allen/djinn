@@ -68,6 +68,7 @@ function main() {
                 const fileContents = fs.readFileSync(args.path, "utf8");
                 const compilerOptions = {
                   ...tsConfig.compilerOptions,
+                  target: ts.ScriptTarget.ES2015,
                   noEmitOnError: true,
                 };
                 const host = ts.createCompilerHost(compilerOptions);

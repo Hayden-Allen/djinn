@@ -16,7 +16,6 @@ export default class Xport {
             Scene.Xport.load(fp)
         this.idTextures = textures
         this.idPhorms = phorms
-        console.log(this.idPhorms)
         this.idLights = lights
         this.idWaypoints = waypoints
         for (const idPhorm of this.idPhorms) {

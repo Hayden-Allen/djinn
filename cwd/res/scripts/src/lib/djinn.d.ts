@@ -1,4 +1,5 @@
 import type { _Asset } from "./service/Asset.d"
+import "./service/Event.d"
 import "./service/ImGui.d"
 import "./service/Input.d"
 import "./service/Nanovg.d"
@@ -9,6 +10,7 @@ import "./service/Util.d"
 
 declare interface _Djinn {
     Asset: _Asset
+    Event: _Event
     ImGui: _ImGui
     Input: _Input
     Nanovg: _Nanovg
@@ -20,4 +22,5 @@ declare interface _Djinn {
 
 declare global {
     const djinn: _Djinn
+    const print2: Function
 }

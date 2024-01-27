@@ -8,7 +8,10 @@
 	- animation jumping on loop
 
 - now
+	- events
 	- switch/door static physics object
+	- soundemitter fade
+	- rewrite main.ts
 - physics
 	- clamp dt
 	- slowly falling after landing? (related to this.velY = 0)
