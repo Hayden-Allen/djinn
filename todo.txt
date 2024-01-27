@@ -9,7 +9,6 @@
 
 - now
 - powertranzphormr
-	- switch/door static physics object
 	- weird sgnode transform
 	- copy tags when clone to static
 	- id not being removed on destroy
@@ -23,7 +22,6 @@
 	- jittery vertical movement/rotation (vsync fixes it)
 	- do shader math in camera space to avoid artifacts
 - other
-	- ctx multiple listeners same event
 	- rewrite main.ts
 	- scripts OOP stl
 	- more scene_service factoring

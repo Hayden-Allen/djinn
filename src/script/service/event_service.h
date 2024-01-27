@@ -3,6 +3,19 @@
 #include "service.h"
 #include "core/util.h"
 
+namespace std
+{
+	template<>
+	struct hash<JSValue>
+	{
+		u64 operator()(JSValue const& v) const
+		{
+			return std::hash<void*>()(JS_VALUE_GET_PTR(v));
+		}
+	};
+	extern bool operator==(JSValue const& a, JSValue const& b);
+} // namespace std
+
 namespace djinn
 {
 	class entity;
@@ -36,7 +49,8 @@ namespace djinn
 		static void unsubscribe_all(JSContext* const ctx);
 	private:
 		std::unordered_map<std::string, std::unordered_set<listener*>> m_listeners;
-		std::unordered_map<JSContext*, std::unordered_map<std::string, listener*>> m_ctx2listeners;
+		std::unordered_map<void*, listener*> m_fn2listener;
+		std::unordered_map<JSContext*, std::unordered_map<listener*, std::string>> m_ctx2listeners;
 	private:
 		event_service();
 	};

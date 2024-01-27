@@ -40,8 +40,11 @@ export default class MainEntity extends Entity {
 
     private player?: Player
 
-    handle_player_can_jump(event: string, payload: any) {
-        // printf(event, payload)
+    handle_player_can_jump(event: string, payload: any, user: number) {
+        printf(event, payload, user)
+    }
+    handle_player_can_jump2(event: string, payload: any) {
+        printf("JUMP 2")
     }
     handle_player_hit_switch(event: string, payload: any, user: any) {
         const switchName = payload as string
@@ -51,7 +54,9 @@ export default class MainEntity extends Entity {
         Scene.addPosYWorld(idDoor, -0.005)
     }
     __init() {
-        Event.subscribe("player_can_jump", this.handle_player_can_jump)
+        Event.subscribe("player_can_jump", this.handle_player_can_jump, 0)
+        Event.subscribe("player_can_jump", this.handle_player_can_jump, 1)
+        Event.subscribe("player_can_jump", this.handle_player_can_jump2, 1)
 
         this.camera = Scene.Camera.load("lib/Camera.js") as Camera
         const ar = Render.getAspectRatio()
@@ -157,6 +162,7 @@ export default class MainEntity extends Entity {
             Scene.Entity.destroy(this.entities[i].getId())
         this.entities = []
     }
+    private unsubscribed: boolean = false
     __main(dt: number, time: number) {
         this.frame++
         if (
@@ -183,8 +189,10 @@ export default class MainEntity extends Entity {
         if (Input.getKey(Input.KEY_BACKSPACE)) {
             Render.setDebugDrawEnabled(false)
         }
-        if (Input.getKey(Input.KEY_0))
+        if (Input.getKey(Input.KEY_0) && !this.unsubscribed) {
             Event.unsubscribe("player_can_jump", this.handle_player_can_jump)
+            this.unsubscribed = true
+        }
         if (Input.getKey(Input.KEY_1))
             Scene.SoundEmitter.setFade(this.idSoundEmitter, -1, 0, 1000)
         else if (Input.getKey(Input.KEY_2))
