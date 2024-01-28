@@ -12,7 +12,7 @@ void main()
     vec3 N = normalize(v_norm_world);
     vec3 V = normalize(v_pos_world - d_cam_pos);
 
-    vec2 offset = .25 * vec2(sin(.1 *d_time), cos(.1 * d_time));
+    vec2 offset = .25 * vec2(sin(.25 *d_time), cos(.1 * d_time));
 	vec4 multi_tex_res =
         texture(d_phorm_tex0, v_uv[0].xy - offset) * v_weights[0] +
         texture(d_phorm_tex1, v_uv[1].xy - offset) * v_weights[1] +
@@ -29,5 +29,5 @@ void main()
         spec = d_specular;
     }
 
-    o_color = vec4(min(mixed_res * (amb + diff) + spec, vec3(1)), 1);
+    o_color = vec4(min(mixed_res * (amb + diff) + spec, vec3(1)), .75);
 }

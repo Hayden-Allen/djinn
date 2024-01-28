@@ -15,6 +15,7 @@ namespace djinn
 		static sptr<mgl::context> get_context();
 		static void set_debug_draw_enabled(bool const enabled);
 		static bool is_debug_draw_enabled();
+		static void draw_all();
 	private:
 		sptr<mgl::context> m_context;
 		bool m_debug_draw_enabled;

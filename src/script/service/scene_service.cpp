@@ -204,6 +204,14 @@ namespace djinn::js::scene_service
 		::djinn::scene_service::get_phorm_manager()->get(id_phorm)->set_visible(visible);
 		return JS_UNDEFINED;
 	}
+	JSValue set_phorm_layer(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		u32 const layer = js::extract_u32(ctx, argv[1]);
+		::djinn::scene_service::get_phorm_manager()->set_layer(id, layer);
+		return JS_UNDEFINED;
+	}
 	JSValue destroy_phorm(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 1);
@@ -1395,6 +1403,7 @@ namespace djinn
 			super::register_function(ctx, "Phorm", "setShaders", 2, js::scene_service::set_phorm_shaders);
 			super::register_function(ctx, "Phorm", "setAlphaShaders", 2, js::scene_service::set_phorm_alpha_shaders);
 			super::register_function(ctx, "Phorm", "setVisible", 2, js::scene_service::set_phorm_visible);
+			super::register_function(ctx, "Phorm", "setLayer", 2, js::scene_service::set_phorm_layer);
 			super::register_function(ctx, "Phorm", "destroy", 1, js::scene_service::destroy_phorm);
 			super::register_function(ctx, "Phorm", "destroyAll", 1, js::scene_service::destroy_all_phorm);
 		}
@@ -1633,11 +1642,6 @@ namespace djinn
 		s_instance->m_camera_entity_manager.for_each([&](sptr<camera_entity> cam, id_t const id)
 			{
 				cam->update_mats();
-			});
-		// finally, render everything
-		s_instance->m_phorm_manager.for_each([](sptr<phorm> p, id_t const id)
-			{
-				p->draw(render_service::get_context());
 			});
 	}
 	void scene_service::draw_ui()

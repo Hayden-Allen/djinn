@@ -8,17 +8,22 @@
 	- animation jumping on loop
 
 - now
+- powertranzphormr
+	- change uv mapping of cone bottom
 - physics
 	- clamp dt
 	- slowly falling after landing? (related to this.velY = 0)
 	- hatsify physics_object, function order/cleanup
 	- physics_object_manager::update order needs to respect scene graph?
 - graphics
+	- mipmaps
+	- mesh layers
 	- wing spaz
 	- wonky goofy debug draw
 	- jittery vertical movement/rotation (vsync fixes it)
 	- do shader math in camera space to avoid artifacts
 - other
+	- xport hot reload
 	- rewrite main.ts
 	- scripts OOP stl
 	- more scene_service factoring

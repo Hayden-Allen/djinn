@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "render_service.h"
 #include "asset_service.h"
+#include "scene_service.h"
 #include "script/js.h"
 
 namespace djinn
@@ -51,6 +52,22 @@ namespace djinn
 	{
 		ASSERT(s_instance);
 		return s_instance->m_debug_draw_enabled;
+	}
+	void render_service::draw_all()
+	{
+		asset_service::get_custom_mesh_manager()->for_each([](sptr<mesh> mesh, id_t const id)
+			{
+				mesh->draw(render_service::get_context());
+			});
+		asset_service::get_static_mesh_manager()->for_each([](sptr<mesh> mesh, id_t const id)
+			{
+				mesh->draw(render_service::get_context());
+			});
+		asset_service::get_animated_mesh_manager()->for_each([](sptr<mesh> mesh, id_t const id)
+			{
+				mesh->draw(render_service::get_context());
+			});
+		scene_service::get_phorm_manager()->draw_all();
 	}
 
 

@@ -8,6 +8,12 @@ declare interface _Xport {
     waypoints: WaypointID[]
 }
 
+declare interface _Scene_Tag {
+    add(id: TaggedID, tag: string): void
+    has(id: TaggedID, tag: string): boolean
+    get(id: TaggedID): string[]
+    remove(id: TaggedID, tag: string): void
+}
 declare interface _Scene_Waypoint {
     create(): WaypointID
     destroy(id: WaypointID): void
@@ -21,16 +27,17 @@ declare interface _Scene_Light {
     destroy(id: LightID): void
     destroyAll(ids: LightID[]): void
 }
-declare interface _Scene_Xport {
-    load(fp: string): _Xport
-    getName(id: XportID): string
-}
 declare interface _Scene_Phorm {
     setShaders(idPhorm: PhormID, idShader: ShaderID): void
     setAlphaShaders(idPhorm: PhormID, idShader: ShaderID): void
     setVisible(id: PhormID, visible: boolean): void
+    setLayer(id: PhormID, layer: number): void
     destroy(id: PhormID): void
     destroyAll(ids: PhormID[]): void
+}
+declare interface _Scene_Xport {
+    load(fp: string): _Xport
+    getName(id: XportID): string
 }
 declare interface _Scene_MeshInstance {
     create(idMesh: MeshID, idShader: ShaderID): MeshInstanceID
@@ -145,23 +152,17 @@ declare interface _Scene_SoundEmitter {
     destroy(id: SoundEmitterID): void
     destroyAll(ids: SoundEmitterID[]): void
 }
-declare interface _Scene_Tag {
-    add(id: TaggedID, tag: string): void
-    has(id: TaggedID, tag: string): boolean
-    get(id: TaggedID): string[]
-    remove(id: TaggedID, tag: string): void
-}
 export declare interface _Scene {
-    Camera: _Scene_Camera
-    Entity: _Scene_Entity
-    Light: _Scene_Light
-    MeshInstance: _Scene_MeshInstance
-    Phorm: _Scene_Phorm
-    Physics: _Scene_Physics
-    SoundEmitter: _Scene_SoundEmitter
     Tag: _Scene_Tag
     Waypoint: _Scene_Waypoint
+    Light: _Scene_Light
+    Phorm: _Scene_Phorm
     Xport: _Scene_Xport
+    MeshInstance: _Scene_MeshInstance
+    Entity: _Scene_Entity
+    Camera: _Scene_Camera
+    Physics: _Scene_Physics
+    SoundEmitter: _Scene_SoundEmitter
 
     copyTransform(idFrom: SceneID, idTo: SceneID): void
     setParent(idChild: SceneID, idParent: SceneID): void

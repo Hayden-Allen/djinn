@@ -127,9 +127,10 @@ export default class MainEntity extends Entity {
         this.xport = new Xport("castle.xport")
         for (var i = 0; i < this.xport.idPhorms.length; i++) {
             const id = this.xport.idPhorms[i]
-            if (Scene.Tag.has(id, "water"))
+            if (Scene.Tag.has(id, "water")) {
                 Scene.Phorm.setShaders(id, this.idPhormWaterShader)
-            else Scene.Phorm.setShaders(id, this.idPhormShader)
+                Scene.Phorm.setLayer(id, 1)
+            } else Scene.Phorm.setShaders(id, this.idPhormShader)
             Scene.Phorm.setAlphaShaders(id, this.idPhormAlphaShader)
         }
 
@@ -208,7 +209,7 @@ export default class MainEntity extends Entity {
 
         const flames = this.xport!.getPhormsByTag("flame")
         for (const flame of flames!) {
-            Scene.addPosYWorld(flame, 0.005 * Math.sin(time))
+            Scene.addPosYWorld(flame, 0.0025 * Math.sin(time))
         }
     }
     __draw() {

@@ -28,7 +28,6 @@ namespace djinn
 		static sound_source_manager* get_sound_source_manager();
 		static material_manager* get_material_manager();
 		static sptr<mesh> get_mesh(id_t const id);
-		static void draw_meshes();
 		static void update();
 	private:
 		shader_manager m_shader_manager;
