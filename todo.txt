@@ -8,16 +8,13 @@
 	- animation jumping on loop
 
 - now
-- powertranzphormr
-	- weird sgnode transform
-	- copy tags when clone to static
-	- id not being removed on destroy
 - physics
 	- clamp dt
 	- slowly falling after landing? (related to this.velY = 0)
 	- hatsify physics_object, function order/cleanup
 	- physics_object_manager::update order needs to respect scene graph?
 - graphics
+	- wing spaz
 	- wonky goofy debug draw
 	- jittery vertical movement/rotation (vsync fixes it)
 	- do shader math in camera space to avoid artifacts

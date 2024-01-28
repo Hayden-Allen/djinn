@@ -36,6 +36,7 @@ export default class MainEntity extends Entity {
 
     private idPhormShader: ShaderID
     private idPhormAlphaShader: ShaderID
+    private idPhormWaterShader: ShaderID
     private xport?: Xport
 
     private player?: Player
@@ -57,6 +58,11 @@ export default class MainEntity extends Entity {
         Event.subscribe("player_can_jump", this.handle_player_can_jump, 0)
         Event.subscribe("player_can_jump", this.handle_player_can_jump, 1)
         Event.subscribe("player_can_jump", this.handle_player_can_jump2, 1)
+        Event.subscribe(
+            "player_hit_switch",
+            this.handle_player_hit_switch,
+            this
+        )
 
         this.camera = Scene.Camera.load("lib/Camera.js") as Camera
         const ar = Render.getAspectRatio()
@@ -114,19 +120,18 @@ export default class MainEntity extends Entity {
             "phorm.vert",
             "phorm_alpha.frag"
         )
-        this.xport = new Xport("hill2.xport")
-        for (var i = 0; i < this.xport.idPhorms.length; i++) {
-            Scene.Phorm.setShaders(this.xport.idPhorms[i], this.idPhormShader)
-            Scene.Phorm.setAlphaShaders(
-                this.xport.idPhorms[i],
-                this.idPhormAlphaShader
-            )
-        }
-        Event.subscribe(
-            "player_hit_switch",
-            this.handle_player_hit_switch,
-            this
+        this.idPhormWaterShader = Asset.Shader.load(
+            "phorm.vert",
+            "phorm_water.frag"
         )
+        this.xport = new Xport("castle.xport")
+        for (var i = 0; i < this.xport.idPhorms.length; i++) {
+            const id = this.xport.idPhorms[i]
+            if (Scene.Tag.has(id, "water"))
+                Scene.Phorm.setShaders(id, this.idPhormWaterShader)
+            else Scene.Phorm.setShaders(id, this.idPhormShader)
+            Scene.Phorm.setAlphaShaders(id, this.idPhormAlphaShader)
+        }
 
         this.player = Scene.Entity.load("Player.js", this.camera!) as Player
     }
@@ -150,6 +155,7 @@ export default class MainEntity extends Entity {
         this.xport!.destroy()
         Asset.Shader.destroy(this.idPhormShader)
         Asset.Shader.destroy(this.idPhormAlphaShader)
+        Asset.Shader.destroy(this.idPhormWaterShader)
     }
     __load() {
         this.color.set(0, 1, 1, 0.5)
@@ -199,6 +205,11 @@ export default class MainEntity extends Entity {
             Scene.SoundEmitter.setFade(this.idSoundEmitter, -1, 0, 1000)
         else if (Input.getKey(Input.KEY_2))
             Scene.SoundEmitter.setFade(this.idSoundEmitter, -1, 1, 1000)
+
+        const flames = this.xport!.getPhormsByTag("flame")
+        for (const flame of flames!) {
+            Scene.addPosYWorld(flame, 0.005 * Math.sin(time))
+        }
     }
     __draw() {
         this.xport!.skybox!.draw(this.camera!.getId())
@@ -214,6 +225,10 @@ export default class MainEntity extends Entity {
         Asset.Shader.setCameraUniforms(this.idPhormShader, this.camera!.getId())
         Asset.Shader.setCameraUniforms(
             this.idPhormAlphaShader,
+            this.camera!.getId()
+        )
+        Asset.Shader.setCameraUniforms(
+            this.idPhormWaterShader,
             this.camera!.getId()
         )
 

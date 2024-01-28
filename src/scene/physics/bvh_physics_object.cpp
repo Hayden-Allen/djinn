@@ -8,27 +8,34 @@ namespace djinn
 	bvh_physics_object::bvh_physics_object(id_t const id, sptr<btDiscreteDynamicsWorld> const& world, sptr<phorm> const& phorm) :
 		physics_object(id, world)
 	{
-		m_iva = new btTriangleIndexVertexArray();
-
-		// create separate btIndexedMesh for each material used by this phorm
-		// (they all end up as one BVH shape anyway)
-		auto const& ros = phorm->get_render_objects();
-		for (auto const& pair : ros)
+		if (phorm->get_vertex_count() != 0)
 		{
-			btIndexedMesh mesh;
+			m_iva = new btTriangleIndexVertexArray();
 
-			static_retained_render_object const& ro = pair.second;
-			auto const& vao = ro.get_vertex_array();
-			mesh.m_triangleIndexStride = 3 * sizeof(u32);
-			mesh.m_triangleIndexBase = (unsigned char const*)ro.get_indices().get_data();
-			mesh.m_numTriangles = ro.get_index_count() / 3;
-			mesh.m_numVertices = vao.get_vertex_count();
-			mesh.m_vertexBase = (unsigned char const*)vao.get_vertices().get_data();
-			mesh.m_vertexStride = vao.get_stride();
+			// create separate btIndexedMesh for each material used by this phorm
+			// (they all end up as one BVH shape anyway)
+			auto const& ros = phorm->get_render_objects();
+			for (auto const& pair : ros)
+			{
+				btIndexedMesh mesh;
 
-			m_iva->addIndexedMesh(mesh);
+				static_retained_render_object const& ro = pair.second;
+				auto const& vao = ro.get_vertex_array();
+				mesh.m_triangleIndexStride = 3 * sizeof(u32);
+				mesh.m_triangleIndexBase = (unsigned char const*)ro.get_indices().get_data();
+				mesh.m_numTriangles = ro.get_index_count() / 3;
+				mesh.m_numVertices = vao.get_vertex_count();
+				mesh.m_vertexBase = (unsigned char const*)vao.get_vertices().get_data();
+				mesh.m_vertexStride = vao.get_stride();
+
+				m_iva->addIndexedMesh(mesh);
+			}
+			m_shape = new btBvhTriangleMeshShape(m_iva.get(), true, true);
 		}
-		m_shape = new btBvhTriangleMeshShape(m_iva.get(), true, true);
+		else
+		{
+			m_shape = new btEmptyShape();
+		}
 
 		btTransform mat;
 		mat.setIdentity();

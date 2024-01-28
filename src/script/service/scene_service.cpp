@@ -235,9 +235,6 @@ namespace djinn::js::scene_service
 		// materials are not accesible to the scripts, just used internally for xports
 		std::unordered_map<u32, sptr<material>> const& materials = ::djinn::asset_service::get_material_manager()->load_xport(&in, tex);
 		std::vector<id_t> const& phorms = ::djinn::scene_service::get_phorm_manager()->load_xport(&in, materials);
-		printf("PHORMZ:\n");
-		for (id_t const id : phorms)
-			printf("\t%u\n", id);
 		std::vector<id_t> const& lights = ::djinn::scene_service::get_light_manager()->load_xport(&in);
 		std::vector<id_t> const& waypoints = ::djinn::scene_service::get_waypoint_manager()->load_xport(&in);
 

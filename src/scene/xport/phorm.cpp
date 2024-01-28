@@ -67,6 +67,15 @@ namespace djinn
 	{
 		return m_ros;
 	}
+	u64 const phorm::get_vertex_count() const
+	{
+		u64 count = 0;
+		for (auto const& pair : m_ros)
+		{
+			count += pair.second.get_vertex_array().get_vertex_count();
+		}
+		return count;
+	}
 
 
 

@@ -38,8 +38,9 @@ export default class Player extends Entity {
     private hitboxHeight: number = 1
     private hitboxRadius: number = 0.2
 
-    private worldPos: number[] = [-36, 103, -39] // top of tower
+    // private worldPos: number[] = [-36, 103, -39] // top of tower
     // private worldPos: number[] = [-29, 30, 39] // ground
+    private worldPos: number[] = [-14, 90, 153] // gate
     private moveDir: number[] = [0, 0, 0]
     private velY: number = 0
     private velYMin: number = -35
@@ -119,6 +120,7 @@ export default class Player extends Entity {
                 const idCam = this.camera!.getId()
                 Scene.setParent(idCam, this.idHitbox)
                 Scene.setPosZ(idCam, 2)
+                Scene.setPosY(idCam, 1)
             }
         }
     }
@@ -260,7 +262,7 @@ export default class Player extends Entity {
 
         // update shaders AFTER CAMERA TRANSFORM IS DONE BEING MODIFIED
         Asset.Shader.setCameraUniforms(this.idMainShader, this.camera!.getId())
-        Asset.Shader.setCameraUniforms(this.idWingShader, this.camera!.getId())
+        // Asset.Shader.setCameraUniforms(this.idWingShader, this.camera!.getId())
     }
     __imgui() {
         ImGui.text("Pos: " + Scene.getPosWorld(this.idHitbox))

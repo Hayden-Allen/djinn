@@ -21,6 +21,17 @@ export default class Xport {
         this.idLights = lights
         this.idWaypoints = waypoints
         for (const idPhorm of this.idPhorms) {
+            const tags = Scene.Tag.get(idPhorm)
+            for (const tag of tags) {
+                if (!this.tag2Phorm.has(tag)) {
+                    this.tag2Phorm.set(tag, new Set())
+                }
+                this.tag2Phorm.get(tag)!.add(idPhorm)
+            }
+            this.name2Phorm.set(Scene.Xport.getName(idPhorm), idPhorm)
+
+            if (Scene.Tag.has(idPhorm, "__nohitbox")) continue
+
             const idHitbox = Scene.Physics.createBVH(idPhorm)
             this.idHitboxes.push(idHitbox)
             Scene.setParent(idHitbox, idPhorm)
@@ -29,15 +40,8 @@ export default class Xport {
                 Scene.Physics.setGhost(idHitbox, true)
                 Scene.Phorm.setVisible(idPhorm, false)
             }
-            const tags = Scene.Tag.get(idPhorm)
-            for (const tag of tags) {
-                if (!this.tag2Phorm.has(tag)) {
-                    this.tag2Phorm.set(tag, new Set())
-                }
-                this.tag2Phorm.get(tag)?.add(idPhorm)
-            }
-            this.name2Phorm.set(Scene.Xport.getName(idPhorm), idPhorm)
         }
+
         this.skybox = new Skybox(skybox, {
             vertexShader: "sky.vert",
             fragmentShader: "sky.frag",
@@ -53,5 +57,8 @@ export default class Xport {
     }
     getPhormByName(name: string) {
         return this.name2Phorm.get(name)
+    }
+    getPhormsByTag(tag: string) {
+        return this.tag2Phorm.get(tag)
     }
 }
