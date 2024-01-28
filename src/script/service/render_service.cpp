@@ -36,6 +36,10 @@ namespace djinn
 
 		super::register_property_u32(ctx, "GL_NEAREST", GL_NEAREST);
 		super::register_property_u32(ctx, "GL_LINEAR", GL_LINEAR);
+		super::register_property_u32(ctx, "GL_NEAREST_MIPMAP_NEAREST", GL_NEAREST_MIPMAP_NEAREST);
+		super::register_property_u32(ctx, "GL_LINEAR_MIPMAP_NEAREST", GL_LINEAR_MIPMAP_NEAREST);
+		super::register_property_u32(ctx, "GL_NEAREST_MIPMAP_LINEAR", GL_NEAREST_MIPMAP_LINEAR);
+		super::register_property_u32(ctx, "GL_LINEAR_MIPMAP_LINEAR", GL_LINEAR_MIPMAP_LINEAR);
 		super::register_property_u32(ctx, "GL_REPEAT", GL_REPEAT);
 	}
 	sptr<mgl::context> render_service::get_context()

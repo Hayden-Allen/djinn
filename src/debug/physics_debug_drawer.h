@@ -23,7 +23,7 @@ namespace djinn
 		int getDebugMode() const override;
 		void set_camera(mat<space::WORLD, space::CLIP> const& vp);
 	private:
-		static constexpr u64 s_max_lines = 65536;
+		static constexpr u64 s_max_lines = (1 << 20);
 		static constexpr u32 s_floats_per_line = sizeof(line) / sizeof(float);
 	private:
 		mgl::shaders m_shaders;

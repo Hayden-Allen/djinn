@@ -79,7 +79,8 @@ namespace djinn
 	{
 		std::string const& old_afp = to_absolute(old_fp);
 		std::string const& new_afp = to_absolute(new_fp);
-		ASSERT(m_afp2ids.contains(old_afp))
+		if (!m_afp2ids.contains(old_afp))
+			return;
 		auto const& ids = m_afp2ids.at(old_afp);
 		// rename old_fp => new_fp in map
 		auto entry = m_afp2ids.extract(old_afp);

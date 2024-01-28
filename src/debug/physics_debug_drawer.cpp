@@ -34,6 +34,7 @@ namespace djinn
 
 	void physics_debug_drawer::drawLine(btVector3 const& from, btVector3 const& to, btVector3 const& color)
 	{
+		ASSERT(m_valid < s_max_lines);
 		m_lines[m_valid] = { from, to, color };
 		m_valid++;
 	}

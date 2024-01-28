@@ -191,16 +191,20 @@ export default class Player extends Entity {
         }
         // movement
         {
-            const x = 25 * Input.leftX()
-            const z = 25 * Input.leftY()
+            const boost = Input.getKey(Input.KEY_LEFT_CONTROL) ? 5 : 1
+            const x = boost * 25 * Input.leftX()
+            const z = boost * 25 * Input.leftY()
             let newVelY = this.velY - this.gravity * dt
             // if (this.canJump) {
             if (Input.getKey(Input.KEY_SPACE)) {
                 this.canJump = false
-                newVelY += this.velYMax
+                newVelY += boost * this.velYMax
             }
             // }
-            this.velY = Math.min(this.velYMax, Math.max(this.velYMin, newVelY))
+            this.velY = Math.min(
+                boost * this.velYMax,
+                Math.max(this.velYMin, newVelY)
+            )
             const dir = [x, this.velY, z]
             Scene.Physics.collideNSlide(this.idHitbox, dir, dt)
             // Scene.Physics.setVelocity(this.idHitbox, dir)

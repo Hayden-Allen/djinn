@@ -121,7 +121,7 @@ export default class MainEntity extends Entity {
             "phorm_alpha.frag"
         )
         this.idPhormWaterShader = Asset.Shader.load(
-            "phorm.vert",
+            "phorm_water.vert",
             "phorm_water.frag"
         )
         this.xport = new Xport("castle.xport")
