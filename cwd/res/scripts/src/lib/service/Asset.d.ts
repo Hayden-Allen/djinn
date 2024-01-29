@@ -1,7 +1,12 @@
 import "./id.d"
 
 declare interface _Asset_Mesh {
-    create(vertCount: number, layout: number[], idxCount: number, idTextures: (TextureID | CubemapID)[]): MeshID
+    create(
+        vertCount: number,
+        layout: number[],
+        idxCount: number,
+        idTextures: (TextureID | CubemapID)[]
+    ): MeshID
     update(id: MeshID, verts: number[], indices: number[]): void
     updateVertices(id: MeshID, verts: number[]): void
     updateIndices(id: MeshID, indices: number[]): void
@@ -21,6 +26,7 @@ declare interface _Asset_Texture {
     create(width: number, height: number, options?: object): TextureID
     load(fp: string, options?: object): TextureID
     update(id: TextureID, subpixels: number[], options?: object): void
+    setOptions(id: TextureID, options: object): void
     destroy(id: TextureID): void
     destroyAll(ids: TextureID[]): void
 }
@@ -42,4 +48,6 @@ export declare interface _Asset {
     Texture: _Asset_Texture
     Cubemap: _Asset_Cubemap
     Sound: _Asset_Sound
+
+    setDefaultTextureOptions(options: object): void
 }

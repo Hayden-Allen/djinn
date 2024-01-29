@@ -55,6 +55,10 @@ export default class MainEntity extends Entity {
         Scene.addPosYWorld(idDoor, -0.005)
     }
     __init() {
+        Asset.setDefaultTextureOptions({
+            minFilter: Render.GL_LINEAR_MIPMAP_LINEAR,
+            magFilter: Render.GL_LINEAR,
+        })
         Event.subscribe("player_can_jump", this.handle_player_can_jump, 0)
         Event.subscribe("player_can_jump", this.handle_player_can_jump, 1)
         Event.subscribe("player_can_jump", this.handle_player_can_jump2, 1)

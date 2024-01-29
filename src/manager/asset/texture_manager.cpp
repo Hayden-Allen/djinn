@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "texture_manager.h"
 #include "core/constants.h"
+#include "script/service/asset_service.h"
 
 namespace djinn
 {
@@ -36,7 +37,7 @@ namespace djinn
 		tex.reserve(count);
 		for (u64 i = 0; i < count; i++)
 		{
-			retained_texture2d_rgba_u8_array* const t = new retained_texture2d_rgba_u8_array(in);
+			retained_texture2d_rgba_u8_array* const t = new retained_texture2d_rgba_u8_array(in, asset_service::get_default_texture_options());
 			id_t const id = insert(t);
 			ids.emplace_back(id);
 			tex.emplace_back(get(id));

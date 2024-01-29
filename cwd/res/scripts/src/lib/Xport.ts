@@ -1,7 +1,7 @@
 import "./djinn.d"
 import Skybox from "./Skybox"
 
-const { Asset, Scene } = djinn
+const { Asset, Scene, Render } = djinn
 
 export default class Xport {
     idTextures: TextureID[] = []

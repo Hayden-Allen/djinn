@@ -4,5 +4,9 @@ declare interface _Render {
 
     GL_NEAREST: number
     GL_LINEAR: number
+    GL_NEAREST_MIPMAP_NEAREST: number
+    GL_LINEAR_MIPMAP_NEAREST: number
+    GL_NEAREST_MIPMAP_LINEAR: number
+    GL_LINEAR_MIPMAP_LINEAR: number
     GL_REPEAT: number
 }

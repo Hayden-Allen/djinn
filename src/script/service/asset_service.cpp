@@ -10,7 +10,7 @@ namespace djinn::js::asset_service
 {
 	static texture_options parse_texture_options(JSContext* const ctx, JSValue const& val)
 	{
-		texture_options options;
+		texture_options options = ::djinn::asset_service::get_default_texture_options();
 		std::unordered_map<std::string, JSValue> const& map = js::extract_map(ctx, val);
 		for (auto const& pair : map)
 		{
@@ -193,7 +193,7 @@ namespace djinn::js::asset_service
 		ASSERT(argc == 2 || argc == 3);
 		u32 const width = js::extract_u32(ctx, argv[0]);
 		u32 const height = js::extract_u32(ctx, argv[1]);
-		texture_options options;
+		texture_options options = ::djinn::asset_service::get_default_texture_options();
 		if (argc == 3)
 			options = parse_texture_options(ctx, argv[2]);
 		return js::create_id(ctx, ::djinn::asset_service::get_texture_manager()->create(width, height, options));
@@ -202,7 +202,7 @@ namespace djinn::js::asset_service
 	{
 		ASSERT(argc == 1 || argc == 2);
 		std::string const& fp = js::extract_string(ctx, argv[0]);
-		texture_options options;
+		texture_options options = ::djinn::asset_service::get_default_texture_options();
 		if (argc == 2)
 			options = parse_texture_options(ctx, argv[1]);
 		return js::create_id(ctx, ::djinn::asset_service::get_texture_manager()->load(fp, options));
@@ -214,11 +214,19 @@ namespace djinn::js::asset_service
 		std::vector<u8> const& subpixels = js::extract_u8_array(ctx, argv[1]);
 		if (argc == 3)
 		{
-			texture_options options = parse_texture_options(ctx, argv[2]);
+			texture_options const& options = parse_texture_options(ctx, argv[2]);
 			::djinn::asset_service::get_texture_manager()->update(id, subpixels, options);
 		}
 		else
 			::djinn::asset_service::get_texture_manager()->update(id, subpixels);
+		return JS_UNDEFINED;
+	}
+	JSValue set_texture_options(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		texture_options const& options = parse_texture_options(ctx, argv[1]);
+		::djinn::asset_service::get_texture_manager()->get(id)->set_options(options);
 		return JS_UNDEFINED;
 	}
 	JSValue destroy_texture(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -321,6 +329,16 @@ namespace djinn::js::asset_service
 			::djinn::asset_service::get_sound_source_manager()->destroy(id);
 		return JS_UNDEFINED;
 	}
+
+
+
+	JSValue set_default_texture_options(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		texture_options const& opts = parse_texture_options(ctx, argv[0]);
+		::djinn::asset_service::set_default_texture_options(opts);
+		return JS_UNDEFINED;
+	}
 } // namespace djinn::js::asset_service
 
 
@@ -334,36 +352,50 @@ namespace djinn
 	}
 	void asset_service::register_functions(JSContext* const ctx)
 	{
-		super::register_function(ctx, "Mesh", "create", 4, js::asset_service::create_mesh);
-		super::register_function(ctx, "Mesh", "update", 3, js::asset_service::update_mesh);
-		super::register_function(ctx, "Mesh", "updateVertices", 2, js::asset_service::update_mesh_vertices);
-		super::register_function(ctx, "Mesh", "updateIndices", 2, js::asset_service::update_mesh_indices);
-		super::register_function(ctx, "Mesh", "loadStatic", 1, js::asset_service::load_static_mesh);
-		super::register_function(ctx, "Mesh", "loadAnimated", 1, js::asset_service::load_animated_mesh);
-		super::register_function(ctx, "Mesh", "destroy", 1, js::asset_service::destroy_mesh);
-		super::register_function(ctx, "Mesh", "destroyAll", 1, js::asset_service::destroy_all_mesh);
+		// MESH
+		{
+			super::register_function(ctx, "Mesh", "create", 4, js::asset_service::create_mesh);
+			super::register_function(ctx, "Mesh", "update", 3, js::asset_service::update_mesh);
+			super::register_function(ctx, "Mesh", "updateVertices", 2, js::asset_service::update_mesh_vertices);
+			super::register_function(ctx, "Mesh", "updateIndices", 2, js::asset_service::update_mesh_indices);
+			super::register_function(ctx, "Mesh", "loadStatic", 1, js::asset_service::load_static_mesh);
+			super::register_function(ctx, "Mesh", "loadAnimated", 1, js::asset_service::load_animated_mesh);
+			super::register_function(ctx, "Mesh", "destroy", 1, js::asset_service::destroy_mesh);
+			super::register_function(ctx, "Mesh", "destroyAll", 1, js::asset_service::destroy_all_mesh);
+		}
+		// SHADER
+		{
+			super::register_function(ctx, "Shader", "load", 2, js::asset_service::load_shader);
+			super::register_function(ctx, "Shader", "setUniforms", 2, js::asset_service::set_shader_uniforms);
+			super::register_function(ctx, "Shader", "setCameraUniforms", 2, js::asset_service::set_shader_camera_uniforms);
+			super::register_function(ctx, "Shader", "destroy", 1, js::asset_service::destroy_shader);
+			super::register_function(ctx, "Shader", "destroyAll", 1, js::asset_service::destroy_all_shader);
+		}
+		// TEXTURE
+		{
+			super::register_function(ctx, "Texture", "create", 3, js::asset_service::create_texture);
+			super::register_function(ctx, "Texture", "load", 2, js::asset_service::load_texture);
+			super::register_function(ctx, "Texture", "update", 3, js::asset_service::update_texture);
+			super::register_function(ctx, "Texture", "setOptions", 2, js::asset_service::set_texture_options);
+			super::register_function(ctx, "Texture", "destroy", 1, js::asset_service::destroy_texture);
+			super::register_function(ctx, "Texture", "destroyAll", 1, js::asset_service::destroy_all_texture);
+		}
+		// CUBEMAP
+		{
+			super::register_function(ctx, "Cubemap", "create", 3, js::asset_service::create_cubemap);
+			super::register_function(ctx, "Cubemap", "load", 2, js::asset_service::load_cubemap);
+			super::register_function(ctx, "Cubemap", "update", 3, js::asset_service::update_cubemap);
+			super::register_function(ctx, "Cubemap", "destroy", 1, js::asset_service::destroy_cubemap);
+			super::register_function(ctx, "Cubemap", "destroyAll", 1, js::asset_service::destroy_all_cubemap);
+		}
+		// SOUND
+		{
+			super::register_function(ctx, "Sound", "load", 1, js::asset_service::load_sound_source);
+			super::register_function(ctx, "Sound", "destroy", 1, js::asset_service::destroy_sound_source);
+			super::register_function(ctx, "Sound", "destroyAll", 1, js::asset_service::destroy_all_sound_source);
+		}
 
-		super::register_function(ctx, "Shader", "load", 2, js::asset_service::load_shader);
-		super::register_function(ctx, "Shader", "setUniforms", 2, js::asset_service::set_shader_uniforms);
-		super::register_function(ctx, "Shader", "setCameraUniforms", 2, js::asset_service::set_shader_camera_uniforms);
-		super::register_function(ctx, "Shader", "destroy", 1, js::asset_service::destroy_shader);
-		super::register_function(ctx, "Shader", "destroyAll", 1, js::asset_service::destroy_all_shader);
-
-		super::register_function(ctx, "Texture", "create", 3, js::asset_service::create_texture);
-		super::register_function(ctx, "Texture", "load", 2, js::asset_service::load_texture);
-		super::register_function(ctx, "Texture", "update", 3, js::asset_service::update_texture);
-		super::register_function(ctx, "Texture", "destroy", 1, js::asset_service::destroy_texture);
-		super::register_function(ctx, "Texture", "destroyAll", 1, js::asset_service::destroy_all_texture);
-
-		super::register_function(ctx, "Cubemap", "create", 3, js::asset_service::create_cubemap);
-		super::register_function(ctx, "Cubemap", "load", 2, js::asset_service::load_cubemap);
-		super::register_function(ctx, "Cubemap", "update", 3, js::asset_service::update_cubemap);
-		super::register_function(ctx, "Cubemap", "destroy", 1, js::asset_service::destroy_cubemap);
-		super::register_function(ctx, "Cubemap", "destroyAll", 1, js::asset_service::destroy_all_cubemap);
-
-		super::register_function(ctx, "Sound", "load", 1, js::asset_service::load_sound_source);
-		super::register_function(ctx, "Sound", "destroy", 1, js::asset_service::destroy_sound_source);
-		super::register_function(ctx, "Sound", "destroyAll", 1, js::asset_service::destroy_all_sound_source);
+		super::register_function(ctx, "setDefaultTextureOptions", 1, js::asset_service::set_default_texture_options);
 	}
 	shader_manager* asset_service::get_shader_manager()
 	{
@@ -408,6 +440,14 @@ namespace djinn
 	void asset_service::update()
 	{
 		s_instance->m_texture_manager.update_all(render_service::get_context()->time.now * 1000);
+	}
+	void asset_service::set_default_texture_options(texture_options const& opts)
+	{
+		s_instance->m_default_texture_options = opts;
+	}
+	texture_options const& asset_service::get_default_texture_options()
+	{
+		return s_instance->m_default_texture_options;
 	}
 
 

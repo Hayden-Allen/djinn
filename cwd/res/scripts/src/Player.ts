@@ -194,7 +194,7 @@ export default class Player extends Entity {
             const boost = Input.getKey(Input.KEY_LEFT_CONTROL) ? 5 : 1
             const x = boost * 25 * Input.leftX()
             const z = boost * 25 * Input.leftY()
-            let newVelY = this.velY - this.gravity * dt
+            let newVelY = this.velY - boost * this.gravity * dt
             // if (this.canJump) {
             if (Input.getKey(Input.KEY_SPACE)) {
                 this.canJump = false
@@ -203,7 +203,7 @@ export default class Player extends Entity {
             // }
             this.velY = Math.min(
                 boost * this.velYMax,
-                Math.max(this.velYMin, newVelY)
+                Math.max(boost * this.velYMin, newVelY)
             )
             const dir = [x, this.velY, z]
             Scene.Physics.collideNSlide(this.idHitbox, dir, dt)

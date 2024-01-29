@@ -29,6 +29,8 @@ namespace djinn
 		static material_manager* get_material_manager();
 		static sptr<mesh> get_mesh(id_t const id);
 		static void update();
+		static void set_default_texture_options(texture_options const& opts);
+		static texture_options const& get_default_texture_options();
 	private:
 		shader_manager m_shader_manager;
 		texture_manager m_texture_manager;
@@ -38,6 +40,7 @@ namespace djinn
 		animated_mesh_manager m_animated_mesh_manager;
 		sound_source_manager m_sound_source_manager;
 		material_manager m_material_manager;
+		texture_options m_default_texture_options;
 	private:
 		asset_service();
 	};
