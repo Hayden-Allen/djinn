@@ -3,4 +3,5 @@ declare interface _ImGui {
     colorPicker4(label: string, colors: number[]): number[]
     sliderFloat(label: string, val: number, min: number, max: number): number
     separator(): void
+    setName(id: EntityID, name: string): void
 }

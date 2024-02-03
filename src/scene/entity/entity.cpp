@@ -16,7 +16,8 @@ namespace djinn
 {
 	entity::entity(id_t const id, std::string const& fp, JSRuntime* const runtime) :
 		scene_object(id),
-		m_ctx(JS_NewContext(runtime))
+		m_ctx(JS_NewContext(runtime)),
+		m_imgui_name("Entity_" + std::to_string(id))
 	{
 		js::global::init_globals(m_ctx);
 		asset_service::register_functions(m_ctx);
@@ -53,6 +54,21 @@ namespace djinn
 		m_request_imgui = false;
 		call_main(dt, time);
 	}
+	void entity::request_imgui()
+	{
+		m_request_imgui = true;
+	}
+	void entity::set_imgui_name(std::string const& name)
+	{
+		m_imgui_name = name;
+	}
+	JSValue entity::get_js_value()
+	{
+		return m_this;
+	}
+
+
+
 	void entity::call_draw()
 	{
 		call_reserved("__draw", 0, nullptr);
@@ -65,9 +81,7 @@ namespace djinn
 	{
 		if (!m_request_imgui)
 			return;
-		char buf[128] = { 0 };
-		sprintf_s(buf, 128, "Entity_%u", m_id);
-		if (ImGui::Begin(buf))
+		if (ImGui::Begin(m_imgui_name.c_str()))
 		{
 			call_reserved("__imgui", 0, nullptr);
 		}
@@ -93,13 +107,9 @@ namespace djinn
 		for (u32 i = 0; i < 2; i++)
 			JS_FreeValue(m_ctx, args[i]);
 	}
-	void entity::request_imgui()
+	void entity::call_no_collide()
 	{
-		m_request_imgui = true;
-	}
-	JSValue entity::get_js_value()
-	{
-		return m_this;
+		call_reserved("__no_collide", 0, nullptr);
 	}
 
 

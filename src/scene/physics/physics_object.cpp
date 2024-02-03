@@ -54,7 +54,12 @@ namespace djinn
 			else
 				obj1->m_bound.e->call_collide(obj0->m_bound.p, normal);
 		}
+		m_num_contacts++;
 		return 0.f;
+	}
+	u32 contact_test_callback::get_num_contacts() const
+	{
+		return m_num_contacts;
 	}
 
 
@@ -291,5 +296,7 @@ namespace djinn
 	{
 		contact_test_callback cb(this);
 		m_world->contactTest(m_rb.get(), cb);
+		if (cb.get_num_contacts() == 0 && m_bound_is_entity)
+			m_bound.e->call_no_collide();
 	}
 } // namespace djinn

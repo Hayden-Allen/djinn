@@ -19,17 +19,21 @@ namespace djinn
 	public:
 		bool is_entity() const override final;
 		virtual void update(f32 const dt, f32 const time);
+		void request_imgui();
+		void set_imgui_name(std::string const& name);
+		JSValue get_js_value();
+	public:
 		void call_draw();
 		void call_ui();
 		void call_imgui();
 		void call_collide(entity* const other, direction<space::WORLD> const& normal);
 		void call_collide(phorm* const phorm, direction<space::WORLD> const& normal);
-		void request_imgui();
-		JSValue get_js_value();
+		void call_no_collide();
 	protected:
 		JSContext* m_ctx;
 		JSValue m_this = JS_UNDEFINED, m_global = JS_UNDEFINED, m_exports = JS_UNDEFINED, m_default = JS_UNDEFINED, m_proto = JS_UNDEFINED;
 		std::unordered_map<std::string, JSValue> m_function_cache;
+		std::string m_imgui_name;
 		bool m_script_loaded = false, m_request_imgui = false;
 	protected:
 		void inject_script(std::string const& fp, std::string const& src, s32 const argc, JSValueConst* const argv);

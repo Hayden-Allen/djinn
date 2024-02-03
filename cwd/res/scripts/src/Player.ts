@@ -57,6 +57,7 @@ export default class Player extends Entity {
         }
     }
     __load() {
+        ImGui.setName(this.id, "Player")
         // character
         {
             this.idMainMesh = Asset.Mesh.loadAnimated("xbot.m3d")
@@ -257,6 +258,9 @@ export default class Player extends Entity {
             const tagz = Scene.Tag.get(id)
             // printf(`Collide with: '${name}' [${tagz}]`)
         }
+    }
+    __no_collide() {
+        // printf("No collisions")
     }
     __draw() {
         this.worldPos = Scene.getPos(this.idHitbox)

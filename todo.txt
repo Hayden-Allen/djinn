@@ -11,7 +11,6 @@
 - powertranzphormr
 	- change uv mapping of cone bottom
 - physics
-	- __no_collide()?
 	- slowly fall off platform
 	- hatsify physics_object, function order/cleanup
 	- physics_object_manager::update order needs to respect scene graph?

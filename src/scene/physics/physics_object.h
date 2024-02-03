@@ -26,13 +26,16 @@ namespace djinn
 	{
 	public:
 		contact_test_callback(physics_object const* const self) :
-			me(self)
+			me(self),
+			m_num_contacts(0)
 		{}
 		DCM(contact_test_callback);
 	public:
 		btScalar addSingleResult(btManifoldPoint& cp, btCollisionObjectWrapper const* colObj0Wrap, int partId0, int index0, btCollisionObjectWrapper const* colObj1Wrap, int partId1, int index1) override;
+		u32 get_num_contacts() const;
 	private:
 		physics_object const* me;
+		u32 m_num_contacts;
 	};
 
 	class physics_object : public scene_object

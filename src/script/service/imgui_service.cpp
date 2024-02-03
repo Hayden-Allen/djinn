@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "imgui_service.h"
+#include "scene_service.h"
 #include "script/js.h"
 #include "core/util.h"
 #include "core/constants.h"
@@ -42,6 +43,15 @@ namespace djinn
 			ImGui::Separator();
 			return JS_UNDEFINED;
 		}
+		JSValue set_name(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+		{
+			ASSERT(argc == 2);
+			id_t const id = js::extract_id(ctx, argv[0]);
+			std::string const& name = js::extract_string(ctx, argv[1]);
+			sptr<entity> e = scene_service::get_entity_manager()->get(id);
+			e->set_imgui_name(name);
+			return JS_UNDEFINED;
+		}
 	} // namespace js::imgui_service
 
 
@@ -64,6 +74,7 @@ namespace djinn
 		super::register_function(ctx, "colorPicker4", 2, js::imgui_service::color_picker4);
 		super::register_function(ctx, "sliderFloat", 4, js::imgui_service::slider_float);
 		super::register_function(ctx, "separator", 0, js::imgui_service::separator);
+		super::register_function(ctx, "setName", 2, js::imgui_service::set_name);
 	}
 	void imgui_service::begin_frame()
 	{
