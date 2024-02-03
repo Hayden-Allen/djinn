@@ -8,12 +8,13 @@ namespace djinn
 	class mesh_instance_batch;
 	class shaders;
 
+	// represents a field in the per-instance uniform block
 	struct mesh_instance_field
 	{
-		std::vector<f32> data;
-		GLenum type;
-		s32 arr_count;
-		u32 offset_bytes;
+		std::vector<f32> data; // raw float data
+		GLenum type;		   // GLSL type
+		s32 arr_count;		   // each field can be an array, this is the length
+		u32 offset_bytes;	   // offset within the block
 	};
 
 

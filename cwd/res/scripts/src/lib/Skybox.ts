@@ -2,7 +2,7 @@ import "./djinn.d"
 
 const { Asset, Scene, Util } = djinn
 
-interface SkyboxTextureOptions {
+interface SkyboxTextureOptions extends Record<string, number> {
     minFilter: number
     magFilter: number
 }
@@ -42,7 +42,10 @@ export default class Skybox {
 
     constructor(idTexture: CubemapID, options: SkyboxOptions) {
         this.idTexture = idTexture
-        this.idShader = Asset.Shader.load(options.vertexShader, options.fragmentShader)
+        this.idShader = Asset.Shader.load(
+            options.vertexShader,
+            options.fragmentShader
+        )
         this.idMesh = Asset.Mesh.create(8, [3], 36, [this.idTexture])
         Asset.Mesh.update(
             this.idMesh,
@@ -85,22 +88,42 @@ export default class Skybox {
         })
     }
 
-    static loadFiles(sboxOptions: SkyboxOptions, loadOptions: SkyboxLoadFilesOptions) {
-        const fps = [loadOptions.right, loadOptions.left, loadOptions.top, loadOptions.bottom, loadOptions.back, loadOptions.front]
+    static loadFiles(
+        sboxOptions: SkyboxOptions,
+        loadOptions: SkyboxLoadFilesOptions
+    ) {
+        const fps = [
+            loadOptions.right,
+            loadOptions.left,
+            loadOptions.top,
+            loadOptions.bottom,
+            loadOptions.back,
+            loadOptions.front,
+        ]
         const idTexture = Asset.Cubemap.load(fps, loadOptions.textureOptions)
         const ret = new Skybox(idTexture, sboxOptions)
         return ret
     }
 
-    static loadDirectory(sboxOptions: SkyboxOptions, loadOptions: SkyboxLoadDirectoryOptions) {
+    static loadDirectory(
+        sboxOptions: SkyboxOptions,
+        loadOptions: SkyboxLoadDirectoryOptions
+    ) {
         const fps = Util.listFiles(Util.makeTexturePath(loadOptions.dir))
         const idTexture = Asset.Cubemap.load(fps, loadOptions.textureOptions)
         const ret = new Skybox(idTexture, sboxOptions)
         return ret
     }
 
-    static createGenerated(sboxOptions: SkyboxOptions, genOptions: SkyboxGeneratedOptions) {
-        const idTexture = Asset.Cubemap.create(genOptions.width, genOptions.height, genOptions.textureOptions)
+    static createGenerated(
+        sboxOptions: SkyboxOptions,
+        genOptions: SkyboxGeneratedOptions
+    ) {
+        const idTexture = Asset.Cubemap.create(
+            genOptions.width,
+            genOptions.height,
+            genOptions.textureOptions
+        )
         Asset.Cubemap.update(idTexture, genOptions.pixels)
         const ret = new Skybox(idTexture, sboxOptions)
         return ret

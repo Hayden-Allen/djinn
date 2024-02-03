@@ -341,6 +341,10 @@ namespace djinn::js::scene_service
 	{
 		ASSERT(argc == 2);
 		id_t const instance_id = js::extract_id(ctx, argv[0]);
+		// map<string, [number[], number]>
+		//  - string is field name
+		//  - number[] is float data
+		//  - number is index in field array (or 0 if the field is not an array)
 		std::unordered_map<std::string, JSValue> const& map = js::extract_map(ctx, argv[1]);
 		sptr<mesh_instance> instance = ::djinn::scene_service::get_mesh_instance_manager()->get(instance_id);
 		for (auto const& pair : map)

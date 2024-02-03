@@ -41,7 +41,10 @@ declare interface _Scene_Xport {
 }
 declare interface _Scene_MeshInstance {
     create(idMesh: MeshID, idShader: ShaderID): MeshInstanceID
-    setUniforms(id: MeshInstanceID, map: Record<string, number>): void
+    setUniforms(
+        id: MeshInstanceID,
+        map: Record<string, [number | number[], number]>
+    ): void
     setVisible(id: MeshInstanceID, visible: boolean): void
     setAction(id: MeshInstanceID, name: string, speed?: number): void
     getBonePos(id: MeshInstanceID, name: string): number[]

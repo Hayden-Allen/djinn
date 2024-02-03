@@ -81,6 +81,7 @@ export default class MainEntity extends Entity {
             u_texture: 0,
         })
         this.idMesh = Asset.Mesh.create(4, [2, 2], 6, [this.idTexture])
+
         this.idSoundSource = Asset.Sound.load("white_out.mp3")
         this.idSoundEmitter = Scene.SoundEmitter.create(this.idSoundSource)
         Scene.setPos(this.idSoundEmitter, [-36, 103, -39])
@@ -128,7 +129,7 @@ export default class MainEntity extends Entity {
             "phorm_water.vert",
             "phorm_water.frag"
         )
-        this.xport = new Xport("castle.xport")
+        this.xport = new Xport("castle3.xport")
         for (var i = 0; i < this.xport.idPhorms.length; i++) {
             const id = this.xport.idPhorms[i]
             if (Scene.Tag.has(id, "water")) {
@@ -210,11 +211,6 @@ export default class MainEntity extends Entity {
             Scene.SoundEmitter.setFade(this.idSoundEmitter, -1, 0, 1000)
         else if (Input.getKey(Input.KEY_2))
             Scene.SoundEmitter.setFade(this.idSoundEmitter, -1, 1, 1000)
-
-        const flames = this.xport!.getPhormsByTag("flame")
-        for (const flame of flames!) {
-            Scene.addPosYWorld(flame, 0.0025 * Math.sin(time))
-        }
     }
     __draw() {
         this.xport!.skybox!.draw(this.camera!.getId())

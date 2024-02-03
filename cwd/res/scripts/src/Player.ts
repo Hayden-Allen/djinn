@@ -246,7 +246,6 @@ export default class Player extends Entity {
             }
             this.canJump = true
             this.velY = 0
-            printf(this.lastTime)
             if (Scene.Tag.has(id, "switch")) {
                 // Event.dispatch("player_hit_switch", Scene.Xport.getName(id))
             }

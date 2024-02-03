@@ -27,12 +27,16 @@ namespace djinn
 
 	void mesh_instance::set_uniform(std::string const& name, std::vector<f32> const& data, u32 const index)
 	{
+		// make sure field exists and index is valid
 		auto it = m_field_index.find(name);
 		ASSERT(it != m_field_index.end());
 		mesh_instance_field& field = m_fields.at(it->second);
 		ASSERT(index < (u32)field.arr_count);
-		ASSERT(data.size() * sizeof(f32) == glsl_type_size_bytes(field.type));
-		std::copy(data.begin(), data.end(), field.data.begin() + index);
+		// make sure given data is the correct size
+		u32 const type_size = glsl_type_size_bytes(field.type);
+		ASSERT(data.size() * sizeof(f32) == type_size);
+		// copy given data into the field and upload
+		std::copy(data.begin(), data.end(), field.data.begin() + index * type_size);
 		m_batch->update(m_batch_index, field);
 	}
 	bool mesh_instance::is_animated() const

@@ -20,7 +20,7 @@ namespace djinn
 
 		u64 const sm_count = in->ulong();
 		printf("sm: %zu\n", sm_count);
-		insert_from_file(in, sg_count, mats, &ids);
+		insert_from_file(in, sm_count, mats, &ids);
 
 		return ids;
 	}
