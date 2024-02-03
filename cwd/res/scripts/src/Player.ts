@@ -47,6 +47,8 @@ export default class Player extends Entity {
     private velYMax: number = 25
     private gravity: number = 75
     private canJump: boolean = false
+    private lastGravity: number = 0
+    private lastTime: number = 0
 
     __init(cam: Camera) {
         if (cam) {
@@ -138,6 +140,7 @@ export default class Player extends Entity {
         Scene.Physics.destroy(this.idHitbox)
     }
     __main(dt: number, time: number) {
+        this.lastTime = time
         // wing mesh update
         {
             let frontWingVerts: number[] = []
@@ -194,6 +197,7 @@ export default class Player extends Entity {
             const boost = Input.getKey(Input.KEY_LEFT_CONTROL) ? 5 : 1
             const x = boost * 25 * Input.leftX()
             const z = boost * 25 * Input.leftY()
+            this.lastGravity = this.gravity * dt
             let newVelY = this.velY - boost * this.gravity * dt
             // if (this.canJump) {
             if (Input.getKey(Input.KEY_SPACE)) {
@@ -206,7 +210,7 @@ export default class Player extends Entity {
                 Math.max(boost * this.velYMin, newVelY)
             )
             const dir = [x, this.velY, z]
-            Scene.Physics.collideNSlide(this.idHitbox, dir, dt)
+            Scene.Physics.collideNSlide(this.idHitbox, dir, dt, { y: 1 })
             // Scene.Physics.setVelocity(this.idHitbox, dir)
             this.moveDir = dir
 
@@ -238,12 +242,13 @@ export default class Player extends Entity {
         const isTrigger = Scene.Tag.has(id, "trigger")
         if (normalWorld[1] >= 0.9 && !isTrigger) {
             if (!this.canJump) {
-                Event.dispatch("player_can_jump", "hello, world")
+                // Event.dispatch("player_can_jump", "hello, world")
             }
             this.canJump = true
             this.velY = 0
+            printf(this.lastTime)
             if (Scene.Tag.has(id, "switch")) {
-                Event.dispatch("player_hit_switch", Scene.Xport.getName(id))
+                // Event.dispatch("player_hit_switch", Scene.Xport.getName(id))
             }
         }
         if (isTrigger) {

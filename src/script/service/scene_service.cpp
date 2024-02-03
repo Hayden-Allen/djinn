@@ -853,12 +853,27 @@ namespace djinn::js::scene_service
 	}
 	JSValue collide_and_slide(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 3);
+		ASSERT(argc == 3 || argc == 4);
 		id_t const id = js::extract_id(ctx, argv[0]);
 		std::vector<f32> const& v = js::extract_f32_array(ctx, argv[1]);
 		f32 const dt = js::extract_f32(ctx, argv[2]);
 		ASSERT(v.size() == 3);
-		::djinn::scene_service::get_physics_object_manager()->get(id)->collide_and_slide(vec<space::OBJECT>(v[0], v[1], v[2]), dt);
+		vec<space::WORLD> threshold(::c::EPSILON);
+		if (argc == 4)
+		{
+			auto const& map = js::extract_map(ctx, argv[3]);
+			for (auto const& pair : map)
+			{
+				if (pair.first == "x")
+					threshold.x = js::extract_f32(ctx, pair.second);
+				if (pair.first == "y")
+					threshold.y = js::extract_f32(ctx, pair.second);
+				if (pair.first == "z")
+					threshold.z = js::extract_f32(ctx, pair.second);
+			}
+		}
+
+		::djinn::scene_service::get_physics_object_manager()->get(id)->collide_and_slide(vec<space::OBJECT>(v[0], v[1], v[2]), dt, threshold);
 		return JS_UNDEFINED;
 	}
 	JSValue aabb_intersects(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -1472,7 +1487,7 @@ namespace djinn
 			super::register_function(ctx, "Physics", "setGravity", 2, js::scene_service::set_gravity);
 			super::register_function(ctx, "Physics", "setKinematic", 2, js::scene_service::set_kinematic);
 			super::register_function(ctx, "Physics", "setGhost", 2, js::scene_service::set_ghost);
-			super::register_function(ctx, "Physics", "collideNSlide", 3, js::scene_service::collide_and_slide);
+			super::register_function(ctx, "Physics", "collideNSlide", 4, js::scene_service::collide_and_slide);
 			super::register_function(ctx, "Physics", "aabbIntersects", 2, js::scene_service::aabb_intersects);
 			super::register_function(ctx, "Physics", "destroy", 1, js::scene_service::destroy_physics_object);
 			super::register_function(ctx, "Physics", "destroyAll", 1, js::scene_service::destroy_all_physics_object);

@@ -45,7 +45,7 @@ namespace djinn
 	public:
 		void bind(phorm* const p);
 		void bind(entity* const e);
-		void collide_and_slide(vec<space::OBJECT> const& vel, f32 const dt);
+		void collide_and_slide(vec<space::OBJECT> const& vel, f32 const dt, vec<space::WORLD> const& threshold);
 		bool aabb_intersects(physics_object const* const other) const;
 		void apply_impulse(vec<space::OBJECT> const& force);
 	public:

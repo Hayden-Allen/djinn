@@ -41,7 +41,7 @@ declare interface _Scene_Xport {
 }
 declare interface _Scene_MeshInstance {
     create(idMesh: MeshID, idShader: ShaderID): MeshInstanceID
-    setUniforms(id: MeshInstanceID, map: object): void
+    setUniforms(id: MeshInstanceID, map: Record<string, number>): void
     setVisible(id: MeshInstanceID, visible: boolean): void
     setAction(id: MeshInstanceID, name: string, speed?: number): void
     getBonePos(id: MeshInstanceID, name: string): number[]
@@ -127,7 +127,12 @@ declare interface _Scene_Physics {
     setGravity(id: PhysicsID, force: number[]): void
     setKinematic(id: PhysicsID, isKinematic: boolean): void
     setGhost(id: PhysicsID, isGhost: boolean): void
-    collideNSlide(id: PhysicsID, velLocal: number[], dt: number): void
+    collideNSlide(
+        id: PhysicsID,
+        velLocal: number[],
+        dt: number,
+        threshold?: Record<string, number>
+    ): void
     aabbIntersects(id0: PhysicsID, id1: PhysicsID): boolean
     destroy(id: PhysicsID): void
     destroyAll(ids: PhysicsID[]): void

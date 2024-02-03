@@ -78,7 +78,7 @@ namespace djinn
 		m_bound.e = e;
 		m_bound_is_entity = true;
 	}
-	void physics_object::collide_and_slide(vec<space::OBJECT> const& vel, f32 const dt)
+	void physics_object::collide_and_slide(vec<space::OBJECT> const& vel, f32 const dt, vec<space::WORLD> const& threshold)
 	{
 		// ASSERT(m_rb->getFlags() & btCollisionObject::CF_KINEMATIC_OBJECT);
 		tmat<space::OBJECT, space::WORLD> const& mat = get_world_transform();
@@ -110,6 +110,8 @@ namespace djinn
 			vel_remaining = vel_after - vel_after.dot(normal) * normal;
 		}
 
+		if (abs(vel_total.x) < threshold.x && abs(vel_total.y) < threshold.y && abs(vel_total.z) < threshold.z)
+			vel_total.set_length(0);
 		m_rb->setLinearVelocity(u::vec2bullet(vel_total));
 	}
 	bool physics_object::aabb_intersects(physics_object const* const other) const

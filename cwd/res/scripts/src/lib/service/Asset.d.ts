@@ -17,23 +17,39 @@ declare interface _Asset_Mesh {
 }
 declare interface _Asset_Shader {
     load(fpVert: string, fpFrag: string): ShaderID
-    setUniforms(id: ShaderID, uniforms: object): void
+    setUniforms(id: ShaderID, uniforms: Record<string, number>): void
     setCameraUniforms(idShader: ShaderID, idCamera: CameraID): void
     destroy(id: ShaderID): void
     destroyAll(ids: ShaderID[]): void
 }
 declare interface _Asset_Texture {
-    create(width: number, height: number, options?: object): TextureID
-    load(fp: string, options?: object): TextureID
-    update(id: TextureID, subpixels: number[], options?: object): void
-    setOptions(id: TextureID, options: object): void
+    create(
+        width: number,
+        height: number,
+        options?: Record<string, number>
+    ): TextureID
+    load(fp: string, options?: Record<string, number>): TextureID
+    update(
+        id: TextureID,
+        subpixels: number[],
+        options?: Record<string, number>
+    ): void
+    setOptions(id: TextureID, options: Record<string, number>): void
     destroy(id: TextureID): void
     destroyAll(ids: TextureID[]): void
 }
 declare interface _Asset_Cubemap {
-    create(width: number, height: number, options?: object): CubemapID
-    load(fps: string[], options?: object): CubemapID
-    update(id: CubemapID, subpixels: number[][], options?: object): void
+    create(
+        width: number,
+        height: number,
+        options?: Record<string, number>
+    ): CubemapID
+    load(fps: string[], options?: Record<string, number>): CubemapID
+    update(
+        id: CubemapID,
+        subpixels: number[][],
+        options?: Record<string, number>
+    ): void
     destroy(id: CubemapID): void
     destroyAll(ids: CubemapID[]): void
 }
@@ -49,5 +65,5 @@ export declare interface _Asset {
     Cubemap: _Asset_Cubemap
     Sound: _Asset_Sound
 
-    setDefaultTextureOptions(options: object): void
+    setDefaultTextureOptions(options: Record<string, number>): void
 }
