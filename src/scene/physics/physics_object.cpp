@@ -88,8 +88,8 @@ namespace djinn
 		btConvexShape const* const shape = (btConvexShape const*)raw_shape;
 
 		vec<space::WORLD> vel_remaining = mat * vel;
-		vec<space::WORLD> vel_total(0, 0, 0);
-		for (u32 i = 0; i < 8 && vel_remaining.length2() > 0; i++)
+		vec<space::WORLD> vel_total(0);
+		for (u32 i = 0; i < c::physics::max_cns_iterations && vel_remaining.length2() > 0; i++)
 		{
 			sweep_test_callback cb(m_rb.get(), u::vec2bullet(up), .5);
 			btTransform from = u::tmat2bullet(mat);

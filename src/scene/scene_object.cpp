@@ -13,6 +13,16 @@ namespace djinn
 	{
 		m_parent = parent;
 	}
+	void scene_object::set_parent_keep_transform(scene_object* const parent)
+	{
+		if (parent == m_parent)
+			return;
+		tmat<space::OBJECT, space::WORLD> const& o2w = get_world_transform();
+		m_parent = parent;
+		tmat<space::PARENT, space::WORLD> const& p2w = get_parent_transform();
+		m_transform = p2w.invert_copy() * o2w;
+		// update_rot();
+	}
 	scene_object const* scene_object::get_parent() const
 	{
 		return m_parent;

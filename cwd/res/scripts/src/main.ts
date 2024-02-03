@@ -211,6 +211,11 @@ export default class MainEntity extends Entity {
             Scene.SoundEmitter.setFade(this.idSoundEmitter, -1, 0, 1000)
         else if (Input.getKey(Input.KEY_2))
             Scene.SoundEmitter.setFade(this.idSoundEmitter, -1, 1, 1000)
+
+        const platforms = this.xport!.getPhormsByTag("platform")
+        for (const platform of platforms!) {
+            Scene.addPosZWorld(platform, -5 * dt)
+        }
     }
     __draw() {
         this.xport!.skybox!.draw(this.camera!.getId())

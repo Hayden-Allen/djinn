@@ -174,6 +174,9 @@ export declare interface _Scene {
 
     copyTransform(idFrom: SceneID, idTo: SceneID): void
     setParent(idChild: SceneID, idParent: SceneID): void
+    setParentKeepTransform(idChild: SceneID, idParent: SceneID): void
+    unsetParent(idChild: SceneID): void
+    unsetParentKeepTransform(idChild: SceneID): void
     getPos(id: SceneID): number[]
     getPosX(id: SceneID): number
     getPosY(id: SceneID): number

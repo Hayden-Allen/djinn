@@ -106,5 +106,6 @@ namespace djinn::c
 		static constexpr f32 substep_time = 1.f / substep_fps;
 		static constexpr u64 num_substeps = (substep_fps / min_game_fps);
 		static constexpr f32 default_raycast_length = 1000;
+		static constexpr u64 max_cns_iterations = 8;
 	} // namespace physics
 } // namespace djinn::c

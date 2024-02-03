@@ -1030,27 +1030,59 @@ namespace djinn::js::scene_service
 		ASSERT(argc == 2);
 		id_t const src_id = js::extract_id(ctx, argv[0]);
 		id_t const dst_id = js::extract_id(ctx, argv[1]);
+		ASSERT(dst_id != 0);
 		sptr<scene_object> src = ::djinn::scene_service::get_scene_object(src_id);
-		if (dst_id != 0)
-		{
-			sptr<scene_object> dst = ::djinn::scene_service::get_scene_object(dst_id);
+		sptr<scene_object> dst = ::djinn::scene_service::get_scene_object(dst_id);
 
-			if (::djinn::scene_service::get_physics_object_manager()->has(src_id))
+		if (::djinn::scene_service::get_physics_object_manager()->has(src_id))
+		{
+			scene_object const* parent = dst.get();
+			while (parent)
 			{
-				scene_object const* parent = dst.get();
-				while (parent)
-				{
-					ASSERT(!::djinn::scene_service::get_physics_object_manager()->has(parent->get_id()));
-					parent = parent->get_parent();
-				}
+				ASSERT(!::djinn::scene_service::get_physics_object_manager()->has(parent->get_id()));
+				parent = parent->get_parent();
 			}
+		}
 
-			src->set_parent(dst.get());
-		}
-		else
+		src->set_parent(dst.get());
+		return JS_UNDEFINED;
+	}
+	JSValue set_parent_keep_transform(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const src_id = js::extract_id(ctx, argv[0]);
+		id_t const dst_id = js::extract_id(ctx, argv[1]);
+		ASSERT(dst_id != 0);
+		sptr<scene_object> src = ::djinn::scene_service::get_scene_object(src_id);
+		sptr<scene_object> dst = ::djinn::scene_service::get_scene_object(dst_id);
+
+		if (::djinn::scene_service::get_physics_object_manager()->has(src_id))
 		{
-			src->set_parent(nullptr);
+			scene_object const* parent = dst.get();
+			while (parent)
+			{
+				ASSERT(!::djinn::scene_service::get_physics_object_manager()->has(parent->get_id()));
+				parent = parent->get_parent();
+			}
 		}
+
+		src->set_parent_keep_transform(dst.get());
+		return JS_UNDEFINED;
+	}
+	JSValue unset_parent(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		sptr<scene_object> obj = ::djinn::scene_service::get_scene_object(id);
+		obj->set_parent(nullptr);
+		return JS_UNDEFINED;
+	}
+	JSValue unset_parent_keep_transform(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		sptr<scene_object> obj = ::djinn::scene_service::get_scene_object(id);
+		obj->set_parent_keep_transform(nullptr);
 		return JS_UNDEFINED;
 	}
 	JSValue get_pos(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -1516,6 +1548,9 @@ namespace djinn
 		{
 			super::register_function(ctx, "copyTransform", 2, js::scene_service::copy_transform);
 			super::register_function(ctx, "setParent", 2, js::scene_service::set_parent);
+			super::register_function(ctx, "setParentKeepTransform", 2, js::scene_service::set_parent_keep_transform);
+			super::register_function(ctx, "unsetParent", 1, js::scene_service::unset_parent);
+			super::register_function(ctx, "unsetParentKeepTransform", 1, js::scene_service::unset_parent_keep_transform);
 			super::register_function(ctx, "getPos", 1, js::scene_service::get_pos);
 			super::register_function(ctx, "getPosX", 1, js::scene_service::get_pos_x);
 			super::register_function(ctx, "getPosY", 1, js::scene_service::get_pos_y);
