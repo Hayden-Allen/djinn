@@ -71,7 +71,11 @@ declare interface _Scene_Camera {
     ): void
 }
 declare interface _Scene_Physics {
-    bind(idPhys: PhysicsID, idBound: EntityID | PhormID): void
+    castRay(
+        fromWorld: number[],
+        dirWorld: number[],
+        length?: number
+    ): number[][][]
     createBox(mass: number, origin: number[], dims: number[]): PhysicsID
     createCylinder(mass: number, origin: number[], dims: number[]): PhysicsID
     createSphere(mass: number, origin: number[], radius: number): PhysicsID
@@ -94,49 +98,40 @@ declare interface _Scene_Physics {
         height: number
     ): PhysicsID
     createBVH(idPhorm: PhormID): PhysicsID
+    bind(idPhys: PhysicsID, idBound: EntityID | PhormID): void
+    aabbIntersects(id0: PhysicsID, id1: PhysicsID): boolean
     setFriction(id: PhysicsID, f: number): void
-    getVelocity(id: PhysicsID): number[]
-    getSpeed(id: PhysicsID): number
-    setVelocity(id: PhysicsID, vel: number[]): void
-    setVelocityX(id: PhysicsID, vel: number): void
-    setVelocityY(id: PhysicsID, vel: number): void
-    setVelocityZ(id: PhysicsID, vel: number): void
-    getVelocityWorld(id: PhysicsID): number[]
-    getSpeedWorld(id: PhysicsID): number
-    setVelocityWorld(id: PhysicsID, vel: number[]): void
-    setVelocityXWorld(id: PhysicsID, vel: number): void
-    setVelocityYWorld(id: PhysicsID, vel: number): void
-    setVelocityZWorld(id: PhysicsID, vel: number): void
-    setAngularVelocity(id: PhysicsID, vel: number[]): void
-    setAngularFactor(id: PhysicsID, vel: number[]): void
     enableCollision(id: PhysicsID): void
     disableCollision(id: PhysicsID): void
-    applyImpulse(id: PhysicsID, localForce: number[]): void
-    setDamping(id: PhysicsID, linear: number): void
-    setAngularDamping(id: PhysicsID, angular: number): void
-    setMaxSpeedX(id: PhysicsID, max: number): void
-    setMaxSpeedY(id: PhysicsID, max: number): void
-    setMaxSpeedZ(id: PhysicsID, max: number): void
-    castRay(
-        fromWorld: number[],
-        dirWorld: number[],
-        length?: number
-    ): number[][][]
-    getNormalTangent(
-        normWorld: number[],
-        dirWorld: number[],
-        idHitbox: PhysicsID
-    ): number[]
-    setGravity(id: PhysicsID, force: number[]): void
-    setKinematic(id: PhysicsID, isKinematic: boolean): void
     setGhost(id: PhysicsID, isGhost: boolean): void
+    getVelocity(id: PhysicsID): number[]
+    getSpeed(id: PhysicsID): number
+    getVelocityWorld(id: PhysicsID): number[]
+    getSpeedWorld(id: PhysicsID): number
     collideNSlide(
         id: PhysicsID,
         velLocal: number[],
         dt: number,
         threshold?: Record<string, number>
     ): void
-    aabbIntersects(id0: PhysicsID, id1: PhysicsID): boolean
+    applyImpulse(id: PhysicsID, localForce: number[]): void
+    setVelocity(id: PhysicsID, vel: number[]): void
+    setVelocityX(id: PhysicsID, vel: number): void
+    setVelocityY(id: PhysicsID, vel: number): void
+    setVelocityZ(id: PhysicsID, vel: number): void
+    setVelocityWorld(id: PhysicsID, vel: number[]): void
+    setVelocityXWorld(id: PhysicsID, vel: number): void
+    setVelocityYWorld(id: PhysicsID, vel: number): void
+    setVelocityZWorld(id: PhysicsID, vel: number): void
+    setDamping(id: PhysicsID, linear: number): void
+    setAngularVelocity(id: PhysicsID, vel: number[]): void
+    setAngularDamping(id: PhysicsID, angular: number): void
+    setAngularFactor(id: PhysicsID, vel: number[]): void
+    setMaxSpeedX(id: PhysicsID, max: number): void
+    setMaxSpeedY(id: PhysicsID, max: number): void
+    setMaxSpeedZ(id: PhysicsID, max: number): void
+    setGravity(id: PhysicsID, force: number[]): void
+    setKinematic(id: PhysicsID, isKinematic: boolean): void
     destroy(id: PhysicsID): void
     destroyAll(ids: PhysicsID[]): void
 }

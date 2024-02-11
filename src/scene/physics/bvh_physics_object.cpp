@@ -4,7 +4,6 @@
 
 namespace djinn
 {
-
 	bvh_physics_object::bvh_physics_object(id_t const id, sptr<btDiscreteDynamicsWorld> const& world, sptr<phorm> const& phorm) :
 		physics_object(id, world)
 	{
@@ -51,5 +50,81 @@ namespace djinn
 	bvh_physics_object::~bvh_physics_object()
 	{
 		m_iva.free();
+	}
+
+
+
+	bool bvh_physics_object::is_bvh() const
+	{
+		return true;
+	}
+	// none of these operatinos are valid on a bvh triangle mesh
+	void bvh_physics_object::collide_and_slide(vec<space::OBJECT> const& vel, f32 const dt, vec<space::WORLD> const& threshold)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::apply_impulse(vec<space::OBJECT> const& force)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_velocity(f32 const x, f32 const y, f32 const z)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_velocity_x(f32 const x)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_velocity_y(f32 const y)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_velocity_z(f32 const z)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_velocity_world(f32 const x, f32 const y, f32 const z)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_velocity_x_world(f32 const x)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_velocity_y_world(f32 const y)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_velocity_z_world(f32 const z)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_damping(f32 const d)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_angular_velocity(f32 const x, f32 const y, f32 const z)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_angular_damping(f32 const d)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_angular_factor(f32 const x, f32 const y, f32 const z)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_max_speed(u32 const index, f32 const max)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_gravity(vec<space::WORLD> const& force)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_kinematic(bool const is_kinematic)
+	{
+		ASSERT(false);
 	}
 } // namespace djinn

@@ -2,18 +2,16 @@
 	- reset ids on scene switch?
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
 	- Scene.destroySelf()
-	- disable bvh movement?
 	- HOT_RELOAD/NOT_RELOAD macro?
-	- move ma_engine into sound_source_manager/asset_service?
 	- animation jumping on loop
 
 - now
-- powertranzphormr
-	- change uv mapping of cone bottom
 - physics
+	- disable bvh movement?
 	- slowly fall off platform
 	- hatsify physics_object, function order/cleanup
 	- physics_object_manager::update order needs to respect scene graph?
+		- physics only subgraph?
 - graphics
 	- mesh layers
 	- wing spaz

@@ -48,31 +48,31 @@ namespace djinn
 	public:
 		void bind(phorm* const p);
 		void bind(entity* const e);
-		void collide_and_slide(vec<space::OBJECT> const& vel, f32 const dt, vec<space::WORLD> const& threshold);
 		bool aabb_intersects(physics_object const* const other) const;
-		void apply_impulse(vec<space::OBJECT> const& force);
-	public:
-		vec<space::WORLD> get_velocity_world() const;
-		void set_velocity_world(f32 const x, f32 const y, f32 const z);
-		void set_velocity_x_world(f32 const x);
-		void set_velocity_y_world(f32 const y);
-		void set_velocity_z_world(f32 const z);
-		vec<space::OBJECT> get_velocity() const;
-		void set_velocity(f32 const x, f32 const y, f32 const z);
-		void set_velocity_x(f32 const x);
-		void set_velocity_y(f32 const y);
-		void set_velocity_z(f32 const z);
-		void set_angular_velocity(f32 const x, f32 const y, f32 const z);
-	public:
 		void set_friction(f32 const f);
 		void set_collision_enabled(bool const enabled);
-		void set_angular_factor(f32 const x, f32 const y, f32 const z);
-		void set_damping(f32 const d);
-		void set_angular_damping(f32 const d);
-		void set_max_speed(u32 const index, f32 const max);
-		void set_gravity(vec<space::WORLD> const& force);
-		void set_kinematic(bool const is_kinematic);
 		void set_ghost(bool const is_ghost);
+		vec<space::OBJECT> get_velocity() const;
+		vec<space::WORLD> get_velocity_world() const;
+	public:
+		virtual bool is_bvh() const;
+		virtual void collide_and_slide(vec<space::OBJECT> const& vel, f32 const dt, vec<space::WORLD> const& threshold);
+		virtual void apply_impulse(vec<space::OBJECT> const& force);
+		virtual void set_velocity(f32 const x, f32 const y, f32 const z);
+		virtual void set_velocity_x(f32 const x);
+		virtual void set_velocity_y(f32 const y);
+		virtual void set_velocity_z(f32 const z);
+		virtual void set_velocity_world(f32 const x, f32 const y, f32 const z);
+		virtual void set_velocity_x_world(f32 const x);
+		virtual void set_velocity_y_world(f32 const y);
+		virtual void set_velocity_z_world(f32 const z);
+		virtual void set_damping(f32 const d);
+		virtual void set_angular_velocity(f32 const x, f32 const y, f32 const z);
+		virtual void set_angular_damping(f32 const d);
+		virtual void set_angular_factor(f32 const x, f32 const y, f32 const z);
+		virtual void set_max_speed(u32 const index, f32 const max);
+		virtual void set_gravity(vec<space::WORLD> const& force);
+		virtual void set_kinematic(bool const is_kinematic);
 	protected:
 		sptr<btDiscreteDynamicsWorld> m_world;
 		optr<btRigidBody> m_rb;

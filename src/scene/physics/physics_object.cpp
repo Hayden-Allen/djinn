@@ -63,6 +63,7 @@ namespace djinn
 	}
 
 
+
 	physics_object::~physics_object()
 	{
 		m_world->removeRigidBody(m_rb.get());
@@ -73,6 +74,7 @@ namespace djinn
 
 
 
+	// non-virtual
 	void physics_object::bind(phorm* const p)
 	{
 		m_bound.p = p;
@@ -82,6 +84,51 @@ namespace djinn
 	{
 		m_bound.e = e;
 		m_bound_is_entity = true;
+	}
+	bool physics_object::aabb_intersects(physics_object const* const other) const
+	{
+		btVector3 min0, max0, min1, max1;
+		m_rb->getAabb(min0, max0);
+		other->m_rb->getAabb(min1, max1);
+		return (min0.x() > min1.x() && min0.x() < max1.x() && min0.y() > min1.y() && min0.y() < max1.y() && min0.z() > min1.z() && min0.z() < max1.z()) ||
+			   (max0.x() > min1.x() && max0.x() < max1.x() && max0.y() > min1.y() && max0.y() < max1.y() && max0.z() > min1.z() && max0.z() < max1.z()) ||
+			   (min1.x() > min0.x() && min1.x() < max0.x() && min1.y() > min0.y() && min1.y() < max0.y() && min1.z() > min0.z() && min1.z() < max0.z()) ||
+			   (max1.x() > min0.x() && max1.x() < max0.x() && max1.y() > min0.y() && max1.y() < max0.y() && max1.z() > min0.z() && max1.z() < max0.z());
+	}
+	void physics_object::set_friction(f32 const f)
+	{
+		m_rb->setFriction(f);
+	}
+	void physics_object::set_collision_enabled(bool const enabled)
+	{
+		if (enabled)
+			m_rb->setCollisionFlags(m_rb->getCollisionFlags() & ~btCollisionObject::CF_NO_CONTACT_RESPONSE);
+		else
+			m_rb->setCollisionFlags(m_rb->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+	}
+	void physics_object::set_ghost(bool const is_ghost)
+	{
+		if (is_ghost)
+			m_rb->setCollisionFlags(m_rb->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+		else
+			m_rb->setCollisionFlags(m_rb->getCollisionFlags() & ~btCollisionObject::CF_NO_CONTACT_RESPONSE);
+	}
+	vec<space::OBJECT> physics_object::get_velocity() const
+	{
+		vec<space::WORLD> const w = u::bullet2vec<space::WORLD>(m_rb->getLinearVelocity());
+		return get_world_transform().invert_copy() * w;
+	}
+	vec<space::WORLD> physics_object::get_velocity_world() const
+	{
+		return u::bullet2vec<space::WORLD>(m_rb->getLinearVelocity());
+	}
+	
+
+	
+	// virtual
+	bool physics_object::is_bvh() const
+	{
+		return false;
 	}
 	void physics_object::collide_and_slide(vec<space::OBJECT> const& vel, f32 const dt, vec<space::WORLD> const& threshold)
 	{
@@ -119,49 +166,10 @@ namespace djinn
 			vel_total.set_length(0);
 		m_rb->setLinearVelocity(u::vec2bullet(vel_total));
 	}
-	bool physics_object::aabb_intersects(physics_object const* const other) const
+	void physics_object::apply_impulse(vec<space::OBJECT> const& force)
 	{
-		btVector3 min0, max0, min1, max1;
-		m_rb->getAabb(min0, max0);
-		other->m_rb->getAabb(min1, max1);
-		return (min0.x() > min1.x() && min0.x() < max1.x() && min0.y() > min1.y() && min0.y() < max1.y() && min0.z() > min1.z() && min0.z() < max1.z()) ||
-			   (max0.x() > min1.x() && max0.x() < max1.x() && max0.y() > min1.y() && max0.y() < max1.y() && max0.z() > min1.z() && max0.z() < max1.z()) ||
-			   (min1.x() > min0.x() && min1.x() < max0.x() && min1.y() > min0.y() && min1.y() < max0.y() && min1.z() > min0.z() && min1.z() < max0.z()) ||
-			   (max1.x() > min0.x() && max1.x() < max0.x() && max1.y() > min0.y() && max1.y() < max0.y() && max1.z() > min0.z() && max1.z() < max0.z());
-	}
-
-
-
-	vec<space::WORLD> physics_object::get_velocity_world() const
-	{
-		return u::bullet2vec<space::WORLD>(m_rb->getLinearVelocity());
-	}
-	void physics_object::set_velocity_world(f32 const x, f32 const y, f32 const z)
-	{
-		m_rb->setLinearVelocity(btVector3(x, y, z));
-	}
-	void physics_object::set_velocity_x_world(f32 const x)
-	{
-		btVector3 v = m_rb->getLinearVelocity();
-		v.setX(x);
-		m_rb->setLinearVelocity(v);
-	}
-	void physics_object::set_velocity_y_world(f32 const y)
-	{
-		btVector3 v = m_rb->getLinearVelocity();
-		v.setY(y);
-		m_rb->setLinearVelocity(v);
-	}
-	void physics_object::set_velocity_z_world(f32 const z)
-	{
-		btVector3 v = m_rb->getLinearVelocity();
-		v.setZ(z);
-		m_rb->setLinearVelocity(v);
-	}
-	vec<space::OBJECT> physics_object::get_velocity() const
-	{
-		vec<space::WORLD> const w = u::bullet2vec<space::WORLD>(m_rb->getLinearVelocity());
-		return get_world_transform().invert_copy() * w;
+		vec<space::WORLD> const& w = get_world_transform() * force;
+		m_rb->applyCentralImpulse(u::vec2bullet(w));
 	}
 	void physics_object::set_velocity(f32 const x, f32 const y, f32 const z)
 	{
@@ -187,40 +195,43 @@ namespace djinn
 		local.setZ(z);
 		set_velocity(local.x(), local.y(), local.z());
 	}
-	void physics_object::set_angular_velocity(f32 const x, f32 const y, f32 const z)
+	void physics_object::set_velocity_world(f32 const x, f32 const y, f32 const z)
 	{
-		m_rb->setAngularVelocity(btVector3(x, y, z));
+		m_rb->setLinearVelocity(btVector3(x, y, z));
 	}
-
-
-
-	void physics_object::set_friction(f32 const f)
+	void physics_object::set_velocity_x_world(f32 const x)
 	{
-		m_rb->setFriction(f);
+		btVector3 v = m_rb->getLinearVelocity();
+		v.setX(x);
+		m_rb->setLinearVelocity(v);
 	}
-	void physics_object::set_collision_enabled(bool const enabled)
+	void physics_object::set_velocity_y_world(f32 const y)
 	{
-		if (enabled)
-			m_rb->setCollisionFlags(m_rb->getCollisionFlags() & ~btCollisionObject::CF_NO_CONTACT_RESPONSE);
-		else
-			m_rb->setCollisionFlags(m_rb->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+		btVector3 v = m_rb->getLinearVelocity();
+		v.setY(y);
+		m_rb->setLinearVelocity(v);
 	}
-	void physics_object::set_angular_factor(f32 const x, f32 const y, f32 const z)
+	void physics_object::set_velocity_z_world(f32 const z)
 	{
-		m_rb->setAngularFactor(btVector3(x, y, z));
-	}
-	void physics_object::apply_impulse(vec<space::OBJECT> const& force)
-	{
-		vec<space::WORLD> const& w = get_world_transform() * force;
-		m_rb->applyCentralImpulse(u::vec2bullet(w));
+		btVector3 v = m_rb->getLinearVelocity();
+		v.setZ(z);
+		m_rb->setLinearVelocity(v);
 	}
 	void physics_object::set_damping(f32 const d)
 	{
 		m_rb->setDamping(d, m_rb->getAngularDamping());
 	}
+	void physics_object::set_angular_velocity(f32 const x, f32 const y, f32 const z)
+	{
+		m_rb->setAngularVelocity(btVector3(x, y, z));
+	}
 	void physics_object::set_angular_damping(f32 const d)
 	{
 		m_rb->setDamping(m_rb->getLinearDamping(), d);
+	}
+	void physics_object::set_angular_factor(f32 const x, f32 const y, f32 const z)
+	{
+		m_rb->setAngularFactor(btVector3(x, y, z));
 	}
 	void physics_object::set_max_speed(u32 const index, f32 const max)
 	{
@@ -238,16 +249,9 @@ namespace djinn
 		else
 			m_rb->setCollisionFlags(m_rb->getCollisionFlags() & ~btCollisionObject::CF_KINEMATIC_OBJECT);
 	}
-	void physics_object::set_ghost(bool const is_ghost)
-	{
-		if (is_ghost)
-			m_rb->setCollisionFlags(m_rb->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
-		else
-			m_rb->setCollisionFlags(m_rb->getCollisionFlags() & ~btCollisionObject::CF_NO_CONTACT_RESPONSE);
-	}
+	
 
-
-
+	
 	physics_object::physics_object(id_t const id, sptr<btDiscreteDynamicsWorld> const& world) :
 		scene_object(id),
 		m_world(world),
