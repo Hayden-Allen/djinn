@@ -172,6 +172,9 @@ export declare interface _Scene {
     setParentKeepTransform(idChild: SceneID, idParent: SceneID): void
     unsetParent(idChild: SceneID): void
     unsetParentKeepTransform(idChild: SceneID): void
+    getParent(idChild: SceneID): SceneID
+    setUserPointer(id: SceneID, user: any): void
+    getUserPointer(id: SceneID): any
     getPos(id: SceneID): number[]
     getPosX(id: SceneID): number
     getPosY(id: SceneID): number

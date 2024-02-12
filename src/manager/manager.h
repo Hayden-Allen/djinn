@@ -33,10 +33,13 @@ namespace djinn
 		}
 		void free_all()
 		{
+			// sort by creation time (id is monotonically increasing)
 			std::map<id_t, optr<T>> sorted;
 			for (auto& pair : this->m_objects)
 				sorted.insert({ pair.first, std::move(pair.second) });
+			// m_objects is basically empty now, all the optr's were moved
 			this->m_objects.clear();
+			// free in reverse order of creation time (traverse dependency tree from bottom to top to avoid freeing parent before child)
 			for (auto it = sorted.rbegin(); it != sorted.rend(); it++)
 				it->second.free();
 		}

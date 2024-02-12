@@ -7,7 +7,10 @@
 	- do shader math in camera space to avoid artifacts?
 
 - now
+	- xport world transform incorrect (expressed relative to its starting position, not world origin)
 - physics
+	- allow parent to physics_object
+	- velocity account for scene graph
 	- slowly fall off platform
 	- physics_object_manager::update order needs to respect scene graph?
 		- physics only subgraph?
@@ -22,7 +25,6 @@
 	- wonky goofy debug draw
 - other
 	- rewrite main.ts
-	- xport hot reload
 	- scripts OOP stl
 	- casting sptr<T> to sptr<U>, where T derives from U AND at least one other type, doesn't work properly (correct byte offset to second base class not applied, not sure why)
 
@@ -31,6 +33,7 @@
 - later
 	- retained_buffer::load => buffer::load (buffer doesn't get save though)
 	- mesh_watcher_base/static_mesh_watcher/animated_mesh_watcher
+	- xport hot reload
 	- script error reporting system (no ASSERTs)
 
 

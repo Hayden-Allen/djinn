@@ -1005,6 +1005,30 @@ namespace djinn::js::scene_service
 		obj->set_parent_keep_transform(nullptr);
 		return JS_UNDEFINED;
 	}
+	JSValue get_parent(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
+		scene_object const* const parent = so->get_parent();
+		return js::create_id(ctx, parent ? parent->get_id() : 0);
+	}
+	JSValue set_user_pointer(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		JSValue const& user = argv[1];
+		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
+		so->set_user_pointer(user);
+		return JS_UNDEFINED;
+	}
+	JSValue get_user_pointer(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 1);
+		id_t const id = js::extract_id(ctx, argv[0]);
+		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
+		return JS_DupValue(ctx, so->get_user_pointer());
+	}
 	JSValue get_pos(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		return get_values(ctx, argc, argv, &scene_object::get_pos);
@@ -1470,6 +1494,9 @@ namespace djinn
 			super::register_function(ctx, "setParentKeepTransform", 2, js::scene_service::set_parent_keep_transform);
 			super::register_function(ctx, "unsetParent", 1, js::scene_service::unset_parent);
 			super::register_function(ctx, "unsetParentKeepTransform", 1, js::scene_service::unset_parent_keep_transform);
+			super::register_function(ctx, "getParent", 1, js::scene_service::get_parent);
+			super::register_function(ctx, "setUserPointer", 2, js::scene_service::set_user_pointer);
+			super::register_function(ctx, "getUserPointer", 1, js::scene_service::get_user_pointer);
 			super::register_function(ctx, "getPos", 1, js::scene_service::get_pos);
 			super::register_function(ctx, "getPosX", 1, js::scene_service::get_pos_x);
 			super::register_function(ctx, "getPosY", 1, js::scene_service::get_pos_y);

@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
 		char buf[128] = { 0 };
 		sprintf_s(buf, 128, "djinn - %dfps", (s32)c->avg_fps);
 		c->set_title(buf);
-		f32 const dt = c->time.delta;
+		f32 const dt = std::min(c->time.delta, 1.f / djinn::c::physics::min_game_fps);
 
 		DJINN_TIME(input_service::update(), input_avg, NUM_FRAMES);
 		asset_service::update();

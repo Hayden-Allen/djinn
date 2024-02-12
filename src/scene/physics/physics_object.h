@@ -87,6 +87,7 @@ namespace djinn
 	protected:
 		physics_object(id_t const id, sptr<btDiscreteDynamicsWorld> const& world);
 	protected:
+		bool is_physics() const override;
 		void bind_to_bullet();
 		void clamp_velocity();
 		void copy_transform_to_physics();

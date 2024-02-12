@@ -10,6 +10,7 @@ namespace djinn
 		DCM(scene_object);
 		virtual ~scene_object();
 	public:
+		virtual bool is_physics() const;
 		virtual void set_parent(scene_object* const parent);
 		void set_parent_keep_transform(scene_object* const parent);
 		scene_object const* get_parent() const;
@@ -18,6 +19,8 @@ namespace djinn
 		tmat<space::OBJECT, space::WORLD> get_world_transform() const;
 		virtual tmat<space::OBJECT, space::WORLD> get_graphics_transform() const;
 		virtual void copy_transform(sptr<scene_object> const& other);
+		void set_user_pointer(JSValue const& v);
+		JSValue const& get_user_pointer() const;
 	public:
 		point<space::PARENT> get_pos() const;
 		std::array<f32, 3> get_rot() const;
@@ -80,6 +83,7 @@ namespace djinn
 	protected:
 		tmat<space::OBJECT, space::PARENT> m_transform;
 		scene_object* m_parent;
+		JSValue m_user;
 		f32 m_rot[3] = { 0.f }; // radians
 	protected:
 		scene_object(id_t const id);

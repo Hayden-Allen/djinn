@@ -8,7 +8,11 @@ namespace djinn
 	{}
 
 
-
+	
+	bool scene_object::is_physics() const
+	{
+		return false;
+	}
 	void scene_object::set_parent(scene_object* const parent)
 	{
 		m_parent = parent;
@@ -48,6 +52,14 @@ namespace djinn
 	void scene_object::copy_transform(sptr<scene_object> const& other)
 	{
 		m_transform = other->m_transform;
+	}
+	void scene_object::set_user_pointer(JSValue const& v)
+	{
+		m_user = v;
+	}
+	JSValue const& scene_object::get_user_pointer() const
+	{
+		return m_user;
 	}
 	point<space::PARENT> scene_object::get_pos() const
 	{
@@ -310,7 +322,8 @@ namespace djinn
 
 	scene_object::scene_object(id_t const id) :
 		identifiable(id),
-		m_parent(nullptr)
+		m_parent(nullptr),
+		m_user(JS_UNDEFINED)
 	{}
 
 

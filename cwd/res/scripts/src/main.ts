@@ -138,6 +138,11 @@ export default class MainEntity extends Entity {
             } else Scene.Phorm.setShaders(id, this.idPhormShader)
             Scene.Phorm.setAlphaShaders(id, this.idPhormAlphaShader)
         }
+        const platforms = this.xport!.getPhormsByTag("platform")
+        for (const platform of platforms!) {
+            printf(platform)
+            Scene.setUserPointer(platform, { vel: [0, 0, -5] })
+        }
 
         this.player = Scene.Entity.load("Player.js", this.camera!) as Player
     }

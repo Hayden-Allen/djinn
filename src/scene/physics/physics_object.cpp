@@ -120,7 +120,11 @@ namespace djinn
 	}
 	vec<space::WORLD> physics_object::get_velocity_world() const
 	{
-		return u::bullet2vec<space::WORLD>(m_rb->getLinearVelocity());
+		vec<space::WORLD> const& this_vel = u::bullet2vec<space::WORLD>(m_rb->getLinearVelocity());
+		if (!m_parent || !m_parent->is_physics())
+			return this_vel;
+		vec<space::WORLD> const& parent_vel = ((physics_object*)m_parent)->get_velocity_world();
+		return this_vel + parent_vel;
 	}
 	
 
@@ -260,6 +264,10 @@ namespace djinn
 
 
 
+	bool physics_object::is_physics() const
+	{
+		return true;
+	}
 	void physics_object::bind_to_bullet()
 	{
 		m_rb->setUserPointer((void*)this);

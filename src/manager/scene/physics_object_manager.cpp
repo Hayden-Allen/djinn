@@ -73,7 +73,6 @@ namespace djinn
 			pair.second->clamp_velocity();
 			pair.second->copy_transform_to_physics();
 		}
-		f32 const clamped_dt = std::min(dt, 1.f / c::physics::min_game_fps);
 		m_world->stepSimulation(dt, c::physics::num_substeps, c::physics::substep_time);
 		for (auto& pair : m_objects)
 		{

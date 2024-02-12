@@ -41,7 +41,7 @@ export default class Player extends Entity {
     // private worldPos: number[] = [-36, 103, -39] // top of tower
     // private worldPos: number[] = [-29, 30, 39] // ground
     // private worldPos: number[] = [-14, 90, 153] // gate
-    private worldPos: number[] = [-28, 126, 118] // platform
+    private worldPos: number[] = [-28, 126, 125] // platform
     private moveDir: number[] = [0, 0, 0]
     private velY: number = 0
     private velYMin: number = -35
@@ -50,6 +50,7 @@ export default class Player extends Entity {
     private canJump: boolean = false
     private lastGravity: number = 0
     private lastTime: number = 0
+    private lastDelta: number[] = [0, 0, 0]
 
     __init(cam: Camera) {
         if (cam) {
@@ -213,7 +214,7 @@ export default class Player extends Entity {
                 Math.max(boost * this.velYMin, newVelY)
             )
             const dir = [x, this.velY, z]
-            Scene.Physics.collideNSlide(this.idHitbox, dir, dt, { y: 1 })
+            Scene.Physics.collideNSlide(this.idHitbox, dir, dt, { x: 1, z: 1, y: 1 })
             this.moveDir = dir
 
             let actionSet = false
@@ -239,6 +240,21 @@ export default class Player extends Entity {
             }
         }
         Scene.Entity.requestImGui(this.id)
+
+        const idParent = Scene.getParent(this.idHitbox)
+        if(idParent != 0)
+        {
+            // const posParent = Scene.getPosWorld(idParent)
+            // const posThis = Scene.getPosWorld(this.idHitbox)
+            // const newDelta = [posParent[0] - posThis[0], posParent[1] - posThis[1], posParent[2] - posThis[2]]
+            // for(var i = 0; i < 3; i++)
+            //     if(newDelta[i] != this.lastDelta[i])
+            //     {
+            //         printf(`${i} (${this.lastDelta[i]} => ${newDelta[i]}) ${dt}ms`)
+            //     }
+            // this.lastDelta = newDelta
+            printf(idParent, Scene.getUserPointer(idParent).vel)
+        }
     }
     __collide_phorm(id: PhormID, normalWorld: number[]) {
         const isTrigger = Scene.Tag.has(id, "trigger")
