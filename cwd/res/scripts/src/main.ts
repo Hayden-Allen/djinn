@@ -129,7 +129,7 @@ export default class MainEntity extends Entity {
             "phorm_water.vert",
             "phorm_water.frag"
         )
-        this.xport = new Xport("castle3.xport")
+        this.xport = new Xport("castle4.xport")
         for (var i = 0; i < this.xport.idPhorms.length; i++) {
             const id = this.xport.idPhorms[i]
             if (Scene.Tag.has(id, "water")) {

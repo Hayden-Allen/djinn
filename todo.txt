@@ -1,9 +1,10 @@
 - questions
 	- reset ids on scene switch?
 	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
-	- Scene.destroySelf()
+	- Scene.destroySelf()?
 	- HOT_RELOAD/NOT_RELOAD macro?
-	- animation jumping on loop
+	- animation jumping on loop?
+	- do shader math in camera space to avoid artifacts?
 
 - now
 - physics
@@ -11,11 +12,14 @@
 	- physics_object_manager::update order needs to respect scene graph?
 		- physics only subgraph?
 - graphics
+	- mesh_instance_batch testing
+		- create instances with different shaders
+		- removing works at all
+		- removing instance at capacity threshold deletes now-unused ubo
+		- removing all instances using a shader deletes that instance
 	- mesh layers
 	- wing spaz
 	- wonky goofy debug draw
-	- jittery vertical movement/rotation (vsync fixes it)
-	- do shader math in camera space to avoid artifacts
 - other
 	- rewrite main.ts
 	- xport hot reload
@@ -25,17 +29,11 @@
 
 
 - later
-	- script error reporting system (no ASSERTs)
-	- retained_buffer::load => buffer::load (buffer doesn't get save though)
 	- powertranzphormr mgl::input_file => haul::input_file
 	- load/save take haul::input_file* const
-
+	- retained_buffer::load => buffer::load (buffer doesn't get save though)
 	- mesh_watcher_base/static_mesh_watcher/animated_mesh_watcher
-	- mesh_instance_batch testing
-		- create instances with different shaders
-		- removing works at all
-		- removing instance at capacity threshold deletes now-unused ubo
-		- removing all instances using a shader deletes that instance
+	- script error reporting system (no ASSERTs)
 
 
 
