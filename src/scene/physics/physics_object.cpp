@@ -126,10 +126,6 @@ namespace djinn
 
 	
 	// virtual
-	bool physics_object::is_bvh() const
-	{
-		return false;
-	}
 	void physics_object::collide_and_slide(vec<space::OBJECT> const& vel, f32 const dt, vec<space::WORLD> const& threshold)
 	{
 		// ASSERT(m_rb->getFlags() & btCollisionObject::CF_KINEMATIC_OBJECT);

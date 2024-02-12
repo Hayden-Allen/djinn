@@ -6,11 +6,8 @@
 	- animation jumping on loop
 
 - now
-	- script error reporting system (no ASSERTs)
 - physics
-	- disable bvh movement?
 	- slowly fall off platform
-	- hatsify physics_object, function order/cleanup
 	- physics_object_manager::update order needs to respect scene graph?
 		- physics only subgraph?
 - graphics
@@ -23,10 +20,12 @@
 	- rewrite main.ts
 	- xport hot reload
 	- scripts OOP stl
-	- more scene_service factoring
 	- casting sptr<T> to sptr<U>, where T derives from U AND at least one other type, doesn't work properly (correct byte offset to second base class not applied, not sure why)
 
+
+
 - later
+	- script error reporting system (no ASSERTs)
 	- retained_buffer::load => buffer::load (buffer doesn't get save though)
 	- powertranzphormr mgl::input_file => haul::input_file
 	- load/save take haul::input_file* const
@@ -38,6 +37,8 @@
 		- removing instance at capacity threshold deletes now-unused ubo
 		- removing all instances using a shader deletes that instance
 
+
+
 - even later
 	- framebuffer_u8/f32?
 	- deferred renderer
@@ -46,6 +47,8 @@
 	- move to mgl::layer system
 	- distribution asset pipeline
 	- virtual filesystem
+
+
 
 - latest
 	- per-camera effects

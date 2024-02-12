@@ -34,7 +34,9 @@ export default class Xport {
 
             const idHitbox = Scene.Physics.createBVH(idPhorm)
             this.idHitboxes.push(idHitbox)
-            Scene.setParent(idHitbox, idPhorm)
+            // use KeepTransform here because it works even for bvh_physics_objects
+            // all transforms are identity at this point anyway, so no side effects
+            Scene.setParentKeepTransform(idHitbox, idPhorm)
             Scene.Physics.bind(idHitbox, idPhorm)
             if (Scene.Tag.has(idPhorm, "trigger")) {
                 Scene.Physics.setGhost(idHitbox, true)

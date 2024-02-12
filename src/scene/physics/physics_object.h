@@ -55,7 +55,6 @@ namespace djinn
 		vec<space::OBJECT> get_velocity() const;
 		vec<space::WORLD> get_velocity_world() const;
 	public:
-		virtual bool is_bvh() const;
 		virtual void collide_and_slide(vec<space::OBJECT> const& vel, f32 const dt, vec<space::WORLD> const& threshold);
 		virtual void apply_impulse(vec<space::OBJECT> const& force);
 		virtual void set_velocity(f32 const x, f32 const y, f32 const z);

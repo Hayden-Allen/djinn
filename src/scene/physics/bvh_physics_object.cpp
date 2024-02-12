@@ -54,10 +54,6 @@ namespace djinn
 
 
 
-	bool bvh_physics_object::is_bvh() const
-	{
-		return true;
-	}
 	// none of these operatinos are valid on a bvh triangle mesh
 	void bvh_physics_object::collide_and_slide(vec<space::OBJECT> const& vel, f32 const dt, vec<space::WORLD> const& threshold)
 	{
@@ -124,6 +120,206 @@ namespace djinn
 		ASSERT(false);
 	}
 	void bvh_physics_object::set_kinematic(bool const is_kinematic)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_parent(scene_object* const parent)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::copy_transform(sptr<scene_object> const& other)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_pos(point<space::PARENT> const& pos)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_pos_x(f32 const x)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_pos_y(f32 const y)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_pos_z(f32 const z)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_rot(f32 const x_deg, f32 const y_deg, f32 const z_deg)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_rot_x(f32 const x_deg)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_rot_y(f32 const y_deg)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_rot_z(f32 const z_deg)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_scale(vec<space::PARENT> const& scale)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_scale_x(f32 const x)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_scale_y(f32 const y)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_scale_z(f32 const z)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_pos_world(point<space::WORLD> const& pos)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_pos_x_world(f32 const x)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_pos_y_world(f32 const y)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_pos_z_world(f32 const z)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_rot_world(f32 const x_deg, f32 const y_deg, f32 const z_deg)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_rot_x_world(f32 const x_deg)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_rot_y_world(f32 const y_deg)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_rot_z_world(f32 const z_deg)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_scale_world(vec<space::WORLD> const& scale)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_scale_x_world(f32 const x)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_scale_y_world(f32 const y)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::set_scale_z_world(f32 const z)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_pos(vec<space::PARENT> const& pos)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_pos_x(f32 const x)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_pos_y(f32 const y)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_pos_z(f32 const z)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_rot(f32 const x_deg, f32 const y_deg, f32 const z_deg)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_rot_x(f32 const x_deg)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_rot_y(f32 const y_deg)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_rot_z(f32 const z_deg)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_scale(vec<space::PARENT> const& scale)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_scale_x(f32 const x)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_scale_y(f32 const y)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_scale_z(f32 const z)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_pos_world(vec<space::WORLD> const& pos)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_pos_x_world(f32 const x)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_pos_y_world(f32 const y)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_pos_z_world(f32 const z)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_rot_world(f32 const x_deg, f32 const y_deg, f32 const z_deg)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_rot_x_world(f32 const x_deg)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_rot_y_world(f32 const y_deg)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_rot_z_world(f32 const z_deg)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_scale_world(vec<space::WORLD> const& scale)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_scale_x_world(f32 const x)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_scale_y_world(f32 const y)
+	{
+		ASSERT(false);
+	}
+	void bvh_physics_object::add_scale_z_world(f32 const z)
 	{
 		ASSERT(false);
 	}

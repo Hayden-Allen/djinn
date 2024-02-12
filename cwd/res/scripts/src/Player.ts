@@ -213,6 +213,7 @@ export default class Player extends Entity {
                 Math.max(boost * this.velYMin, newVelY)
             )
             const dir = [x, this.velY, z]
+            printf(Input.leftX(), Input.leftY(), Input.rightX(), Input.rightY())
             Scene.Physics.collideNSlide(this.idHitbox, dir, dt, { y: 1 })
             this.moveDir = dir
 
