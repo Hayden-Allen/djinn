@@ -41,7 +41,7 @@ export default class Player extends Entity {
     // private worldPos: number[] = [-36, 103, -39] // top of tower
     // private worldPos: number[] = [-29, 30, 39] // ground
     // private worldPos: number[] = [-14, 90, 153] // gate
-    private worldPos: number[] = [-28, 126, 119] // platform
+    private worldPos: number[] = [-28, 126, 118] // platform
     private moveDir: number[] = [0, 0, 0]
     private velY: number = 0
     private velYMin: number = -35
@@ -213,7 +213,6 @@ export default class Player extends Entity {
                 Math.max(boost * this.velYMin, newVelY)
             )
             const dir = [x, this.velY, z]
-            printf(Input.leftX(), Input.leftY(), Input.rightX(), Input.rightY())
             Scene.Physics.collideNSlide(this.idHitbox, dir, dt, { y: 1 })
             this.moveDir = dir
 

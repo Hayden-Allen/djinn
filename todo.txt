@@ -29,8 +29,6 @@
 
 
 - later
-	- powertranzphormr mgl::input_file => haul::input_file
-	- load/save take haul::input_file* const
 	- retained_buffer::load => buffer::load (buffer doesn't get save though)
 	- mesh_watcher_base/static_mesh_watcher/animated_mesh_watcher
 	- script error reporting system (no ASSERTs)
