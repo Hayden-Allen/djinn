@@ -1,12 +1,12 @@
 #pragma once
 
 #ifndef _WIN32
-#ifndef NDEBUG
-#define _DEBUG
-#endif
-#define __debugbreak __builtin_debugtrap
-#define sprintf_s snprintf
-#define vsprintf_s vsnprintf
+#	ifndef NDEBUG
+#		define _DEBUG
+#	endif
+#	define __debugbreak __builtin_debugtrap
+#	define sprintf_s	 snprintf
+#	define vsprintf_s	 vsnprintf
 #endif
 
 #include <stdio.h>
@@ -32,6 +32,9 @@
 #	undef far
 #endif
 
+#ifdef DJINN_DIST
+#	define HAPI_OPAQUE
+#endif
 #include "hapi/hapi.h"
 using namespace hapi;
 #include "hats/hats.h"
