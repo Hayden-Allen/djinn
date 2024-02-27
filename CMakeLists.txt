@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(djinn)
+project(fps)
 
 option(GLFW_BUILD_DOCS OFF)
 option(GLFW_BUILD_EXAMPLES OFF)
