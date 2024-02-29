@@ -1,55 +1,6 @@
-- questions
-	- reset ids on scene switch?
-	- mesh_instance dirty flag/call mesh_instance_batch::update when transform changed?
-	- Scene.destroySelf()?
-	- HOT_RELOAD/NOT_RELOAD macro?
-	- animation jumping on loop?
-	- do shader math in camera space to avoid artifacts?
-
-- now
-	- xport world transform incorrect (expressed relative to its starting position, not world origin)
-- physics
-	- allow parent to physics_object
-	- velocity account for scene graph
-	- slowly fall off platform
-	- physics_object_manager::update order needs to respect scene graph?
-		- physics only subgraph?
-- graphics
-	- mesh_instance_batch testing
-		- create instances with different shaders
-		- removing works at all
-		- removing instance at capacity threshold deletes now-unused ubo
-		- removing all instances using a shader deletes that instance
-	- mesh layers
-	- wing spaz
-	- wonky goofy debug draw
-- other
-	- rewrite main.ts
-	- scripts OOP stl
-	- casting sptr<T> to sptr<U>, where T derives from U AND at least one other type, doesn't work properly (correct byte offset to second base class not applied, not sure why)
-
-
-
-- later
-	- retained_buffer::load => buffer::load (buffer doesn't get save though)
-	- mesh_watcher_base/static_mesh_watcher/animated_mesh_watcher
-	- xport hot reload
-	- script error reporting system (no ASSERTs)
-
-
-
-- even later
-	- framebuffer_u8/f32?
-	- deferred renderer
-	- multiple cameras
-	- visibility mask (Scene.MeshInstance.setVisible) camera mask?
-	- move to mgl::layer system
-	- distribution asset pipeline
-	- virtual filesystem
-
-
-
-- latest
-	- per-camera effects
-
+- factor sound/soundemitter
+- state machine thing
+- skybox
+- tune jump/walk constants
+- tune camera position/speed
 

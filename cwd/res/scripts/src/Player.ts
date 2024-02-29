@@ -13,12 +13,22 @@ export default class Player extends Entity {
     private hitboxRadius: number = .1
     private worldPos: number[] = [0, 0, 0]
 
+    private isWalking: boolean = false
+    private isRunning: boolean = false
     private canJump: boolean = false
     private velY: number = 0
     private velYMin: number = -100
     private velYMax: number = 20
     private gravity: number = 65
-    private runSpeed: number = 1.5
+    private walkSpeed: number = 3
+    private runSpeed: number = 5
+
+    private idFootstep: SoundID = 0 as SoundID
+    private idFootstepEmitter: SoundEmitterID = 0 as SoundEmitterID
+    private idFootstepRun: SoundID = 0 as SoundID
+    private idFootstepRunEmitter: SoundEmitterID = 0 as SoundEmitterID
+    private idJump: SoundID = 0 as SoundID
+    private idJumpEmitter: SoundEmitterID = 0 as SoundEmitterID
 
     __init(cam: Camera) {
         if (cam) {
@@ -48,8 +58,32 @@ export default class Player extends Entity {
                 Scene.setPosY(idCam, .025)
             }
         }
+
+        this.idFootstep = Asset.Sound.load("footstep_walk.wav")
+        this.idFootstepEmitter = Scene.SoundEmitter.create(this.idFootstep)
+        Scene.SoundEmitter.setLooping(this.idFootstepEmitter, true)
+        Scene.setParent(this.idFootstepEmitter, this.idHitbox)
+
+        this.idFootstepRun = Asset.Sound.load("footstep_run.wav")
+        this.idFootstepRunEmitter = Scene.SoundEmitter.create(this.idFootstepRun)
+        Scene.SoundEmitter.setLooping(this.idFootstepRunEmitter, true)
+        Scene.setParent(this.idFootstepRunEmitter, this.idHitbox)
+
+
+        this.idJump = Asset.Sound.load("jump.mp3")
+        this.idJumpEmitter = Scene.SoundEmitter.create(this.idJump)
+        Scene.setParent(this.idJumpEmitter, this.idHitbox)
     }
     __unload() {
+        Scene.SoundEmitter.destroy(this.idFootstepEmitter)
+        Asset.Sound.destroy(this.idFootstep)
+
+        Scene.SoundEmitter.destroy(this.idFootstepRunEmitter)
+        Asset.Sound.destroy(this.idFootstepRun)
+
+        Scene.SoundEmitter.destroy(this.idJumpEmitter)
+        Asset.Sound.destroy(this.idJump)
+
         Scene.Physics.destroy(this.idHitbox)
     }
     __main(dt: number, time: number) {
@@ -67,15 +101,16 @@ export default class Player extends Entity {
         }
         // movement
         {
-            const boost = Input.getKey(Input.KEY_LEFT_CONTROL) ? 5 : 1
-            const x = boost * this.runSpeed * Input.leftX()
-            const z = boost * this.runSpeed * Input.leftY()
-            let newVelY = this.velY - boost * this.gravity * dt
+            const boost = Input.buttonB() ? this.runSpeed : this.walkSpeed
+            const x = boost * Input.leftX()
+            const z = boost * Input.leftY()
+            let newVelY = this.velY - this.gravity * dt
             if (this.canJump) {
-                if (Input.getKey(Input.KEY_SPACE)) {
+                if (Input.buttonA()) {
                     this.canJump = false
                     newVelY += this.velYMax
                     Scene.unsetParentKeepTransform(this.idHitbox)
+                    Scene.SoundEmitter.start(this.idJumpEmitter)
                 }
             }
             this.velY = Math.min(
@@ -84,6 +119,22 @@ export default class Player extends Entity {
             )
             const dir = [x, this.velY, z]
             Scene.Physics.collideNSlide(this.idHitbox, dir, dt, { x: 1, z: 1, y: 1 })
+
+            const moving = (x !== 0 || z !== 0) && this.canJump
+            const walking = moving && !Input.buttonB()
+            const running = moving && Input.buttonB()
+            if(!this.isWalking && walking) {
+                Scene.SoundEmitter.start(this.idFootstepEmitter)
+            } else if(this.isWalking && !walking) {
+                Scene.SoundEmitter.stop(this.idFootstepEmitter)
+            }
+            if(!this.isRunning && running) {
+                Scene.SoundEmitter.start(this.idFootstepRunEmitter)
+            } else if(this.isRunning && !running) {
+                Scene.SoundEmitter.stop(this.idFootstepRunEmitter)
+            }
+            this.isWalking = walking
+            this.isRunning = running
         }
         Scene.Entity.requestImGui(this.id)
 
@@ -132,6 +183,9 @@ export default class Player extends Entity {
         this.velYMin = -mag;
         this.gravity = ImGui.sliderFloat("Gravity", this.gravity, 0, 100);
 
+        ImGui.separator();
+
+        this.walkSpeed = ImGui.sliderFloat("Walk Speed", this.walkSpeed, 0, 25);
         this.runSpeed = ImGui.sliderFloat("Run Speed", this.runSpeed, 0, 25);
     }
 }

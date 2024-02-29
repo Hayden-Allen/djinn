@@ -5,6 +5,11 @@ declare interface _Input {
     leftY(): number
     rightX(): number
     rightY(): number
+    buttonA(): boolean
+    buttonB(): boolean
+    buttonX(): boolean
+    buttonY(): boolean
+
     KEY_0: number
     KEY_1: number
     KEY_2: number

@@ -37,6 +37,26 @@ namespace djinn::js::input_service
 		ASSERT(argc == 0);
 		return js::create_f32(ctx, ::djinn::input_service::get_gamepad().right_y);
 	}
+	JSValue button_a(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 0);
+		return js::create_bool(ctx, ::djinn::input_service::get_gamepad().a);
+	}
+	JSValue button_b(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 0);
+		return js::create_bool(ctx, ::djinn::input_service::get_gamepad().b);
+	}
+	JSValue button_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 0);
+		return js::create_bool(ctx, ::djinn::input_service::get_gamepad().x);
+	}
+	JSValue button_y(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 0);
+		return js::create_bool(ctx, ::djinn::input_service::get_gamepad().y);
+	}
 } // namespace djinn::js::input_service
 
 
@@ -56,6 +76,10 @@ namespace djinn
 		super::register_function(ctx, "leftY", 0, js::input_service::left_y);
 		super::register_function(ctx, "rightX", 0, js::input_service::right_x);
 		super::register_function(ctx, "rightY", 0, js::input_service::right_y);
+		super::register_function(ctx, "buttonA", 0, js::input_service::button_a);
+		super::register_function(ctx, "buttonB", 0, js::input_service::button_b);
+		super::register_function(ctx, "buttonX", 0, js::input_service::button_x);
+		super::register_function(ctx, "buttonY", 0, js::input_service::button_y);
 
 		char buf[32] = { 0 };
 		for (char i = '0'; i <= '9'; i++)
