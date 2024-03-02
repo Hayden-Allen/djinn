@@ -257,7 +257,7 @@ namespace djinn::js::scene_service
 		ASSERT(argc == 1);
 		std::string const& fp = js::extract_string(ctx, argv[0]);
 		std::string const& afp = u::to_absolute(c::base_dir::xport, fp);
-		mgl::input_file in(afp);
+		haul::input_file in(afp);
 
 		auto const& [tex_ids, tex] = ::djinn::asset_service::get_texture_manager()->load_xport(&in);
 		id_t const skybox_id = ::djinn::asset_service::get_cubemap_manager()->load_xport(&in);

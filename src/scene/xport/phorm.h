@@ -11,7 +11,7 @@ namespace djinn
 	class phorm final : public visibility_scene_object, public xport
 	{
 	public:
-		phorm(id_t const id, mgl::input_file* const in, std::unordered_map<u32, sptr<material>> const& mats);
+		phorm(id_t const id, haul::input_file* const in, std::unordered_map<u32, sptr<material>> const& mats);
 		DCM(phorm);
 	public:
 		void draw(sptr<mgl::context> const& ctx);

@@ -18,7 +18,7 @@ namespace djinn
 		};
 	public:
 		light(id_t const id);
-		light(id_t const id, mgl::input_file* const in);
+		light(id_t const id, haul::input_file* const in);
 		DCM(light);
 	public:
 		tmat<space::OBJECT, space::WORLD> get_graphics_transform() const override;

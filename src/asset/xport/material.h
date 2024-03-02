@@ -6,7 +6,7 @@ namespace djinn
 	class material
 	{
 	public:
-		material(mgl::input_file* const in, std::vector<sptr<retained_texture2d_rgba_u8_array>> const& tex);
+		material(haul::input_file* const in, std::vector<sptr<retained_texture2d_rgba_u8_array>> const& tex);
 		DCM(material);
 	public:
 		void bind() const;

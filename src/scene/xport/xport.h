@@ -14,6 +14,6 @@ namespace djinn
 		std::string m_name;
 	protected:
 		xport();
-		xport(mgl::input_file* const in);
+		xport(haul::input_file* const in);
 	};
 } // namespace djinn

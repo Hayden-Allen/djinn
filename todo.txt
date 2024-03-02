@@ -3,4 +3,3 @@
 - skybox
 - tune jump/walk constants
 - tune camera position/speed
-

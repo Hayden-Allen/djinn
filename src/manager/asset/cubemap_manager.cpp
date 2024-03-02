@@ -22,7 +22,7 @@ namespace djinn
 		m_id2options.insert({ id, options });
 		return id;
 	}
-	id_t cubemap_manager::load_xport(mgl::input_file* const in)
+	id_t cubemap_manager::load_xport(haul::input_file* const in)
 	{
 		return insert(new retained_cubemap_rgb_u8(in));
 	}

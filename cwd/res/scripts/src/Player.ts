@@ -9,8 +9,8 @@ export default class Player extends Entity {
     private idHitbox: PhysicsID
     private camAngleX: number = 0
     private camAngleY: number = 0
-    private hitboxHeight: number = .1
-    private hitboxRadius: number = .1
+    private hitboxHeight: number = 0.1
+    private hitboxRadius: number = 0.1
     private worldPos: number[] = [0, 0, 0]
 
     private isWalking: boolean = false
@@ -29,6 +29,10 @@ export default class Player extends Entity {
     private idFootstepRunEmitter: SoundEmitterID = 0 as SoundEmitterID
     private idJump: SoundID = 0 as SoundID
     private idJumpEmitter: SoundEmitterID = 0 as SoundEmitterID
+
+    private idSphereMesh: MeshID = 0 as MeshID
+    private idSphereInstances: MeshInstanceID[] = []
+    private idSphereShader: ShaderID = 0 as ShaderID
 
     __init(cam: Camera) {
         if (cam) {
@@ -55,7 +59,7 @@ export default class Player extends Entity {
             if (this.camera) {
                 const idCam = this.camera!.getId()
                 Scene.setParent(idCam, this.idHitbox)
-                Scene.setPosY(idCam, .025)
+                Scene.setPosY(idCam, 0.025)
             }
         }
 
@@ -65,16 +69,34 @@ export default class Player extends Entity {
         Scene.setParent(this.idFootstepEmitter, this.idHitbox)
 
         this.idFootstepRun = Asset.Sound.load("footstep_run.wav")
-        this.idFootstepRunEmitter = Scene.SoundEmitter.create(this.idFootstepRun)
+        this.idFootstepRunEmitter = Scene.SoundEmitter.create(
+            this.idFootstepRun
+        )
         Scene.SoundEmitter.setLooping(this.idFootstepRunEmitter, true)
         Scene.setParent(this.idFootstepRunEmitter, this.idHitbox)
-
 
         this.idJump = Asset.Sound.load("jump.mp3")
         this.idJumpEmitter = Scene.SoundEmitter.create(this.idJump)
         Scene.setParent(this.idJumpEmitter, this.idHitbox)
+
+        this.idSphereShader = Asset.Shader.load("blob.vert", "blob.frag")
+
+        this.idSphereMesh = Asset.Mesh.loadStatic("icosphere.m3d")
+        for (let i = 0; i < 10; ++i) {
+            this.idSphereInstances.push(
+                Scene.MeshInstance.create(
+                    this.idSphereMesh,
+                    this.idSphereShader
+                )
+            )
+            Scene.setPos(this.idSphereInstances[i], [i * 2 - 10, 0, -5])
+        }
     }
     __unload() {
+        Scene.MeshInstance.destroyAll(this.idSphereInstances)
+        Asset.Mesh.destroy(this.idSphereMesh)
+        Asset.Shader.destroy(this.idSphereShader)
+
         Scene.SoundEmitter.destroy(this.idFootstepEmitter)
         Asset.Sound.destroy(this.idFootstep)
 
@@ -113,24 +135,25 @@ export default class Player extends Entity {
                     Scene.SoundEmitter.start(this.idJumpEmitter)
                 }
             }
-            this.velY = Math.min(
-                this.velYMax,
-                Math.max(this.velYMin, newVelY)
-            )
+            this.velY = Math.min(this.velYMax, Math.max(this.velYMin, newVelY))
             const dir = [x, this.velY, z]
-            Scene.Physics.collideNSlide(this.idHitbox, dir, dt, { x: 1, z: 1, y: 1 })
+            Scene.Physics.collideNSlide(this.idHitbox, dir, dt, {
+                x: 1,
+                z: 1,
+                y: 1,
+            })
 
             const moving = (x !== 0 || z !== 0) && this.canJump
             const walking = moving && !Input.buttonB()
             const running = moving && Input.buttonB()
-            if(!this.isWalking && walking) {
+            if (!this.isWalking && walking) {
                 Scene.SoundEmitter.start(this.idFootstepEmitter)
-            } else if(this.isWalking && !walking) {
+            } else if (this.isWalking && !walking) {
                 Scene.SoundEmitter.stop(this.idFootstepEmitter)
             }
-            if(!this.isRunning && running) {
+            if (!this.isRunning && running) {
                 Scene.SoundEmitter.start(this.idFootstepRunEmitter)
-            } else if(this.isRunning && !running) {
+            } else if (this.isRunning && !running) {
                 Scene.SoundEmitter.stop(this.idFootstepRunEmitter)
             }
             this.isWalking = walking
@@ -139,8 +162,7 @@ export default class Player extends Entity {
         Scene.Entity.requestImGui(this.id)
 
         const idParent = Scene.getParent(this.idHitbox)
-        if(idParent != 0)
-        {
+        if (idParent != 0) {
             // const posParent = Scene.getPosWorld(idParent)
             // const posThis = Scene.getPosWorld(this.idHitbox)
             // const newDelta = [posParent[0] - posThis[0], posParent[1] - posThis[1], posParent[2] - posThis[2]]
@@ -178,14 +200,14 @@ export default class Player extends Entity {
         // update shaders AFTER CAMERA TRANSFORM IS DONE BEING MODIFIED
     }
     __imgui() {
-        const mag = ImGui.sliderFloat("Jump", this.velYMax, 0, 100);
-        this.velYMax = mag;
-        this.velYMin = -mag;
-        this.gravity = ImGui.sliderFloat("Gravity", this.gravity, 0, 100);
+        const mag = ImGui.sliderFloat("Jump", this.velYMax, 0, 100)
+        this.velYMax = mag
+        this.velYMin = -mag
+        this.gravity = ImGui.sliderFloat("Gravity", this.gravity, 0, 100)
 
-        ImGui.separator();
+        ImGui.separator()
 
-        this.walkSpeed = ImGui.sliderFloat("Walk Speed", this.walkSpeed, 0, 25);
-        this.runSpeed = ImGui.sliderFloat("Run Speed", this.runSpeed, 0, 25);
+        this.walkSpeed = ImGui.sliderFloat("Walk Speed", this.walkSpeed, 0, 25)
+        this.runSpeed = ImGui.sliderFloat("Run Speed", this.runSpeed, 0, 25)
     }
 }

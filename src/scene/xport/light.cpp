@@ -8,7 +8,7 @@ namespace djinn
 		m_type(light_type::NONE)
 	{}
 
-	light::light(id_t const id, mgl::input_file* const in) :
+	light::light(id_t const id, haul::input_file* const in) :
 		visibility_scene_object(id),
 		xport(in)
 	{

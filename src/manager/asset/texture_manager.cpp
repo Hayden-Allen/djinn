@@ -27,9 +27,9 @@ namespace djinn
 		ASSERT(false);
 		return 0;
 	}
-	std::pair<std::vector<id_t>, std::vector<sptr<retained_texture2d_rgba_u8_array>>> texture_manager::load_xport(mgl::input_file* const in)
+	std::pair<std::vector<id_t>, std::vector<sptr<retained_texture2d_rgba_u8_array>>> texture_manager::load_xport(haul::input_file* const in)
 	{
-		u64 const count = in->ulong();
+		u64 const count = in->get64();
 		printf("t: %zu\n", count);
 		std::vector<id_t> ids;
 		std::vector<sptr<retained_texture2d_rgba_u8_array>> tex;

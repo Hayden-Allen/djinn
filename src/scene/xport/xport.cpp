@@ -12,12 +12,12 @@ namespace djinn
 
 	xport::xport()
 	{}
-	xport::xport(mgl::input_file* const in)
+	xport::xport(haul::input_file* const in)
 	{
-		m_name = in->string();
-		u64 const tag_count = in->ulong();
+		m_name = in->get_string();
+		u64 const tag_count = in->get64();
 		m_tags.reserve(tag_count);
 		for (u64 i = 0; i < tag_count; i++)
-			m_tags.emplace(in->string());
+			m_tags.emplace(in->get_string());
 	}
 } // namespace djinn

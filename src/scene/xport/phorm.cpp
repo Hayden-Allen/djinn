@@ -6,18 +6,18 @@
 
 namespace djinn
 {
-	phorm::phorm(id_t const id, mgl::input_file* const in, std::unordered_map<u32, sptr<material>> const& mats) :
+	phorm::phorm(id_t const id, haul::input_file* const in, std::unordered_map<u32, sptr<material>> const& mats) :
 		visibility_scene_object(id),
 		xport(in),
 		m_shaders(nullptr),
 		m_alpha_shaders(nullptr)
 	{
-		u64 const ro_count = in->ulong();
+		u64 const ro_count = in->get64();
 		for (u64 i = 0; i < ro_count; i++)
 		{
-			u32 const material_idx = in->uint();
+			u32 const material_idx = in->get32();
 			ASSERT(mats.contains(material_idx));
-			m_ros.insert({ mats.at(material_idx).get(), std::move(static_retained_render_object(*in)) });
+			m_ros.insert({ mats.at(material_idx).get(), std::move(static_retained_render_object(in)) });
 		}
 	}
 

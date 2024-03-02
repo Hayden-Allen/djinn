@@ -10,15 +10,15 @@ namespace djinn
 
 
 
-	std::vector<id_t> phorm_manager::load_xport(mgl::input_file* const in, std::unordered_map<u32, sptr<material>> const& mats)
+	std::vector<id_t> phorm_manager::load_xport(haul::input_file* const in, std::unordered_map<u32, sptr<material>> const& mats)
 	{
 		std::vector<id_t> ids;
 
-		u64 const sg_count = in->ulong();
+		u64 const sg_count = in->get64();
 		printf("sg: %zu\n", sg_count);
 		insert_from_file(in, sg_count, mats, &ids);
 
-		u64 const sm_count = in->ulong();
+		u64 const sm_count = in->get64();
 		printf("sm: %zu\n", sm_count);
 		insert_from_file(in, sm_count, mats, &ids);
 
@@ -40,7 +40,7 @@ namespace djinn
 
 
 
-	void phorm_manager::insert_from_file(mgl::input_file* const in, u64 const count, std::unordered_map<u32, sptr<material>> const& mats, std::vector<id_t>* const out_ids)
+	void phorm_manager::insert_from_file(haul::input_file* const in, u64 const count, std::unordered_map<u32, sptr<material>> const& mats, std::vector<id_t>* const out_ids)
 	{
 		for (u64 i = 0; i < count; i++)
 		{

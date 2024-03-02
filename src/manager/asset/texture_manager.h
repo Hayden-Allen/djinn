@@ -12,7 +12,7 @@ namespace djinn
 	public:
 		void update_all(f32 const milliseconds);
 		id_t create(u32 const width, u32 const height, texture_options const& options);
-		std::pair<std::vector<id_t>, std::vector<sptr<retained_texture2d_rgba_u8_array>>> load_xport(mgl::input_file* const in);
+		std::pair<std::vector<id_t>, std::vector<sptr<retained_texture2d_rgba_u8_array>>> load_xport(haul::input_file* const in);
 		id_t load(std::string const& fp) override;
 		id_t load(std::string const& fp, texture_options const& options);
 		void destroy(id_t const id) override;

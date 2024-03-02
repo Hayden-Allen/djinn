@@ -11,7 +11,7 @@ namespace djinn
 		light_manager();
 		DCM(light_manager);
 	public:
-		std::vector<id_t> load_xport(mgl::input_file* const in);
+		std::vector<id_t> load_xport(haul::input_file* const in);
 		id_t create();
 		void destroy(id_t const id) override;
 		void update();

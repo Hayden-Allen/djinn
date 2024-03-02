@@ -4,15 +4,15 @@
 
 namespace djinn
 {
-	material::material(mgl::input_file* const in, std::vector<sptr<retained_texture2d_rgba_u8_array>> const& tex)
+	material::material(haul::input_file* const in, std::vector<sptr<retained_texture2d_rgba_u8_array>> const& tex)
 	{
-		m_use_alpha = in->ubyte();
-		m_use_lighting = in->ubyte();
-		m_should_cull = in->ubyte();
+		m_use_alpha = in->get8();
+		m_use_lighting = in->get8();
+		m_should_cull = in->get8();
 
 		for (u32 i = 0; i < c::shader::num_phorm_textures; i++)
 		{
-			u64 const idx = in->ulong();
+			u64 const idx = in->get64();
 			ASSERT(idx < tex.size())
 			m_textures.push_back(tex[idx]);
 		}

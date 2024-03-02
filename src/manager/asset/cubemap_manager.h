@@ -12,7 +12,7 @@ namespace djinn
 		~cubemap_manager();
 	public:
 		id_t create(u32 const width, u32 const height, texture_options const& options);
-		id_t load_xport(mgl::input_file* const in);
+		id_t load_xport(haul::input_file* const in);
 		id_t load(std::string const& fp) override;
 		id_t load(std::array<std::string, 6> const& fps, texture_options const& options);
 		void destroy(id_t const id) override;
