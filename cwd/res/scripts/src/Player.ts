@@ -82,18 +82,23 @@ export default class Player extends Entity {
         this.idSphereShader = Asset.Shader.load("blob.vert", "blob.frag")
 
         this.idSphereMesh = Asset.Mesh.loadStatic("icosphere.m3d")
-        for (let i = 0; i < 10; ++i) {
+        for (let i = 0; i < 1024; ++i) {
             this.idSphereInstances.push(
                 Scene.MeshInstance.create(
                     this.idSphereMesh,
                     this.idSphereShader
                 )
             )
-            Scene.setPos(this.idSphereInstances[i], [i * 2 - 10, 0, -5])
+            let x = Math.random() * 3
+            let y = Math.random() * 3 - 4
+            let z = Math.random() * 3
+            Scene.setPos(this.idSphereInstances[i], [x, y, z])
+            Scene.setScale(this.idSphereInstances[i], [0.3, 0.3, 0.3])
         }
     }
     __unload() {
         Scene.MeshInstance.destroyAll(this.idSphereInstances)
+        this.idSphereInstances = []
         Asset.Mesh.destroy(this.idSphereMesh)
         Asset.Shader.destroy(this.idSphereShader)
 
@@ -123,12 +128,15 @@ export default class Player extends Entity {
         }
         // movement
         {
-            const boost = Input.buttonB() ? this.runSpeed : this.walkSpeed
+            const boost =
+                Input.buttonB() || Input.getKey(Input.KEY_LEFT_CONTROL)
+                    ? this.runSpeed
+                    : this.walkSpeed
             const x = boost * Input.leftX()
             const z = boost * Input.leftY()
             let newVelY = this.velY - this.gravity * dt
             if (this.canJump) {
-                if (Input.buttonA()) {
+                if (Input.buttonA() || Input.getKey(Input.KEY_SPACE)) {
                     this.canJump = false
                     newVelY += this.velYMax
                     Scene.unsetParentKeepTransform(this.idHitbox)
@@ -198,8 +206,15 @@ export default class Player extends Entity {
         Sound.setListenerWorldDir(dir)
 
         // update shaders AFTER CAMERA TRANSFORM IS DONE BEING MODIFIED
+        Asset.Shader.setCameraUniforms(
+            this.idSphereShader,
+            this.camera!.getId()
+        )
     }
     __imgui() {
+        ImGui.text(
+            `${this.worldPos[0]} ${this.worldPos[1]} ${this.worldPos[2]}`
+        )
         const mag = ImGui.sliderFloat("Jump", this.velYMax, 0, 100)
         this.velYMax = mag
         this.velYMin = -mag
