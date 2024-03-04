@@ -1,5 +1,4 @@
-- hats mat3x3 write to pointer instead of return vector
-
+- sound source library?
 - state machine thing
 - skybox
 - tune jump/walk constants

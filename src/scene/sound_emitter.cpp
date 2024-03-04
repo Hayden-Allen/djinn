@@ -9,13 +9,14 @@ namespace djinn
 		scene_object(id),
 		m_source(source)
 	{
+		m_source->add_emitter(wptr(this));
 		before_reload();
 		after_reload();
 	}
 	sound_emitter::~sound_emitter()
 	{
 		ASSERT(m_sound_ready);
-		m_source->unregister_emitter(wptr(this));
+		m_source->remove_emitter(wptr(this));
 		ma_sound_uninit(&m_sound);
 	}
 

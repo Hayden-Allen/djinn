@@ -63,7 +63,7 @@ export default class Player extends Entity {
 
         this.soundWalk = new SoundEmitter("footstep_walk.wav", true)
         this.soundWalk.setParent(this.idHitbox)
-        this.soundRun = new SoundEmitter("footstep_run.wav", true)
+        this.soundRun = new SoundEmitter("footstep_walk.wav", true)
         this.soundRun.setParent(this.idHitbox)
         this.soundJump = new SoundEmitter("jump.mp3", false)
         this.soundJump.setParent(this.idHitbox)

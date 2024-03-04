@@ -13,8 +13,8 @@ namespace djinn
 		DCM(sound_source);
 	public:
 		void load(std::string const& afp);
-		void register_emitter(wptr<sound_emitter> emitter);
-		void unregister_emitter(wptr<sound_emitter> emitter);
+		void add_emitter(wptr<sound_emitter> emitter);
+		void remove_emitter(wptr<sound_emitter> emitter);
 		ma_resource_manager_data_source* get_data_source();
 	private:
 		std::unordered_set<sound_emitter*> m_emitters;

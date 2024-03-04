@@ -145,7 +145,9 @@ namespace djinn
 		{
 			tmat<space::OBJECT, space::WORLD> const& normal = transform.invert_copy().transpose_copy();
 			// mat3 == mat3x4 with layout(std140), so pad columns with 0
-			m_ubos[block_index].update(normal.mat3x4().data(), s_floats_per_mat3, (u32)offset_bytes);
+			f32 data[12] = { 0 };
+			normal.mat3x4(data);
+			m_ubos[block_index].update(data, s_floats_per_mat3, (u32)offset_bytes);
 		}
 		// upload bone matrices for animated meshes
 		else

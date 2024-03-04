@@ -83,8 +83,11 @@ namespace djinn
 	{
 		tmat<space::OBJECT, space::WORLD> const& model = get_graphics_transform();
 		shaders->uniform_mat4(c::uniform::model_mat, model.e);
-		std::vector<f32> const& normal = model.invert_copy().transpose_copy().mat3();
-		shaders->uniform_mat3(c::uniform::normal_mat, normal.data());
+
+		f32 normal[9] = { 0 };
+		model.invert_copy().transpose_copy().mat3(normal);
+		shaders->uniform_mat3(c::uniform::normal_mat, normal);
+
 		shaders->uniform_1f(c::uniform::time, render_service::get_context()->time.now);
 		// done here for hot reloading
 		for (u32 i = 0; i < c::shader::num_phorm_textures; i++)

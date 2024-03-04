@@ -8,8 +8,7 @@ namespace djinn
 {
 	sound_source_manager::sound_source_manager() :
 		ref_counted_file_manager(c::base_dir::sound)
-	{
-	}
+	{}
 	sound_source_manager::~sound_source_manager()
 	{
 		unconfigure(false);
