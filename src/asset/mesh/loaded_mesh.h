@@ -16,7 +16,8 @@ namespace djinn
 		void draw(sptr<mgl::context> const& ctx)
 		{
 			for (auto& pair : m_batches)
-				pair.second.draw(ctx, m_ro);
+				for (auto& batch : pair.second)
+					batch.draw(ctx, m_ro);
 		}
 	protected:
 		static_structured_render_object<VERT> m_ro;

@@ -15,6 +15,7 @@ namespace djinn
 		mesh_instance_batch(mesh_instance_batch const&) = delete;
 		mesh_instance_batch(mesh_instance_batch&& other) noexcept;
 	public:
+		bool is_full() const;
 		bool empty() const;
 		u64 insert(sptr<mesh_instance> instance);
 		void remove(u64 const index);

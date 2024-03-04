@@ -35,12 +35,17 @@ namespace djinn
 
 
 
+	bool mesh_instance_batch::is_full() const
+	{
+		return m_valid == m_instances_per_ubo * c::shader::num_batch_ubos;
+	}
 	bool mesh_instance_batch::empty() const
 	{
 		return m_valid == 0;
 	}
 	u64 mesh_instance_batch::insert(sptr<mesh_instance> instance)
 	{
+		ASSERT(!is_full());
 		u64 index = 0;
 		if (!m_openings.empty())
 		{
@@ -56,7 +61,7 @@ namespace djinn
 			m_instances.push_back(instance);
 		}
 		set_transform_index(index);
-		instance->bind(wptr(this), index);
+		instance->bind_batch(wptr(this), index);
 		m_valid++;
 		return index;
 	}

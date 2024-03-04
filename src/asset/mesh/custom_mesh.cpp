@@ -33,6 +33,7 @@ namespace djinn
 				m_textures[i].arr->bind((u32)i);
 		}
 		for (auto& pair : m_batches)
-			pair.second.draw(ctx, m_ro);
+			for (auto& batch : pair.second)
+				batch.draw(ctx, m_ro);
 	}
 } // namespace djinn

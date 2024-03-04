@@ -82,16 +82,16 @@ export default class Player extends Entity {
         this.idSphereShader = Asset.Shader.load("blob.vert", "blob.frag")
 
         this.idSphereMesh = Asset.Mesh.loadStatic("icosphere.m3d")
-        for (let i = 0; i < 1024; ++i) {
+        for (let i = 0; i < 8192; ++i) {
             this.idSphereInstances.push(
                 Scene.MeshInstance.create(
                     this.idSphereMesh,
                     this.idSphereShader
                 )
             )
-            let x = Math.random() * 3
-            let y = Math.random() * 3 - 4
-            let z = Math.random() * 3
+            let x = Math.random() * 10 - 5
+            let y = Math.random() * 10 - 5
+            let z = Math.random() * 10 - 5
             Scene.setPos(this.idSphereInstances[i], [x, y, z])
             Scene.setScale(this.idSphereInstances[i], [0.3, 0.3, 0.3])
         }

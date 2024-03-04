@@ -9,6 +9,7 @@ namespace djinn
 	mesh_instance::mesh_instance(id_t const id, sptr<mesh> const& mesh, wptr<shaders> const& batch_shaders) :
 		visibility_scene_object(id),
 		m_mesh(mesh),
+		m_batch_number(MAX_VALUE_T(u64)),
 		m_batch_index(MAX_VALUE_T(u64)),
 		m_batch_shaders(batch_shaders),
 		m_batch(nullptr)
@@ -46,16 +47,17 @@ namespace djinn
 
 
 
-	void mesh_instance::remove_from_batch()
+	void mesh_instance::bind_mesh(u64 const batch_number)
 	{
-		m_mesh->remove_instance(m_batch_shaders, m_batch_index);
+		m_batch_number = batch_number;
 	}
-
-
-
-	void mesh_instance::bind(wptr<mesh_instance_batch> batch, u64 const index)
+	void mesh_instance::bind_batch(wptr<mesh_instance_batch> batch, u64 const batch_index)
 	{
 		m_batch = batch;
-		m_batch_index = index;
+		m_batch_index = batch_index;
+	}
+	void mesh_instance::remove_from_batch()
+	{
+		m_mesh->remove_instance(m_batch_shaders, m_batch_number, m_batch_index);
 	}
 } // namespace djinn

@@ -137,13 +137,17 @@ void main()
     float nb = fbm(v_pos + vec3(5.3, 1.7, 2.4) + d_time * 0.2);
     float nc = fbm(v_pos + vec3(-2.8, 4.3, -0.65) + d_time * 0.2);
     float f = fbm(v_pos + vec3(na, nb, nc)) + 0.5;
-    /* if (c < 0.35) {
+    vec3 c = mix(vec3(0.2, 0.05, 0.6), vec3(0.9, 0.02, 0.2), f);
+    o_color = vec4(c, 1);
+    
+    /*
+    if (c < 0.35) {
         discard;
-    } */
+    }
+    */
     vec3 N = normalize(v_norm);
     vec3 V = normalize(v_pos - d_cam_pos);
     LIGHT_SUM(N, V, v_pos);
     vec3 l = min(0.2 + d_diffuse + d_specular, vec3(1));
-    vec3 c = mix(vec3(0.2, 0.05, 0.6), vec3(0.9, 0.02, 0.2), f);
     o_color = vec4(c * l, 1);
 }
