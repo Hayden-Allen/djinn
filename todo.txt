@@ -1,6 +1,5 @@
 - hats mat3x3 write to pointer instead of return vector
 
-- factor sound/soundemitter
 - state machine thing
 - skybox
 - tune jump/walk constants

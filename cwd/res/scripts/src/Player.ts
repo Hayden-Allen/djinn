@@ -1,6 +1,7 @@
 import "./lib/djinn.d"
 import Entity from "./lib/Entity"
 import Camera from "./lib/Camera"
+import SoundEmitter from "./lib/wrap/SoundEmitter"
 
 const { Asset, Event, Scene, Input, ImGui, Sound } = djinn
 
@@ -23,12 +24,9 @@ export default class Player extends Entity {
     private walkSpeed: number = 3
     private runSpeed: number = 5
 
-    private idFootstep: SoundID = 0 as SoundID
-    private idFootstepEmitter: SoundEmitterID = 0 as SoundEmitterID
-    private idFootstepRun: SoundID = 0 as SoundID
-    private idFootstepRunEmitter: SoundEmitterID = 0 as SoundEmitterID
-    private idJump: SoundID = 0 as SoundID
-    private idJumpEmitter: SoundEmitterID = 0 as SoundEmitterID
+    private soundWalk?: SoundEmitter
+    private soundRun?: SoundEmitter
+    private soundJump?: SoundEmitter
 
     private idSphereMesh: MeshID = 0 as MeshID
     private idSphereInstances: MeshInstanceID[] = []
@@ -63,26 +61,17 @@ export default class Player extends Entity {
             }
         }
 
-        this.idFootstep = Asset.Sound.load("footstep_walk.wav")
-        this.idFootstepEmitter = Scene.SoundEmitter.create(this.idFootstep)
-        Scene.SoundEmitter.setLooping(this.idFootstepEmitter, true)
-        Scene.setParent(this.idFootstepEmitter, this.idHitbox)
-
-        this.idFootstepRun = Asset.Sound.load("footstep_run.wav")
-        this.idFootstepRunEmitter = Scene.SoundEmitter.create(
-            this.idFootstepRun
-        )
-        Scene.SoundEmitter.setLooping(this.idFootstepRunEmitter, true)
-        Scene.setParent(this.idFootstepRunEmitter, this.idHitbox)
-
-        this.idJump = Asset.Sound.load("jump.mp3")
-        this.idJumpEmitter = Scene.SoundEmitter.create(this.idJump)
-        Scene.setParent(this.idJumpEmitter, this.idHitbox)
+        this.soundWalk = new SoundEmitter("footstep_walk.wav", true)
+        this.soundWalk.setParent(this.idHitbox)
+        this.soundRun = new SoundEmitter("footstep_run.wav", true)
+        this.soundRun.setParent(this.idHitbox)
+        this.soundJump = new SoundEmitter("jump.mp3", false)
+        this.soundJump.setParent(this.idHitbox)
 
         this.idSphereShader = Asset.Shader.load("blob.vert", "blob.frag")
 
         this.idSphereMesh = Asset.Mesh.loadStatic("icosphere.m3d")
-        for (let i = 0; i < 8192; ++i) {
+        for (let i = 0; i < 1024; ++i) {
             this.idSphereInstances.push(
                 Scene.MeshInstance.create(
                     this.idSphereMesh,
@@ -102,14 +91,9 @@ export default class Player extends Entity {
         Asset.Mesh.destroy(this.idSphereMesh)
         Asset.Shader.destroy(this.idSphereShader)
 
-        Scene.SoundEmitter.destroy(this.idFootstepEmitter)
-        Asset.Sound.destroy(this.idFootstep)
-
-        Scene.SoundEmitter.destroy(this.idFootstepRunEmitter)
-        Asset.Sound.destroy(this.idFootstepRun)
-
-        Scene.SoundEmitter.destroy(this.idJumpEmitter)
-        Asset.Sound.destroy(this.idJump)
+        this.soundWalk?.destroy()
+        this.soundRun?.destroy()
+        this.soundJump?.destroy()
 
         Scene.Physics.destroy(this.idHitbox)
     }
@@ -140,7 +124,7 @@ export default class Player extends Entity {
                     this.canJump = false
                     newVelY += this.velYMax
                     Scene.unsetParentKeepTransform(this.idHitbox)
-                    Scene.SoundEmitter.start(this.idJumpEmitter)
+                    this.soundJump?.start()
                 }
             }
             this.velY = Math.min(this.velYMax, Math.max(this.velYMin, newVelY))
@@ -155,14 +139,14 @@ export default class Player extends Entity {
             const walking = moving && !Input.buttonB()
             const running = moving && Input.buttonB()
             if (!this.isWalking && walking) {
-                Scene.SoundEmitter.start(this.idFootstepEmitter)
+                this.soundWalk?.start()
             } else if (this.isWalking && !walking) {
-                Scene.SoundEmitter.stop(this.idFootstepEmitter)
+                this.soundWalk?.stop()
             }
             if (!this.isRunning && running) {
-                Scene.SoundEmitter.start(this.idFootstepRunEmitter)
+                this.soundRun?.start()
             } else if (this.isRunning && !running) {
-                Scene.SoundEmitter.stop(this.idFootstepRunEmitter)
+                this.soundRun?.stop()
             }
             this.isWalking = walking
             this.isRunning = running
