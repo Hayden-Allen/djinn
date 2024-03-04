@@ -1,5 +1,6 @@
-- sound source library?
-- state machine thing
+- sound source library? cpp or js
+- how organize state graph? separate files? do states own things? subclass?
+
 - skybox
 - tune jump/walk constants
 - tune camera position/speed

@@ -2,6 +2,7 @@ import "./lib/djinn.d"
 import Entity from "./lib/Entity"
 import Camera from "./lib/Camera"
 import SoundEmitter from "./lib/wrap/SoundEmitter"
+import { StateNode, StateGraph } from "./lib/wrap/StateGraph"
 
 const { Asset, Event, Scene, Input, ImGui, Sound } = djinn
 
@@ -32,6 +33,8 @@ export default class Player extends Entity {
     private idSphereInstances: MeshInstanceID[] = []
     private idSphereShader: ShaderID = 0 as ShaderID
 
+    private state: StateGraph = new StateGraph()
+
     __init(cam: Camera) {
         if (cam) {
             this.camera = cam
@@ -60,29 +63,119 @@ export default class Player extends Entity {
                 Scene.setPosY(idCam, 0.025)
             }
         }
-
-        this.soundWalk = new SoundEmitter("footstep_walk.wav", true)
-        this.soundWalk.setParent(this.idHitbox)
-        this.soundRun = new SoundEmitter("footstep_walk.wav", true)
-        this.soundRun.setParent(this.idHitbox)
-        this.soundJump = new SoundEmitter("jump.mp3", false)
-        this.soundJump.setParent(this.idHitbox)
-
-        this.idSphereShader = Asset.Shader.load("blob.vert", "blob.frag")
-
-        this.idSphereMesh = Asset.Mesh.loadStatic("icosphere.m3d")
-        for (let i = 0; i < 1024; ++i) {
-            this.idSphereInstances.push(
-                Scene.MeshInstance.create(
-                    this.idSphereMesh,
-                    this.idSphereShader
+        // sound
+        {
+            this.soundWalk = new SoundEmitter("footstep_walk.wav", true)
+            this.soundWalk.setParent(this.idHitbox)
+            this.soundRun = new SoundEmitter("footstep_walk.wav", true)
+            this.soundRun.setParent(this.idHitbox)
+            this.soundJump = new SoundEmitter("jump.mp3", false)
+            this.soundJump.setParent(this.idHitbox)
+        }
+        // test
+        {
+            this.idSphereShader = Asset.Shader.load("blob.vert", "blob.frag")
+            this.idSphereMesh = Asset.Mesh.loadStatic("icosphere.m3d")
+            for (let i = 0; i < 1024; ++i) {
+                this.idSphereInstances.push(
+                    Scene.MeshInstance.create(
+                        this.idSphereMesh,
+                        this.idSphereShader
+                    )
                 )
-            )
-            let x = Math.random() * 10 - 5
-            let y = Math.random() * 10 - 5
-            let z = Math.random() * 10 - 5
-            Scene.setPos(this.idSphereInstances[i], [x, y, z])
-            Scene.setScale(this.idSphereInstances[i], [0.3, 0.3, 0.3])
+                let x = Math.random() * 10 - 5
+                let y = Math.random() * 10 - 5
+                let z = Math.random() * 10 - 5
+                Scene.setPos(this.idSphereInstances[i], [x, y, z])
+                Scene.setScale(this.idSphereInstances[i], [0.3, 0.3, 0.3])
+            }
+        }
+        // state graph
+        {
+            const move = (dt: number, speed: number) => {
+                const x = this.walkSpeed * Input.leftX()
+                const z = this.walkSpeed * Input.leftY()
+                let newVelY = this.velY - this.gravity * dt
+                this.velY = Math.min(
+                    this.velYMax,
+                    Math.max(this.velYMin, newVelY)
+                )
+                const dir = [x, this.velY, z]
+                Scene.Physics.collideNSlide(this.idHitbox, dir, dt, {
+                    x: 1,
+                    z: 1,
+                    y: 1,
+                })
+            }
+            const idle = new StateNode("idle", {
+                onEnter: () => printf("IDLE"),
+                onTick: (dt: number) => {
+                    move(dt, 0)
+                },
+            })
+            const walk = new StateNode("walk", {
+                onEnter: () => {
+                    printf("WALK")
+                    this.soundWalk?.start()
+                },
+                onExit: () => {
+                    this.soundWalk?.stop()
+                },
+                onTick: (dt: number, time: number) => {
+                    move(dt, this.walkSpeed)
+                },
+            })
+            const jump = new StateNode("jump", {
+                onEnter: (dt: number, time: number) => {
+                    printf("JUMP")
+
+                    this.canJump = false
+                    Scene.unsetParentKeepTransform(this.idHitbox)
+                    this.soundJump?.start()
+
+                    // don't apply gravity, it will be applied in onTick
+                    let newVelY = this.velY + this.velYMax
+                    this.velY = Math.min(
+                        this.velYMax,
+                        Math.max(this.velYMin, newVelY)
+                    )
+                },
+                onTick: (dt: number, time: number) => {
+                    move(dt, this.walkSpeed / 2)
+                },
+            })
+
+            idle.addTransition(walk, () => {
+                return Input.leftX() != 0 || Input.leftY() != 0
+            })
+            idle.addTransition(jump, () => {
+                return Input.getKey(Input.KEY_SPACE) || Input.buttonA()
+            })
+
+            walk.addTransition(idle, () => {
+                return (
+                    !(Input.getKey(Input.KEY_SPACE) || Input.buttonA()) &&
+                    Input.leftX() == 0 &&
+                    Input.leftY() == 0
+                )
+            })
+            walk.addTransition(jump, () => {
+                return Input.getKey(Input.KEY_SPACE) || Input.buttonA()
+            })
+
+            jump.addTransition(idle, () => {
+                return this.canJump && Input.leftX() == 0 && Input.leftY() == 0
+            })
+            jump.addTransition(walk, () => {
+                return (
+                    this.canJump && (Input.leftX() != 0 || Input.leftY() != 0)
+                )
+            })
+
+            this.state.addNode(idle)
+            this.state.addNode(walk)
+            this.state.addNode(jump)
+            this.state.setCurrent(idle)
         }
     }
     __unload() {
@@ -112,6 +205,8 @@ export default class Player extends Entity {
         }
         // movement
         {
+            this.state.tick(dt, time)
+            /*
             const boost =
                 Input.buttonB() || Input.getKey(Input.KEY_LEFT_CONTROL)
                     ? this.runSpeed
@@ -150,6 +245,7 @@ export default class Player extends Entity {
             }
             this.isWalking = walking
             this.isRunning = running
+            */
         }
         Scene.Entity.requestImGui(this.id)
 
