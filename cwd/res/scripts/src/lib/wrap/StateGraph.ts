@@ -12,7 +12,7 @@ class StateTransition {
 
 export class StateNode {
     public targets: StateTransition[] = []
-    private name: string = ""
+    public name: string = ""
     private onEnter: Function = () => {}
     private onTick: Function = () => {}
     private onExit: Function = () => {}
@@ -59,6 +59,7 @@ export class StateGraph {
     tick(dt: number, time: number) {
         if (this.newCurrent) {
             this.current?.enter(dt, time)
+            printf(`ENTER: ${this.current?.name}`)
             this.newCurrent = false
         }
 
@@ -67,7 +68,8 @@ export class StateGraph {
             if (transition.condition(dt, time)) {
                 this.current?.exit(dt, time)
                 this.current = target
-                target?.enter(dt, time)
+                this.current?.enter(dt, time)
+                printf(`ENTER: ${this.current?.name}`)
             }
         }
 

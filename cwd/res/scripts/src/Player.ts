@@ -15,8 +15,6 @@ export default class Player extends Entity {
     private hitboxRadius: number = 0.1
     private worldPos: number[] = [0, 0, 0]
 
-    private isWalking: boolean = false
-    private isRunning: boolean = false
     private canJump: boolean = false
     private velY: number = 0
     private velYMin: number = -100
@@ -93,8 +91,8 @@ export default class Player extends Entity {
         // state graph
         {
             const move = (dt: number, speed: number) => {
-                const x = this.walkSpeed * Input.leftX()
-                const z = this.walkSpeed * Input.leftY()
+                const x = speed * Input.leftX()
+                const z = speed * Input.leftY()
                 let newVelY = this.velY - this.gravity * dt
                 this.velY = Math.min(
                     this.velYMax,
@@ -107,15 +105,15 @@ export default class Player extends Entity {
                     y: 1,
                 })
             }
+
             const idle = new StateNode("idle", {
-                onEnter: () => printf("IDLE"),
                 onTick: (dt: number) => {
+                    // still want to do custom gravity and collideNSlide
                     move(dt, 0)
                 },
             })
             const walk = new StateNode("walk", {
                 onEnter: () => {
-                    printf("WALK")
                     this.soundWalk?.start()
                 },
                 onExit: () => {
@@ -125,10 +123,19 @@ export default class Player extends Entity {
                     move(dt, this.walkSpeed)
                 },
             })
+            const run = new StateNode("run", {
+                onEnter: () => {
+                    this.soundRun?.start()
+                },
+                onExit: () => {
+                    this.soundRun?.stop()
+                },
+                onTick: (dt: number, time: number) => {
+                    move(dt, this.runSpeed)
+                },
+            })
             const jump = new StateNode("jump", {
                 onEnter: (dt: number, time: number) => {
-                    printf("JUMP")
-
                     this.canJump = false
                     Scene.unsetParentKeepTransform(this.idHitbox)
                     this.soundJump?.start()
@@ -141,35 +148,65 @@ export default class Player extends Entity {
                     )
                 },
                 onTick: (dt: number, time: number) => {
-                    move(dt, this.walkSpeed / 2)
+                    move(dt, this.walkSpeed)
                 },
             })
 
-            idle.addTransition(walk, () => {
-                return Input.leftX() != 0 || Input.leftY() != 0
-            })
             idle.addTransition(jump, () => {
                 return Input.getKey(Input.KEY_SPACE) || Input.buttonA()
             })
-
-            walk.addTransition(idle, () => {
+            idle.addTransition(run, () => {
                 return (
-                    !(Input.getKey(Input.KEY_SPACE) || Input.buttonA()) &&
-                    Input.leftX() == 0 &&
-                    Input.leftY() == 0
+                    (Input.buttonB() || Input.getKey(Input.KEY_LEFT_CONTROL)) &&
+                    (Input.leftX() != 0 || Input.leftY() != 0)
                 )
             })
+            idle.addTransition(walk, () => {
+                return Input.leftX() != 0 || Input.leftY() != 0
+            })
+
             walk.addTransition(jump, () => {
                 return Input.getKey(Input.KEY_SPACE) || Input.buttonA()
             })
+            walk.addTransition(run, () => {
+                return (
+                    (Input.buttonB() || Input.getKey(Input.KEY_LEFT_CONTROL)) &&
+                    (Input.leftX() != 0 || Input.leftY() != 0)
+                )
+            })
+            walk.addTransition(idle, () => {
+                return Input.leftX() == 0 && Input.leftY() == 0
+            })
 
-            jump.addTransition(idle, () => {
-                return this.canJump && Input.leftX() == 0 && Input.leftY() == 0
+            run.addTransition(jump, () => {
+                return Input.getKey(Input.KEY_SPACE) || Input.buttonA()
+            })
+            run.addTransition(walk, () => {
+                return (
+                    !(
+                        Input.buttonB() || Input.getKey(Input.KEY_LEFT_CONTROL)
+                    ) &&
+                    (Input.leftX() != 0 || Input.leftY() != 0)
+                )
+            })
+            run.addTransition(idle, () => {
+                return Input.leftX() == 0 && Input.leftY() == 0
+            })
+
+            jump.addTransition(run, () => {
+                return (
+                    this.canJump &&
+                    (Input.buttonB() || Input.getKey(Input.KEY_LEFT_CONTROL)) &&
+                    (Input.leftX() != 0 || Input.leftY() != 0)
+                )
             })
             jump.addTransition(walk, () => {
                 return (
                     this.canJump && (Input.leftX() != 0 || Input.leftY() != 0)
                 )
+            })
+            jump.addTransition(idle, () => {
+                return this.canJump
             })
 
             this.state.addNode(idle)
@@ -206,46 +243,6 @@ export default class Player extends Entity {
         // movement
         {
             this.state.tick(dt, time)
-            /*
-            const boost =
-                Input.buttonB() || Input.getKey(Input.KEY_LEFT_CONTROL)
-                    ? this.runSpeed
-                    : this.walkSpeed
-            const x = boost * Input.leftX()
-            const z = boost * Input.leftY()
-            let newVelY = this.velY - this.gravity * dt
-            if (this.canJump) {
-                if (Input.buttonA() || Input.getKey(Input.KEY_SPACE)) {
-                    this.canJump = false
-                    newVelY += this.velYMax
-                    Scene.unsetParentKeepTransform(this.idHitbox)
-                    this.soundJump?.start()
-                }
-            }
-            this.velY = Math.min(this.velYMax, Math.max(this.velYMin, newVelY))
-            const dir = [x, this.velY, z]
-            Scene.Physics.collideNSlide(this.idHitbox, dir, dt, {
-                x: 1,
-                z: 1,
-                y: 1,
-            })
-
-            const moving = (x !== 0 || z !== 0) && this.canJump
-            const walking = moving && !Input.buttonB()
-            const running = moving && Input.buttonB()
-            if (!this.isWalking && walking) {
-                this.soundWalk?.start()
-            } else if (this.isWalking && !walking) {
-                this.soundWalk?.stop()
-            }
-            if (!this.isRunning && running) {
-                this.soundRun?.start()
-            } else if (this.isRunning && !running) {
-                this.soundRun?.stop()
-            }
-            this.isWalking = walking
-            this.isRunning = running
-            */
         }
         Scene.Entity.requestImGui(this.id)
 
