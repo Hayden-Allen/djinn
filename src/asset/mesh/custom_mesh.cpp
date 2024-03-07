@@ -5,9 +5,9 @@
 
 namespace djinn
 {
-	custom_mesh::custom_mesh(u32 const vertex_count, std::vector<u32> const& layout, u32 const index_count, std::vector<custom_mesh_texture> const& textures) :
-		m_ro(vertex_count, layout, index_count),
-		m_textures(textures)
+	custom_mesh::custom_mesh(u32 const vertex_count, std::vector<u32> const& layout, u32 const index_count, std::vector<mesh_texture> const& textures) :
+		mesh(textures),
+		m_ro(vertex_count, layout, index_count)
 	{}
 
 
@@ -26,13 +26,7 @@ namespace djinn
 	}
 	void custom_mesh::draw(sptr<mgl::context> const& ctx)
 	{
-		for (u64 i = 0; i < m_textures.size(); i++)
-		{
-			if (m_textures[i].is_raw)
-				m_textures[i].raw->bind((u32)i);
-			else
-				m_textures[i].arr->bind((u32)i);
-		}
+		mesh::draw(ctx);
 		for (auto& pair : m_batches)
 			for (auto& batch : pair.second)
 				batch->draw(ctx, m_ro);

@@ -54,7 +54,7 @@ namespace djinn
 			s32 id;
 		};
 	public:
-		animated_mesh(m3d_t* const raw);
+		animated_mesh(m3d_t* const raw, std::vector<mesh_texture> const& textures);
 		DCM(animated_mesh);
 	public:
 		void init(m3d_t* const raw) override;

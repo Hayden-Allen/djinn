@@ -4,7 +4,8 @@
 
 namespace djinn
 {
-	animated_mesh::animated_mesh(m3d_t* const raw) :
+	animated_mesh::animated_mesh(m3d_t* const raw, std::vector<mesh_texture> const& textures) :
+		loaded_mesh(textures),
 		m_raw(raw)
 	{
 		init(raw);

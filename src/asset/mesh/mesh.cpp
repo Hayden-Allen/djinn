@@ -5,10 +5,23 @@
 
 namespace djinn
 {
+	mesh::mesh(std::vector<mesh_texture> const& textures) :
+		m_textures(textures)
+	{}
 	mesh::~mesh() {}
 
 
 
+	void mesh::draw(sptr<mgl::context> const& ctx)
+	{
+		for (u64 i = 0; i < m_textures.size(); i++)
+		{
+			if (m_textures[i].is_raw)
+				m_textures[i].raw->bind((u32)i);
+			else
+				m_textures[i].arr->bind((u32)i);
+		}
+	}
 	bool mesh::is_animated() const
 	{
 		return false;

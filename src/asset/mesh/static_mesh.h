@@ -33,7 +33,7 @@ namespace djinn
 	{
 	public:
 	public:
-		static_mesh(m3d_t* const raw);
+		static_mesh(m3d_t* const raw, std::vector<mesh_texture> const& textures);
 		DCM(static_mesh);
 	public:
 		void init(m3d_t* const raw) override;

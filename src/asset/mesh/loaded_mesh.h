@@ -9,13 +9,16 @@ namespace djinn
 	class loaded_mesh : public mesh
 	{
 	public:
-		loaded_mesh() {}
+		loaded_mesh(std::vector<mesh_texture> const& textures) :
+			mesh(textures)
+		{}
 		DCM(loaded_mesh);
 		virtual ~loaded_mesh() {}
 	public:
 		virtual void init(m3d_t* const raw) = 0;
 		void draw(sptr<mgl::context> const& ctx)
 		{
+			mesh::draw(ctx);
 			for (auto& pair : m_batches)
 				for (auto& batch : pair.second)
 					batch->draw(ctx, m_ro);

@@ -3,7 +3,8 @@
 
 namespace djinn
 {
-	static_mesh::static_mesh(m3d_t* const raw)
+	static_mesh::static_mesh(m3d_t* const raw, std::vector<mesh_texture> const& textures) :
+		loaded_mesh(textures)
 	{
 		init(raw);
 	}

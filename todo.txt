@@ -3,7 +3,6 @@
 - how organize state graph? separate files? do states own things? subclass?
 
 - mesh textures
-- mesh_instance_batch should ACTUALLY BATCH
 - Asset.Mesh.getActionNames
 	- AnimatedMesh.setActionLike("run") picks action with closest name match
 - skybox

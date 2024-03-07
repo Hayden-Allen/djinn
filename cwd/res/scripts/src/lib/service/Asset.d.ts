@@ -5,13 +5,13 @@ declare interface _Asset_Mesh {
         vertCount: number,
         layout: number[],
         idxCount: number,
-        idTextures: (TextureID | CubemapID)[]
+        idTextures: MeshTextureID[]
     ): MeshID
     update(id: MeshID, verts: number[], indices: number[]): void
     updateVertices(id: MeshID, verts: number[]): void
     updateIndices(id: MeshID, indices: number[]): void
-    loadStatic(fp: string): MeshID
-    loadAnimated(fp: string): MeshID
+    loadStatic(fp: string, idTextures?: MeshTextureID[]): MeshID
+    loadAnimated(fp: string, idTextures?: MeshTextureID[]): MeshID
     destroy(id: MeshID): void
     destroyAll(ids: MeshID[]): void
 }

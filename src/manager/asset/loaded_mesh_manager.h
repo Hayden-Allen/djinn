@@ -22,14 +22,19 @@ namespace djinn
 			}
 		}
 	public:
-		id_t load(std::string const& fp) override final
+		id_t load_mesh(std::string const& fp, std::vector<mesh_texture> const& textures)
 		{
 			std::string const& afp = this->to_absolute(fp);
 			m3d_t* const raw = get_or_load(afp);
-			T* const mesh = new T(raw);
+			T* const mesh = new T(raw, textures);
 			id_t const id = this->insert(mesh);
 			m_id2afp.insert(id, afp);
 			return id;
+		}
+		id_t load(std::string const& fp) override final
+		{
+			ASSERT(false);
+			return 0;
 		}
 		void reload(std::string const& fp) override final
 		{

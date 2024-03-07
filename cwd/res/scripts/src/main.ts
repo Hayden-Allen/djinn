@@ -50,11 +50,16 @@ export default class MainEntity extends Entity {
         this.idAnimatedTexture = Asset.Texture.load(
             "MonsterLoResBakedTexture512.png"
         )
-        this.idAnimatedMesh = Asset.Mesh.loadAnimated("monster.m3d")
+        this.idAnimatedMesh = Asset.Mesh.loadAnimated("monster.m3d", [
+            this.idAnimatedTexture,
+        ])
         this.idAnimatedShader = Asset.Shader.load(
             "animated.vert",
             "animated.frag"
         )
+        Asset.Shader.setUniforms(this.idAnimatedShader, {
+            u_texture: 0,
+        })
         this.idAnimatedInstance = Scene.MeshInstance.create(
             this.idAnimatedMesh,
             this.idAnimatedShader

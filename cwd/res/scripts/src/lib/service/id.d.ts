@@ -20,6 +20,7 @@ declare type ShaderID = _ShaderID | undefined
 declare type TextureID = _TextureID | undefined
 declare type CubemapID = _CubemapID | undefined
 declare type SoundID = _SoundID | undefined
+declare type MeshTextureID = TextureID | CubemapID
 
 declare type MeshInstanceID = _MeshInstanceID | undefined
 declare type EntityID = _EntityID | undefined

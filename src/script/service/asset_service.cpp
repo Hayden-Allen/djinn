@@ -29,22 +29,13 @@ namespace djinn::js::asset_service
 		}
 		return options;
 	}
-
-
-
-	JSValue create_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	static std::vector<mesh_texture> extract_mesh_textures(std::vector<id_t> const& texture_ids)
 	{
-		ASSERT(argc == 4);
-		u32 const vertex_count = js::extract_u32(ctx, argv[0]);
-		std::vector<u32> const& vertex_layout = js::extract_u32_array(ctx, argv[1]);
-		u32 const index_count = js::extract_u32(ctx, argv[2]);
-		std::vector<id_t> const& texture_ids = js::extract_id_array(ctx, argv[3]);
-
-		std::vector<custom_mesh_texture> textures;
+		std::vector<mesh_texture> textures;
 		textures.reserve(texture_ids.size());
 		for (id_t const id : texture_ids)
 		{
-			custom_mesh_texture tex = { nullptr, false };
+			mesh_texture tex = { nullptr, false };
 			if (::djinn::asset_service::get_texture_manager()->has(id))
 			{
 				tex.arr = ::djinn::asset_service::get_texture_manager()->get(id).get();
@@ -57,21 +48,35 @@ namespace djinn::js::asset_service
 			}
 			textures.emplace_back(tex);
 		}
+		return textures;
+	}
 
-		JSValue ret = js::create_id(ctx, ::djinn::asset_service::get_custom_mesh_manager()->create(vertex_count, vertex_layout, index_count, textures));
+
+
+	JSValue create_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 4);
+		u32 const vertex_count = js::extract_u32(ctx, argv[0]);
+		std::vector<u32> const& vertex_layout = js::extract_u32_array(ctx, argv[1]);
+		u32 const index_count = js::extract_u32(ctx, argv[2]);
+		std::vector<id_t> const& texture_ids = js::extract_id_array(ctx, argv[3]);
+
+		JSValue ret = js::create_id(ctx, ::djinn::asset_service::get_custom_mesh_manager()->create(vertex_count, vertex_layout, index_count, extract_mesh_textures(texture_ids)));
 		return ret;
 	}
 	JSValue load_static_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
+		ASSERT(argc == 1 || argc == 2);
 		std::string const& fp = js::extract_string(ctx, argv[0]);
-		return js::create_id(ctx, ::djinn::asset_service::get_static_mesh_manager()->load(fp));
+		std::vector<id_t> const& texture_ids = argc == 2 ? js::extract_id_array(ctx, argv[1]) : std::vector<id_t>();
+		return js::create_id(ctx, ::djinn::asset_service::get_static_mesh_manager()->load_mesh(fp, extract_mesh_textures(texture_ids)));
 	}
 	JSValue load_animated_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 1);
+		ASSERT(argc == 1 || argc == 2);
 		std::string const& fp = js::extract_string(ctx, argv[0]);
-		return js::create_id(ctx, ::djinn::asset_service::get_animated_mesh_manager()->load(fp));
+		std::vector<id_t> const& texture_ids = argc == 2 ? js::extract_id_array(ctx, argv[1]) : std::vector<id_t>();
+		return js::create_id(ctx, ::djinn::asset_service::get_animated_mesh_manager()->load_mesh(fp, extract_mesh_textures(texture_ids)));
 	}
 	JSValue update_mesh(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -358,8 +363,8 @@ namespace djinn
 			super::register_function(ctx, "Mesh", "update", 3, js::asset_service::update_mesh);
 			super::register_function(ctx, "Mesh", "updateVertices", 2, js::asset_service::update_mesh_vertices);
 			super::register_function(ctx, "Mesh", "updateIndices", 2, js::asset_service::update_mesh_indices);
-			super::register_function(ctx, "Mesh", "loadStatic", 1, js::asset_service::load_static_mesh);
-			super::register_function(ctx, "Mesh", "loadAnimated", 1, js::asset_service::load_animated_mesh);
+			super::register_function(ctx, "Mesh", "loadStatic", 2, js::asset_service::load_static_mesh);
+			super::register_function(ctx, "Mesh", "loadAnimated", 2, js::asset_service::load_animated_mesh);
 			super::register_function(ctx, "Mesh", "destroy", 1, js::asset_service::destroy_mesh);
 			super::register_function(ctx, "Mesh", "destroyAll", 1, js::asset_service::destroy_all_mesh);
 		}
