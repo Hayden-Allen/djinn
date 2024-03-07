@@ -8,7 +8,7 @@ namespace djinn
 	{}
 
 
-	
+
 	bool scene_object::is_physics() const
 	{
 		return false;
@@ -16,6 +16,7 @@ namespace djinn
 	void scene_object::set_parent(scene_object* const parent)
 	{
 		m_parent = parent;
+		m_transform_dirty = true;
 	}
 	void scene_object::set_parent_keep_transform(scene_object* const parent)
 	{
@@ -26,6 +27,7 @@ namespace djinn
 		tmat<space::PARENT, space::WORLD> const& p2w = get_parent_transform();
 		m_transform = p2w.invert_copy() * o2w;
 		// update_rot();
+		m_transform_dirty = true;
 	}
 	scene_object const* scene_object::get_parent() const
 	{
@@ -60,6 +62,14 @@ namespace djinn
 	JSValue const& scene_object::get_user_pointer() const
 	{
 		return m_user;
+	}
+	bool scene_object::is_transform_dirty() const
+	{
+		return m_transform_dirty;
+	}
+	void scene_object::set_transform_clean()
+	{
+		m_transform_dirty = false;
 	}
 	point<space::PARENT> scene_object::get_pos() const
 	{
@@ -99,18 +109,22 @@ namespace djinn
 		m_transform.t[0] = pos.x;
 		m_transform.t[1] = pos.y;
 		m_transform.t[2] = pos.z;
+		m_transform_dirty = true;
 	}
 	void scene_object::set_pos_x(f32 const x)
 	{
 		m_transform.t[0] = x;
+		m_transform_dirty = true;
 	}
 	void scene_object::set_pos_y(f32 const y)
 	{
 		m_transform.t[1] = y;
+		m_transform_dirty = true;
 	}
 	void scene_object::set_pos_z(f32 const z)
 	{
 		m_transform.t[2] = z;
+		m_transform_dirty = true;
 	}
 	void scene_object::set_rot(f32 const x_deg, f32 const y_deg, f32 const z_deg)
 	{
@@ -118,21 +132,25 @@ namespace djinn
 		m_rot[1] = u::deg2rad(y_deg);
 		m_rot[2] = u::deg2rad(z_deg);
 		update_rot();
+		m_transform_dirty = true;
 	}
 	void scene_object::set_rot_x(f32 const x_deg)
 	{
 		m_rot[0] = u::deg2rad(x_deg);
 		update_rot();
+		m_transform_dirty = true;
 	}
 	void scene_object::set_rot_y(f32 const y_deg)
 	{
 		m_rot[1] = u::deg2rad(y_deg);
 		update_rot();
+		m_transform_dirty = true;
 	}
 	void scene_object::set_rot_z(f32 const z_deg)
 	{
 		m_rot[2] = u::deg2rad(z_deg);
 		update_rot();
+		m_transform_dirty = true;
 	}
 	void scene_object::set_scale(vec<space::PARENT> const& scale)
 	{
@@ -141,95 +159,115 @@ namespace djinn
 		f32 const cz = m_transform.get_k().length();
 		tmat<space::OBJECT, space::OBJECT> const& mat = tmat_util::scale<space::OBJECT>(scale.x / cx, scale.y / cy, scale.z / cz);
 		m_transform *= mat;
+		m_transform_dirty = true;
 	}
 	void scene_object::set_scale_x(f32 const x)
 	{
 		f32 const cx = m_transform.get_i().length();
 		tmat<space::OBJECT, space::OBJECT> const& mat = tmat_util::scale<space::OBJECT>(x / cx, 1, 1);
 		m_transform *= mat;
+		m_transform_dirty = true;
 	}
 	void scene_object::set_scale_y(f32 const y)
 	{
 		f32 const cy = m_transform.get_j().length();
 		tmat<space::OBJECT, space::OBJECT> const& mat = tmat_util::scale<space::OBJECT>(1, y / cy, 1);
 		m_transform *= mat;
+		m_transform_dirty = true;
 	}
 	void scene_object::set_scale_z(f32 const z)
 	{
 		f32 const cz = m_transform.get_k().length();
 		tmat<space::OBJECT, space::OBJECT> const& mat = tmat_util::scale<space::OBJECT>(1, 1, z / cz);
 		m_transform *= mat;
+		m_transform_dirty = true;
 	}
 	void scene_object::set_pos_world(point<space::WORLD> const& pos)
 	{
 		point<space::PARENT> const& local_pos = get_parent_transform().invert_copy() * pos;
 		set_pos(local_pos);
+		m_transform_dirty = true;
 	}
 	void scene_object::set_pos_x_world(f32 const x)
 	{
 		point<space::WORLD> pos = get_pos_world();
 		pos.x = x;
 		set_pos_world(pos);
+		m_transform_dirty = true;
 	}
 	void scene_object::set_pos_y_world(f32 const y)
 	{
 		point<space::WORLD> pos = get_pos_world();
 		pos.y = y;
 		set_pos_world(pos);
+		m_transform_dirty = true;
 	}
 	void scene_object::set_pos_z_world(f32 const z)
 	{
 		point<space::WORLD> pos = get_pos_world();
 		pos.z = z;
 		set_pos_world(pos);
+		m_transform_dirty = true;
 	}
 	void scene_object::set_rot_world(f32 const x_deg, f32 const y_deg, f32 const z_deg)
 	{
 		ASSERT(false);
+		m_transform_dirty = true;
 	}
 	void scene_object::set_rot_x_world(f32 const x_deg)
 	{
 		ASSERT(false);
+		m_transform_dirty = true;
 	}
 	void scene_object::set_rot_y_world(f32 const y_deg)
 	{
 		ASSERT(false);
+		m_transform_dirty = true;
 	}
 	void scene_object::set_rot_z_world(f32 const z_deg)
 	{
 		ASSERT(false);
+		m_transform_dirty = true;
 	}
 	void scene_object::set_scale_world(vec<space::WORLD> const& scale)
 	{
 		ASSERT(false);
+		m_transform_dirty = true;
 	}
 	void scene_object::set_scale_x_world(f32 const x)
 	{
 		ASSERT(false);
+		m_transform_dirty = true;
 	}
 	void scene_object::set_scale_y_world(f32 const y)
 	{
 		ASSERT(false);
+		m_transform_dirty = true;
 	}
 	void scene_object::set_scale_z_world(f32 const z)
 	{
 		ASSERT(false);
+		m_transform_dirty = true;
 	}
 	void scene_object::add_pos(vec<space::PARENT> const& pos)
 	{
 		set_pos(get_pos() + pos);
+		m_transform_dirty = true;
 	}
 	void scene_object::add_pos_x(f32 const x)
 	{
 		set_pos_x(get_pos().x + x);
+		m_transform_dirty = true;
 	}
 	void scene_object::add_pos_y(f32 const y)
 	{
 		set_pos_y(get_pos().y + y);
+		m_transform_dirty = true;
 	}
 	void scene_object::add_pos_z(f32 const z)
 	{
 		set_pos_z(get_pos().z + z);
+		m_transform_dirty = true;
 	}
 	void scene_object::add_rot(f32 const x_deg, f32 const y_deg, f32 const z_deg)
 	{
@@ -237,85 +275,105 @@ namespace djinn
 		m_rot[1] += u::deg2rad(y_deg);
 		m_rot[2] += u::deg2rad(z_deg);
 		update_rot();
+		m_transform_dirty = true;
 	}
 	void scene_object::add_rot_x(f32 const x_deg)
 	{
 		m_rot[0] += u::deg2rad(x_deg);
 		update_rot();
+		m_transform_dirty = true;
 	}
 	void scene_object::add_rot_y(f32 const y_deg)
 	{
 		m_rot[1] += u::deg2rad(y_deg);
 		update_rot();
+		m_transform_dirty = true;
 	}
 	void scene_object::add_rot_z(f32 const z_deg)
 	{
 		m_rot[2] += u::deg2rad(z_deg);
 		update_rot();
+		m_transform_dirty = true;
 	}
 	void scene_object::add_scale(vec<space::PARENT> const& scale)
 	{
 		set_scale(get_scale() + scale);
+		m_transform_dirty = true;
 	}
 	void scene_object::add_scale_x(f32 const x)
 	{
 		set_scale_x(get_scale().x + x);
+		m_transform_dirty = true;
 	}
 	void scene_object::add_scale_y(f32 const y)
 	{
 		set_scale_y(get_scale().y + y);
+		m_transform_dirty = true;
 	}
 	void scene_object::add_scale_z(f32 const z)
 	{
 		set_scale_z(get_scale().z + z);
+		m_transform_dirty = true;
 	}
 	void scene_object::add_pos_world(vec<space::WORLD> const& pos)
 	{
 		set_pos_world(get_pos_world() + pos);
+		m_transform_dirty = true;
 	}
 	void scene_object::add_pos_x_world(f32 const x)
 	{
 		set_pos_x_world(get_pos_world().x + x);
+		m_transform_dirty = true;
 	}
 	void scene_object::add_pos_y_world(f32 const y)
 	{
 		set_pos_y_world(get_pos_world().y + y);
+		m_transform_dirty = true;
 	}
 	void scene_object::add_pos_z_world(f32 const z)
 	{
 		set_pos_z_world(get_pos_world().z + z);
+		m_transform_dirty = true;
 	}
 	void scene_object::add_rot_world(f32 const x_deg, f32 const y_deg, f32 const z_deg)
 	{
 		ASSERT(false);
+		m_transform_dirty = true;
 	}
 	void scene_object::add_rot_x_world(f32 const x_deg)
 	{
 		ASSERT(false);
+		m_transform_dirty = true;
 	}
 	void scene_object::add_rot_y_world(f32 const y_deg)
 	{
 		ASSERT(false);
+		m_transform_dirty = true;
 	}
 	void scene_object::add_rot_z_world(f32 const z_deg)
 	{
 		ASSERT(false);
+		m_transform_dirty = true;
 	}
 	void scene_object::add_scale_world(vec<space::WORLD> const& scale)
 	{
 		set_scale_world(get_scale_world() + scale);
+		m_transform_dirty = true;
 	}
 	void scene_object::add_scale_x_world(f32 const x)
 	{
 		set_scale_x_world(get_scale_world().x + x);
+		m_transform_dirty = true;
 	}
 	void scene_object::add_scale_y_world(f32 const y)
 	{
 		set_scale_y_world(get_scale_world().y + y);
+		m_transform_dirty = true;
 	}
 	void scene_object::add_scale_z_world(f32 const z)
 	{
 		set_scale_z_world(get_scale_world().z + z);
+		m_transform_dirty = true;
 	}
 
 

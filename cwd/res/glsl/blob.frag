@@ -132,6 +132,9 @@ float fbm(in vec3 p) {
 
 void main()
 {
+    // o_color = vec4(1, 0, 0, 1);
+    // return;
+
     vec3 g = vec3(0.0);
     float na = fbm(v_pos + d_time * 0.2);
     float nb = fbm(v_pos + vec3(5.3, 1.7, 2.4) + d_time * 0.2);

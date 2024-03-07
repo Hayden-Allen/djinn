@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "custom_mesh.h"
 #include "asset/shaders.h"
+#include "scene/mesh/mesh_instance_batch.h"
 
 namespace djinn
 {
@@ -34,6 +35,6 @@ namespace djinn
 		}
 		for (auto& pair : m_batches)
 			for (auto& batch : pair.second)
-				batch.draw(ctx, m_ro);
+				batch->draw(ctx, m_ro);
 	}
 } // namespace djinn

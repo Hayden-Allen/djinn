@@ -17,6 +17,7 @@ export default class MainEntity extends Entity {
     private idAnimatedMesh?: MeshID
     private idAnimatedShader?: ShaderID
     private idAnimatedInstance?: MeshInstanceID
+    private idAnimatedTexture?: TextureID
 
     __init() {
         Asset.setDefaultTextureOptions({
@@ -46,7 +47,10 @@ export default class MainEntity extends Entity {
 
         this.player = Scene.Entity.load("Player.js", this.camera!) as Player
 
-        this.idAnimatedMesh = Asset.Mesh.loadAnimated("xbot.m3d")
+        this.idAnimatedTexture = Asset.Texture.load(
+            "MonsterLoResBakedTexture512.png"
+        )
+        this.idAnimatedMesh = Asset.Mesh.loadAnimated("monster.m3d")
         this.idAnimatedShader = Asset.Shader.load(
             "animated.vert",
             "animated.frag"
@@ -55,8 +59,11 @@ export default class MainEntity extends Entity {
             this.idAnimatedMesh,
             this.idAnimatedShader
         )
-        Scene.setPosWorld(this.idAnimatedInstance, [0, -5, -5])
-        Scene.MeshInstance.setAction(this.idAnimatedInstance, "run_Armature")
+        Scene.setPosWorld(this.idAnimatedInstance, [0, -6, -5])
+        Scene.MeshInstance.setAction(
+            this.idAnimatedInstance,
+            "Armature|mixamo.com|Layer0"
+        )
     }
     __destroy() {
         this.xport!.destroy()
@@ -67,6 +74,7 @@ export default class MainEntity extends Entity {
         Scene.MeshInstance.destroy(this.idAnimatedInstance)
         Asset.Shader.destroy(this.idAnimatedShader)
         Asset.Mesh.destroy(this.idAnimatedMesh)
+        Asset.Texture.destroy(this.idAnimatedTexture)
     }
     __main(dt: number, time: number) {
         if (Input.getKey(Input.KEY_ENTER)) {

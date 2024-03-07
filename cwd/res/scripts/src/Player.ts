@@ -74,7 +74,7 @@ export default class Player extends Entity {
         {
             this.idSphereShader = Asset.Shader.load("blob.vert", "blob.frag")
             this.idSphereMesh = Asset.Mesh.loadStatic("icosphere.m3d")
-            for (let i = 0; i < 1024; ++i) {
+            for (let i = 0; i < 1 << 17; ++i) {
                 this.idSphereInstances.push(
                     Scene.MeshInstance.create(
                         this.idSphereMesh,
@@ -90,6 +90,8 @@ export default class Player extends Entity {
         }
         // state graph
         {
+            this.state = new StateGraph()
+
             const move = (dt: number, speed: number) => {
                 const x = speed * Input.leftX()
                 const z = speed * Input.leftY()

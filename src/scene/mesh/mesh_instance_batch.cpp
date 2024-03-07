@@ -27,6 +27,7 @@ namespace djinn
 		m_openings(std::move(other.m_openings)),
 		m_instance_indices(std::move(other.m_instance_indices)),
 		m_max_instance_index(std::move(other.m_max_instance_index)),
+		m_buffer(std::move(other.m_buffer)),
 		m_next(other.m_next),
 		m_valid(other.m_valid),
 		m_instances_per_ubo(other.m_instances_per_ubo),
@@ -76,7 +77,10 @@ namespace djinn
 		m_valid--;
 		// check if we can delete a UBO now
 		if (m_valid % m_instances_per_ubo == m_instances_per_ubo - 1)
+		{
 			m_ubos.pop_back();
+			m_buffer.resize(m_floats_per_instance * m_instances_per_ubo * m_ubos.size());
+		}
 
 		// slot in m_instances whose transform is at the end of the UBOs
 		u64 const end_transform_index = m_max_instance_index.back();
@@ -98,8 +102,9 @@ namespace djinn
 		// index within above block
 		u64 const transform_index = total_index % m_instances_per_ubo;
 		// byte offset within block
-		u64 offset_bytes = field.offset_bytes + (m_floats_per_instance * sizeof(f32) * transform_index);
-		m_ubos[block_index].update(field.data.data(), (u32)field.data.size(), (u32)offset_bytes);
+		u64 const offset_bytes = field.offset_bytes + (m_floats_per_instance * sizeof(f32) * transform_index);
+		// m_ubos[block_index].update(field.data.data(), (u32)field.data.size(), (u32)offset_bytes);
+		write_to_buffer(block_index, offset_bytes, field.data.data(), field.data.size());
 	}
 
 
@@ -108,6 +113,7 @@ namespace djinn
 	{
 		ASSERT(m_ubos.size() <= c::shader::num_batch_ubos);
 		m_ubos.emplace_back(m_instances_per_ubo * m_floats_per_instance);
+		m_buffer.resize(m_floats_per_instance * m_instances_per_ubo * m_ubos.size());
 	}
 	void mesh_instance_batch::set_transform_index(u64 const index)
 	{
@@ -137,7 +143,9 @@ namespace djinn
 		// byte offset within block
 		u64 offset_bytes = (m_floats_per_instance * sizeof(f32) * transform_index);
 
-		m_ubos[block_index].update(transform.e, s_floats_per_mat4, (u32)offset_bytes);
+		// m_ubos[block_index].update(transform.e, s_floats_per_mat4, (u32)offset_bytes);
+		// std::memcpy(m_buffer.data() + block_index * m_instances_per_ubo * m_floats_per_instance + offset_floats, transform.e, s_floats_per_mat4 * sizeof(f32));
+		write_to_buffer(block_index, offset_bytes, transform.e, s_floats_per_mat4);
 		offset_bytes += s_floats_per_mat4 * sizeof(f32);
 
 		// upload normal matrix for static meshes
@@ -147,7 +155,8 @@ namespace djinn
 			// mat3 == mat3x4 with layout(std140), so pad columns with 0
 			f32 data[12] = { 0 };
 			normal.mat3x4(data);
-			m_ubos[block_index].update(data, s_floats_per_mat3, (u32)offset_bytes);
+			// m_ubos[block_index].update(data, s_floats_per_mat3, (u32)offset_bytes);
+			write_to_buffer(block_index, offset_bytes, data, s_floats_per_mat3);
 		}
 		// upload bone matrices for animated meshes
 		else
@@ -158,10 +167,18 @@ namespace djinn
 			m3db_t const* const bones = ami->get_pose();
 			for (u32 i = 0; i < am->get_num_bones(); i++)
 			{
-				m_ubos[block_index].update(bones[i].mat4, s_floats_per_mat4, (u32)offset_bytes);
+				// m_ubos[block_index].update(bones[i].mat4, s_floats_per_mat4, (u32)offset_bytes);
+				// std::memcpy(m_buffer.data() + block_index * m_instances_per_ubo * m_floats_per_instance + offset_bytes / sizeof(f32), bones[i].mat4, s_floats_per_mat4 * sizeof(f32));
+				write_to_buffer(block_index, offset_bytes, bones[i].mat4, s_floats_per_mat4);
 				offset_bytes += s_floats_per_mat4 * sizeof(f32);
 			}
 			M3D_FREE((void*)bones);
 		}
+	}
+	void mesh_instance_batch::write_to_buffer(u64 const block_index, u64 const offset_bytes, f32 const* const data, u64 const float_count)
+	{
+		u64 const buffer_index = block_index * m_instances_per_ubo * m_floats_per_instance + offset_bytes / sizeof(f32);
+		ASSERT(buffer_index < m_buffer.size());
+		std::memcpy(m_buffer.data() + buffer_index, data, float_count * sizeof(f32));
 	}
 } // namespace djinn

@@ -21,6 +21,8 @@ namespace djinn
 		virtual void copy_transform(sptr<scene_object> const& other);
 		void set_user_pointer(JSValue const& v);
 		JSValue const& get_user_pointer() const;
+		bool is_transform_dirty() const;
+		void set_transform_clean();
 	public:
 		point<space::PARENT> get_pos() const;
 		std::array<f32, 3> get_rot() const;
@@ -85,6 +87,7 @@ namespace djinn
 		scene_object* m_parent;
 		JSValue m_user;
 		f32 m_rot[3] = { 0.f }; // radians
+		bool m_transform_dirty = true;
 	protected:
 		scene_object(id_t const id);
 	protected:

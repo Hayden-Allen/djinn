@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "loaded_mesh.h"
+#include "core/constants.h"
 #include "core/util.h"
 
 namespace djinn

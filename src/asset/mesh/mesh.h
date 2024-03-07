@@ -1,10 +1,10 @@
 #pragma once
 #include "pch.h"
-#include "scene/mesh/mesh_instance_batch.h"
 
 namespace djinn
 {
 	class mesh_instance;
+	class mesh_instance_batch;
 	class shaders;
 
 	class mesh
@@ -18,7 +18,7 @@ namespace djinn
 		virtual void draw(sptr<mgl::context> const& ctx) = 0;
 		virtual bool is_animated() const;
 	protected:
-		std::unordered_map<shaders const*, std::vector<mesh_instance_batch>> m_batches;
+		std::unordered_map<shaders const*, std::vector<mesh_instance_batch*>> m_batches;
 		std::unordered_map<shaders const*, u64> m_num_empty_batches;
 	protected:
 		mesh();

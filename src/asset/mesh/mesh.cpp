@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "mesh.h"
 #include "asset/shaders.h"
+#include "scene/mesh/mesh_instance_batch.h"
 
 namespace djinn
 {
@@ -29,18 +30,18 @@ namespace djinn
 			m_num_empty_batches.insert({ shaders.get(), 0 });
 		}
 
-		std::vector<mesh_instance_batch>& batches = m_batches.at(shaders.get());
+		std::vector<mesh_instance_batch*>& batches = m_batches.at(shaders.get());
 		bool found = false;
 		// check if there's an existing batch that can fit the new instance
 		for (u64 i = 0; i < batches.size(); i++)
 		{
-			if (!batches[i].is_full())
+			if (!batches[i]->is_full())
 			{
 				// this batch is currently empty, but won't be after we insert the new instance
-				if (batches[i].empty())
+				if (batches[i]->empty())
 					m_num_empty_batches[shaders.get()]--;
 
-				batches[i].insert(instance);
+				batches[i]->insert(instance);
 				instance->bind_mesh(i);
 				found = true;
 				break;
@@ -50,18 +51,18 @@ namespace djinn
 		// all existing batches full, need to make a new one
 		if (!found)
 		{
-			batches.emplace_back(wptr(this), shaders);
-			batches.back().insert(instance);
+			batches.push_back(new mesh_instance_batch(wptr(this), shaders));
+			batches.back()->insert(instance);
 			instance->bind_mesh(batches.size() - 1);
 		}
 	}
 	void mesh::remove_instance(wptr<shaders> const& shaders, u64 const batch_number, u64 const index)
 	{
-		std::vector<mesh_instance_batch>& batches = m_batches.at(shaders.get());
+		std::vector<mesh_instance_batch*>& batches = m_batches.at(shaders.get());
 		ASSERT(batch_number < batches.size());
 
-		batches.at(batch_number).remove(index);
-		if (batches.at(batch_number).empty())
+		batches.at(batch_number)->remove(index);
+		if (batches.at(batch_number)->empty())
 			m_num_empty_batches[shaders.get()]++;
 
 		// TODO? remove empty batches (but need to update mesh_instance::m_batch_number)

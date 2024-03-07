@@ -135,8 +135,11 @@ float fbm(in vec3 p, out vec3 g) {
 void main()
 {
     v_pos = (d_instance.d_model * vec4(d_pos, 1)).xyz;
-    v_norm = d_norm * mat3(d_instance.d_model);
+    v_norm = d_norm * d_instance.d_normal;
     v_tex = d_tex;
+    // gl_Position = d_vp * d_instance.d_model * vec4(d_pos, 1);
+    // return;
+
     vec3 g = vec3(0.0);
     fbm(v_pos + d_time * 0.125, g);
     if (g.x < 0.0) { g.x *= 0.25; }
