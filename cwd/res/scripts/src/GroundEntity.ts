@@ -93,9 +93,10 @@ export default class GroundEntity extends Entity {
         Asset.Texture.destroy(this.idTexture!)
     }
     __draw() {
-        Asset.Shader.setCameraUniforms(this.idShader!, this.camera!.getId())
+        // Asset.Shader.setCameraUniforms(this.idShader!, this.camera!.getId())
     }
     bind(cam: Camera) {
         this.camera = cam
+        Asset.Shader.bindCamera(this.idShader, this.camera!.getId())
     }
 }

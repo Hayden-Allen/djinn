@@ -1,8 +1,5 @@
 - asset "libraries" that prevent loading same thing twice? cpp or js
-- Asset.Shader.bindCamera(CameraID)? automatically update before draw
-- how organize state graph? separate files? do states own things? subclass?
 
-- Scene.setScale(s)
 - Asset.Mesh.getActionNames
 	- AnimatedMesh.setActionLike("run") picks action with closest name match
 - skybox

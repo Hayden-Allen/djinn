@@ -1651,6 +1651,10 @@ namespace djinn
 			{
 				cam->update_mats();
 			});
+		asset_service::get_shader_manager()->for_each([&](sptr<shaders> shaders, id_t const id)
+			{
+				shaders->update_camera_uniforms();
+			});
 	}
 	void scene_service::draw_ui()
 	{

@@ -137,6 +137,6 @@ export default class Skybox {
     }
 
     draw(idCamera: CameraID) {
-        Asset.Shader.setCameraUniforms(this.idShader, idCamera)
+        Asset.Shader.bindCamera(this.idShader, idCamera)
     }
 }

@@ -30,14 +30,20 @@ export default class MainEntity extends Entity {
         Scene.Camera.configure(this.camera.getId(), 108 / ar, ar, 0.1, 1000)
 
         this.xport = new Xport("01.xport")
-        this.idPhormShader = Asset.Shader.load("phorm.vert", "phorm.frag")
+        this.idPhormShader = Asset.Shader.load(
+            "phorm.vert",
+            "phorm.frag",
+            this.camera.getId()
+        )
         this.idPhormAlphaShader = Asset.Shader.load(
             "phorm.vert",
-            "phorm_alpha.frag"
+            "phorm_alpha.frag",
+            this.camera.getId()
         )
         this.idPhormWaterShader = Asset.Shader.load(
             "phorm_water.vert",
-            "phorm_water.frag"
+            "phorm_water.frag",
+            this.camera.getId()
         )
         for (var i = 0; i < this.xport.idPhorms.length; i++) {
             const id = this.xport.idPhorms[i]
@@ -55,7 +61,8 @@ export default class MainEntity extends Entity {
         ])
         this.idAnimatedShader = Asset.Shader.load(
             "animated.vert",
-            "animated.frag"
+            "animated.frag",
+            this.camera.getId()
         )
         Asset.Shader.setUniforms(this.idAnimatedShader, {
             u_texture: 0,
@@ -95,18 +102,18 @@ export default class MainEntity extends Entity {
     }
     __draw() {
         this.xport!.skybox!.draw(this.camera!.getId())
-        Asset.Shader.setCameraUniforms(this.idPhormShader, this.camera!.getId())
-        Asset.Shader.setCameraUniforms(
-            this.idPhormAlphaShader,
-            this.camera!.getId()
-        )
-        Asset.Shader.setCameraUniforms(
-            this.idPhormWaterShader,
-            this.camera!.getId()
-        )
-        Asset.Shader.setCameraUniforms(
-            this.idAnimatedShader,
-            this.camera!.getId()
-        )
+        // Asset.Shader.setCameraUniforms(this.idPhormShader, this.camera!.getId())
+        // Asset.Shader.setCameraUniforms(
+        //     this.idPhormAlphaShader,
+        //     this.camera!.getId()
+        // )
+        // Asset.Shader.setCameraUniforms(
+        //     this.idPhormWaterShader,
+        //     this.camera!.getId()
+        // )
+        // Asset.Shader.setCameraUniforms(
+        //     this.idAnimatedShader,
+        //     this.camera!.getId()
+        // )
     }
 }

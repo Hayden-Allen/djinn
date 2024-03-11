@@ -72,7 +72,11 @@ export default class Player extends Entity {
         }
         // test
         {
-            this.idSphereShader = Asset.Shader.load("blob.vert", "blob.frag")
+            this.idSphereShader = Asset.Shader.load(
+                "blob.vert",
+                "blob.frag",
+                this.camera?.getId()
+            )
             this.idSphereMesh = Asset.Mesh.loadStatic("icosphere.m3d")
             for (let i = 0; i < 1 << 10; ++i) {
                 this.idSphereInstances.push(
@@ -285,10 +289,10 @@ export default class Player extends Entity {
         Sound.setListenerWorldDir(dir)
 
         // update shaders AFTER CAMERA TRANSFORM IS DONE BEING MODIFIED
-        Asset.Shader.setCameraUniforms(
-            this.idSphereShader,
-            this.camera!.getId()
-        )
+        // Asset.Shader.setCameraUniforms(
+        //     this.idSphereShader,
+        //     this.camera!.getId()
+        // )
     }
     __imgui() {
         ImGui.text(

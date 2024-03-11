@@ -12,7 +12,7 @@ namespace djinn
 		DCM(shader_manager);
 	public:
 		id_t load(std::string const& fp) override;
-		id_t load(std::string const& vert_fp, std::string const& frag_fp);
+		id_t load(std::string const& vert_fp, std::string const& frag_fp, camera_entity* const cam);
 		void destroy(id_t const id) override;
 		void reload(std::string const& fp) override;
 		void rename(std::string const& old_fp, std::string const& new_fp) override;

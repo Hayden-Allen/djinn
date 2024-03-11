@@ -5,6 +5,8 @@
 
 namespace djinn
 {
+	class camera_entity;
+
 	class shaders final : public haul::parent<mgl::shaders>
 	{
 	public:
@@ -25,13 +27,15 @@ namespace djinn
 			COUNT
 		};
 	public:
-		shaders(std::string const& vert_afp, std::string const& frag_afp);
+		shaders(std::string const& vert_afp, std::string const& frag_afp, camera_entity* const cam);
 		DCM(shaders);
 	public:
 		std::vector<instance_field> const& get_instance_fields() const;
 		u32 get_base_offset_bytes() const;
 		void init(std::string const& vert_afp, std::string const& frag_afp);
 		bool uniform_block_binding(std::string const& name, s32 const slot) const override;
+		void bind_camera(camera_entity* const cam);
+		void update_camera_uniforms();
 	private:
 		// sizeof(mat4) == 64
 		// sizeof(mat3) == sizeof(mat3x4) == 48 (alignment)
@@ -44,6 +48,7 @@ namespace djinn
 	private:
 		std::string m_vert_afp, m_frag_afp;
 		std::vector<instance_field> m_instance_fields;
+		camera_entity* m_camera;
 		shader_type m_type;
 	private:
 		static std::vector<std::string> extract_args(std::string const& line);

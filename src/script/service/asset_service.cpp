@@ -143,10 +143,13 @@ namespace djinn::js::asset_service
 
 	JSValue load_shader(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		ASSERT(argc == 2);
+		ASSERT(argc == 2 || argc == 3);
 		std::string const vert_fp = js::extract_string(ctx, argv[0]);
 		std::string const frag_fp = js::extract_string(ctx, argv[1]);
-		return js::create_id(ctx, ::djinn::asset_service::get_shader_manager()->load(vert_fp, frag_fp));
+		camera_entity* cam = nullptr;
+		if (argc == 3)
+			cam = ::djinn::scene_service::get_camera_entity_manager()->get(js::extract_id(ctx, argv[2])).get();
+		return js::create_id(ctx, ::djinn::asset_service::get_shader_manager()->load(vert_fp, frag_fp, cam));
 	}
 	JSValue set_shader_uniforms(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
@@ -157,7 +160,7 @@ namespace djinn::js::asset_service
 			::djinn::asset_service::get_shader_manager()->set_uniform(ctx, id, pair.first, pair.second);
 		return JS_UNDEFINED;
 	}
-	JSValue set_shader_camera_uniforms(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	/*JSValue set_shader_camera_uniforms(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
 		ASSERT(argc == 2);
 		id_t const shader_id = js::extract_id(ctx, argv[0]);
@@ -173,6 +176,16 @@ namespace djinn::js::asset_service
 		point<space::WORLD> const& pos = cam->get_world_transform().get_t();
 		shaders->uniform_3f(c::uniform::cam_pos, pos[0], pos[1], pos[2]);
 
+		return JS_UNDEFINED;
+	}*/
+	JSValue bind_shader_camera(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
+	{
+		ASSERT(argc == 2);
+		id_t const id_shaders = js::extract_id(ctx, argv[0]);
+		id_t const id_cam = js::extract_id(ctx, argv[1]);
+		sptr<shaders> shaders = ::djinn::asset_service::get_shader_manager()->get(id_shaders);
+		sptr<camera_entity> cam = ::djinn::scene_service::get_camera_entity_manager()->get(id_cam);
+		shaders->bind_camera(cam.get());
 		return JS_UNDEFINED;
 	}
 	JSValue destroy_shader(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
@@ -370,9 +383,10 @@ namespace djinn
 		}
 		// SHADER
 		{
-			super::register_function(ctx, "Shader", "load", 2, js::asset_service::load_shader);
+			super::register_function(ctx, "Shader", "load", 3, js::asset_service::load_shader);
 			super::register_function(ctx, "Shader", "setUniforms", 2, js::asset_service::set_shader_uniforms);
-			super::register_function(ctx, "Shader", "setCameraUniforms", 2, js::asset_service::set_shader_camera_uniforms);
+			/*super::register_function(ctx, "Shader", "setCameraUniforms", 2, js::asset_service::set_shader_camera_uniforms);*/
+			super::register_function(ctx, "Shader", "bindCamera", 2, js::asset_service::bind_shader_camera);
 			super::register_function(ctx, "Shader", "destroy", 1, js::asset_service::destroy_shader);
 			super::register_function(ctx, "Shader", "destroyAll", 1, js::asset_service::destroy_all_shader);
 		}

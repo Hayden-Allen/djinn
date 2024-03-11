@@ -16,9 +16,10 @@ declare interface _Asset_Mesh {
     destroyAll(ids: MeshID[]): void
 }
 declare interface _Asset_Shader {
-    load(fpVert: string, fpFrag: string): ShaderID
+    load(fpVert: string, fpFrag: string, idCamera?: CameraID): ShaderID
     setUniforms(id: ShaderID, uniforms: Record<string, number>): void
-    setCameraUniforms(idShader: ShaderID, idCamera: CameraID): void
+    bindCamera(idShader: ShaderID, idCamera: CameraID): void
+    // setCameraUniforms(idShader: ShaderID, idCamera: CameraID): void
     destroy(id: ShaderID): void
     destroyAll(ids: ShaderID[]): void
 }

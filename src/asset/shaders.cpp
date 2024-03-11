@@ -2,15 +2,18 @@
 #include "shaders.h"
 #include "core/constants.h"
 #include "script/service/render_service.h"
+#include "scene/entity/camera_entity.h"
 
 namespace djinn
 {
-	shaders::shaders(std::string const& vert_afp, std::string const& frag_afp) :
+	shaders::shaders(std::string const& vert_afp, std::string const& frag_afp, camera_entity* const cam) :
 		m_vert_afp(vert_afp),
 		m_frag_afp(frag_afp),
+		m_camera(nullptr),
 		m_type(shader_type::NONE)
 	{
 		init(vert_afp, frag_afp);
+		bind_camera(cam);
 	}
 
 
@@ -42,6 +45,21 @@ namespace djinn
 			return false;
 		}
 		return true;
+	}
+	void shaders::bind_camera(camera_entity* const cam)
+	{
+		m_camera = cam;
+	}
+	void shaders::update_camera_uniforms()
+	{
+		if (!m_camera)
+			return;
+		uniform_mat4(c::uniform::view_mat, m_camera->get_view().e);
+		uniform_mat4(c::uniform::proj_mat, m_camera->get_proj().e);
+		uniform_mat4(c::uniform::vp_mat, m_camera->get_view_proj().e);
+		uniform_mat4(c::uniform::vpr_mat, m_camera->get_view_proj_basis().e);
+		point<space::WORLD> const& pos = m_camera->get_world_transform().get_t();
+		uniform_3f(c::uniform::cam_pos, pos[0], pos[1], pos[2]);
 	}
 
 

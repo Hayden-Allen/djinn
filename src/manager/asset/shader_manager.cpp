@@ -17,7 +17,7 @@ namespace djinn
 		ASSERT(false)
 		return 0;
 	}
-	id_t shader_manager::load(std::string const& vert_fp, std::string const& frag_fp)
+	id_t shader_manager::load(std::string const& vert_fp, std::string const& frag_fp, camera_entity* const cam)
 	{
 		std::string const& vert_afp = to_absolute(vert_fp);
 		std::string const& frag_afp = to_absolute(frag_fp);
@@ -30,7 +30,7 @@ namespace djinn
 		}
 
 		// no such shader exists yet, create it
-		shaders* const s = new shaders(vert_afp, frag_afp);
+		shaders* const s = new shaders(vert_afp, frag_afp, cam);
 		id_t const id = insert(s);
 		m_afp2ids[vert_afp].insert(id);
 		m_afp2ids[frag_afp].insert(id);
