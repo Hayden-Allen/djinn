@@ -1171,7 +1171,15 @@ namespace djinn::js::scene_service
 	}
 	JSValue set_scale(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{
-		return set_values<vec<space::PARENT>>(ctx, argc, argv, &scene_object::set_scale);
+		ASSERT(argc == 2);
+
+		if (JS_IsArray(ctx, argv[1]))
+			return set_values<vec<space::PARENT>>(ctx, argc, argv, &scene_object::set_scale);
+
+		id_t const id = js::extract_id(ctx, argv[0]);
+		sptr<scene_object> so = ::djinn::scene_service::get_scene_object(id);
+		so->set_scale_uniform(js::extract_f32(ctx, argv[1]));
+		return JS_UNDEFINED;
 	}
 	JSValue set_scale_x(JSContext* const ctx, JSValueConst this_val, s32 const argc, JSValueConst* const argv)
 	{

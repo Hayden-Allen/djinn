@@ -152,6 +152,10 @@ namespace djinn
 		update_rot();
 		m_transform_dirty = true;
 	}
+	void scene_object::set_scale_uniform(f32 const s)
+	{
+		set_scale(vec<space::PARENT>(s, s, s));
+	}
 	void scene_object::set_scale(vec<space::PARENT> const& scale)
 	{
 		f32 const cx = m_transform.get_i().length();

@@ -39,6 +39,7 @@ namespace djinn
 		virtual void set_rot_x(f32 const x_deg);
 		virtual void set_rot_y(f32 const y_deg);
 		virtual void set_rot_z(f32 const z_deg);
+		virtual void set_scale_uniform(f32 const s);
 		virtual void set_scale(vec<space::PARENT> const& scale);
 		virtual void set_scale_x(f32 const x);
 		virtual void set_scale_y(f32 const y);
