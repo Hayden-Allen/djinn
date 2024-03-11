@@ -13,7 +13,7 @@ export default class Player extends Entity {
     private camAngleY: number = 0
     private hitboxHeight: number = 0.1
     private hitboxRadius: number = 0.1
-    private worldPos: number[] = [0, 0, 0]
+    private worldPos: number[] = [0, 3, 2.5]
 
     private canJump: boolean = false
     private velY: number = 0
@@ -82,7 +82,7 @@ export default class Player extends Entity {
                     )
                 )
                 let x = Math.random() * 10 - 5
-                let y = Math.random() * 10 - 5
+                let y = Math.random() * 5 - 10
                 let z = Math.random() * 10 - 5
                 Scene.setPos(this.idSphereInstances[i], [x, y, z])
                 Scene.setScale(this.idSphereInstances[i], [0.3, 0.3, 0.3])

@@ -388,9 +388,7 @@ namespace djinn
 
 	void scene_object::update_rot()
 	{
-		point<space::PARENT> const& t = m_transform.get_t();
-		tmat<space::OBJECT, space::PARENT> const& trans = tmat_util::translation<space::OBJECT, space::PARENT>(t.x, t.y, t.z);
 		tmat<space::OBJECT, space::OBJECT> const& rot = tmat_util::rotation_yxz<space::OBJECT>(m_rot[0], m_rot[1], m_rot[2]);
-		m_transform = trans * rot;
+		m_transform = m_transform.extract_translation_scale() * rot;
 	}
 } // namespace djinn

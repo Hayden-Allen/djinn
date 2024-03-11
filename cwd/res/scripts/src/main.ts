@@ -64,11 +64,15 @@ export default class MainEntity extends Entity {
             this.idAnimatedMesh,
             this.idAnimatedShader
         )
-        Scene.setPosWorld(this.idAnimatedInstance, [0, -6, -5])
         Scene.MeshInstance.setAction(
             this.idAnimatedInstance,
             "Armature|mixamo.com|Layer0"
         )
+    }
+    __load() {
+        Scene.setPosWorld(this.idAnimatedInstance, [0, 1.8, 0])
+        Scene.setScale(this.idAnimatedInstance, [6, 6, 6])
+        Scene.setRotY(this.idAnimatedInstance, 60)
     }
     __destroy() {
         this.xport!.destroy()

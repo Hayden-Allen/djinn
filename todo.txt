@@ -2,7 +2,7 @@
 - Asset.Shader.bindCamera(CameraID)? automatically update before draw
 - how organize state graph? separate files? do states own things? subclass?
 
-- mesh textures
+- Scene.setScale(s)
 - Asset.Mesh.getActionNames
 	- AnimatedMesh.setActionLike("run") picks action with closest name match
 - skybox
